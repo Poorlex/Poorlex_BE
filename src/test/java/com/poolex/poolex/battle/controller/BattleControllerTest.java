@@ -10,10 +10,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.poolex.poolex.battle.fixture.BattleCreateRequestFixture;
 import com.poolex.poolex.battle.service.dto.request.BattleCreateRequest;
-import com.poolex.poolex.member.domain.Member;
-import com.poolex.poolex.member.domain.MemberNickname;
-import com.poolex.poolex.member.domain.MemberPoint;
-import com.poolex.poolex.member.domain.MemberRepository;
+import com.poolex.poolex.login.domain.Member;
+import com.poolex.poolex.login.domain.MemberNickname;
+import com.poolex.poolex.login.domain.MemberPoint;
+import com.poolex.poolex.login.domain.MemberRepository;
 import com.poolex.poolex.participate.domain.BattleParticipant;
 import com.poolex.poolex.participate.domain.BattleParticipantRepository;
 import com.poolex.poolex.support.IntegrationTest;

@@ -1,4 +1,4 @@
-package com.poolex.poolex.member.domain;
+package com.poolex.poolex.login.domain;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
