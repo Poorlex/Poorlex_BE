@@ -1,5 +1,6 @@
 package com.poolex.poolex.participate.domain;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -16,9 +17,12 @@ public class BattleParticipant {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(updatable = false, nullable = false)
     private Long battleId;
+    @Column(updatable = false, nullable = false)
     private Long memberId;
     @Enumerated(value = EnumType.STRING)
+    @Column(nullable = false)
     private BattleParticipantRole role;
 
     private BattleParticipant(final Long id,
@@ -32,11 +36,7 @@ public class BattleParticipant {
     }
 
     public static BattleParticipant manager(final Long battleId, final Long memberId) {
-        return new BattleParticipant(null,
-            battleId,
-            memberId,
-            BattleParticipantRole.MANAGER
-        );
+        return new BattleParticipant(null, battleId, memberId, BattleParticipantRole.MANAGER);
     }
 
     public static BattleParticipant normalPlayer(final Long battleId, final Long memberId) {
@@ -50,7 +50,7 @@ public class BattleParticipant {
     public boolean isNormalPlayer() {
         return BattleParticipantRole.NORMAL_PLAYER == this.role;
     }
-    
+
     public boolean hasSameBattleId(final Long targetBattleId) {
         return this.battleId.equals(targetBattleId);
     }
