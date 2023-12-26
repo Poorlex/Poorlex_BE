@@ -11,7 +11,7 @@ public class BattleParticipantSize {
 
     private static final int MINIMUM_SIZE = 1;
     private static final int MAXIMUM_SIZE = 10;
-    @Column(name = "max_size")
+    @Column(name = "max_size", updatable = false, nullable = false)
     private int value;
 
     public BattleParticipantSize(final int value) {
@@ -35,7 +35,7 @@ public class BattleParticipantSize {
 
     public BattleSizeType getBattleSizeType() {
         return BattleSizeType.findByParticipantSize(this)
-                .orElseThrow(IllegalArgumentException::new);
+            .orElseThrow(IllegalArgumentException::new);
     }
 
     public int getValue() {

@@ -12,7 +12,7 @@ public class BattleName {
 
     private static final int MINIMUM_NAME_LENGTH = 2;
     private static final int MAXIMUM_NAME_LENGTH = 12;
-    @Column(name = "name")
+    @Column(name = "name", nullable = false)
     private String value;
 
     public BattleName(final String value) {

@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -35,13 +36,13 @@ public class Battle {
     private BattleStatus status;
 
     public Battle(final Long id,
-                  final BattleName name,
-                  final BattleIntroduction introduction,
-                  final BattleImageUrl imageUrl,
-                  final BattleBudget budget,
-                  final BattleParticipantSize maxParticipantSize,
-                  final BattleDuration duration,
-                  final BattleStatus status) {
+                  @NonNull final BattleName name,
+                  @NonNull final BattleIntroduction introduction,
+                  @NonNull final BattleImageUrl imageUrl,
+                  @NonNull final BattleBudget budget,
+                  @NonNull final BattleParticipantSize maxParticipantSize,
+                  @NonNull final BattleDuration duration,
+                  @NonNull final BattleStatus status) {
         this.id = id;
         this.name = name;
         this.introduction = introduction;
@@ -100,6 +101,14 @@ public class Battle {
         return hasSameStatus(BattleStatus.PROGRESS);
     }
 
+    public boolean hasSameStatus(final BattleStatus targetStatus) {
+        return this.status == targetStatus;
+    }
+
+    public boolean isRecruiting() {
+        return hasSameStatus(BattleStatus.RECRUITING);
+    }
+
     public void recruit() {
         status = BattleStatus.RECRUITING;
     }
@@ -108,8 +117,8 @@ public class Battle {
         status = BattleStatus.RECRUITING_FINISHED;
     }
 
-    public boolean hasSameStatus(final BattleStatus targetStatus) {
-        return this.status == targetStatus;
+    public boolean hasLessOrEqualMaxParticipantSizeThen(final int targetSize) {
+        return !maxParticipantSize.hasGreaterValue(targetSize);
     }
 
     public Long getId() {

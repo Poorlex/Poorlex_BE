@@ -9,6 +9,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -26,9 +27,9 @@ public class BattleParticipant {
     private BattleParticipantRole role;
 
     private BattleParticipant(final Long id,
-                              final Long battleId,
-                              final Long memberId,
-                              final BattleParticipantRole role) {
+                              @NonNull final Long battleId,
+                              @NonNull final Long memberId,
+                              @NonNull final BattleParticipantRole role) {
         this.id = id;
         this.battleId = battleId;
         this.memberId = memberId;

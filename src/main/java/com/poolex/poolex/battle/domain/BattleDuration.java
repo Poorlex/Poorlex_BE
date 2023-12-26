@@ -23,9 +23,9 @@ public class BattleDuration {
     private static final LocalTime END_TIME = LocalTime.of(END_HOUR, END_MINUTE);
     private static final int BATTLE_DAYS = END_DAY_OF_WEEK.getValue() - START_DAY_OF_WEEK.getValue();
 
-    @Column(name = "start_time")
+    @Column(name = "start_time", updatable = false, nullable = false)
     private LocalDateTime start;
-    @Column(name = "end_time")
+    @Column(name = "end_time", updatable = false, nullable = false)
     private LocalDateTime end;
 
     public BattleDuration(final LocalDateTime start, final LocalDateTime end) {

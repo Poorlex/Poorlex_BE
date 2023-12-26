@@ -12,7 +12,7 @@ public class BattleBudget {
     private static final int UNIT = 10000;
     private static final int MINIMUM_BUDGET = 10000;
     private static final int MAXIMUM_BUDGET = 200000;
-    @Column(name = "budget")
+    @Column(name = "budget", updatable = false, nullable = false)
     private int value;
 
     public BattleBudget(final int value) {
@@ -47,6 +47,6 @@ public class BattleBudget {
 
     public BattleDifficulty getDifficulty() {
         return BattleDifficulty.findByBattleBudget(this)
-                .orElseThrow(IllegalArgumentException::new);
+            .orElseThrow(IllegalArgumentException::new);
     }
 }
