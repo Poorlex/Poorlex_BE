@@ -9,6 +9,7 @@ import jakarta.persistence.Id;
 import java.time.LocalDate;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -28,12 +29,12 @@ public class Expenditure {
     @Embedded
     private ExpenditureCertificationImageUrls imageUrls;
 
-    public Expenditure(final Long id,
-                       final Long memberId,
-                       final ExpenditureAmount amount,
-                       final LocalDate date,
-                       final ExpenditureDescription description,
-                       final ExpenditureCertificationImageUrls imageUrls) {
+    protected Expenditure(final Long id,
+                          @NonNull final Long memberId,
+                          @NonNull final ExpenditureAmount amount,
+                          @NonNull final LocalDate date,
+                          @NonNull final ExpenditureDescription description,
+                          @NonNull final ExpenditureCertificationImageUrls imageUrls) {
         this.id = id;
         this.memberId = memberId;
         this.amount = amount;
@@ -54,5 +55,25 @@ public class Expenditure {
 
     public Long getId() {
         return id;
+    }
+
+    public Long getMemberId() {
+        return memberId;
+    }
+
+    public long getAmount() {
+        return amount.getValue();
+    }
+
+    public LocalDate getDate() {
+        return date;
+    }
+
+    public String getDescription() {
+        return description.getValue();
+    }
+
+    public ExpenditureCertificationImageUrls getImageUrls() {
+        return imageUrls;
     }
 }

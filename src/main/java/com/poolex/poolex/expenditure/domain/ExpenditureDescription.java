@@ -16,8 +16,8 @@ public class ExpenditureDescription {
     private String value;
 
     public ExpenditureDescription(final String value) {
-        validate(value);
-        this.value = value;
+        validate(value.strip());
+        this.value = value.strip();
     }
 
     private static void validate(final String value) {

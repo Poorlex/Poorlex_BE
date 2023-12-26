@@ -4,6 +4,7 @@ import io.jsonwebtoken.lang.Collections;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.OneToMany;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -29,8 +30,12 @@ public class ExpenditureCertificationImageUrls {
     }
 
     protected void belongTo(final Expenditure expenditure) {
-        for (ExpenditureCertificationImageUrl imageUrl : imageUrls) {
+        for (final ExpenditureCertificationImageUrl imageUrl : imageUrls) {
             imageUrl.belongTo(expenditure);
         }
+    }
+
+    public List<ExpenditureCertificationImageUrl> getImageUrls() {
+        return new ArrayList<>(imageUrls);
     }
 }

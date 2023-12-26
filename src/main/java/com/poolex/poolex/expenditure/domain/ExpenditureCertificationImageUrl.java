@@ -27,10 +27,19 @@ public class ExpenditureCertificationImageUrl {
     @JoinColumn(name = "expenditure_id", nullable = false)
     private Expenditure expenditure;
 
-    public ExpenditureCertificationImageUrl(final String value, final Expenditure expenditure) {
+    public ExpenditureCertificationImageUrl(final Long id, final String value, final Expenditure expenditure) {
         validate(value);
+        this.id = id;
         this.value = value;
         this.expenditure = expenditure;
+    }
+
+    public static ExpenditureCertificationImageUrl withoutId(final String value, final Expenditure expenditure) {
+        return new ExpenditureCertificationImageUrl(null, value, expenditure);
+    }
+
+    public static ExpenditureCertificationImageUrl withoutIdAndExpenditure(final String value) {
+        return new ExpenditureCertificationImageUrl(null, value, null);
     }
 
     private void validate(final String value) {
@@ -48,5 +57,9 @@ public class ExpenditureCertificationImageUrl {
 
     public String getValue() {
         return value;
+    }
+
+    public Expenditure getExpenditure() {
+        return expenditure;
     }
 }
