@@ -27,10 +27,10 @@ class BattleIntroductionTest implements ReplaceUnderScoreTest {
     @Test
     void 소개에는_한글_영어_특수문자_이모티콘을_포함할_수_있다() {
         //given
-        final String name = "a가@#$😁";
+        final String introduction = "a가@#$😁";
 
         //when
-        final BattleName battleName = new BattleName(name);
+        final BattleIntroduction battleName = new BattleIntroduction(introduction);
 
         //then
         assertThat(battleName.getValue()).isEqualTo("a가@#$😁");
@@ -39,21 +39,21 @@ class BattleIntroductionTest implements ReplaceUnderScoreTest {
     @Test
     void 모두_공백으로만_이루어져_있는_경우_예외를_던진다() {
         //given
-        final String name = " ".repeat(200);
+        final String introduction = " ".repeat(200);
 
         //when
         //then
-        assertThatThrownBy(() -> new BattleName(name))
+        assertThatThrownBy(() -> new BattleIntroduction(introduction))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void 앞뒤_공백들은_모두_제거한다() {
         //given
-        final String name = "  aaa   ";
+        final String introduction = "  aaa   ";
 
         //when
-        final BattleName battleName = new BattleName(name);
+        final BattleIntroduction battleName = new BattleIntroduction(introduction);
 
         //then
         assertThat(battleName.getValue()).isEqualTo("aaa");

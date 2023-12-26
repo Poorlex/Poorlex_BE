@@ -12,12 +12,12 @@ public class BattleIntroduction {
 
     private static final int MINIMUM_NAME_LENGTH = 2;
     private static final int MAXIMUM_NAME_LENGTH = 200;
-    @Column(name = "introduction")
+    @Column(name = "introduction", nullable = false)
     private String value;
 
     public BattleIntroduction(final String value) {
-        validate(value);
-        this.value = value;
+        validate(value.strip());
+        this.value = value.strip();
     }
 
     private void validate(final String value) {
