@@ -7,31 +7,27 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.poolex.poolex.battle.fixture.BattleCreateRequestFixture;
 import com.poolex.poolex.battle.service.dto.request.BattleCreateRequest;
 import com.poolex.poolex.login.domain.Member;
 import com.poolex.poolex.login.domain.MemberNickname;
-import com.poolex.poolex.login.domain.MemberPoint;
 import com.poolex.poolex.login.domain.MemberRepository;
 import com.poolex.poolex.participate.domain.BattleParticipant;
 import com.poolex.poolex.participate.domain.BattleParticipantRepository;
 import com.poolex.poolex.support.IntegrationTest;
 import com.poolex.poolex.support.ReplaceUnderScoreTest;
+import com.poolex.poolex.support.TestMemberTokenGenerator;
 import com.poolex.poolex.token.JwtTokenProvider;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
-@AutoConfigureMockMvc
+@DisplayName("배틀 인수 테스트")
 class BattleControllerTest extends IntegrationTest implements ReplaceUnderScoreTest {
-
-    @Autowired
-    private MockMvc mockMvc;
 
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
@@ -42,16 +38,21 @@ class BattleControllerTest extends IntegrationTest implements ReplaceUnderScoreT
     @Autowired
     private BattleParticipantRepository battleParticipantRepository;
 
-    private ObjectMapper objectMapper = new ObjectMapper();
+    private TestMemberTokenGenerator testMemberTokenGenerator;
+
+    @BeforeEach
+    void setUp() {
+        this.testMemberTokenGenerator = new TestMemberTokenGenerator(memberRepository, jwtTokenProvider);
+    }
 
     @Test
     void 배틀을_성공적으로_생성시_상태코드_201을_반환한다() throws Exception {
         //given
-        final Member member = createMember("nickname", 0);
-        final String accessToken = createAccessToken(member);
+        final String accessToken = testMemberTokenGenerator.createTokenWithNewMember("nickname");
         final BattleCreateRequest request = BattleCreateRequestFixture.simple();
 
-        //when //then
+        //when
+        //then
         mockMvc.perform(
                 post("/battles")
                     .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
@@ -68,8 +69,7 @@ class BattleControllerTest extends IntegrationTest implements ReplaceUnderScoreT
         //given
         final Long battleId = createBattle();
         addNormalPlayer(battleId);
-        final Member member = memberRepository.findAll().get(0);
-        final String accessToken = createAccessToken(member);
+        final String accessToken = testMemberTokenGenerator.createTokenWithNewMember("nickname");
 
         //when
         mockMvc.perform(get("/battles")
@@ -81,24 +81,14 @@ class BattleControllerTest extends IntegrationTest implements ReplaceUnderScoreT
             .andExpect(jsonPath("$[0].name").value("name"))
             .andExpect(jsonPath("$[0].imageUrl").value("imageUrl"))
             .andExpect(jsonPath("$[0].difficulty").value("HARD"))
-            .andExpect(jsonPath("$[0].d_day").exists())
-            .andExpect(jsonPath("$[0].current_participant").value(2))
-            .andExpect(jsonPath("$[0].max_participant_count").value(10));
-    }
-
-    private Member createMember(final String nickname, final int point) {
-        final Member member = Member.withoutId(new MemberNickname(nickname), new MemberPoint(point));
-        return memberRepository.save(member);
-    }
-
-    private String createAccessToken(final Member member) {
-        return jwtTokenProvider.createAccessToken(member.getId());
+            .andExpect(jsonPath("$[0].dday").exists())
+            .andExpect(jsonPath("$[0].currentParticipant").value(2))
+            .andExpect(jsonPath("$[0].maxParticipantCount").value(10));
     }
 
     private Long createBattle() throws Exception {
         //given
-        final Member member1 = createMember("member1", 0);
-        final String accessToken = createAccessToken(member1);
+        final String accessToken = testMemberTokenGenerator.createTokenWithNewMember("nickname");
         final BattleCreateRequest request = BattleCreateRequestFixture.simple();
 
         //when
@@ -117,7 +107,7 @@ class BattleControllerTest extends IntegrationTest implements ReplaceUnderScoreT
     }
 
     private void addNormalPlayer(final Long battleId) {
-        final Member member = createMember("member2", 0);
+        final Member member = memberRepository.save(Member.withoutId(new MemberNickname("nickname")));
 
         final BattleParticipant battleParticipant = BattleParticipant.normalPlayer(
             battleId,
