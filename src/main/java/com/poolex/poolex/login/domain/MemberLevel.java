@@ -1,5 +1,6 @@
 package com.poolex.poolex.login.domain;
 
+import com.poolex.poolex.point.domain.MemberPoint;
 import java.util.Arrays;
 import java.util.Optional;
 

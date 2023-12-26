@@ -7,6 +7,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -18,32 +19,20 @@ public class Member {
     @Embedded
     private MemberNickname nickname;
 
-    @Embedded
-    private MemberPoint point;
-
-    public Member(final Long id, final MemberNickname nickname, final MemberPoint point) {
+    public Member(final Long id, @NonNull final MemberNickname nickname) {
         this.id = id;
         this.nickname = nickname;
-        this.point = point;
     }
 
-    public static Member withoutId(final MemberNickname nickname, final MemberPoint point) {
-        return new Member(null, nickname, point);
+    public static Member withoutId(final MemberNickname nickname) {
+        return new Member(null, nickname);
     }
 
     public void changeNickname(final MemberNickname newNickname) {
         this.nickname = newNickname;
     }
 
-    public void addPoint(final int additionalPoint) {
-        point.addPoint(additionalPoint);
-    }
-
     public Long getId() {
         return id;
-    }
-
-    public MemberLevel getLevel() {
-        return point.getLevel();
     }
 }

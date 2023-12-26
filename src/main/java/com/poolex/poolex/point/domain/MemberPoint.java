@@ -1,5 +1,6 @@
-package com.poolex.poolex.login.domain;
+package com.poolex.poolex.point.domain;
 
+import com.poolex.poolex.login.domain.MemberLevel;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import lombok.AccessLevel;
