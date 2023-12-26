@@ -14,15 +14,16 @@ import com.poolex.poolex.login.domain.MemberRepository;
 import com.poolex.poolex.participate.domain.BattleParticipant;
 import com.poolex.poolex.participate.domain.BattleParticipantRepository;
 import com.poolex.poolex.support.ReplaceUnderScoreTest;
+import com.poolex.poolex.support.TestDataJpaTest;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-@DataJpaTest
-class BattleParticipantServiceTest implements ReplaceUnderScoreTest {
+@DisplayName("배틀 참가 서비스 테스트")
+class BattleParticipantServiceTest extends TestDataJpaTest implements ReplaceUnderScoreTest {
 
     @Autowired
     private BattleRepository battleRepository;

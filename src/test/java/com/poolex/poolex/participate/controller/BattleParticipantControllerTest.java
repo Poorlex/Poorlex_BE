@@ -13,13 +13,13 @@ import com.poolex.poolex.login.domain.MemberRepository;
 import com.poolex.poolex.support.IntegrationTest;
 import com.poolex.poolex.support.ReplaceUnderScoreTest;
 import com.poolex.poolex.token.JwtTokenProvider;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.http.HttpHeaders;
 import org.springframework.test.web.servlet.MockMvc;
 
-@AutoConfigureMockMvc
+@DisplayName("배틀 참가 인수 테스트")
 class BattleParticipantControllerTest extends IntegrationTest implements ReplaceUnderScoreTest {
 
     @Autowired
