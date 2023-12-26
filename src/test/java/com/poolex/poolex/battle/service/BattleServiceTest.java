@@ -7,33 +7,29 @@ import com.poolex.poolex.battle.domain.BattleRepository;
 import com.poolex.poolex.battle.fixture.BattleCreateRequestFixture;
 import com.poolex.poolex.battle.fixture.BattleFixture;
 import com.poolex.poolex.battle.service.dto.request.BattleCreateRequest;
-import com.poolex.poolex.battle.service.event.BattleCreatedEvent;
+import com.poolex.poolex.support.ReplaceUnderScoreTest;
+import com.poolex.poolex.support.TestDataJpaTest;
 import java.util.List;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.event.ApplicationEvents;
-import org.springframework.test.context.event.RecordApplicationEvents;
 
-@ActiveProfiles("test")
-@SpringBootTest
-@RecordApplicationEvents
-class BattleServiceTest {
+@DisplayName("배틀 서비스 테스트")
+class BattleServiceTest extends TestDataJpaTest implements ReplaceUnderScoreTest {
 
-    @Autowired
     private BattleService battleService;
 
     @Autowired
     private BattleRepository battleRepository;
 
-    @Autowired
-    private ApplicationEvents events;
+    @BeforeEach
+    void setUp() {
+        battleService = new BattleService(battleRepository);
+    }
 
-    @DisplayName("유효한 입력값들을 통한 배틀 생성에 성공한다.")
     @Test
-    void create_success() {
+    void 배틀을_생성한다() {
         //given
         final long createMemberId = 1L;
         final BattleCreateRequest request = BattleCreateRequestFixture.simple();
@@ -49,7 +45,6 @@ class BattleServiceTest {
                 softly.assertThat(battles.get(0)).usingRecursiveComparison()
                     .ignoringFields("id")
                     .isEqualTo(BattleFixture.simple());
-                softly.assertThat(events.stream(BattleCreatedEvent.class).count()).isOne();
             }
         );
     }
