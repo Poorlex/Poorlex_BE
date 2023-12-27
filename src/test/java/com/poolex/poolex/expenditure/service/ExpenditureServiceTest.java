@@ -11,7 +11,7 @@ import com.poolex.poolex.login.domain.Member;
 import com.poolex.poolex.login.domain.MemberNickname;
 import com.poolex.poolex.login.domain.MemberRepository;
 import com.poolex.poolex.support.ReplaceUnderScoreTest;
-import com.poolex.poolex.support.TestDataJpaTest;
+import com.poolex.poolex.support.UsingDataJpaTest;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -19,7 +19,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @DisplayName("지출 서비스 테스트")
-class ExpenditureServiceTest extends TestDataJpaTest implements ReplaceUnderScoreTest {
+class ExpenditureServiceTest extends UsingDataJpaTest implements ReplaceUnderScoreTest {
 
     @Autowired
     private MemberRepository memberRepository;

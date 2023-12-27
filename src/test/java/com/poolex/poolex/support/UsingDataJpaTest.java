@@ -5,6 +5,6 @@ import org.springframework.test.context.ActiveProfiles;
 
 @ActiveProfiles("test")
 @DataJpaTest
-public abstract class TestDataJpaTest {
+public abstract class UsingDataJpaTest {
 
 }
