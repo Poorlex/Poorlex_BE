@@ -3,8 +3,6 @@ package com.poolex.poolex.battle.service.dto.response;
 import com.poolex.poolex.battle.domain.Battle;
 import com.poolex.poolex.battle.domain.BattleWithCurrentParticipantSize;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -34,13 +32,9 @@ public class FindingBattleResponse {
             battle.getName(),
             battle.getImageUrl(),
             battle.getDifficulty().name(),
-            getDDay(battle.getDuration().getEnd()),
+            battle.getDDay(LocalDate.now()),
             currentParticipantSize,
             battle.getMaxParticipantSize().getValue()
         );
-    }
-
-    private static long getDDay(final LocalDateTime end) {
-        return ChronoUnit.DAYS.between(LocalDate.now(), LocalDate.from(end));
     }
 }

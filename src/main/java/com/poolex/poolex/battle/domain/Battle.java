@@ -7,8 +7,10 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.Objects;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -121,6 +123,14 @@ public class Battle {
         return !maxParticipantSize.hasGreaterValue(targetSize);
     }
 
+    public long getDDay(final LocalDate current) {
+        return ChronoUnit.DAYS.between(current, LocalDate.from(duration.getEnd()));
+    }
+
+    public int getBudgetLeft(final int expenditure) {
+        return budget.getValue() - expenditure;
+    }
+
     public Long getId() {
         return id;
     }
@@ -155,5 +165,22 @@ public class Battle {
 
     public BattleDifficulty getDifficulty() {
         return budget.getDifficulty();
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final Battle battle = (Battle) o;
+        return Objects.equals(id, battle.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

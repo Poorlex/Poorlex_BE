@@ -49,4 +49,41 @@ public interface BattleRepository extends JpaRepository<Battle, Long> {
     List<BattleWithCurrentParticipantSize> findBattlesByStatusesWithCurrentParticipantSizeIn(
         @Param("status") List<BattleStatus> battleStatus
     );
+
+    @Query(
+        "select b as battle, p as participant from Battle b "
+            + "left join BattleParticipant p "
+            + "on b.id = p.battleId "
+            + "where p.memberId = :memberId and b.status = :status"
+    )
+    List<BattleWithMemberExpenditure> findMemberBattlesByMemberIdAndStatus(
+        @Param("memberId") final Long memberId,
+        @Param("status") final BattleStatus status
+    );
+
+    @Query(
+        "select b as battle, sum(coalesce(e.amount.value, 0)) as expenditure from Battle b "
+            + "left join BattleParticipant p on p.battleId = b.id "
+            + "left join Expenditure e on e.memberId = p.memberId and e.date between b.duration.start and b.duration.end "
+            + "where b.status = :status "
+            + "and p.memberId = :memberId "
+            + "group by b.id"
+    )
+    List<BattleWithMemberExpenditure> findMemberBattlesByMemberIdAndStatusWithExpenditure(
+        @Param("memberId") final Long memberId,
+        @Param("status") final BattleStatus status
+    );
+
+    @Query(
+        "select p as battleParticipant, sum(coalesce(e.amount.value, 0)) as expenditure from Battle b "
+            + "left join BattleParticipant p "
+            + "on b.id = p.battleId "
+            + "left join Expenditure e "
+            + "on e.memberId = p.memberId "
+            + "where b.id = :battleId "
+            + "group by p.id"
+    )
+    List<BattleParticipantWithExpenditure> findBattleParticipantsWithExpenditureByBattleId(
+        @Param("battleId") final Long battleId
+    );
 }
