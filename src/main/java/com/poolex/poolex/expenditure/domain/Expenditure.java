@@ -6,7 +6,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -23,7 +23,7 @@ public class Expenditure {
     @Embedded
     private ExpenditureAmount amount;
     @Column(nullable = false)
-    private LocalDate date;
+    private LocalDateTime date;
     @Embedded
     private ExpenditureDescription description;
     @Embedded
@@ -32,7 +32,7 @@ public class Expenditure {
     protected Expenditure(final Long id,
                           @NonNull final Long memberId,
                           @NonNull final ExpenditureAmount amount,
-                          @NonNull final LocalDate date,
+                          @NonNull final LocalDateTime date,
                           @NonNull final ExpenditureDescription description,
                           @NonNull final ExpenditureCertificationImageUrls imageUrls) {
         this.id = id;
@@ -45,7 +45,7 @@ public class Expenditure {
 
     public static Expenditure withoutId(final ExpenditureAmount amount,
                                         final Long memberId,
-                                        final LocalDate date,
+                                        final LocalDateTime date,
                                         final ExpenditureDescription description,
                                         final ExpenditureCertificationImageUrls imageUrls) {
         final Expenditure instance = new Expenditure(null, memberId, amount, date, description, imageUrls);
@@ -65,7 +65,7 @@ public class Expenditure {
         return amount.getValue();
     }
 
-    public LocalDate getDate() {
+    public LocalDateTime getDate() {
         return date;
     }
 
