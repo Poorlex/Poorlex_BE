@@ -25,7 +25,7 @@ public class TestMemberTokenGenerator {
         return memberRepository.save(member);
     }
 
-    private String createAccessToken(final Member member) {
+    public String createAccessToken(final Member member) {
         return jwtTokenProvider.createAccessToken(member.getId());
     }
 }
