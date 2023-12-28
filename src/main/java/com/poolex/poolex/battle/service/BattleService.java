@@ -8,10 +8,12 @@ import com.poolex.poolex.battle.domain.BattleWithCurrentParticipantSize;
 import com.poolex.poolex.battle.domain.BattleWithMemberExpenditure;
 import com.poolex.poolex.battle.service.dto.request.BattleCreateRequest;
 import com.poolex.poolex.battle.service.dto.response.FindingBattleResponse;
-import com.poolex.poolex.battle.service.dto.response.MemberBattleResponse;
+import com.poolex.poolex.battle.service.dto.response.MemberCompleteBattleResponse;
+import com.poolex.poolex.battle.service.dto.response.MemberProgressBattleResponse;
 import com.poolex.poolex.battle.service.event.BattleCreatedEvent;
 import com.poolex.poolex.battle.service.mapper.BattleMapper;
 import com.poolex.poolex.config.event.Events;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
@@ -43,15 +45,25 @@ public class BattleService {
         return FindingBattleResponse.parseToList(battlesByMemberIdWithCurrentParticipantSize);
     }
 
-    public List<MemberBattleResponse> findMemberBattlesWithStatus(final String status, final Long memberId) {
-        final BattleStatus battleStatus = BattleStatus.findByName(status);
+    public List<MemberProgressBattleResponse> findProgressMemberBattles(final Long memberId, final LocalDate date) {
         final List<BattleWithMemberExpenditure> battles =
-            battleRepository.findMemberBattlesByMemberIdAndStatusWithExpenditure(memberId, battleStatus);
+            battleRepository.findMemberBattlesByMemberIdAndStatusWithExpenditure(memberId, BattleStatus.PROGRESS);
+        return battles.stream()
+            .map(battleInfo -> {
+                final int memberRank = getMemberRank(battleInfo.getBattle(), memberId);
+                return MemberProgressBattleResponse.from(battleInfo, date, memberRank);
+            })
+            .toList();
+    }
+
+    public List<MemberCompleteBattleResponse> findCompleteMemberBattles(final Long memberId, final LocalDate date) {
+        final List<BattleWithMemberExpenditure> battles =
+            battleRepository.findMemberBattlesByMemberIdAndStatusWithExpenditure(memberId, BattleStatus.COMPLETE);
 
         return battles.stream()
             .map(battleInfo -> {
                 final int memberRank = getMemberRank(battleInfo.getBattle(), memberId);
-                return MemberBattleResponse.from(battleInfo, memberRank);
+                return MemberCompleteBattleResponse.from(battleInfo, date, memberRank);
             })
             .toList();
     }
@@ -93,5 +105,13 @@ public class BattleService {
             .orElseThrow(IllegalArgumentException::new);
 
         battle.start(current);
+    }
+
+    @Transactional
+    public void endBattle(final Long battleId, final LocalDateTime current) {
+        final Battle battle = battleRepository.findById(battleId)
+            .orElseThrow(IllegalArgumentException::new);
+
+        battle.end(current);
     }
 }

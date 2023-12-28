@@ -8,7 +8,7 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Getter
-public class MemberBattleResponse {
+public class MemberProgressBattleResponse {
 
     private final String name;
     private final String imageUrl;
@@ -18,15 +18,16 @@ public class MemberBattleResponse {
     private final int currentParticipantRank;
     private final int maxParticipantCount;
 
-    public static MemberBattleResponse from(final BattleWithMemberExpenditure battleInfo,
-                                            final int currentParticipantRank) {
+    public static MemberProgressBattleResponse from(final BattleWithMemberExpenditure battleInfo,
+                                                    final LocalDate current,
+                                                    final int currentParticipantRank) {
         final Battle battle = battleInfo.getBattle();
 
-        return new MemberBattleResponse(
+        return new MemberProgressBattleResponse(
             battle.getName(),
             battle.getImageUrl(),
             battle.getDifficulty().name(),
-            battle.getDDay(LocalDate.now()),
+            battle.getDDay(current),
             battle.getBudgetLeft(battleInfo.getExpenditure()),
             currentParticipantRank,
             battle.getMaxParticipantSize().getValue()

@@ -127,8 +127,16 @@ public class Battle {
         return ChronoUnit.DAYS.between(current, LocalDate.from(duration.getEnd()));
     }
 
+    public long getPastDay(final LocalDate current) {
+        return ChronoUnit.DAYS.between(LocalDate.from(duration.getEnd()), current);
+    }
+
     public int getBudgetLeft(final int expenditure) {
         return budget.getValue() - expenditure;
+    }
+
+    public BattleType getBattleType() {
+        return maxParticipantSize.getBattleSizeType();
     }
 
     public Long getId() {

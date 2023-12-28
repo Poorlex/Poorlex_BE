@@ -33,8 +33,8 @@ public class BattleParticipantSize {
         return lowerBound.value <= this.value && this.value <= upperBound.value;
     }
 
-    public BattleSizeType getBattleSizeType() {
-        return BattleSizeType.findByParticipantSize(this)
+    public BattleType getBattleSizeType() {
+        return BattleType.findByParticipantSize(this)
             .orElseThrow(IllegalArgumentException::new);
     }
 
