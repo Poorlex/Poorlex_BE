@@ -15,9 +15,9 @@ import com.poolex.poolex.battle.service.dto.response.MemberCompleteBattleRespons
 import com.poolex.poolex.battle.service.dto.response.MemberProgressBattleResponse;
 import com.poolex.poolex.expenditure.domain.ExpenditureRepository;
 import com.poolex.poolex.expenditure.fixture.ExpenditureFixture;
-import com.poolex.poolex.login.domain.Member;
-import com.poolex.poolex.login.domain.MemberNickname;
-import com.poolex.poolex.login.domain.MemberRepository;
+import com.poolex.poolex.member.domain.Member;
+import com.poolex.poolex.member.domain.MemberNickname;
+import com.poolex.poolex.member.domain.MemberRepository;
 import com.poolex.poolex.participate.domain.BattleParticipant;
 import com.poolex.poolex.participate.domain.BattleParticipantRepository;
 import com.poolex.poolex.support.ReplaceUnderScoreTest;

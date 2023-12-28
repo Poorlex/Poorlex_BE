@@ -1,8 +1,8 @@
 package com.poolex.poolex.support;
 
-import com.poolex.poolex.login.domain.Member;
-import com.poolex.poolex.login.domain.MemberNickname;
-import com.poolex.poolex.login.domain.MemberRepository;
+import com.poolex.poolex.member.domain.Member;
+import com.poolex.poolex.member.domain.MemberNickname;
+import com.poolex.poolex.member.domain.MemberRepository;
 import com.poolex.poolex.token.JwtTokenProvider;
 
 public class TestMemberTokenGenerator {

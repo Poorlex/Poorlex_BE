@@ -1,40 +1,48 @@
 package com.poolex.poolex.point.domain;
 
-import com.poolex.poolex.login.domain.MemberLevel;
-import jakarta.persistence.Column;
-import jakarta.persistence.Embeddable;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
-@Embeddable
+@Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MemberPoint {
 
-    @Column(name = "point")
-    private int value;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @Embedded
+    private Point point;
 
-    public MemberPoint(final int value) {
-        validation(value);
-        this.value = value;
+    private Long memberId;
+
+    public MemberPoint(final Long id, final Point point, final Long memberId) {
+        this.id = id;
+        this.point = point;
+        this.memberId = memberId;
     }
 
-    private void validation(final int value) {
-        if (value < 0) {
-            throw new IllegalArgumentException();
-        }
+    public static MemberPoint withoutId(final Point point, final Long memberId) {
+        return new MemberPoint(null, point, memberId);
     }
 
-    public boolean isGreaterOrEqualThan(final MemberPoint target) {
-        return this.value >= target.value;
+    public static MemberPoint withId(final Long id, final Point point, final Long memberId) {
+        return new MemberPoint(id, point, memberId);
     }
 
-    public void addPoint(final int additionalPoint) {
-        validation(additionalPoint);
-        value += additionalPoint;
+    public Long getId() {
+        return id;
     }
 
-    public MemberLevel getLevel() {
-        return MemberLevel.findByMemberPoint(this)
-            .orElseThrow(IllegalArgumentException::new);
+    public Point getPoint() {
+        return point;
+    }
+
+    public Long getMemberId() {
+        return memberId;
     }
 }

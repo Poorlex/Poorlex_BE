@@ -7,7 +7,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.poolex.poolex.expenditure.fixture.ExpenditureRequestFixture;
 import com.poolex.poolex.expenditure.service.dto.ExpenditureCreateRequest;
-import com.poolex.poolex.login.domain.MemberRepository;
+import com.poolex.poolex.member.domain.MemberRepository;
 import com.poolex.poolex.support.IntegrationTest;
 import com.poolex.poolex.support.ReplaceUnderScoreTest;
 import com.poolex.poolex.support.TestMemberTokenGenerator;

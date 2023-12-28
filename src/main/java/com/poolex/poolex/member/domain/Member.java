@@ -1,4 +1,4 @@
-package com.poolex.poolex.login.domain;
+package com.poolex.poolex.member.domain;
 
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;

@@ -1,7 +1,7 @@
 package com.poolex.poolex.config.auth.interceptor;
 
-import com.poolex.poolex.login.domain.Member;
-import com.poolex.poolex.login.domain.MemberRepository;
+import com.poolex.poolex.member.domain.Member;
+import com.poolex.poolex.member.domain.MemberRepository;
 import com.poolex.poolex.token.JwtTokenProvider;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;

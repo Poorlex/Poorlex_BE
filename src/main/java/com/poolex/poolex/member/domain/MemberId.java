@@ -1,4 +1,4 @@
-package com.poolex.poolex.login.domain;
+package com.poolex.poolex.member.domain;
 
 import java.util.Objects;
 
