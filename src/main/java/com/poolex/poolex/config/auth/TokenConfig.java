@@ -3,7 +3,7 @@ package com.poolex.poolex.config.auth;
 import com.poolex.poolex.config.auth.argumentresolver.MemberArgumentResolver;
 import com.poolex.poolex.config.auth.interceptor.RequestMemberInfo;
 import com.poolex.poolex.config.auth.interceptor.TokenInterceptor;
-import com.poolex.poolex.login.domain.MemberRepository;
+import com.poolex.poolex.member.domain.MemberRepository;
 import com.poolex.poolex.token.JwtTokenProvider;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +26,8 @@ public class TokenConfig implements WebMvcConfigurer {
     public void addInterceptors(final InterceptorRegistry registry) {
         registry.addInterceptor(tokenInterceptor())
             .addPathPatterns("/battles/**")
-            .addPathPatterns("/expenditures/**");
+            .addPathPatterns("/expenditures/**")
+            .addPathPatterns("/points/**");
     }
 
     @Override
