@@ -56,7 +56,15 @@ public class BattleNotification {
         }
     }
 
+    public void removeImage(final BattleParticipant editor) {
+        validateEditorIsManagerInSameBattle(editor);
+        this.imageUrl = null;
+    }
+
     public void changeImage(final BattleParticipant editor, final BattleNotificationImageUrl newImageUrl) {
+        if (Objects.isNull(newImageUrl)) {
+            removeImage(editor);
+        }
         validateEditorIsManagerInSameBattle(editor);
         this.imageUrl = newImageUrl;
     }
