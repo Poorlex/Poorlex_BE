@@ -10,7 +10,7 @@ import org.springframework.util.StringUtils;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class BattleNotificationImageUrl {
 
-    @Column(name = "image_url")
+    @Column(name = "image_url", columnDefinition = "text")
     private String value;
 
     public BattleNotificationImageUrl(final String value) {

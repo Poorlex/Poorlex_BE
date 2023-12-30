@@ -21,7 +21,7 @@ public class ExpenditureCertificationImageUrl {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "url", nullable = false)
+    @Column(name = "url", columnDefinition = "text", nullable = false)
     private String value;
     @ManyToOne
     @JoinColumn(name = "expenditure_id", nullable = false)
