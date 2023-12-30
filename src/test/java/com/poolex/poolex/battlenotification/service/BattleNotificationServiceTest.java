@@ -7,8 +7,11 @@ import com.poolex.poolex.battle.domain.Battle;
 import com.poolex.poolex.battle.domain.BattleRepository;
 import com.poolex.poolex.battle.fixture.BattleFixture;
 import com.poolex.poolex.battlenotification.domain.BattleNotification;
+import com.poolex.poolex.battlenotification.domain.BattleNotificationContent;
+import com.poolex.poolex.battlenotification.domain.BattleNotificationImageUrl;
 import com.poolex.poolex.battlenotification.domain.BattleNotificationRepository;
 import com.poolex.poolex.battlenotification.service.dto.request.BattleNotificationCreateRequest;
+import com.poolex.poolex.battlenotification.service.dto.request.BattleNotificationUpdateRequest;
 import com.poolex.poolex.member.domain.Member;
 import com.poolex.poolex.member.domain.MemberNickname;
 import com.poolex.poolex.member.domain.MemberRepository;
@@ -130,6 +133,62 @@ class BattleNotificationServiceTest extends UsingDataJpaTest implements ReplaceU
         ).isInstanceOf(IllegalArgumentException.class);
     }
 
+    @Test
+    void 배틀공지를_수정한다() {
+        //given
+        final Battle battle = createBattle();
+        final BattleParticipant manager = createManager(battle);
+        final BattleNotification battleNotification = createBattleNotification(battle);
+        final BattleNotificationUpdateRequest request = new BattleNotificationUpdateRequest(
+            battleNotification.getId(),
+            "newContentNewContent",
+            "newImageUrl"
+        );
+
+        //when
+        battleNotificationService.updateNotification(battleNotification.getBattleId(), manager.getMemberId(), request);
+
+        //then
+        final List<BattleNotification> battleNotifications = battleNotificationRepository.findAll();
+        assertSoftly(
+            softly -> {
+                softly.assertThat(battleNotifications).hasSize(1);
+
+                final BattleNotification findBattleNotification = battleNotifications.get(0);
+                softly.assertThat(findBattleNotification.getContent()).isEqualTo(request.getContent());
+                softly.assertThat(findBattleNotification.getImageUrl()).contains(request.getImageUrl());
+            }
+        );
+    }
+
+    @Test
+    void 배틀공지의_이미지를_삭제한다() {
+        //given
+        final Battle battle = createBattle();
+        final BattleParticipant manager = createManager(battle);
+        final BattleNotification battleNotification = createBattleNotification(battle);
+        final BattleNotificationUpdateRequest request = new BattleNotificationUpdateRequest(
+            battleNotification.getId(),
+            "newContentNewContent",
+            null
+        );
+
+        //when
+        battleNotificationService.updateNotification(battleNotification.getBattleId(), manager.getMemberId(), request);
+
+        //then
+        final List<BattleNotification> battleNotifications = battleNotificationRepository.findAll();
+        assertSoftly(
+            softly -> {
+                softly.assertThat(battleNotifications).hasSize(1);
+
+                final BattleNotification findBattleNotification = battleNotifications.get(0);
+                softly.assertThat(findBattleNotification.getContent()).isEqualTo(request.getContent());
+                softly.assertThat(findBattleNotification.getImageUrl()).isEmpty();
+            }
+        );
+    }
+
     private Battle createBattle() {
         final Battle battle = BattleFixture.simple();
         return battleRepository.save(battle);
@@ -143,5 +202,11 @@ class BattleNotificationServiceTest extends UsingDataJpaTest implements ReplaceU
     private BattleParticipant createNormalPlayer(final Battle battle) {
         final Member member = memberRepository.save(Member.withoutId(new MemberNickname("nickname")));
         return battleParticipantRepository.save(BattleParticipant.normalPlayer(battle.getId(), member.getId()));
+    }
+
+    private BattleNotification createBattleNotification(final Battle battle) {
+        final BattleNotificationContent content = new BattleNotificationContent("12345678901234567890");
+        final BattleNotificationImageUrl imageUrl = new BattleNotificationImageUrl("imageUrl");
+        return battleNotificationRepository.save(BattleNotification.withoutId(battle.getId(), content, imageUrl));
     }
 }
