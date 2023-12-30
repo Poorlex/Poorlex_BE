@@ -24,6 +24,7 @@ public class BattleFixture {
 
     public static class Builder {
 
+        private Long id = null;
         private BattleName name = new BattleName("name");
         private BattleIntroduction introduction = new BattleIntroduction("introduction");
         private BattleImageUrl imageUrl = new BattleImageUrl("imageUrl");
@@ -34,6 +35,11 @@ public class BattleFixture {
 
         public Builder name(final BattleName name) {
             this.name = name;
+            return this;
+        }
+
+        public Builder id(final Long id) {
+            this.id = id;
             return this;
         }
 
@@ -68,8 +74,7 @@ public class BattleFixture {
         }
 
         public Battle build() {
-            return Battle.withoutBattleId(name, introduction, imageUrl, budget, battleParticipantSize, duration,
-                status);
+            return new Battle(id, name, introduction, imageUrl, budget, battleParticipantSize, duration, status);
         }
     }
 }
