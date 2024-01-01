@@ -102,8 +102,8 @@ class BattleServiceTest extends UsingDataJpaTest implements ReplaceUnderScoreTes
         join(member1, battle);
         join(member2, battle);
 
-        expend(member1Expenditure, member1, LocalDateTime.now());
-        expend(member2Expenditure, member2, LocalDateTime.now());
+        expend(member1Expenditure, member1, BATTLE_START_DATE);
+        expend(member2Expenditure, member2, BATTLE_START_DATE);
 
         //when
         final List<MemberProgressBattleResponse> battles =
@@ -136,8 +136,8 @@ class BattleServiceTest extends UsingDataJpaTest implements ReplaceUnderScoreTes
         join(member1, battle);
         join(member2, battle);
 
-        expend(member1Expenditure, member1, LocalDateTime.now());
-        expend(member2Expenditure, member2, LocalDateTime.now());
+        expend(member1Expenditure, member1, BATTLE_START_DATE);
+        expend(member2Expenditure, member2, BATTLE_START_DATE);
 
         //when
         final List<MemberCompleteBattleResponse> battles =
