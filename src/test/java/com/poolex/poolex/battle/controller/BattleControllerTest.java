@@ -7,6 +7,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.poolex.poolex.auth.domain.Member;
+import com.poolex.poolex.auth.domain.MemberNickname;
+import com.poolex.poolex.auth.domain.MemberRepository;
 import com.poolex.poolex.battle.domain.Battle;
 import com.poolex.poolex.battle.domain.BattleRepository;
 import com.poolex.poolex.battle.fixture.BattleCreateRequestFixture;
@@ -14,9 +17,6 @@ import com.poolex.poolex.battle.service.BattleService;
 import com.poolex.poolex.battle.service.dto.request.BattleCreateRequest;
 import com.poolex.poolex.expenditure.domain.ExpenditureRepository;
 import com.poolex.poolex.expenditure.fixture.ExpenditureFixture;
-import com.poolex.poolex.member.domain.Member;
-import com.poolex.poolex.member.domain.MemberNickname;
-import com.poolex.poolex.member.domain.MemberRepository;
 import com.poolex.poolex.participate.domain.BattleParticipant;
 import com.poolex.poolex.participate.domain.BattleParticipantRepository;
 import com.poolex.poolex.support.IntegrationTest;
@@ -107,7 +107,7 @@ class BattleControllerTest extends IntegrationTest implements ReplaceUnderScoreT
     @Test
     void 현재_진행중인_배틀들을_조회시_상태코드_200_과_배틀의_데이터를_반환한다() throws Exception {
         //given
-        final Member member = Member.withoutId(new MemberNickname("nickname"));
+        final Member member = Member.withoutId("oauthId", new MemberNickname("nickname"));
         final Long battleId = createBattle();
         final Battle battle = battleRepository.findById(battleId).orElseThrow(IllegalArgumentException::new);
 
@@ -137,7 +137,7 @@ class BattleControllerTest extends IntegrationTest implements ReplaceUnderScoreT
     @Test
     void 완료된_배틀들을_조회시_상태코드_200_과_배틀의_데이터를_반환한다() throws Exception {
         //given
-        final Member member = Member.withoutId(new MemberNickname("nickname"));
+        final Member member = Member.withoutId("oauthId", new MemberNickname("nickname"));
         final Long battleId = createBattle();
         final Battle battle = battleRepository.findById(battleId).orElseThrow(IllegalArgumentException::new);
 
@@ -183,7 +183,7 @@ class BattleControllerTest extends IntegrationTest implements ReplaceUnderScoreT
     }
 
     private Member joinNewNormalPlayerWithNickname(final String nickname, final Long battleId) {
-        final Member member = Member.withoutId(new MemberNickname(nickname));
+        final Member member = Member.withoutId("oauthId", new MemberNickname(nickname));
         memberRepository.save(member);
 
         final BattleParticipant battleParticipant = BattleParticipant.normalPlayer(battleId, member.getId());

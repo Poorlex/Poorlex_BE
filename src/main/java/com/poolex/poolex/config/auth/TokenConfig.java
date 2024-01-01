@@ -1,9 +1,9 @@
 package com.poolex.poolex.config.auth;
 
+import com.poolex.poolex.auth.domain.MemberRepository;
 import com.poolex.poolex.config.auth.argumentresolver.MemberArgumentResolver;
 import com.poolex.poolex.config.auth.interceptor.RequestMemberInfo;
 import com.poolex.poolex.config.auth.interceptor.TokenInterceptor;
-import com.poolex.poolex.member.domain.MemberRepository;
 import com.poolex.poolex.token.JwtTokenProvider;
 import java.util.List;
 import lombok.RequiredArgsConstructor;

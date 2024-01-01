@@ -4,7 +4,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.poolex.poolex.member.domain.MemberRepository;
+import com.poolex.poolex.auth.domain.MemberRepository;
 import com.poolex.poolex.point.service.dto.PointCreateRequest;
 import com.poolex.poolex.support.IntegrationTest;
 import com.poolex.poolex.support.ReplaceUnderScoreTest;
@@ -34,7 +34,7 @@ class MemberPointControllerTest extends IntegrationTest implements ReplaceUnderS
         //given
         final PointCreateRequest pointCreateRequest = new PointCreateRequest(10);
         final String accessToken = memberTokenGenerator.createTokenWithNewMember("nickname");
-        
+
         //when
         //then
         mockMvc.perform(

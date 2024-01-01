@@ -5,11 +5,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.poolex.poolex.auth.domain.Member;
+import com.poolex.poolex.auth.domain.MemberNickname;
+import com.poolex.poolex.auth.domain.MemberRepository;
 import com.poolex.poolex.battle.fixture.BattleCreateRequestFixture;
 import com.poolex.poolex.battle.service.BattleService;
-import com.poolex.poolex.member.domain.Member;
-import com.poolex.poolex.member.domain.MemberNickname;
-import com.poolex.poolex.member.domain.MemberRepository;
 import com.poolex.poolex.support.IntegrationTest;
 import com.poolex.poolex.support.ReplaceUnderScoreTest;
 import com.poolex.poolex.token.JwtTokenProvider;
@@ -53,7 +53,7 @@ class BattleParticipantControllerTest extends IntegrationTest implements Replace
     }
 
     private Member createMember() {
-        final Member member = Member.withoutId(new MemberNickname("nickname"));
+        final Member member = Member.withoutId("oauthId", new MemberNickname("nickname"));
         return memberRepository.save(member);
     }
 

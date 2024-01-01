@@ -2,9 +2,9 @@ package com.poolex.poolex.weeklybudget.service;
 
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
-import com.poolex.poolex.member.domain.Member;
-import com.poolex.poolex.member.domain.MemberNickname;
-import com.poolex.poolex.member.domain.MemberRepository;
+import com.poolex.poolex.auth.domain.Member;
+import com.poolex.poolex.auth.domain.MemberNickname;
+import com.poolex.poolex.auth.domain.MemberRepository;
 import com.poolex.poolex.support.ReplaceUnderScoreTest;
 import com.poolex.poolex.support.UsingDataJpaTest;
 import com.poolex.poolex.weeklybudget.domain.WeeklyBudget;
@@ -33,7 +33,7 @@ class WeeklyBudgetServiceTest extends UsingDataJpaTest implements ReplaceUnderSc
     @Test
     void 주간_예산을_생성한다() {
         //given
-        final Member member = memberRepository.save(Member.withoutId(new MemberNickname("nickname")));
+        final Member member = memberRepository.save(Member.withoutId("oauthId", new MemberNickname("nickname")));
 
         //when
         weeklyBudgetService.createBudget(member.getId(), 10000);

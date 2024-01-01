@@ -5,15 +5,15 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.poolex.poolex.auth.domain.Member;
+import com.poolex.poolex.auth.domain.MemberNickname;
+import com.poolex.poolex.auth.domain.MemberRepository;
 import com.poolex.poolex.battle.fixture.BattleCreateRequestFixture;
 import com.poolex.poolex.battle.service.BattleService;
 import com.poolex.poolex.battlenotification.domain.BattleNotification;
 import com.poolex.poolex.battlenotification.domain.BattleNotificationRepository;
 import com.poolex.poolex.battlenotification.service.dto.request.BattleNotificationCreateRequest;
 import com.poolex.poolex.battlenotification.service.dto.request.BattleNotificationUpdateRequest;
-import com.poolex.poolex.member.domain.Member;
-import com.poolex.poolex.member.domain.MemberNickname;
-import com.poolex.poolex.member.domain.MemberRepository;
 import com.poolex.poolex.support.DataCleaner;
 import com.poolex.poolex.support.DataCleanerExtension;
 import com.poolex.poolex.support.IntegrationTest;
@@ -56,7 +56,7 @@ class BattleNotificationControllerTest extends IntegrationTest implements Replac
     @Test
     void 배틀공지를_등록한다() throws Exception {
         //given
-        final Member member = memberRepository.save(Member.withoutId(new MemberNickname("nickname")));
+        final Member member = memberRepository.save(Member.withoutId("oauthId", new MemberNickname("nickname")));
         final Long battleId = battleService.create(member.getId(), BattleCreateRequestFixture.simple());
         final String content = "12345678901234567890";
         final BattleNotificationCreateRequest request = new BattleNotificationCreateRequest(content, "imageUrl");
@@ -77,7 +77,7 @@ class BattleNotificationControllerTest extends IntegrationTest implements Replac
     @Test
     void 배틀공지를_수정한다_이미지_포함() throws Exception {
         //given
-        final Member member = memberRepository.save(Member.withoutId(new MemberNickname("nickname")));
+        final Member member = memberRepository.save(Member.withoutId("oauthId", new MemberNickname("nickname")));
         final BattleNotification battleNotification = createBattleNotification(member);
         final Long battleId = battleNotification.getBattleId();
         final String newContent = "newContentNewContent";
@@ -100,7 +100,7 @@ class BattleNotificationControllerTest extends IntegrationTest implements Replac
     @Test
     void 배틀공지를_수정한다_이미지_제거() throws Exception {
         //given
-        final Member member = memberRepository.save(Member.withoutId(new MemberNickname("nickname")));
+        final Member member = memberRepository.save(Member.withoutId("oauthId", new MemberNickname("nickname")));
         final BattleNotification battleNotification = createBattleNotification(member);
         final Long battleId = battleNotification.getBattleId();
         final String newContent = "newContentNewContent";

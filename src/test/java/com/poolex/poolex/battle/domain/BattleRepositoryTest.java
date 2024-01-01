@@ -2,13 +2,13 @@ package com.poolex.poolex.battle.domain;
 
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
+import com.poolex.poolex.auth.domain.Member;
+import com.poolex.poolex.auth.domain.MemberNickname;
+import com.poolex.poolex.auth.domain.MemberRepository;
 import com.poolex.poolex.battle.fixture.BattleFixture;
 import com.poolex.poolex.expenditure.domain.Expenditure;
 import com.poolex.poolex.expenditure.domain.ExpenditureRepository;
 import com.poolex.poolex.expenditure.fixture.ExpenditureFixture;
-import com.poolex.poolex.member.domain.Member;
-import com.poolex.poolex.member.domain.MemberNickname;
-import com.poolex.poolex.member.domain.MemberRepository;
 import com.poolex.poolex.participate.domain.BattleParticipant;
 import com.poolex.poolex.participate.domain.BattleParticipantRepository;
 import com.poolex.poolex.support.ReplaceUnderScoreTest;
@@ -242,7 +242,7 @@ class BattleRepositoryTest extends UsingDataJpaTest implements ReplaceUnderScore
     }
 
     private Member createMember(final String nickname) {
-        final Member member = Member.withoutId(new MemberNickname(nickname));
+        final Member member = Member.withoutId("oauthId", new MemberNickname(nickname));
         return memberRepository.save(member);
     }
 

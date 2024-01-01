@@ -1,6 +1,6 @@
 package com.poolex.poolex.weeklybudget.service;
 
-import com.poolex.poolex.member.domain.MemberRepository;
+import com.poolex.poolex.auth.domain.MemberRepository;
 import com.poolex.poolex.weeklybudget.domain.WeeklyBudget;
 import com.poolex.poolex.weeklybudget.domain.WeeklyBudgetAmount;
 import com.poolex.poolex.weeklybudget.domain.WeeklyBudgetDuration;

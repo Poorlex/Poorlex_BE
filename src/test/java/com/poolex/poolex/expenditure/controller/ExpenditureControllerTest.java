@@ -5,9 +5,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.poolex.poolex.auth.domain.MemberRepository;
 import com.poolex.poolex.expenditure.fixture.ExpenditureRequestFixture;
 import com.poolex.poolex.expenditure.service.dto.ExpenditureCreateRequest;
-import com.poolex.poolex.member.domain.MemberRepository;
 import com.poolex.poolex.support.IntegrationTest;
 import com.poolex.poolex.support.ReplaceUnderScoreTest;
 import com.poolex.poolex.support.TestMemberTokenGenerator;

@@ -1,4 +1,4 @@
-package com.poolex.poolex.member.domain;
+package com.poolex.poolex.auth.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

@@ -2,9 +2,9 @@ package com.poolex.poolex.point.service;
 
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
-import com.poolex.poolex.member.domain.Member;
-import com.poolex.poolex.member.domain.MemberNickname;
-import com.poolex.poolex.member.domain.MemberRepository;
+import com.poolex.poolex.auth.domain.Member;
+import com.poolex.poolex.auth.domain.MemberNickname;
+import com.poolex.poolex.auth.domain.MemberRepository;
 import com.poolex.poolex.point.domain.MemberPoint;
 import com.poolex.poolex.point.domain.MemberPointRepository;
 import com.poolex.poolex.point.service.dto.PointCreateRequest;
@@ -33,7 +33,7 @@ class MemberPointServiceTest extends UsingDataJpaTest implements ReplaceUnderSco
     @Test
     void 멤버_포인트를_생성한다() {
         //given
-        final Member member = memberRepository.save(Member.withoutId(new MemberNickname("nickname")));
+        final Member member = memberRepository.save(Member.withoutId("oauthId", new MemberNickname("nickname")));
         final PointCreateRequest request = new PointCreateRequest(10);
 
         //when

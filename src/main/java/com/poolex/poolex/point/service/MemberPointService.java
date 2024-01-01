@@ -1,6 +1,6 @@
 package com.poolex.poolex.point.service;
 
-import com.poolex.poolex.member.domain.MemberRepository;
+import com.poolex.poolex.auth.domain.MemberRepository;
 import com.poolex.poolex.point.domain.MemberPoint;
 import com.poolex.poolex.point.domain.MemberPointRepository;
 import com.poolex.poolex.point.domain.Point;

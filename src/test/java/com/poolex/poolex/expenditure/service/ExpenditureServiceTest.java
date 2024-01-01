@@ -2,14 +2,14 @@ package com.poolex.poolex.expenditure.service;
 
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
+import com.poolex.poolex.auth.domain.Member;
+import com.poolex.poolex.auth.domain.MemberNickname;
+import com.poolex.poolex.auth.domain.MemberRepository;
 import com.poolex.poolex.expenditure.domain.Expenditure;
 import com.poolex.poolex.expenditure.domain.ExpenditureCertificationImageUrl;
 import com.poolex.poolex.expenditure.domain.ExpenditureRepository;
 import com.poolex.poolex.expenditure.fixture.ExpenditureRequestFixture;
 import com.poolex.poolex.expenditure.service.dto.ExpenditureCreateRequest;
-import com.poolex.poolex.member.domain.Member;
-import com.poolex.poolex.member.domain.MemberNickname;
-import com.poolex.poolex.member.domain.MemberRepository;
 import com.poolex.poolex.support.ReplaceUnderScoreTest;
 import com.poolex.poolex.support.UsingDataJpaTest;
 import java.util.List;
@@ -37,7 +37,7 @@ class ExpenditureServiceTest extends UsingDataJpaTest implements ReplaceUnderSco
     @Test
     void 지출을_생성한다() {
         //given
-        final Member member = memberRepository.save(Member.withoutId(new MemberNickname("nickname")));
+        final Member member = memberRepository.save(Member.withoutId("oauthId", new MemberNickname("nickname")));
         final ExpenditureCreateRequest createRequest = ExpenditureRequestFixture.getSimpleCreateRequest();
 
         //when
