@@ -140,7 +140,6 @@ class BattleNotificationServiceTest extends UsingDataJpaTest implements ReplaceU
         final BattleParticipant manager = createManager(battle);
         final BattleNotification battleNotification = createBattleNotification(battle);
         final BattleNotificationUpdateRequest request = new BattleNotificationUpdateRequest(
-            battleNotification.getId(),
             "newContentNewContent",
             "newImageUrl"
         );
@@ -168,7 +167,6 @@ class BattleNotificationServiceTest extends UsingDataJpaTest implements ReplaceU
         final BattleParticipant manager = createManager(battle);
         final BattleNotification battleNotification = createBattleNotification(battle);
         final BattleNotificationUpdateRequest request = new BattleNotificationUpdateRequest(
-            battleNotification.getId(),
             "newContentNewContent",
             null
         );

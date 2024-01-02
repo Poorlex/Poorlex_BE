@@ -81,8 +81,7 @@ class BattleNotificationControllerTest extends IntegrationTest implements Replac
         final BattleNotification battleNotification = createBattleNotification(member);
         final Long battleId = battleNotification.getBattleId();
         final String newContent = "newContentNewContent";
-        final BattleNotificationUpdateRequest request =
-            new BattleNotificationUpdateRequest(battleId, newContent, "imageUrl");
+        final BattleNotificationUpdateRequest request = new BattleNotificationUpdateRequest(newContent, "imageUrl");
         final String accessToken = memberTokenGenerator.createAccessToken(member);
 
         //when
@@ -104,8 +103,7 @@ class BattleNotificationControllerTest extends IntegrationTest implements Replac
         final BattleNotification battleNotification = createBattleNotification(member);
         final Long battleId = battleNotification.getBattleId();
         final String newContent = "newContentNewContent";
-        final BattleNotificationUpdateRequest request =
-            new BattleNotificationUpdateRequest(battleId, newContent, null);
+        final BattleNotificationUpdateRequest request = new BattleNotificationUpdateRequest(newContent, null);
         final String accessToken = memberTokenGenerator.createAccessToken(member);
 
         //when

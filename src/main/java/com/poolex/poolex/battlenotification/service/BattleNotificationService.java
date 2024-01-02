@@ -67,9 +67,8 @@ public class BattleNotificationService {
                                    final BattleNotificationUpdateRequest request) {
         validateIsManager(battleId, memberId);
 
-        final BattleNotification battleNotification =
-            battleNotificationRepository.findById(request.getBattleNotificationId())
-                .orElseThrow(() -> new IllegalArgumentException("ID에 해당하는 배틀 공지가 존재하지 않습니다."));
+        final BattleNotification battleNotification = battleNotificationRepository.findByBattleId(battleId)
+            .orElseThrow(() -> new IllegalArgumentException("ID에 해당하는 배틀 공지가 존재하지 않습니다."));
 
         final BattleParticipant editor = BattleParticipant.manager(battleId, memberId);
         battleNotification.changeContent(editor, new BattleNotificationContent(request.getContent()));

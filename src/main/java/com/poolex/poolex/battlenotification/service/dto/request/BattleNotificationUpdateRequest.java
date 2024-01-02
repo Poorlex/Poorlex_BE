@@ -7,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class BattleNotificationUpdateRequest {
 
-    private final Long battleNotificationId;
     private final String content;
     private final String imageUrl;
 }
