@@ -55,4 +55,9 @@ public class BattleController {
 
         return ResponseEntity.ok(memberCompleteBattleResponses);
     }
+
+    @GetMapping(params = "status")
+    public ResponseEntity<List<Void>> invalidBattleStatusRequest() {
+        throw new IllegalArgumentException("입력값에 해당하는 상태가 존재하지 않습니다.");
+    }
 }
