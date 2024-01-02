@@ -95,8 +95,8 @@ class BattleServiceTest extends UsingDataJpaTest implements ReplaceUnderScoreTes
                                     final int member2Expenditure,
                                     final int expectedRank) {
         //given
-        final Member member1 = createMemberWithNickname("nickname");
-        final Member member2 = createMemberWithNickname("nickname2");
+        final Member member1 = createMemberWithOauthId("oauthId1");
+        final Member member2 = createMemberWithOauthId("oauthId2");
         final Battle battle = createSimpleBattleWithStatusAndDuration(10000, BattleStatus.PROGRESS, BATTLE_DURATION);
 
         join(member1, battle);
@@ -129,8 +129,8 @@ class BattleServiceTest extends UsingDataJpaTest implements ReplaceUnderScoreTes
                                       final int member2Expenditure,
                                       final int expectedRank) {
         //given
-        final Member member1 = createMemberWithNickname("nickname");
-        final Member member2 = createMemberWithNickname("nickname2");
+        final Member member1 = createMemberWithOauthId("oauthId1");
+        final Member member2 = createMemberWithOauthId("oauthId2");
         final Battle battle = createSimpleBattleWithStatusAndDuration(10000, BattleStatus.COMPLETE, BATTLE_DURATION);
 
         join(member1, battle);
@@ -155,8 +155,8 @@ class BattleServiceTest extends UsingDataJpaTest implements ReplaceUnderScoreTes
         );
     }
 
-    private Member createMemberWithNickname(final String nickname) {
-        final Member member = Member.withoutId("oauthId", new MemberNickname(nickname));
+    private Member createMemberWithOauthId(final String oauthId) {
+        final Member member = Member.withoutId(oauthId, new MemberNickname("nickname"));
         return memberRepository.save(member);
     }
 

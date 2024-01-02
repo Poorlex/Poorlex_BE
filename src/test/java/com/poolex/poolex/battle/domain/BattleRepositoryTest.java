@@ -49,7 +49,7 @@ class BattleRepositoryTest extends UsingDataJpaTest implements ReplaceUnderScore
         //given
         final Battle progressBattle1 = createBattle(BattleStatus.PROGRESS, BATTLE_DURATION);
         final Battle progressBattle2 = createBattle(BattleStatus.PROGRESS, BATTLE_DURATION);
-        final Member member = createMember("nickname");
+        final Member member = createMember("oauthId");
 
         join(progressBattle1, member);
         join(progressBattle2, member);
@@ -81,7 +81,7 @@ class BattleRepositoryTest extends UsingDataJpaTest implements ReplaceUnderScore
         //given
         final Battle progressBattle1 = createBattle(BattleStatus.PROGRESS, BATTLE_DURATION);
         final Battle progressBattle2 = createBattle(BattleStatus.PROGRESS, BATTLE_DURATION);
-        final Member member = createMember("nickname");
+        final Member member = createMember("oauthId");
 
         join(progressBattle1, member);
         join(progressBattle2, member);
@@ -110,7 +110,7 @@ class BattleRepositoryTest extends UsingDataJpaTest implements ReplaceUnderScore
         //given
         final Battle progressBattle = createBattle(BattleStatus.PROGRESS, BattleRepositoryTest.BATTLE_DURATION);
         final Battle recruitingBattle = createBattle(BattleStatus.RECRUITING, BattleRepositoryTest.BATTLE_DURATION);
-        final Member member = createMember("nickname");
+        final Member member = createMember("oauthId");
 
         join(progressBattle, member);
         join(recruitingBattle, member);
@@ -139,7 +139,7 @@ class BattleRepositoryTest extends UsingDataJpaTest implements ReplaceUnderScore
         //given
         final Battle completeBattle1 = createBattle(BattleStatus.COMPLETE, BATTLE_DURATION);
         final Battle completeBattle2 = createBattle(BattleStatus.COMPLETE, BATTLE_DURATION);
-        final Member member = createMember("nickname");
+        final Member member = createMember("oauthId");
 
         join(completeBattle1, member);
         join(completeBattle2, member);
@@ -172,7 +172,7 @@ class BattleRepositoryTest extends UsingDataJpaTest implements ReplaceUnderScore
         //given
         final Battle completeBattle = createBattle(BattleStatus.COMPLETE, BATTLE_DURATION);
         final Battle progressBattle = createBattle(BattleStatus.PROGRESS, BATTLE_DURATION);
-        final Member member = createMember("nickname");
+        final Member member = createMember("oauthId");
 
         join(completeBattle, member);
         join(progressBattle, member);
@@ -200,8 +200,8 @@ class BattleRepositoryTest extends UsingDataJpaTest implements ReplaceUnderScore
     void 해당_id를_가진_배틀의_참여자들의_지출_목록을_조회한다() {
         //given
         final Battle battle = createBattle(BattleStatus.PROGRESS, BATTLE_DURATION);
-        final Member member1 = createMember("nickname1");
-        final Member member2 = createMember("nickname2");
+        final Member member1 = createMember("oauthId1");
+        final Member member2 = createMember("oauthId2");
 
         final BattleParticipant battleParticipantMember1 = join(battle, member1);
         final BattleParticipant battleParticipantMember2 = join(battle, member2);
@@ -241,8 +241,8 @@ class BattleRepositoryTest extends UsingDataJpaTest implements ReplaceUnderScore
         return battleRepository.save(battle);
     }
 
-    private Member createMember(final String nickname) {
-        final Member member = Member.withoutId("oauthId", new MemberNickname(nickname));
+    private Member createMember(final String oauthId) {
+        final Member member = Member.withoutId(oauthId, new MemberNickname("nickname"));
         return memberRepository.save(member);
     }
 

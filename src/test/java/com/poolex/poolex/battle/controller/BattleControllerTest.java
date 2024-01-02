@@ -84,9 +84,9 @@ class BattleControllerTest extends IntegrationTest implements ReplaceUnderScoreT
     void 현재_참여가능한_배틀들을_조회시_상태코드_200_과_배틀의_데이터를_반환한다() throws Exception {
         //given
         final Long battleId = createBattle();
-        joinNewNormalPlayerWithNickname("nickname", battleId);
+        joinNewNormalPlayerWithOauthId("oauthId", battleId);
 
-        final String accessToken = testMemberTokenGenerator.createTokenWithNewMember("nickname");
+        final String accessToken = testMemberTokenGenerator.createTokenWithNewMember("oauthId2");
 
         //when
         //then
@@ -182,8 +182,8 @@ class BattleControllerTest extends IntegrationTest implements ReplaceUnderScoreT
         );
     }
 
-    private Member joinNewNormalPlayerWithNickname(final String nickname, final Long battleId) {
-        final Member member = Member.withoutId("oauthId", new MemberNickname(nickname));
+    private Member joinNewNormalPlayerWithOauthId(final String oauthId, final Long battleId) {
+        final Member member = Member.withoutId(oauthId, new MemberNickname("nickname"));
         memberRepository.save(member);
 
         final BattleParticipant battleParticipant = BattleParticipant.normalPlayer(battleId, member.getId());

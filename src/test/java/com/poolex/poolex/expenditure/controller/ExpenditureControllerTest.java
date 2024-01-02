@@ -38,7 +38,7 @@ class ExpenditureControllerTest extends IntegrationTest implements ReplaceUnderS
     @Test
     void 지출을_생성한다() throws Exception {
         //given
-        final String accessToken = testMemberTokenGenerator.createTokenWithNewMember("nickname");
+        final String accessToken = testMemberTokenGenerator.createTokenWithNewMember("oauthId");
         final ExpenditureCreateRequest request = ExpenditureRequestFixture.getSimpleCreateRequest();
 
         //when

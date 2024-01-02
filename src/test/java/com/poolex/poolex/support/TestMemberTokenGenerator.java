@@ -15,13 +15,13 @@ public class TestMemberTokenGenerator {
         this.jwtTokenProvider = jwtTokenProvider;
     }
 
-    public String createTokenWithNewMember(final String nickname) {
-        final Member member = createMember(nickname);
+    public String createTokenWithNewMember(final String oauthId) {
+        final Member member = createMember(oauthId);
         return createAccessToken(member);
     }
 
-    private Member createMember(final String nickname) {
-        final Member member = Member.withoutId("oauthId", new MemberNickname(nickname));
+    private Member createMember(final String oauthId) {
+        final Member member = Member.withoutId(oauthId, new MemberNickname("nickname"));
         return memberRepository.save(member);
     }
 
