@@ -15,19 +15,16 @@ import com.poolex.poolex.battlenotification.domain.BattleNotificationRepository;
 import com.poolex.poolex.battlenotification.service.dto.request.BattleNotificationCreateRequest;
 import com.poolex.poolex.battlenotification.service.dto.request.BattleNotificationUpdateRequest;
 import com.poolex.poolex.support.DataCleaner;
-import com.poolex.poolex.support.DataCleanerExtension;
 import com.poolex.poolex.support.IntegrationTest;
 import com.poolex.poolex.support.ReplaceUnderScoreTest;
 import com.poolex.poolex.support.TestMemberTokenGenerator;
 import com.poolex.poolex.token.JwtTokenProvider;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 
-@ExtendWith(DataCleanerExtension.class)
 class BattleNotificationControllerTest extends IntegrationTest implements ReplaceUnderScoreTest {
 
     @Autowired
