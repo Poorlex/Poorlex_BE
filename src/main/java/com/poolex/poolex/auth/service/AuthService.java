@@ -21,7 +21,7 @@ public class AuthService {
     @Transactional
     public LoginTokenResponse loginAfterRegisterIfNotExist(final LoginRequest request) {
         final Member member = memberRepository.findByOauthId(request.getOauthId())
-            .orElse(createMember(request));
+            .orElseGet(() -> createMember(request));
         final String accessToken = jwtTokenProvider.createAccessToken(member.getId());
 
         return new LoginTokenResponse(accessToken);
