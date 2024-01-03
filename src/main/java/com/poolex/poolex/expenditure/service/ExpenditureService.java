@@ -2,7 +2,10 @@ package com.poolex.poolex.expenditure.service;
 
 import com.poolex.poolex.expenditure.domain.Expenditure;
 import com.poolex.poolex.expenditure.domain.ExpenditureRepository;
-import com.poolex.poolex.expenditure.service.dto.ExpenditureCreateRequest;
+import com.poolex.poolex.expenditure.domain.WeeklyExpenditureDuration;
+import com.poolex.poolex.expenditure.service.dto.request.ExpenditureCreateRequest;
+import com.poolex.poolex.expenditure.service.dto.request.MemberWeeklyTotalExpenditureRequest;
+import com.poolex.poolex.expenditure.service.dto.response.MemberWeeklyTotalExpenditureResponse;
 import com.poolex.poolex.expenditure.service.mapper.ExpenditureMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,5 +23,17 @@ public class ExpenditureService {
         final Expenditure savedExpenditure = expenditureRepository.save(expenditure);
 
         return savedExpenditure.getId();
+    }
+
+    public MemberWeeklyTotalExpenditureResponse findMemberWeeklyTotalExpenditure(final Long memberId,
+                                                                                 final MemberWeeklyTotalExpenditureRequest request) {
+        final WeeklyExpenditureDuration duration = WeeklyExpenditureDuration.from(request.getDate());
+        final int sumExpenditure = expenditureRepository.findSumExpenditureByMemberIdAndBetween(
+            memberId,
+            duration.getStart(),
+            duration.getEnd()
+        );
+
+        return new MemberWeeklyTotalExpenditureResponse(sumExpenditure);
     }
 }

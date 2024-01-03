@@ -1,6 +1,6 @@
 package com.poolex.poolex.expenditure.fixture;
 
-import com.poolex.poolex.expenditure.service.dto.ExpenditureCreateRequest;
+import com.poolex.poolex.expenditure.service.dto.request.ExpenditureCreateRequest;
 import java.util.List;
 
 public class ExpenditureRequestFixture {

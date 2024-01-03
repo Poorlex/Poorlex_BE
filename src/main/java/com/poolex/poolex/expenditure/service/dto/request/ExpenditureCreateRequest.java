@@ -1,4 +1,4 @@
-package com.poolex.poolex.expenditure.service.dto;
+package com.poolex.poolex.expenditure.service.dto.request;
 
 import java.util.List;
 import lombok.Getter;

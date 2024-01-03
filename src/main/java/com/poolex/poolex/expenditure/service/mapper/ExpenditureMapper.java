@@ -5,7 +5,7 @@ import com.poolex.poolex.expenditure.domain.ExpenditureAmount;
 import com.poolex.poolex.expenditure.domain.ExpenditureCertificationImageUrl;
 import com.poolex.poolex.expenditure.domain.ExpenditureCertificationImageUrls;
 import com.poolex.poolex.expenditure.domain.ExpenditureDescription;
-import com.poolex.poolex.expenditure.service.dto.ExpenditureCreateRequest;
+import com.poolex.poolex.expenditure.service.dto.request.ExpenditureCreateRequest;
 import java.time.LocalDateTime;
 import java.util.List;
 

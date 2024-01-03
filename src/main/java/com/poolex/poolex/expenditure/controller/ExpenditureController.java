@@ -3,10 +3,13 @@ package com.poolex.poolex.expenditure.controller;
 import com.poolex.poolex.config.auth.argumentresolver.MemberInfo;
 import com.poolex.poolex.config.auth.argumentresolver.MemberOnly;
 import com.poolex.poolex.expenditure.service.ExpenditureService;
-import com.poolex.poolex.expenditure.service.dto.ExpenditureCreateRequest;
+import com.poolex.poolex.expenditure.service.dto.request.ExpenditureCreateRequest;
+import com.poolex.poolex.expenditure.service.dto.request.MemberWeeklyTotalExpenditureRequest;
+import com.poolex.poolex.expenditure.service.dto.response.MemberWeeklyTotalExpenditureResponse;
 import java.net.URI;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,5 +30,17 @@ public class ExpenditureController {
         final String locationHeader = CONTROLLER_MAPPED_URL + "/" + expenditureID;
 
         return ResponseEntity.created(URI.create(locationHeader)).build();
+    }
+
+    @GetMapping
+    public ResponseEntity<MemberWeeklyTotalExpenditureResponse> findMemberWeeklyTotalExpenditures(
+        @MemberOnly MemberInfo memberInfo,
+        @RequestBody MemberWeeklyTotalExpenditureRequest request) {
+        final MemberWeeklyTotalExpenditureResponse response = expenditureService.findMemberWeeklyTotalExpenditure(
+            memberInfo.getMemberId(),
+            request
+        );
+
+        return ResponseEntity.ok(response);
     }
 }
