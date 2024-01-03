@@ -29,7 +29,7 @@ public class WeeklyBudgetController {
                                                                  @RequestBody final WeeklyBudgetRequest request) {
         final WeeklyBudgetResponse response = weeklyBudgetService.findCurrentBudgetByMemberIdAndDate(
             memberInfo.getMemberId(),
-            request.getDate()
+            request.getDateTime()
         );
 
         return ResponseEntity.ok(response);
@@ -40,7 +40,7 @@ public class WeeklyBudgetController {
                                                                          @RequestBody final WeeklyBudgetLeftRequest request) {
         final WeeklyBudgetLeftResponse response = weeklyBudgetService.findCurrentBudgetLeftByMemberIdAndDate(
             memberInfo.getMemberId(),
-            request.getDate()
+            request.getDateTime()
         );
 
         return ResponseEntity.ok(response);

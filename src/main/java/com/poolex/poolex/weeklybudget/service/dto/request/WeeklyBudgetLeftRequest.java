@@ -9,9 +9,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class WeeklyBudgetLeftRequest {
 
-    private LocalDateTime date;
+    private LocalDateTime dateTime;
 
-    public WeeklyBudgetLeftRequest(final LocalDateTime date) {
-        this.date = date;
+    public WeeklyBudgetLeftRequest(final LocalDateTime dateTime) {
+        this.dateTime = dateTime;
     }
 }
