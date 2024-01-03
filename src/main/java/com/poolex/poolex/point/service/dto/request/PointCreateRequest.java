@@ -1,4 +1,4 @@
-package com.poolex.poolex.point.service.dto;
+package com.poolex.poolex.point.service.dto.request;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

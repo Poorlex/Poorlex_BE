@@ -38,8 +38,8 @@ public class MemberPoint {
         return id;
     }
 
-    public Point getPoint() {
-        return point;
+    public int getPoint() {
+        return point.getValue();
     }
 
     public Long getMemberId() {

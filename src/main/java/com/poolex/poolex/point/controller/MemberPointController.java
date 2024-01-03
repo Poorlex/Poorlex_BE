@@ -3,10 +3,12 @@ package com.poolex.poolex.point.controller;
 import com.poolex.poolex.config.auth.argumentresolver.MemberInfo;
 import com.poolex.poolex.config.auth.argumentresolver.MemberOnly;
 import com.poolex.poolex.point.service.MemberPointService;
-import com.poolex.poolex.point.service.dto.PointCreateRequest;
+import com.poolex.poolex.point.service.dto.request.PointCreateRequest;
+import com.poolex.poolex.point.service.dto.response.MemberPointResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,5 +27,11 @@ public class MemberPointController {
         memberPointService.createPoint(memberInfo.getMemberId(), request.getPoint());
 
         return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @GetMapping
+    public ResponseEntity<MemberPointResponse> findMemberSumPoint(@MemberOnly final MemberInfo memberInfo) {
+        final MemberPointResponse response = memberPointService.findMemberSumPoint(memberInfo.getMemberId());
+        return ResponseEntity.ok(response);
     }
 }

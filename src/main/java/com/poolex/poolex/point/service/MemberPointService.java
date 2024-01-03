@@ -4,6 +4,7 @@ import com.poolex.poolex.auth.domain.MemberRepository;
 import com.poolex.poolex.point.domain.MemberPoint;
 import com.poolex.poolex.point.domain.MemberPointRepository;
 import com.poolex.poolex.point.domain.Point;
+import com.poolex.poolex.point.service.dto.response.MemberPointResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,5 +24,11 @@ public class MemberPointService {
         }
 
         memberPointRepository.save(MemberPoint.withoutId(new Point(point), memberId));
+    }
+
+    public MemberPointResponse findMemberSumPoint(final Long memberId) {
+        final int sumPoint = memberPointRepository.findSumByMemberId(memberId);
+        
+        return new MemberPointResponse(sumPoint);
     }
 }
