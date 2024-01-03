@@ -4,13 +4,13 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import com.poolex.poolex.support.ReplaceUnderScoreTest;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import org.junit.jupiter.api.Test;
 
 class WeeklyBudgetDurationTest implements ReplaceUnderScoreTest {
 
-    private static final LocalDate VALID_WEEKLY_BUDGET_DURATION_START = LocalDate.of(2023, 12, 25);
-    private static final LocalDate VALID_WEEKLY_BUDGET_DURATION_END = LocalDate.of(2023, 12, 31);
+    private static final LocalDateTime VALID_WEEKLY_BUDGET_DURATION_START = LocalDateTime.of(2023, 12, 25, 9, 0);
+    private static final LocalDateTime VALID_WEEKLY_BUDGET_DURATION_END = LocalDateTime.of(2023, 12, 31, 22, 0);
 
     @Test
     void 주간_예산의_기간을_생성한다() {
@@ -26,7 +26,7 @@ class WeeklyBudgetDurationTest implements ReplaceUnderScoreTest {
     @Test
     void 주간_예산의_기간의_시작이_월요일이_아닐_경우_예외를_던진다() {
         //given
-        final LocalDate thursday = LocalDate.of(2023, 12, 28);
+        final LocalDateTime thursday = LocalDateTime.of(2023, 12, 28, 9, 0);
 
         //when
         //then
@@ -37,7 +37,7 @@ class WeeklyBudgetDurationTest implements ReplaceUnderScoreTest {
     @Test
     void 주간_예산의_기간의_끝이_일요일이_아닐_경우_예외를_던진다() {
         //given
-        final LocalDate thursday = LocalDate.of(2023, 12, 28);
+        final LocalDateTime thursday = LocalDateTime.of(2023, 12, 28, 22, 0);
 
         //when
         //then

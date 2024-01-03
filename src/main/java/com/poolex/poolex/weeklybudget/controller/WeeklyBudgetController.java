@@ -4,7 +4,9 @@ import com.poolex.poolex.config.auth.argumentresolver.MemberInfo;
 import com.poolex.poolex.config.auth.argumentresolver.MemberOnly;
 import com.poolex.poolex.weeklybudget.service.WeeklyBudgetService;
 import com.poolex.poolex.weeklybudget.service.dto.request.WeeklyBudgetCreateRequest;
+import com.poolex.poolex.weeklybudget.service.dto.request.WeeklyBudgetLeftRequest;
 import com.poolex.poolex.weeklybudget.service.dto.request.WeeklyBudgetRequest;
+import com.poolex.poolex.weeklybudget.service.dto.response.WeeklyBudgetLeftResponse;
 import com.poolex.poolex.weeklybudget.service.dto.response.WeeklyBudgetResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -26,6 +28,17 @@ public class WeeklyBudgetController {
     public ResponseEntity<WeeklyBudgetResponse> findWeeklyBudget(@MemberOnly final MemberInfo memberInfo,
                                                                  @RequestBody final WeeklyBudgetRequest request) {
         final WeeklyBudgetResponse response = weeklyBudgetService.findCurrentBudgetByMemberIdAndDate(
+            memberInfo.getMemberId(),
+            request.getDate()
+        );
+
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/left")
+    public ResponseEntity<WeeklyBudgetLeftResponse> findWeeklyBudgetLeft(@MemberOnly final MemberInfo memberInfo,
+                                                                         @RequestBody final WeeklyBudgetLeftRequest request) {
+        final WeeklyBudgetLeftResponse response = weeklyBudgetService.findCurrentBudgetLeftByMemberIdAndDate(
             memberInfo.getMemberId(),
             request.getDate()
         );
