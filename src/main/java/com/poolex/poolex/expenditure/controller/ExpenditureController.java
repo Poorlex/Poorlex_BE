@@ -32,7 +32,7 @@ public class ExpenditureController {
         return ResponseEntity.created(URI.create(locationHeader)).build();
     }
 
-    @GetMapping
+    @GetMapping("/weekly")
     public ResponseEntity<MemberWeeklyTotalExpenditureResponse> findMemberWeeklyTotalExpenditures(
         @MemberOnly MemberInfo memberInfo,
         @RequestBody MemberWeeklyTotalExpenditureRequest request) {

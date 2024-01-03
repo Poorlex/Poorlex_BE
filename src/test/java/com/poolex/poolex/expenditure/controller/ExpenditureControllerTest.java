@@ -82,7 +82,7 @@ class ExpenditureControllerTest extends IntegrationTest implements ReplaceUnderS
         //when
         //then
         mockMvc.perform(
-                get("/expenditures")
+                get("/expenditures/weekly")
                     .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
                     .content(objectMapper.writeValueAsString(request))
                     .contentType(MediaType.APPLICATION_JSON)
@@ -108,7 +108,7 @@ class ExpenditureControllerTest extends IntegrationTest implements ReplaceUnderS
         //when
         //then
         mockMvc.perform(
-                get("/expenditures")
+                get("/expenditures/weekly")
                     .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
                     .content(objectMapper.writeValueAsString(request))
                     .contentType(MediaType.APPLICATION_JSON)
