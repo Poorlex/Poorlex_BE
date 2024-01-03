@@ -1,5 +1,6 @@
 package com.poolex.poolex.point.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import com.poolex.poolex.auth.domain.Member;
@@ -7,7 +8,9 @@ import com.poolex.poolex.auth.domain.MemberNickname;
 import com.poolex.poolex.auth.domain.MemberRepository;
 import com.poolex.poolex.point.domain.MemberPoint;
 import com.poolex.poolex.point.domain.MemberPointRepository;
-import com.poolex.poolex.point.service.dto.PointCreateRequest;
+import com.poolex.poolex.point.domain.Point;
+import com.poolex.poolex.point.service.dto.request.PointCreateRequest;
+import com.poolex.poolex.point.service.dto.response.MemberPointResponse;
 import com.poolex.poolex.support.ReplaceUnderScoreTest;
 import com.poolex.poolex.support.UsingDataJpaTest;
 import java.util.List;
@@ -45,9 +48,22 @@ class MemberPointServiceTest extends UsingDataJpaTest implements ReplaceUnderSco
             softly -> {
                 softly.assertThat(memberPoints).hasSize(1);
                 final MemberPoint memberPoint = memberPoints.get(0);
-                softly.assertThat(memberPoint.getPoint().getValue()).isEqualTo(request.getPoint());
+                softly.assertThat(memberPoint.getPoint()).isEqualTo(request.getPoint());
                 softly.assertThat(memberPoint.getMemberId()).isEqualTo(member.getId());
             }
         );
+    }
+
+    @Test
+    void 멤버_포인트의_총합을_조회한다() {
+        //given
+        final Member member = memberRepository.save(Member.withoutId("oauthId", new MemberNickname("nickname")));
+        memberPointRepository.save(MemberPoint.withoutId(new Point(10), member.getId()));
+
+        //when
+        final MemberPointResponse response = memberPointService.findMemberSumPoint(member.getId());
+
+        //then
+        assertThat(response.getPoint()).isEqualTo(10);
     }
 }

@@ -1,11 +1,18 @@
 package com.poolex.poolex.point.controller;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.poolex.poolex.auth.domain.Member;
+import com.poolex.poolex.auth.domain.MemberNickname;
 import com.poolex.poolex.auth.domain.MemberRepository;
-import com.poolex.poolex.point.service.dto.PointCreateRequest;
+import com.poolex.poolex.point.domain.MemberPoint;
+import com.poolex.poolex.point.domain.MemberPointRepository;
+import com.poolex.poolex.point.domain.Point;
+import com.poolex.poolex.point.service.dto.request.PointCreateRequest;
 import com.poolex.poolex.support.IntegrationTest;
 import com.poolex.poolex.support.ReplaceUnderScoreTest;
 import com.poolex.poolex.support.TestMemberTokenGenerator;
@@ -20,8 +27,13 @@ class MemberPointControllerTest extends IntegrationTest implements ReplaceUnderS
 
     @Autowired
     private MemberRepository memberRepository;
+
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
+
+    @Autowired
+    private MemberPointRepository memberPointRepository;
+
     private TestMemberTokenGenerator memberTokenGenerator;
 
     @BeforeEach
@@ -45,5 +57,31 @@ class MemberPointControllerTest extends IntegrationTest implements ReplaceUnderS
             )
             .andDo(print())
             .andExpect(status().isCreated());
+    }
+
+    @Test
+    void 멤버포인트의_합을_조회한다() throws Exception {
+        //given
+        final Member member = createMember("oauthId");
+        final MemberPoint memberPoint = createMemberPoint(10, member);
+        final String accessToken = memberTokenGenerator.createAccessToken(member);
+
+        //when
+        //then
+        mockMvc.perform(
+                get("/points")
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+            )
+            .andDo(print())
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.point").value(memberPoint.getPoint()));
+    }
+
+    private Member createMember(final String oauthId) {
+        return memberRepository.save(Member.withoutId(oauthId, new MemberNickname("nickname")));
+    }
+
+    private MemberPoint createMemberPoint(final int point, final Member member) {
+        return memberPointRepository.save(MemberPoint.withoutId(new Point(10), member.getId()));
     }
 }
