@@ -20,6 +20,8 @@ public class AlarmReaction {
 
     private Long alarmId;
 
+    private Long memberId;
+
     @Enumerated(value = EnumType.STRING)
     private AlarmReactionType type;
 
@@ -28,26 +30,33 @@ public class AlarmReaction {
 
     private AlarmReaction(final Long id,
                           final Long alarmId,
+                          final Long memberId,
                           final AlarmReactionType type,
                           final AlarmReactionContent content) {
         this.id = id;
         this.alarmId = alarmId;
+        this.memberId = memberId;
         this.type = type;
         this.content = content;
     }
 
     public static AlarmReaction withoutId(final Long alarmId,
+                                          final Long memberId,
                                           final AlarmReactionType type,
                                           final AlarmReactionContent content) {
-        return new AlarmReaction(null, alarmId, type, content);
+        return new AlarmReaction(null, alarmId, memberId, type, content);
     }
 
-    public static AlarmReaction praiseWithoutId(final Long alarmId, final AlarmReactionContent content) {
-        return withoutId(alarmId, AlarmReactionType.PRAISE, content);
+    public static AlarmReaction praiseWithoutId(final Long alarmId,
+                                                final Long memberId,
+                                                final AlarmReactionContent content) {
+        return withoutId(alarmId, memberId, AlarmReactionType.PRAISE, content);
     }
 
-    public static AlarmReaction scoldWithoutId(final Long alarmId, final AlarmReactionContent content) {
-        return withoutId(alarmId, AlarmReactionType.SCOLD, content);
+    public static AlarmReaction scoldWithoutId(final Long alarmId,
+                                               final Long memberId,
+                                               final AlarmReactionContent content) {
+        return withoutId(alarmId, memberId, AlarmReactionType.SCOLD, content);
     }
 
     public Long getId() {
@@ -58,11 +67,15 @@ public class AlarmReaction {
         return alarmId;
     }
 
+    public Long getMemberId() {
+        return memberId;
+    }
+
     public AlarmReactionType getType() {
         return type;
     }
 
-    public String getContent() {
-        return content.getValue();
+    public AlarmReactionContent getContent() {
+        return content;
     }
 }
