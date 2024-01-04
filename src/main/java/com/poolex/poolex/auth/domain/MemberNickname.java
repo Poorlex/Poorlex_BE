@@ -11,7 +11,7 @@ import org.springframework.util.StringUtils;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MemberNickname {
 
-    private static final Pattern NICKNAME_PATTERN = Pattern.compile("[가-힣a-zA-Z0-9_-]+");
+    private static final Pattern NICKNAME_PATTERN = Pattern.compile("[ 가-힣a-zA-Z0-9_-]+");
     private static final int MINIMUM_LENGTH = 2;
     private static final int MAXIMUM_LENGTH = 15;
     @Column(name = "nickname")

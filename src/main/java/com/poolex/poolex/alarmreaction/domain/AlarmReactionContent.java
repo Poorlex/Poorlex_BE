@@ -11,7 +11,7 @@ import org.springframework.util.StringUtils;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class AlarmReactionContent {
 
-    private static final Pattern ALARM_REACTION_CONTENT_REGEX = Pattern.compile("[가-힣]+");
+    private static final Pattern ALARM_REACTION_CONTENT_PATTERN = Pattern.compile("[가-힣 ]+");
 
     private static final int MAX_LENGTH = 10;
     @Column(name = "content")
@@ -26,7 +26,7 @@ public class AlarmReactionContent {
         if (!StringUtils.hasText(value)) {
             throw new IllegalArgumentException();
         }
-        if (!ALARM_REACTION_CONTENT_REGEX.matcher(value).matches()) {
+        if (!ALARM_REACTION_CONTENT_PATTERN.matcher(value).matches()) {
             throw new IllegalArgumentException();
         }
         validateLength(value);
