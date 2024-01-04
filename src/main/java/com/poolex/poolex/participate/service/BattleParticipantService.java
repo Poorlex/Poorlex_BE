@@ -55,7 +55,7 @@ public class BattleParticipantService {
                 memberId)
             .orElseThrow(IllegalArgumentException::new);
         validateBattleNotStarted(battleId);
-
+        validateParticipantNotManager(battleParticipant);
         battleParticipantRepository.delete(battleParticipant);
     }
 
@@ -64,6 +64,12 @@ public class BattleParticipantService {
             .orElseThrow(IllegalArgumentException::new);
         if (battle.hasSameStatus(BattleStatus.PROGRESS) || battle.hasSameStatus(BattleStatus.COMPLETE)) {
             throw new IllegalArgumentException();
+        }
+    }
+
+    private void validateParticipantNotManager(final BattleParticipant battleParticipant) {
+        if (battleParticipant.isManager()) {
+            throw new IllegalArgumentException("배틀의 매니저는 배틀을 나갈 수 없습니다.");
         }
     }
 }

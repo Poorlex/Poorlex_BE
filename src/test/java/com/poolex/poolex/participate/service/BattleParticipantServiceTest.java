@@ -132,6 +132,20 @@ class BattleParticipantServiceTest extends UsingDataJpaTest implements ReplaceUn
 
     }
 
+    @ParameterizedTest(name = "배틀의 상태가 {0} 일 때")
+    @CsvSource(value = {"RECRUITING", "RECRUITING_FINISHED"})
+    void 배틀의_매니저가_참가를_취소할시_예외를_던진다(final BattleStatus battleStatus) {
+        //given
+        final Member member = createMember();
+        final Battle battle = createBattleWithStatus(battleStatus);
+        battleParticipantRepository.save(BattleParticipant.manager(battle.getId(), member.getId()));
+
+        //when
+        //then
+        assertThatThrownBy(() -> battleParticipantService.remove(battle.getId(), member.getId()))
+            .isInstanceOf(IllegalArgumentException.class);
+    }
+
     private Member createMember() {
         return memberRepository.save(Member.withoutId("oauthId", new MemberNickname("nickname")));
     }
