@@ -33,11 +33,16 @@ class BattleParticipantServiceTest extends UsingDataJpaTest implements ReplaceUn
 
     @Autowired
     private BattleParticipantRepository battleParticipantRepository;
+
     private BattleParticipantService battleParticipantService;
 
     @BeforeEach
     void setUp() {
-        battleParticipantService = new BattleParticipantService(battleRepository, battleParticipantRepository);
+        battleParticipantService = new BattleParticipantService(
+            memberRepository,
+            battleRepository,
+            battleParticipantRepository
+        );
     }
 
     @Test
