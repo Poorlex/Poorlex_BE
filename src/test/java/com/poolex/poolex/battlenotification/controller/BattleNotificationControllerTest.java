@@ -14,7 +14,6 @@ import com.poolex.poolex.battlenotification.domain.BattleNotification;
 import com.poolex.poolex.battlenotification.domain.BattleNotificationRepository;
 import com.poolex.poolex.battlenotification.service.dto.request.BattleNotificationCreateRequest;
 import com.poolex.poolex.battlenotification.service.dto.request.BattleNotificationUpdateRequest;
-import com.poolex.poolex.support.DataCleaner;
 import com.poolex.poolex.support.IntegrationTest;
 import com.poolex.poolex.support.ReplaceUnderScoreTest;
 import com.poolex.poolex.support.TestMemberTokenGenerator;
@@ -26,9 +25,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 
 class BattleNotificationControllerTest extends IntegrationTest implements ReplaceUnderScoreTest {
-
-    @Autowired
-    private DataCleaner dataCleaner;
 
     @Autowired
     private BattleService battleService;
@@ -47,7 +43,6 @@ class BattleNotificationControllerTest extends IntegrationTest implements Replac
     @BeforeEach
     void setUp() {
         this.memberTokenGenerator = new TestMemberTokenGenerator(memberRepository, jwtTokenProvider);
-        dataCleaner.clear();
     }
 
     @Test
