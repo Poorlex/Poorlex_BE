@@ -2,7 +2,6 @@ package com.poolex.poolex.alarmreaction.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
-import java.util.regex.Pattern;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.springframework.util.StringUtils;
@@ -11,9 +10,8 @@ import org.springframework.util.StringUtils;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class AlarmReactionContent {
 
-    private static final Pattern ALARM_REACTION_CONTENT_PATTERN = Pattern.compile("[가-힣 ]+");
-
-    private static final int MAX_LENGTH = 10;
+    private static final int MIN_LENGTH = 2;
+    private static final int MAX_LENGTH = 30;
     @Column(name = "content")
     private String value;
 
@@ -26,14 +24,11 @@ public class AlarmReactionContent {
         if (!StringUtils.hasText(value)) {
             throw new IllegalArgumentException();
         }
-        if (!ALARM_REACTION_CONTENT_PATTERN.matcher(value).matches()) {
-            throw new IllegalArgumentException();
-        }
         validateLength(value);
     }
 
     private void validateLength(final String value) {
-        if (value.length() > MAX_LENGTH) {
+        if (value.length() < MIN_LENGTH || value.length() > MAX_LENGTH) {
             throw new IllegalArgumentException();
         }
     }

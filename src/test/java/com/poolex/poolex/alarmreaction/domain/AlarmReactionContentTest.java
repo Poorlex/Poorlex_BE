@@ -11,24 +11,14 @@ import org.junit.jupiter.params.provider.ValueSource;
 class AlarmReactionContentTest implements ReplaceUnderScoreTest {
 
     @ParameterizedTest(name = "알림반응 문구의 길이가 {0} 인 경우")
-    @ValueSource(ints = {0, 11})
-    void 알림_반응_문구의_길이가_1이상_10이하가_아닌_경우_예외를_던진다(final int length) {
+    @ValueSource(ints = {1, 31})
+    void 알림_반응_문구의_길이가_2이상_30이하가_아닌_경우_예외를_던진다(final int length) {
         //given
         final String alarmReactionContent = "a".repeat(length);
 
         //when
         //then
         assertThatThrownBy(() -> new AlarmReactionContent(alarmReactionContent))
-            .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @ParameterizedTest(name = "알림 반응 문구가 {0} 일 때")
-    @ValueSource(strings = {"abcde", "12345", "😁😁😁😁😁"})
-    void 알림_반응_문구에_한글이_아닌_문자가_포함되면_예외를_던진다(final String invalidContent) {
-        //given
-        //when
-        //then
-        assertThatThrownBy(() -> new AlarmReactionContent(invalidContent))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
