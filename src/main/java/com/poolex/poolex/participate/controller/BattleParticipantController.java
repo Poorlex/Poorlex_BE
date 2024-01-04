@@ -6,6 +6,7 @@ import com.poolex.poolex.participate.service.BattleParticipantService;
 import java.net.URI;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,7 +24,14 @@ public class BattleParticipantController {
                                                   @MemberOnly MemberInfo memberInfo) {
         final Long battleParticipantId = battleParticipantService.create(battleId, memberInfo.getMemberId());
         final String locationHeader = "/battles/" + battleId + "/participants/" + battleParticipantId;
-        
+
         return ResponseEntity.created(URI.create(locationHeader)).build();
+    }
+
+    @DeleteMapping
+    public ResponseEntity<Void> removeParticipant(@PathVariable(value = "battleId") final Long battleId,
+                                                  @MemberOnly MemberInfo memberInfo) {
+        battleParticipantService.remove(battleId, memberInfo.getMemberId());
+        return ResponseEntity.noContent().build();
     }
 }

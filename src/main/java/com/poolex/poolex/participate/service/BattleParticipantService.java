@@ -3,6 +3,7 @@ package com.poolex.poolex.participate.service;
 import com.poolex.poolex.auth.domain.MemberRepository;
 import com.poolex.poolex.battle.domain.Battle;
 import com.poolex.poolex.battle.domain.BattleRepository;
+import com.poolex.poolex.battle.domain.BattleStatus;
 import com.poolex.poolex.config.event.Events;
 import com.poolex.poolex.participate.domain.BattleParticipant;
 import com.poolex.poolex.participate.domain.BattleParticipantRepository;
@@ -43,6 +44,25 @@ public class BattleParticipantService {
         final int battleParticipantSize = battleParticipantRepository.countBattleParticipantByBattleId(battleId);
 
         if (!battle.isRecruiting() || battle.hasLessOrEqualMaxParticipantSizeThen(battleParticipantSize)) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    @Transactional
+    public void remove(final Long battleId, final Long memberId) {
+        final BattleParticipant battleParticipant = battleParticipantRepository.findByBattleIdAndMemberId(
+                battleId,
+                memberId)
+            .orElseThrow(IllegalArgumentException::new);
+        validateBattleNotStarted(battleId);
+
+        battleParticipantRepository.delete(battleParticipant);
+    }
+
+    private void validateBattleNotStarted(final Long battleId) {
+        final Battle battle = battleRepository.findById(battleId)
+            .orElseThrow(IllegalArgumentException::new);
+        if (battle.hasSameStatus(BattleStatus.PROGRESS) || battle.hasSameStatus(BattleStatus.COMPLETE)) {
             throw new IllegalArgumentException();
         }
     }
