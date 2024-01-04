@@ -6,6 +6,8 @@ import com.poolex.poolex.battlenotification.domain.BattleNotificationImageUrl;
 import com.poolex.poolex.battlenotification.domain.BattleNotificationRepository;
 import com.poolex.poolex.battlenotification.service.dto.request.BattleNotificationCreateRequest;
 import com.poolex.poolex.battlenotification.service.dto.request.BattleNotificationUpdateRequest;
+import com.poolex.poolex.battlenotification.service.event.BattleNotificationChangedEvent;
+import com.poolex.poolex.config.event.Events;
 import com.poolex.poolex.participate.domain.BattleParticipant;
 import com.poolex.poolex.participate.domain.BattleParticipantRepository;
 import com.poolex.poolex.participate.domain.BattleParticipantRole;
@@ -31,9 +33,10 @@ public class BattleNotificationService {
 
         if (Objects.isNull(request.getImageUrl())) {
             createNotificationWithoutImageUrl(battleId, content);
-            return;
+        } else {
+            createNotificationWithImageUrl(battleId, content, request.getImageUrl());
         }
-        createNotificationWithImageUrl(battleId, content, request.getImageUrl());
+        Events.raise(new BattleNotificationChangedEvent(battleId, memberId));
     }
 
     private void validateIsManager(final Long battleId, final Long memberId) {
@@ -73,6 +76,7 @@ public class BattleNotificationService {
         final BattleParticipant editor = BattleParticipant.manager(battleId, memberId);
         battleNotification.changeContent(editor, new BattleNotificationContent(request.getContent()));
         updateImageUrl(editor, battleNotification, request.getImageUrl());
+        Events.raise(new BattleNotificationChangedEvent(battleId, memberId));
     }
 
     private void updateImageUrl(final BattleParticipant editor,

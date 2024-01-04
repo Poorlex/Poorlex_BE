@@ -19,8 +19,9 @@ public class ExpenditureMapper {
         final ExpenditureAmount amount = new ExpenditureAmount(request.getAmount());
         final ExpenditureDescription description = new ExpenditureDescription(request.getDescription());
         final ExpenditureCertificationImageUrls imageUrls = createImageUrls(request);
+        final LocalDateTime dateTime = request.getDateTime();
 
-        return Expenditure.withoutId(amount, memberId, LocalDateTime.now(), description, imageUrls);
+        return Expenditure.withoutId(amount, memberId, dateTime, description, imageUrls);
     }
 
     private static ExpenditureCertificationImageUrls createImageUrls(final ExpenditureCreateRequest request) {
