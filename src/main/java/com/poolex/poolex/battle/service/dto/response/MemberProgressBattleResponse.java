@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 @Getter
 public class MemberProgressBattleResponse {
 
+    private final Long battleId;
     private final String name;
     private final String imageUrl;
     private final String difficulty;
@@ -24,6 +25,7 @@ public class MemberProgressBattleResponse {
         final Battle battle = battleInfo.getBattle();
 
         return new MemberProgressBattleResponse(
+            battle.getId(),
             battle.getName(),
             battle.getImageUrl(),
             battle.getDifficulty().name(),

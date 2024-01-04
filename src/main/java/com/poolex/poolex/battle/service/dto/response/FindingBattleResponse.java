@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 @Getter
 public class FindingBattleResponse {
 
+    private final Long battleId;
     private final String name;
     private final String imageUrl;
     private final String difficulty;
@@ -29,6 +30,7 @@ public class FindingBattleResponse {
         final int currentParticipantSize = battleWithCurrentParticipantSize.getCurrentParticipantSize();
 
         return new FindingBattleResponse(
+            battle.getId(),
             battle.getName(),
             battle.getImageUrl(),
             battle.getDifficulty().name(),
