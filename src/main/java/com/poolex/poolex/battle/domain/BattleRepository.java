@@ -18,7 +18,7 @@ public interface BattleRepository extends JpaRepository<Battle, Long> {
     List<Battle> findBattlesByMemberId(@Param("memberId") final Long memberId);
 
     @Query(
-        "select b, count(b) from Battle b "
+        "select b, count(p) from Battle b "
             + "left join BattleParticipant p "
             + "on p.battleId = b.id "
             + "where p.memberId = :memberId "
@@ -29,7 +29,7 @@ public interface BattleRepository extends JpaRepository<Battle, Long> {
     );
 
     @Query(
-        "select b as battle, count(b.id) as currentParticipantSize from Battle b "
+        "select b as battle, count(p) as currentParticipantSize from Battle b "
             + "left join BattleParticipant p "
             + "on p.battleId = b.id "
             + "where b.status = :status "
@@ -40,7 +40,7 @@ public interface BattleRepository extends JpaRepository<Battle, Long> {
     );
 
     @Query(
-        "select b as battle, count(b.id) as currentParticipantSize from Battle b "
+        "select b as battle, count(p) as currentParticipantSize from Battle b "
             + "left join BattleParticipant p "
             + "on p.battleId = b.id "
             + "where b.status in :status "
