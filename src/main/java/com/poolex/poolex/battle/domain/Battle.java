@@ -115,8 +115,12 @@ public class Battle {
         status = BattleStatus.RECRUITING;
     }
 
-    public void recruitFinish() {
+    public void finishRecruiting() {
         status = BattleStatus.RECRUITING_FINISHED;
+    }
+
+    public boolean hasSameMaxParticipantSize(final int targetSize) {
+        return maxParticipantSize.hasSameValue(targetSize);
     }
 
     public boolean hasLessOrEqualMaxParticipantSizeThen(final int targetSize) {
