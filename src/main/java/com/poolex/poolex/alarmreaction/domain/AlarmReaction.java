@@ -7,6 +7,8 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
+import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -27,6 +29,8 @@ public class AlarmReaction {
 
     @Embedded
     private AlarmReactionContent content;
+
+    private LocalDateTime createdAt;
 
     private AlarmReaction(final Long id,
                           final Long alarmId,
@@ -59,6 +63,11 @@ public class AlarmReaction {
         return withoutId(alarmId, memberId, AlarmReactionType.SCOLD, content);
     }
 
+    @PrePersist
+    public void prePersist() {
+        this.createdAt = LocalDateTime.now();
+    }
+    
     public Long getId() {
         return id;
     }
