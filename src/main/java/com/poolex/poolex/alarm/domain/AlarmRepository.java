@@ -6,4 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface AlarmRepository extends JpaRepository<Alarm, Long> {
 
     List<Alarm> findByType(final AlarmType type);
+
+    List<Alarm> findAllByBattleId(final Long battleId);
 }
