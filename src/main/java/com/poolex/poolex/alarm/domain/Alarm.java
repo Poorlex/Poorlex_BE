@@ -49,6 +49,10 @@ public class Alarm {
         this.createdAt = LocalDateTime.now();
     }
 
+    public boolean isReactable() {
+        return this.type != AlarmType.EXPENDITURE_NEEDED && this.type != AlarmType.BATTLE_NOTIFICATION_CHANGED;
+    }
+
     public Long getId() {
         return id;
     }
