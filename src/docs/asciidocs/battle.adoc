@@ -1,0 +1,25 @@
+== 배틀 API
+
+=== 멤버가 매니저로 배틀 생성
+
+operation::battle-create[snippets='http-request']
+operation::battle-create[snippets='request-fields']
+operation::battle-create[snippets='http-response']
+
+=== 멤버가 참여 가능한 배틀 조회
+
+operation::battle-find-recruiting[snippets='http-request']
+operation::battle-find-recruiting[snippets='http-response']
+operation::battle-find-recruiting[snippets='response-fields']
+
+=== 멤버가 참가한 진행중 배틀 조회
+
+operation::battle-find-participated[snippets='http-request']
+operation::battle-find-participated[snippets='http-response']
+operation::battle-find-participated[snippets='response-fields']
+
+=== 멤버가 참가한 완료된 배틀 조회
+
+operation::battle-find-complete[snippets='http-request']
+operation::battle-find-complete[snippets='http-response']
+operation::battle-find-complete[snippets='response-fields']
