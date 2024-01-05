@@ -43,4 +43,6 @@ public class ExpenditureController {
 
         return ResponseEntity.ok(response);
     }
+
+    //지출 목록 조회 API 정리, 구현
 }
