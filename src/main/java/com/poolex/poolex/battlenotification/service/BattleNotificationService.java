@@ -6,12 +6,14 @@ import com.poolex.poolex.battlenotification.domain.BattleNotificationImageUrl;
 import com.poolex.poolex.battlenotification.domain.BattleNotificationRepository;
 import com.poolex.poolex.battlenotification.service.dto.request.BattleNotificationCreateRequest;
 import com.poolex.poolex.battlenotification.service.dto.request.BattleNotificationUpdateRequest;
+import com.poolex.poolex.battlenotification.service.dto.response.BattleNotificationResponse;
 import com.poolex.poolex.battlenotification.service.event.BattleNotificationChangedEvent;
 import com.poolex.poolex.config.event.Events;
 import com.poolex.poolex.participate.domain.BattleParticipant;
 import com.poolex.poolex.participate.domain.BattleParticipantRepository;
 import com.poolex.poolex.participate.domain.BattleParticipantRole;
 import java.util.Objects;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -87,5 +89,12 @@ public class BattleNotificationService {
             return;
         }
         battleNotification.changeImage(editor, new BattleNotificationImageUrl(imageUrl));
+    }
+
+    public BattleNotificationResponse findNotificationByBattleId(final Long battleId) {
+        final Optional<BattleNotification> battleNotification = battleNotificationRepository.findByBattleId(battleId);
+        
+        return battleNotification.map(BattleNotificationResponse::from)
+            .orElseGet(BattleNotificationResponse::empty);
     }
 }

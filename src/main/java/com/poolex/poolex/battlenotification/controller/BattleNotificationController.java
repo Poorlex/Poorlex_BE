@@ -3,11 +3,13 @@ package com.poolex.poolex.battlenotification.controller;
 import com.poolex.poolex.battlenotification.service.BattleNotificationService;
 import com.poolex.poolex.battlenotification.service.dto.request.BattleNotificationCreateRequest;
 import com.poolex.poolex.battlenotification.service.dto.request.BattleNotificationUpdateRequest;
+import com.poolex.poolex.battlenotification.service.dto.response.BattleNotificationResponse;
 import com.poolex.poolex.config.auth.argumentresolver.MemberInfo;
 import com.poolex.poolex.config.auth.argumentresolver.MemberOnly;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -37,5 +39,13 @@ public class BattleNotificationController {
         battleNotificationService.updateNotification(battleId, memberInfo.getMemberId(), request);
 
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping
+    public ResponseEntity<BattleNotificationResponse> findNotification(
+        @PathVariable(name = "battleId") final Long battleId) {
+        final BattleNotificationResponse response = battleNotificationService.findNotificationByBattleId(battleId);
+
+        return ResponseEntity.ok(response);
     }
 }
