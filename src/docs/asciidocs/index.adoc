@@ -6,3 +6,4 @@
 :sectlinks:
 
 include::battle.adoc[]
+include::weekly-budget.adoc[]
