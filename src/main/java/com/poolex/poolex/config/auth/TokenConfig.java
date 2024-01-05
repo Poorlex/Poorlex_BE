@@ -1,10 +1,7 @@
 package com.poolex.poolex.config.auth;
 
-import com.poolex.poolex.auth.domain.MemberRepository;
 import com.poolex.poolex.config.auth.argumentresolver.MemberArgumentResolver;
-import com.poolex.poolex.config.auth.interceptor.RequestMemberInfo;
 import com.poolex.poolex.config.auth.interceptor.TokenInterceptor;
-import com.poolex.poolex.token.JwtTokenProvider;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
@@ -16,15 +13,12 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @RequiredArgsConstructor
 public class TokenConfig implements WebMvcConfigurer {
 
-    private final JwtTokenProvider tokenProvider;
-
-    private final MemberRepository memberRepository;
-
-    private final RequestMemberInfo requestMemberInfo;
+    private final TokenInterceptor tokenInterceptor;
+    private final MemberArgumentResolver memberArgumentResolver;
 
     @Override
     public void addInterceptors(final InterceptorRegistry registry) {
-        registry.addInterceptor(tokenInterceptor())
+        registry.addInterceptor(tokenInterceptor)
             .addPathPatterns("/battles/**")
             .excludePathPatterns("/battles/*/alarms")
             .addPathPatterns("/expenditures/**")
@@ -35,14 +29,6 @@ public class TokenConfig implements WebMvcConfigurer {
 
     @Override
     public void addArgumentResolvers(final List<HandlerMethodArgumentResolver> resolvers) {
-        resolvers.add(memberArgumentResolver());
-    }
-
-    private TokenInterceptor tokenInterceptor() {
-        return new TokenInterceptor(tokenProvider, memberRepository, requestMemberInfo);
-    }
-
-    private MemberArgumentResolver memberArgumentResolver() {
-        return new MemberArgumentResolver(requestMemberInfo);
+        resolvers.add(memberArgumentResolver);
     }
 }
