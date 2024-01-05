@@ -13,10 +13,7 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWit
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.poolex.poolex.config.auth.argumentresolver.MemberArgumentResolver;
-import com.poolex.poolex.config.auth.argumentresolver.MemberInfo;
-import com.poolex.poolex.config.auth.interceptor.TokenInterceptor;
+import com.poolex.poolex.support.RestDocsDocumentationTest;
 import com.poolex.poolex.weeklybudget.controller.WeeklyBudgetController;
 import com.poolex.poolex.weeklybudget.service.WeeklyBudgetService;
 import com.poolex.poolex.weeklybudget.service.dto.request.WeeklyBudgetCreateRequest;
@@ -26,36 +23,22 @@ import com.poolex.poolex.weeklybudget.service.dto.response.WeeklyBudgetLeftRespo
 import com.poolex.poolex.weeklybudget.service.dto.response.WeeklyBudgetResponse;
 import java.time.LocalDateTime;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-@ExtendWith(SpringExtension.class)
 @WebMvcTest(WeeklyBudgetController.class)
-@AutoConfigureRestDocs
-class WeeklyBudgetDocumentationTest {
+class WeeklyBudgetDocumentationTest extends RestDocsDocumentationTest {
 
     @Autowired
-    protected MockMvc mockMvc;
-
-    @Autowired
-    protected ObjectMapper objectMapper;
-
-    @MockBean
-    private TokenInterceptor tokenInterceptor;
-
-    @MockBean
-    private MemberArgumentResolver memberArgumentResolver;
+    private MockMvc mockMvc;
 
     @MockBean
     private WeeklyBudgetService weeklyBudgetService;
@@ -64,8 +47,9 @@ class WeeklyBudgetDocumentationTest {
     void create() throws Exception {
         //given
         final WeeklyBudgetCreateRequest request = new WeeklyBudgetCreateRequest(10000);
-        given(tokenInterceptor.preHandle(any(), any(), any())).willReturn(true);
-        given(memberArgumentResolver.resolveArgument(any(), any(), any(), any())).willReturn(new MemberInfo(1L));
+
+        mockingTokenInterceptor();
+        mockingMemberArgumentResolver();
         doNothing().when(weeklyBudgetService).createBudget(anyLong(), anyInt());
 
         //when
@@ -93,8 +77,8 @@ class WeeklyBudgetDocumentationTest {
         //given
         final WeeklyBudgetRequest request = new WeeklyBudgetRequest(LocalDateTime.now());
 
-        given(tokenInterceptor.preHandle(any(), any(), any())).willReturn(true);
-        given(memberArgumentResolver.resolveArgument(any(), any(), any(), any())).willReturn(new MemberInfo(1L));
+        mockingTokenInterceptor();
+        mockingMemberArgumentResolver();
         given(weeklyBudgetService.findCurrentBudgetByMemberIdAndDate(any(), any())).willReturn(
             new WeeklyBudgetResponse(true, 10000)
         );
@@ -129,8 +113,8 @@ class WeeklyBudgetDocumentationTest {
         //given
         final WeeklyBudgetLeftRequest request = new WeeklyBudgetLeftRequest(LocalDateTime.now());
 
-        given(tokenInterceptor.preHandle(any(), any(), any())).willReturn(true);
-        given(memberArgumentResolver.resolveArgument(any(), any(), any(), any())).willReturn(new MemberInfo(1L));
+        mockingTokenInterceptor();
+        mockingMemberArgumentResolver();
         given(weeklyBudgetService.findCurrentBudgetLeftByMemberIdAndDate(any(), any())).willReturn(
             new WeeklyBudgetLeftResponse(true, 10000)
         );

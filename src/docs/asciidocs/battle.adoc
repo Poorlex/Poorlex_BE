@@ -23,3 +23,13 @@ operation::battle-find-participated[snippets='response-fields']
 operation::battle-find-complete[snippets='http-request']
 operation::battle-find-complete[snippets='http-response']
 operation::battle-find-complete[snippets='response-fields']
+
+=== 멤버 배틀 참가
+
+operation::battle-participate[snippets='http-request']
+operation::battle-participate[snippets='http-response']
+
+=== 멤버 배틀 참가 취소
+
+operation::battle-participate-cancel[snippets='http-request']
+operation::battle-participate-cancel[snippets='http-response']

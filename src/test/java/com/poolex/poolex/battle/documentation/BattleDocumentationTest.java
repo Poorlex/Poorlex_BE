@@ -11,49 +11,32 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.requestF
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.poolex.poolex.battle.controller.BattleController;
 import com.poolex.poolex.battle.service.BattleService;
 import com.poolex.poolex.battle.service.dto.request.BattleCreateRequest;
 import com.poolex.poolex.battle.service.dto.response.FindingBattleResponse;
 import com.poolex.poolex.battle.service.dto.response.MemberCompleteBattleResponse;
 import com.poolex.poolex.battle.service.dto.response.MemberProgressBattleResponse;
-import com.poolex.poolex.config.auth.argumentresolver.MemberArgumentResolver;
-import com.poolex.poolex.config.auth.argumentresolver.MemberInfo;
-import com.poolex.poolex.config.auth.interceptor.TokenInterceptor;
+import com.poolex.poolex.support.RestDocsDocumentationTest;
 import java.util.List;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-@ExtendWith(SpringExtension.class)
 @WebMvcTest(BattleController.class)
-@AutoConfigureRestDocs
-class BattleDocumentationTest {
+class BattleDocumentationTest extends RestDocsDocumentationTest {
 
     @Autowired
     protected MockMvc mockMvc;
-
-    @Autowired
-    protected ObjectMapper objectMapper;
-
-    @MockBean
-    private TokenInterceptor tokenInterceptor;
-
-    @MockBean
-    private MemberArgumentResolver memberArgumentResolver;
-
+    
     @MockBean
     private BattleService battleService;
 
@@ -67,8 +50,8 @@ class BattleDocumentationTest {
             10000,
             10
         );
-        given(tokenInterceptor.preHandle(any(), any(), any())).willReturn(true);
-        given(memberArgumentResolver.resolveArgument(any(), any(), any(), any())).willReturn(new MemberInfo(1L));
+        mockingTokenInterceptor();
+        mockingMemberArgumentResolver();
         given(battleService.create(any(), any())).willReturn(1L);
 
         //when
@@ -98,8 +81,8 @@ class BattleDocumentationTest {
     @Test
     void find_recruiting() throws Exception {
         //given
-        given(tokenInterceptor.preHandle(any(), any(), any())).willReturn(true);
-        given(memberArgumentResolver.resolveArgument(any(), any(), any(), any())).willReturn(new MemberInfo(1L));
+        mockingTokenInterceptor();
+        mockingMemberArgumentResolver();
         given(battleService.findBattlesToPlay()).willReturn(
             List.of(
                 new FindingBattleResponse(1L, "첫번째 배틀명", "첫번째 배틀 이미지 링크", "HARD", 10000, 2, 10),
@@ -136,8 +119,8 @@ class BattleDocumentationTest {
     @Test
     void find_progressing() throws Exception {
         //given
-        given(tokenInterceptor.preHandle(any(), any(), any())).willReturn(true);
-        given(memberArgumentResolver.resolveArgument(any(), any(), any(), any())).willReturn(new MemberInfo(1L));
+        mockingTokenInterceptor();
+        mockingMemberArgumentResolver();
         given(battleService.findProgressMemberBattles(any(), any())).willReturn(
             List.of(
                 new MemberProgressBattleResponse(1L, "첫번째 배틀명", "첫번째 배틀 이미지 링크", "HARD", 5, 10000, 1, 10),
@@ -176,8 +159,8 @@ class BattleDocumentationTest {
     @Test
     void find_complete() throws Exception {
         //given
-        given(tokenInterceptor.preHandle(any(), any(), any())).willReturn(true);
-        given(memberArgumentResolver.resolveArgument(any(), any(), any(), any())).willReturn(new MemberInfo(1L));
+        mockingTokenInterceptor();
+        mockingMemberArgumentResolver();
         given(battleService.findCompleteMemberBattles(any(), any())).willReturn(
             List.of(
                 new MemberCompleteBattleResponse(1L, "첫번째 배틀명", "첫번째 배틀 이미지 링크", "HARD", 5, 10000, 1, 10, 30),
