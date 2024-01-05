@@ -19,7 +19,6 @@ import com.poolex.poolex.support.IntegrationTest;
 import com.poolex.poolex.support.ReplaceUnderScoreTest;
 import com.poolex.poolex.support.TestMemberTokenGenerator;
 import com.poolex.poolex.token.JwtTokenProvider;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -70,14 +69,13 @@ class ExpenditureControllerTest extends IntegrationTest implements ReplaceUnderS
     void 멤버의_기간중의_지출의_총합을_구한다_지출이_있을_때() throws Exception {
         //given
         final Member member = createMember("oauthId");
-        final LocalDateTime date = LocalDateTime.now();
+        final LocalDateTime dateTime = LocalDateTime.now();
 
-        createExpenditure(1000, member.getId(), date);
-        createExpenditure(2000, member.getId(), date);
+        createExpenditure(1000, member.getId(), dateTime);
+        createExpenditure(2000, member.getId(), dateTime);
 
         final String accessToken = testMemberTokenGenerator.createAccessToken(member);
-        final MemberWeeklyTotalExpenditureRequest request =
-            new MemberWeeklyTotalExpenditureRequest(LocalDate.from(date));
+        final MemberWeeklyTotalExpenditureRequest request = new MemberWeeklyTotalExpenditureRequest(dateTime);
 
         //when
         //then
@@ -96,14 +94,14 @@ class ExpenditureControllerTest extends IntegrationTest implements ReplaceUnderS
     void 멤버의_기간중의_지출의_총합을_구한다_지출이_없을_때() throws Exception {
         //given
         final Member member = createMember("oauthId");
-        final LocalDateTime date = LocalDateTime.now();
+        final LocalDateTime dateTime = LocalDateTime.now();
 
-        createExpenditure(1000, member.getId(), date);
-        createExpenditure(2000, member.getId(), date);
+        createExpenditure(1000, member.getId(), dateTime);
+        createExpenditure(2000, member.getId(), dateTime);
 
         final String accessToken = testMemberTokenGenerator.createAccessToken(member);
         final MemberWeeklyTotalExpenditureRequest request =
-            new MemberWeeklyTotalExpenditureRequest(LocalDate.from(date).plusDays(7));
+            new MemberWeeklyTotalExpenditureRequest(dateTime.plusDays(7));
 
         //when
         //then

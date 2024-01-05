@@ -16,7 +16,6 @@ import com.poolex.poolex.expenditure.service.dto.request.MemberWeeklyTotalExpend
 import com.poolex.poolex.expenditure.service.dto.response.MemberWeeklyTotalExpenditureResponse;
 import com.poolex.poolex.support.ReplaceUnderScoreTest;
 import com.poolex.poolex.support.UsingDataJpaTest;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -78,8 +77,8 @@ class ExpenditureServiceTest extends UsingDataJpaTest implements ReplaceUnderSco
         createExpenditure(1000, member.getId(), date);
         createExpenditure(2000, member.getId(), date);
 
-        final MemberWeeklyTotalExpenditureRequest request = new MemberWeeklyTotalExpenditureRequest(
-            LocalDate.from(date));
+        final MemberWeeklyTotalExpenditureRequest request =
+            new MemberWeeklyTotalExpenditureRequest(LocalDateTime.from(date));
 
         //when
         final MemberWeeklyTotalExpenditureResponse response = expenditureService.findMemberWeeklyTotalExpenditure(
@@ -100,9 +99,8 @@ class ExpenditureServiceTest extends UsingDataJpaTest implements ReplaceUnderSco
         createExpenditure(1000, member.getId(), date);
         createExpenditure(2000, member.getId(), date);
 
-        final MemberWeeklyTotalExpenditureRequest request = new MemberWeeklyTotalExpenditureRequest(
-            LocalDate.from(date).plusDays(7)
-        );
+        final MemberWeeklyTotalExpenditureRequest request =
+            new MemberWeeklyTotalExpenditureRequest(LocalDateTime.from(date).plusDays(7));
 
         //when
         final MemberWeeklyTotalExpenditureResponse response = expenditureService.findMemberWeeklyTotalExpenditure(
