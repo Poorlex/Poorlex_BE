@@ -1,8 +1,8 @@
-= Spring REST Docs Test
+= PoorLex API 문서
 :doctype: book
 :source-highlighter: highlightjs
 :toc: left
 :toclevels: 2
-:seclinks:
+:sectlinks:
 
 include::battle.adoc[]
