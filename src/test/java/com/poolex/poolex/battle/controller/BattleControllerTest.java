@@ -100,7 +100,7 @@ class BattleControllerTest extends IntegrationTest implements ReplaceUnderScoreT
             .andExpect(jsonPath("$[0].name").value("name"))
             .andExpect(jsonPath("$[0].imageUrl").value("imageUrl"))
             .andExpect(jsonPath("$[0].difficulty").value("HARD"))
-            .andExpect(jsonPath("$[0].dday").exists())
+            .andExpect(jsonPath("$[0].budget").value(10000))
             .andExpect(jsonPath("$[0].currentParticipant").value(2))
             .andExpect(jsonPath("$[0].maxParticipantCount").value(10));
     }
@@ -133,7 +133,7 @@ class BattleControllerTest extends IntegrationTest implements ReplaceUnderScoreT
             .andExpect(jsonPath("$[0].dday").value(battle.getDDay(LocalDate.now())))
             .andExpect(jsonPath("$[0].budgetLeft").value(10000 - 1000))
             .andExpect(jsonPath("$[0].currentParticipantRank").value(2))
-            .andExpect(jsonPath("$[0].maxParticipantCount").value(10));
+            .andExpect(jsonPath("$[0].battleParticipantCount").value(2));
     }
 
     @Test
@@ -166,7 +166,7 @@ class BattleControllerTest extends IntegrationTest implements ReplaceUnderScoreT
             .andExpect(jsonPath("$[0].budgetLeft").value(10000 - 1000))
             .andExpect(jsonPath("$[0].earnedPoint").value(20))
             .andExpect(jsonPath("$[0].currentParticipantRank").value(2))
-            .andExpect(jsonPath("$[0].maxParticipantCount").value(10));
+            .andExpect(jsonPath("$[0].battleParticipantCount").value(2));
     }
 
     private Long createBattle() throws Exception {

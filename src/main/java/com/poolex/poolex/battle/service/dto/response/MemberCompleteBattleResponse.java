@@ -17,12 +17,13 @@ public class MemberCompleteBattleResponse {
     private final long pastDay;
     private final int budgetLeft;
     private final int currentParticipantRank;
-    private final int maxParticipantCount;
+    private final int battleParticipantCount;
     private final int earnedPoint;
 
     public static MemberCompleteBattleResponse from(final BattleWithMemberExpenditure battleInfo,
                                                     final LocalDate current,
-                                                    final int currentParticipantRank) {
+                                                    final int currentParticipantRank,
+                                                    final int battleParticipantCount) {
         final Battle battle = battleInfo.getBattle();
 
         return new MemberCompleteBattleResponse(
@@ -33,7 +34,7 @@ public class MemberCompleteBattleResponse {
             battle.getPastDay(current),
             battle.getBudgetLeft(battleInfo.getExpenditure()),
             currentParticipantRank,
-            battle.getMaxParticipantSize().getValue(),
+            battleParticipantCount,
             battle.getBattleType().getScore(currentParticipantRank)
         );
     }

@@ -17,11 +17,12 @@ public class MemberProgressBattleResponse {
     private final long dDay;
     private final int budgetLeft;
     private final int currentParticipantRank;
-    private final int maxParticipantCount;
+    private final int battleParticipantCount;
 
     public static MemberProgressBattleResponse from(final BattleWithMemberExpenditure battleInfo,
                                                     final LocalDate current,
-                                                    final int currentParticipantRank) {
+                                                    final int currentParticipantRank,
+                                                    final int battleParticipantCount) {
         final Battle battle = battleInfo.getBattle();
 
         return new MemberProgressBattleResponse(
@@ -32,7 +33,7 @@ public class MemberProgressBattleResponse {
             battle.getDDay(current),
             battle.getBudgetLeft(battleInfo.getExpenditure()),
             currentParticipantRank,
-            battle.getMaxParticipantSize().getValue()
+            battleParticipantCount
         );
     }
 }

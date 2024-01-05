@@ -2,7 +2,6 @@ package com.poolex.poolex.battle.service.dto.response;
 
 import com.poolex.poolex.battle.domain.Battle;
 import com.poolex.poolex.battle.domain.BattleWithCurrentParticipantSize;
-import java.time.LocalDate;
 import java.util.List;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +14,7 @@ public class FindingBattleResponse {
     private final String name;
     private final String imageUrl;
     private final String difficulty;
-    private final long dDay;
+    private final int budget;
     private final int currentParticipant;
     private final int maxParticipantCount;
 
@@ -34,7 +33,7 @@ public class FindingBattleResponse {
             battle.getName(),
             battle.getImageUrl(),
             battle.getDifficulty().name(),
-            battle.getDDay(LocalDate.now()),
+            battle.getBudget(),
             currentParticipantSize,
             battle.getMaxParticipantSize().getValue()
         );

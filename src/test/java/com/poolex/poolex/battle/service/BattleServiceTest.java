@@ -62,7 +62,7 @@ class BattleServiceTest extends UsingDataJpaTest implements ReplaceUnderScoreTes
 
     @BeforeEach
     void setUp() {
-        battleService = new BattleService(battleRepository);
+        battleService = new BattleService(battleRepository, battleParticipantRepository);
     }
 
     @Test
