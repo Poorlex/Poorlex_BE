@@ -7,5 +7,5 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class MemberPointResponse {
 
-    private final int point;
+    private final int totalPoint;
 }

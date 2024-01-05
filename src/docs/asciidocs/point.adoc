@@ -1,0 +1,13 @@
+== 멤버 포인트 API
+
+=== 멤버 포인트 지급
+
+operation::member-point-create[snippets='http-request']
+operation::member-point-create[snippets='request-fields']
+operation::member-point-create[snippets='http-response']
+
+=== 멤버 총 포인트 조회
+
+operation::member-total-point-find[snippets='http-request']
+operation::member-total-point-find[snippets='http-response']
+operation::member-total-point-find[snippets='response-fields']

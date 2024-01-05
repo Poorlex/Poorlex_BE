@@ -64,6 +64,6 @@ class MemberPointServiceTest extends UsingDataJpaTest implements ReplaceUnderSco
         final MemberPointResponse response = memberPointService.findMemberSumPoint(member.getId());
 
         //then
-        assertThat(response.getPoint()).isEqualTo(10);
+        assertThat(response.getTotalPoint()).isEqualTo(10);
     }
 }

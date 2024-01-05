@@ -74,7 +74,7 @@ class MemberPointControllerTest extends IntegrationTest implements ReplaceUnderS
             )
             .andDo(print())
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.point").value(memberPoint.getPoint()));
+            .andExpect(jsonPath("$.totalPoint").value(memberPoint.getPoint()));
     }
 
     private Member createMember(final String oauthId) {
