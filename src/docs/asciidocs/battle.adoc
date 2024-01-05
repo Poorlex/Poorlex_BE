@@ -1,35 +1,53 @@
 == 배틀 API
 
-=== 멤버가 매니저로 배틀 생성
+=== 배틀 생성
 
 operation::battle-create[snippets='http-request']
 operation::battle-create[snippets='request-fields']
 operation::battle-create[snippets='http-response']
 
-=== 멤버가 참여 가능한 배틀 조회
+=== 배틀 조회 [ 미참가 ]
 
 operation::battle-find-recruiting[snippets='http-request']
 operation::battle-find-recruiting[snippets='http-response']
 operation::battle-find-recruiting[snippets='response-fields']
 
-=== 멤버가 참가한 진행중 배틀 조회
+=== 배틀 조회 [ 참가, 진행중 ]
 
 operation::battle-find-participated[snippets='http-request']
 operation::battle-find-participated[snippets='http-response']
 operation::battle-find-participated[snippets='response-fields']
 
-=== 멤버가 참가한 완료된 배틀 조회
+=== 배틀 조회 [ 참가, 완료 ]
 
 operation::battle-find-complete[snippets='http-request']
 operation::battle-find-complete[snippets='http-response']
 operation::battle-find-complete[snippets='response-fields']
 
-=== 멤버 배틀 참가
+=== 배틀 참가
 
 operation::battle-participate[snippets='http-request']
 operation::battle-participate[snippets='http-response']
 
-=== 멤버 배틀 참가 취소
+=== 배틀 참가 취소
 
 operation::battle-participate-cancel[snippets='http-request']
 operation::battle-participate-cancel[snippets='http-response']
+
+=== 배틀 공지 조회
+
+operation::battle-notification-find[snippets='http-request']
+operation::battle-notification-find[snippets='http-response']
+operation::battle-notification-find[snippets='response-fields']
+
+=== 배틀 공지 생성 [ 배틀 매니저 ]
+
+operation::battle-notification-create[snippets='http-request']
+operation::battle-notification-create[snippets='request-fields']
+operation::battle-notification-create[snippets='http-response']
+
+=== 배틀 공지 수정 [ 배틀 매니저 ]
+
+operation::battle-notification-update[snippets='http-request']
+operation::battle-notification-update[snippets='request-fields']
+operation::battle-notification-update[snippets='http-response']
