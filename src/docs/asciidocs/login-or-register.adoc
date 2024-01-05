@@ -1,0 +1,13 @@
+== 로그인, 회원 가입 API
+
+=== 로그인
+
+operation::login-or-register[snippets='http-request']
+operation::login-or-register[snippets='http-response']
+operation::login-or-register[snippets='response-fields']
+
+=== 회원 가입
+
+operation::login-or-register[snippets='http-request']
+operation::login-or-register[snippets='http-response']
+operation::login-or-register[snippets='response-fields']
