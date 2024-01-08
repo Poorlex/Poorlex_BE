@@ -12,6 +12,8 @@ import static org.springframework.restdocs.operation.preprocess.Preprocessors.pr
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 import com.poolex.poolex.support.RestDocsDocumentationTest;
 import com.poolex.poolex.weeklybudget.controller.WeeklyBudgetController;
@@ -31,7 +33,6 @@ import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 @WebMvcTest(WeeklyBudgetController.class)
@@ -54,7 +55,7 @@ class WeeklyBudgetDocumentationTest extends RestDocsDocumentationTest {
 
         //when
         final ResultActions result = mockMvc.perform(
-            MockMvcRequestBuilders.post("/weekly-budgets")
+            post("/weekly-budgets")
                 .header(HttpHeaders.AUTHORIZATION, "Bearer {accessToken}")
                 .content(objectMapper.writeValueAsString(request))
                 .contentType(MediaType.APPLICATION_JSON)
@@ -80,12 +81,12 @@ class WeeklyBudgetDocumentationTest extends RestDocsDocumentationTest {
         mockingTokenInterceptor();
         mockingMemberArgumentResolver();
         given(weeklyBudgetService.findCurrentBudgetByMemberIdAndDate(any(), any())).willReturn(
-            new WeeklyBudgetResponse(true, 10000)
+            new WeeklyBudgetResponse(true, 10000, 5)
         );
 
         //when
         final ResultActions result = mockMvc.perform(
-            MockMvcRequestBuilders.get("/weekly-budgets")
+            get("/weekly-budgets")
                 .header(HttpHeaders.AUTHORIZATION, "Bearer {accessToken}")
                 .content(objectMapper.writeValueAsString(request))
                 .contentType(MediaType.APPLICATION_JSON)
@@ -103,7 +104,8 @@ class WeeklyBudgetDocumentationTest extends RestDocsDocumentationTest {
                     ),
                     responseFields(
                         fieldWithPath("exist").type(JsonFieldType.BOOLEAN).description("요청 시간이 포함된 주의 주간 예산 등록 여부"),
-                        fieldWithPath("amount").type(JsonFieldType.NUMBER).description("요청 시간이 포함된 주의 주간 예산")
+                        fieldWithPath("amount").type(JsonFieldType.NUMBER).description("요청 시간이 포함된 주의 주간 예산"),
+                        fieldWithPath("dday").type(JsonFieldType.NUMBER).description("요청 시간이 포함된 주의 종료까지의 D-Day")
                     )
                 ));
     }
@@ -121,7 +123,7 @@ class WeeklyBudgetDocumentationTest extends RestDocsDocumentationTest {
 
         //when
         final ResultActions result = mockMvc.perform(
-            MockMvcRequestBuilders.get("/weekly-budgets/left")
+            get("/weekly-budgets/left")
                 .header(HttpHeaders.AUTHORIZATION, "Bearer {accessToken}")
                 .content(objectMapper.writeValueAsString(request))
                 .contentType(MediaType.APPLICATION_JSON)

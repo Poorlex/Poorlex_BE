@@ -5,6 +5,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -35,6 +37,10 @@ public class WeeklyBudget {
                                          final WeeklyBudgetDuration duration,
                                          final Long memberId) {
         return new WeeklyBudget(null, amount, duration, memberId);
+    }
+
+    public long getDDay(final LocalDateTime current) {
+        return ChronoUnit.DAYS.between(current, duration.getEnd());
     }
 
     public Long getId() {

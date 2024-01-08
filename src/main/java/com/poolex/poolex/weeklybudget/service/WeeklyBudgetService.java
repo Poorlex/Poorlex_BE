@@ -34,10 +34,10 @@ public class WeeklyBudgetService {
 
     public WeeklyBudgetResponse findCurrentBudgetByMemberIdAndDate(final Long memberId, final LocalDateTime date) {
         validateMemberId(memberId);
-        final WeeklyBudget weeklyBudget = weeklyBudgetRepository.findByMemberIdAndCurrentDate(memberId, date)
-            .orElse(null);
-
-        return WeeklyBudgetResponse.from(weeklyBudget);
+        
+        return weeklyBudgetRepository.findByMemberIdAndCurrentDate(memberId, date)
+            .map(findWeeklyBudget -> WeeklyBudgetResponse.exist(findWeeklyBudget, findWeeklyBudget.getDDay(date)))
+            .orElseGet(WeeklyBudgetResponse::empty);
     }
 
     private void validateMemberId(final Long memberId) {

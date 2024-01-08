@@ -88,7 +88,8 @@ class WeeklyBudgetControllerTest extends IntegrationTest implements ReplaceUnder
             .andDo(print())
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.exist").value(true))
-            .andExpect(jsonPath("$.amount").value(10000));
+            .andExpect(jsonPath("$.amount").value(10000))
+            .andExpect(jsonPath("$.dday").value(6));
     }
 
     @Test
@@ -109,7 +110,8 @@ class WeeklyBudgetControllerTest extends IntegrationTest implements ReplaceUnder
             .andDo(print())
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.exist").value(false))
-            .andExpect(jsonPath("$.amount").value(0));
+            .andExpect(jsonPath("$.amount").value(0))
+            .andExpect(jsonPath("$.dday").value(0));
     }
 
     @Test
