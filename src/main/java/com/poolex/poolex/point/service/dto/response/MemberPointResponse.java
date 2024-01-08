@@ -8,4 +8,5 @@ import lombok.RequiredArgsConstructor;
 public class MemberPointResponse {
 
     private final int totalPoint;
+    private final int level;
 }

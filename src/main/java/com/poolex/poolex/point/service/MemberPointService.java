@@ -1,5 +1,6 @@
 package com.poolex.poolex.point.service;
 
+import com.poolex.poolex.auth.domain.MemberLevel;
 import com.poolex.poolex.auth.domain.MemberRepository;
 import com.poolex.poolex.point.domain.MemberPoint;
 import com.poolex.poolex.point.domain.MemberPointRepository;
@@ -28,7 +29,9 @@ public class MemberPointService {
 
     public MemberPointResponse findMemberSumPoint(final Long memberId) {
         final int sumPoint = memberPointRepository.findSumByMemberId(memberId);
-        
-        return new MemberPointResponse(sumPoint);
+        final MemberLevel memberLevel = MemberLevel.findByPoint(new Point(sumPoint))
+            .orElseThrow(IllegalArgumentException::new);
+
+        return new MemberPointResponse(sumPoint, memberLevel.getNumber());
     }
 }
