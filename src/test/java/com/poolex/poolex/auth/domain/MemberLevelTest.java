@@ -28,4 +28,21 @@ class MemberLevelTest implements ReplaceUnderScoreTest {
         //then
         assertThat(memberLevel).isEqualTo(expectedLevel);
     }
+
+    @ParameterizedTest(name = "레벨이 {0}일 때")
+    @CsvSource(value = {
+        "LEVEL_4:LEVEL_5",
+        "LEVEL_3:LEVEL_4",
+        "LEVEL_2:LEVEL_3",
+        "LEVEL_1:LEVEL_2"
+    }, delimiter = ':')
+    void 레벨의_구간의_길이를_반환한다(final MemberLevel currentLevel, final MemberLevel nextLevel) {
+        //given
+        //when
+        final int levelRange = currentLevel.getLevelRange();
+
+        //then
+        final int expectedRange = nextLevel.getLowerBound() - currentLevel.getLowerBound();
+        assertThat(levelRange).isEqualTo(expectedRange);
+    }
 }
