@@ -25,7 +25,19 @@ public enum MemberLevel {
             .findFirst();
     }
 
+    public int getLevelRange() {
+        if (this == LEVEL_5) {
+            return 0;
+        }
+        final MemberLevel nextLevel = values()[ordinal() - 1];
+        return nextLevel.lowerBound - this.lowerBound;
+    }
+
     public int getNumber() {
         return number;
+    }
+
+    public int getLowerBound() {
+        return lowerBound;
     }
 }

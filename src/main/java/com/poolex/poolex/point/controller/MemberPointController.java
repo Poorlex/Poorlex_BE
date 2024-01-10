@@ -4,6 +4,7 @@ import com.poolex.poolex.config.auth.argumentresolver.MemberInfo;
 import com.poolex.poolex.config.auth.argumentresolver.MemberOnly;
 import com.poolex.poolex.point.service.MemberPointService;
 import com.poolex.poolex.point.service.dto.request.PointCreateRequest;
+import com.poolex.poolex.point.service.dto.response.MemberLevelBarResponse;
 import com.poolex.poolex.point.service.dto.response.MemberPointResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -32,6 +33,12 @@ public class MemberPointController {
     @GetMapping
     public ResponseEntity<MemberPointResponse> findMemberSumPointAndLevel(@MemberOnly final MemberInfo memberInfo) {
         final MemberPointResponse response = memberPointService.findMemberSumPoint(memberInfo.getMemberId());
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/level-bar")
+    public ResponseEntity<MemberLevelBarResponse> findPointsForLevelBar(@MemberOnly final MemberInfo memberInfo) {
+        final MemberLevelBarResponse response = memberPointService.findPointsForLevelBar(memberInfo.getMemberId());
         return ResponseEntity.ok(response);
     }
 }
