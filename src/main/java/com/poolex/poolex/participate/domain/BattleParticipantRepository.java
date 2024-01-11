@@ -12,4 +12,6 @@ public interface BattleParticipantRepository extends JpaRepository<BattlePartici
     boolean existsByBattleIdAndMemberIdAndRole(final Long battleId,
                                                final Long memberId,
                                                final BattleParticipantRole role);
+
+    boolean existsByBattleIdAndMemberId(final Long battleId, final Long memberId);
 }

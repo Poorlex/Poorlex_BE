@@ -1,4 +1,4 @@
-package com.poolex.poolex.alarm.service.dto.request;
+package com.poolex.poolex.alarm.service.dto.response;
 
 import com.poolex.poolex.alarm.domain.Alarm;
 import java.time.LocalDateTime;

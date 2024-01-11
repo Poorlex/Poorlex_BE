@@ -20,7 +20,6 @@ public class TokenConfig implements WebMvcConfigurer {
     public void addInterceptors(final InterceptorRegistry registry) {
         registry.addInterceptor(tokenInterceptor)
             .addPathPatterns("/battles/**")
-            .excludePathPatterns("/battles/*/alarms")
             .addPathPatterns("/expenditures/**")
             .addPathPatterns("/points/**")
             .addPathPatterns("/weekly-budgets/**")
