@@ -1,4 +1,4 @@
-package com.poolex.poolex.auth.domain;
+package com.poolex.poolex.member.domain;
 
 import com.poolex.poolex.point.domain.Point;
 import java.util.Arrays;

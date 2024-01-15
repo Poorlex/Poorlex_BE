@@ -6,10 +6,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.poolex.poolex.auth.domain.Member;
-import com.poolex.poolex.auth.domain.MemberLevel;
-import com.poolex.poolex.auth.domain.MemberNickname;
-import com.poolex.poolex.auth.domain.MemberRepository;
+import com.poolex.poolex.member.domain.Member;
+import com.poolex.poolex.member.domain.MemberLevel;
+import com.poolex.poolex.member.domain.MemberNickname;
+import com.poolex.poolex.member.domain.MemberRepository;
 import com.poolex.poolex.point.domain.MemberPoint;
 import com.poolex.poolex.point.domain.MemberPointRepository;
 import com.poolex.poolex.point.domain.Point;

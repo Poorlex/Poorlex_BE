@@ -1,10 +1,10 @@
 package com.poolex.poolex.auth.service;
 
-import com.poolex.poolex.auth.domain.Member;
-import com.poolex.poolex.auth.domain.MemberNickname;
-import com.poolex.poolex.auth.domain.MemberRepository;
 import com.poolex.poolex.auth.service.dto.request.LoginRequest;
 import com.poolex.poolex.auth.service.dto.response.LoginTokenResponse;
+import com.poolex.poolex.member.domain.Member;
+import com.poolex.poolex.member.domain.MemberNickname;
+import com.poolex.poolex.member.domain.MemberRepository;
 import com.poolex.poolex.token.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

@@ -4,14 +4,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
-import com.poolex.poolex.auth.domain.Member;
-import com.poolex.poolex.auth.domain.MemberNickname;
-import com.poolex.poolex.auth.domain.MemberRepository;
 import com.poolex.poolex.battle.domain.Battle;
 import com.poolex.poolex.battle.domain.BattleParticipantSize;
 import com.poolex.poolex.battle.domain.BattleRepository;
 import com.poolex.poolex.battle.domain.BattleStatus;
 import com.poolex.poolex.battle.fixture.BattleFixture;
+import com.poolex.poolex.member.domain.Member;
+import com.poolex.poolex.member.domain.MemberNickname;
+import com.poolex.poolex.member.domain.MemberRepository;
 import com.poolex.poolex.participate.domain.BattleParticipant;
 import com.poolex.poolex.participate.domain.BattleParticipantRepository;
 import com.poolex.poolex.support.ReplaceUnderScoreTest;

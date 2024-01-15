@@ -16,7 +16,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.poolex.poolex.auth.domain.MemberLevel;
+import com.poolex.poolex.member.domain.MemberLevel;
 import com.poolex.poolex.point.controller.MemberPointController;
 import com.poolex.poolex.point.service.MemberPointService;
 import com.poolex.poolex.point.service.dto.request.PointCreateRequest;
@@ -76,7 +76,7 @@ class MemberPointDocumentationTest extends RestDocsDocumentationTest {
         //given
         mockingTokenInterceptor();
         mockingMemberArgumentResolver();
-        given(memberPointService.findMemberSumPoint(any()))
+        given(memberPointService.findMemberTotalPoint(any()))
             .willReturn(new MemberPointResponse(1000, MemberLevel.LEVEL_4.getNumber()));
 
         //when

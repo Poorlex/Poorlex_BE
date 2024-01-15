@@ -3,10 +3,10 @@ package com.poolex.poolex.point.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
-import com.poolex.poolex.auth.domain.Member;
-import com.poolex.poolex.auth.domain.MemberLevel;
-import com.poolex.poolex.auth.domain.MemberNickname;
-import com.poolex.poolex.auth.domain.MemberRepository;
+import com.poolex.poolex.member.domain.Member;
+import com.poolex.poolex.member.domain.MemberLevel;
+import com.poolex.poolex.member.domain.MemberNickname;
+import com.poolex.poolex.member.domain.MemberRepository;
 import com.poolex.poolex.point.domain.MemberPoint;
 import com.poolex.poolex.point.domain.MemberPointRepository;
 import com.poolex.poolex.point.domain.Point;
@@ -63,7 +63,7 @@ class MemberPointServiceTest extends UsingDataJpaTest implements ReplaceUnderSco
         memberPointRepository.save(MemberPoint.withoutId(new Point(10), member.getId()));
 
         //when
-        final MemberPointResponse response = memberPointService.findMemberSumPoint(member.getId());
+        final MemberPointResponse response = memberPointService.findMemberTotalPoint(member.getId());
 
         //then
         assertThat(response.getTotalPoint()).isEqualTo(10);

@@ -32,7 +32,7 @@ public class MemberPointController {
 
     @GetMapping
     public ResponseEntity<MemberPointResponse> findMemberSumPointAndLevel(@MemberOnly final MemberInfo memberInfo) {
-        final MemberPointResponse response = memberPointService.findMemberSumPoint(memberInfo.getMemberId());
+        final MemberPointResponse response = memberPointService.findMemberTotalPoint(memberInfo.getMemberId());
         return ResponseEntity.ok(response);
     }
 
