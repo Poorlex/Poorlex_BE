@@ -1,12 +1,16 @@
 package com.poolex.poolex.point.service;
 
-import com.poolex.poolex.auth.domain.MemberLevel;
-import com.poolex.poolex.auth.domain.MemberRepository;
+import com.poolex.poolex.member.domain.MemberLevel;
+import com.poolex.poolex.member.domain.MemberRepository;
+import com.poolex.poolex.point.domain.MemberIdAndTotalPointDto;
 import com.poolex.poolex.point.domain.MemberPoint;
 import com.poolex.poolex.point.domain.MemberPointRepository;
 import com.poolex.poolex.point.domain.Point;
 import com.poolex.poolex.point.service.dto.response.MemberLevelBarResponse;
 import com.poolex.poolex.point.service.dto.response.MemberPointResponse;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,12 +32,18 @@ public class MemberPointService {
         memberPointRepository.save(MemberPoint.withoutId(new Point(point), memberId));
     }
 
-    public MemberPointResponse findMemberSumPoint(final Long memberId) {
+    public MemberPointResponse findMemberTotalPoint(final Long memberId) {
         final int sumPoint = memberPointRepository.findSumByMemberId(memberId);
         final MemberLevel memberLevel = MemberLevel.findByPoint(new Point(sumPoint))
             .orElseThrow(IllegalArgumentException::new);
 
         return new MemberPointResponse(sumPoint, memberLevel.getNumber());
+    }
+
+    public Map<Long, Integer> findMembersTotalPoint(final List<Long> memberIds) {
+        return memberPointRepository.findTotalPointsByMemberIdIn(memberIds)
+            .stream()
+            .collect(Collectors.toMap(MemberIdAndTotalPointDto::getMemberId, MemberIdAndTotalPointDto::getTotalPoint));
     }
 
     public MemberLevelBarResponse findPointsForLevelBar(final Long memberId) {
