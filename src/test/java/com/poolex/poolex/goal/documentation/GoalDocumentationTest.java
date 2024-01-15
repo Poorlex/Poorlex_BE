@@ -8,6 +8,8 @@ import static org.springframework.restdocs.operation.preprocess.Preprocessors.pr
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
+import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -15,8 +17,10 @@ import com.poolex.poolex.goal.controller.GoalController;
 import com.poolex.poolex.goal.domain.GoalType;
 import com.poolex.poolex.goal.service.GoalService;
 import com.poolex.poolex.goal.service.dto.request.GoalCreateRequest;
+import com.poolex.poolex.goal.service.dto.response.GoalIdResponse;
 import com.poolex.poolex.support.RestDocsDocumentationTest;
 import java.time.LocalDate;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -62,7 +66,7 @@ class GoalDocumentationTest extends RestDocsDocumentationTest {
 
         result.andExpect(status().isCreated())
             .andDo(
-                document("create-goal",
+                document("goal-create",
                     preprocessRequest(prettyPrint()),
                     preprocessResponse(prettyPrint()),
                     requestFields(
@@ -72,6 +76,38 @@ class GoalDocumentationTest extends RestDocsDocumentationTest {
                         fieldWithPath("startDate").type(JsonFieldType.STRING).description("목표 시작 날짜"),
                         fieldWithPath("endDate").type(JsonFieldType.STRING).description("목표 종료 날짜")
                     )
+                )
+            );
+    }
+
+    @Test
+    void goal_find_ids() throws Exception {
+        //given
+        mockingTokenInterceptor();
+        mockingMemberArgumentResolver();
+        given(goalService.findMemberGoalIds(any()))
+            .willReturn(List.of(
+                new GoalIdResponse(1L),
+                new GoalIdResponse(2L),
+                new GoalIdResponse(3L))
+            );
+
+        //when
+        //then
+        final ResultActions result = mockMvc.perform(
+            get("/goals")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer {accessToken}")
+        );
+
+        result.andExpect(status().isOk())
+            .andDo(
+                document("goal-find-ids",
+                    preprocessRequest(prettyPrint()),
+                    preprocessResponse(prettyPrint()),
+                    responseFields()
+                        .andWithPrefix("[].",
+                            fieldWithPath("goalId").type(JsonFieldType.NUMBER).description("회원이 등록한 목표 Id")
+                        )
                 )
             );
     }
