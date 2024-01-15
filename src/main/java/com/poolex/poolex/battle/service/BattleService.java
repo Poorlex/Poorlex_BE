@@ -1,5 +1,6 @@
 package com.poolex.poolex.battle.service;
 
+import com.poolex.poolex.alarm.service.AlarmService;
 import com.poolex.poolex.battle.domain.Battle;
 import com.poolex.poolex.battle.domain.BattleParticipantWithExpenditure;
 import com.poolex.poolex.battle.domain.BattleRepository;
@@ -29,6 +30,7 @@ public class BattleService {
 
     private final BattleRepository battleRepository;
     private final BattleParticipantRepository battleParticipantRepository;
+    private final AlarmService alarmService;
 
     @Transactional
     public Long create(final Long memberId, final BattleCreateRequest request) {
@@ -50,6 +52,7 @@ public class BattleService {
     public List<MemberProgressBattleResponse> findProgressMemberBattles(final Long memberId, final LocalDate date) {
         final List<BattleWithMemberExpenditure> battles =
             battleRepository.findMemberBattlesByMemberIdAndStatusWithExpenditure(memberId, BattleStatus.PROGRESS);
+
         return battles.stream()
             .map(battleInfo -> mapToProgressBattleResponse(battleInfo, memberId, date))
             .toList();
@@ -59,11 +62,18 @@ public class BattleService {
                                                                      final Long memberId,
                                                                      final LocalDate date) {
         final Battle battle = battleInfo.getBattle();
-        final int memberRank = getMemberRank(battle, memberId);
-        final int battleParticipantCount = battleParticipantRepository.countBattleParticipantByBattleId(
-            battle.getId());
+        final Long battleId = battle.getId();
+        final int battleParticipantCount = battleParticipantRepository.countBattleParticipantByBattleId(battleId);
+        final int uncheckedAlarmCount = alarmService.getBattleParticipantUncheckedAlarmCount(battleId, memberId)
+            .getCount();
 
-        return MemberProgressBattleResponse.from(battleInfo, date, memberRank, battleParticipantCount);
+        return MemberProgressBattleResponse.from(
+            battleInfo,
+            battle.getDDay(date),
+            getMemberRank(battle, memberId),
+            battleParticipantCount,
+            uncheckedAlarmCount
+        );
     }
 
     private int getMemberRank(final Battle battle, final Long targetMemberId) {

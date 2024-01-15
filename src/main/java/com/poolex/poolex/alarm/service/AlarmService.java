@@ -39,7 +39,6 @@ public class AlarmService {
 
         return viewHistory.map(history -> getResponseHistoryExist(battleId, memberId, history.getLastViewTime()))
             .orElseGet(() -> getResponseHistoryNotExist(battleId, memberId));
-
     }
 
     private UncheckedBattleAlarmCountResponse getResponseHistoryNotExist(final Long battleId, final Long memberId) {

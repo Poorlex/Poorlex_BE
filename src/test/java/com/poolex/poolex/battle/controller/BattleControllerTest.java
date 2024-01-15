@@ -133,7 +133,8 @@ class BattleControllerTest extends IntegrationTest implements ReplaceUnderScoreT
             .andExpect(jsonPath("$[0].dday").value(battle.getDDay(LocalDate.now())))
             .andExpect(jsonPath("$[0].budgetLeft").value(10000 - 1000))
             .andExpect(jsonPath("$[0].currentParticipantRank").value(2))
-            .andExpect(jsonPath("$[0].battleParticipantCount").value(2));
+            .andExpect(jsonPath("$[0].battleParticipantCount").value(2))
+            .andExpect(jsonPath("$[0].uncheckedAlarmCount").value(0));
     }
 
     @Test

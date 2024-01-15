@@ -36,7 +36,7 @@ class BattleDocumentationTest extends RestDocsDocumentationTest {
 
     @Autowired
     protected MockMvc mockMvc;
-    
+
     @MockBean
     private BattleService battleService;
 
@@ -123,9 +123,9 @@ class BattleDocumentationTest extends RestDocsDocumentationTest {
         mockingMemberArgumentResolver();
         given(battleService.findProgressMemberBattles(any(), any())).willReturn(
             List.of(
-                new MemberProgressBattleResponse(1L, "첫번째 배틀명", "첫번째 배틀 이미지 링크", "HARD", 5, 10000, 1, 10),
-                new MemberProgressBattleResponse(2L, "두번째 배틀명", "두번째 배틀 이미지 링크", "NORMAL", 5, 90000, 1, 10),
-                new MemberProgressBattleResponse(3L, "세번째 배틀명", "세번째 배틀 이미지 링크", "EASY", 5, 150000, 1, 10)
+                new MemberProgressBattleResponse(1L, "첫번째 배틀명", "첫번째 배틀 이미지 링크", "HARD", 5, 10000, 1, 10, 1),
+                new MemberProgressBattleResponse(2L, "두번째 배틀명", "두번째 배틀 이미지 링크", "NORMAL", 5, 90000, 1, 10, 1),
+                new MemberProgressBattleResponse(3L, "세번째 배틀명", "세번째 배틀 이미지 링크", "EASY", 5, 150000, 1, 10, 1)
             )
         );
 
@@ -151,7 +151,9 @@ class BattleDocumentationTest extends RestDocsDocumentationTest {
                             fieldWithPath("currentParticipantRank").type(JsonFieldType.NUMBER)
                                 .description("배틀에서 멤버의 랭킹"),
                             fieldWithPath("battleParticipantCount").type(JsonFieldType.NUMBER)
-                                .description("현재 배틀 참가자 수")
+                                .description("현재 배틀 참가자 수"),
+                            fieldWithPath("uncheckedAlarmCount").type(JsonFieldType.NUMBER)
+                                .description("미확인 배틀 알림 수")
                         )
                 ));
     }

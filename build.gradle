@@ -67,6 +67,7 @@ asciidoctor {
 
 asciidoctor.doFirst {
     delete file('src/main/resources/static/docs')
+    println("delete finished")
 }
 
 tasks.register('copyDocument', Copy) {

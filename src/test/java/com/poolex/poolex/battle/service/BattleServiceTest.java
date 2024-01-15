@@ -2,6 +2,9 @@ package com.poolex.poolex.battle.service;
 
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
+import com.poolex.poolex.alarm.domain.AlarmRepository;
+import com.poolex.poolex.alarm.domain.BattleAlarmViewHistoryRepository;
+import com.poolex.poolex.alarm.service.AlarmService;
 import com.poolex.poolex.auth.domain.Member;
 import com.poolex.poolex.auth.domain.MemberNickname;
 import com.poolex.poolex.auth.domain.MemberRepository;
@@ -52,6 +55,12 @@ class BattleServiceTest extends UsingDataJpaTest implements ReplaceUnderScoreTes
     private BattleRepository battleRepository;
 
     @Autowired
+    private AlarmRepository alarmRepository;
+
+    @Autowired
+    private BattleAlarmViewHistoryRepository battleAlarmViewHistoryRepository;
+
+    @Autowired
     private MemberRepository memberRepository;
 
     @Autowired
@@ -62,7 +71,11 @@ class BattleServiceTest extends UsingDataJpaTest implements ReplaceUnderScoreTes
 
     @BeforeEach
     void setUp() {
-        battleService = new BattleService(battleRepository, battleParticipantRepository);
+        battleService = new BattleService(
+            battleRepository,
+            battleParticipantRepository,
+            new AlarmService(alarmRepository, battleAlarmViewHistoryRepository)
+        );
     }
 
     @Test
