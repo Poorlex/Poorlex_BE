@@ -1,0 +1,7 @@
+== 목표 API
+
+=== 목표 등록
+
+operation::create-goal[snippets='http-request']
+operation::create-goal[snippets='request-fields']
+operation::create-goal[snippets='http-response']
