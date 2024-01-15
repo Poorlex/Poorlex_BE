@@ -24,6 +24,13 @@ operation::battle-find-complete[snippets='http-request']
 operation::battle-find-complete[snippets='http-response']
 operation::battle-find-complete[snippets='response-fields']
 
+=== 단일 배틀 상세 조회
+
+operation::battle-find-by-id[snippets='http-request']
+operation::battle-find-by-id[snippets='request-fields']
+operation::battle-find-by-id[snippets='http-response']
+operation::battle-find-by-id[snippets='response-fields']
+
 === 배틀 참가
 
 operation::battle-participate[snippets='http-request']

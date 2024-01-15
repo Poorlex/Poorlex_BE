@@ -7,16 +7,17 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.poolex.poolex.auth.domain.Member;
-import com.poolex.poolex.auth.domain.MemberNickname;
-import com.poolex.poolex.auth.domain.MemberRepository;
 import com.poolex.poolex.battle.domain.Battle;
 import com.poolex.poolex.battle.domain.BattleRepository;
 import com.poolex.poolex.battle.fixture.BattleCreateRequestFixture;
 import com.poolex.poolex.battle.service.BattleService;
 import com.poolex.poolex.battle.service.dto.request.BattleCreateRequest;
+import com.poolex.poolex.battle.service.dto.request.BattleFindRequest;
 import com.poolex.poolex.expenditure.domain.ExpenditureRepository;
 import com.poolex.poolex.expenditure.fixture.ExpenditureFixture;
+import com.poolex.poolex.member.domain.Member;
+import com.poolex.poolex.member.domain.MemberNickname;
+import com.poolex.poolex.member.domain.MemberRepository;
 import com.poolex.poolex.participate.domain.BattleParticipant;
 import com.poolex.poolex.participate.domain.BattleParticipantRepository;
 import com.poolex.poolex.support.IntegrationTest;
@@ -168,6 +169,46 @@ class BattleControllerTest extends IntegrationTest implements ReplaceUnderScoreT
             .andExpect(jsonPath("$[0].earnedPoint").value(20))
             .andExpect(jsonPath("$[0].currentParticipantRank").value(2))
             .andExpect(jsonPath("$[0].battleParticipantCount").value(2));
+    }
+
+    @Test
+    void Id에_해당하는_배틀을_조회시_상태코드_200_과_배틀의_데이터를_반환한다() throws Exception {
+        //given
+        final Member member = Member.withoutId("oauthId", new MemberNickname("nickname"));
+        final Long battleId = createBattle();
+        final Battle battle = battleRepository.findById(battleId).orElseThrow(IllegalArgumentException::new);
+
+        join(member, battle);
+        startBattle(battle);
+        expend(1000, member, battle.getDuration().getStart());
+        endBattle(battle);
+
+        final BattleFindRequest request = new BattleFindRequest(LocalDate.now());
+
+        //when
+        //then
+        mockMvc.perform(
+                get("/battles/{battleId}", battleId)
+                    .content(objectMapper.writeValueAsString(request))
+                    .contentType(MediaType.APPLICATION_JSON)
+            )
+            .andDo(print())
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.battleName").value(battle.getName()))
+            .andExpect(jsonPath("$.maxParticipantSize").value(battle.getMaxParticipantSize().getValue()))
+            .andExpect(jsonPath("$.currentParticipantSize").value(2))
+            .andExpect(jsonPath("$.battleBudget").value(10000))
+            .andExpect(jsonPath("$.battleDDay").value(battle.getDDay(request.getDate())))
+            .andExpect(jsonPath("$.rankings.length()").value(2))
+            .andExpect(jsonPath("$.rankings[0].rank").value(1))
+            .andExpect(jsonPath("$.rankings[0].level").value(1))
+            .andExpect(jsonPath("$.rankings[0].manager").value(true))
+            .andExpect(jsonPath("$.rankings[0].expenditure").value(0))
+            .andExpect(jsonPath("$.rankings[1].rank").value(2))
+            .andExpect(jsonPath("$.rankings[1].level").value(1))
+            .andExpect(jsonPath("$.rankings[1].manager").value(false))
+            .andExpect(jsonPath("$.rankings[1].nickname").value(member.getNickname()))
+            .andExpect(jsonPath("$.rankings[1].expenditure").value(1000));
     }
 
     private Long createBattle() throws Exception {

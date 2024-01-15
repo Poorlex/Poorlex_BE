@@ -14,10 +14,14 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import com.poolex.poolex.battle.controller.BattleController;
 import com.poolex.poolex.battle.service.BattleService;
 import com.poolex.poolex.battle.service.dto.request.BattleCreateRequest;
+import com.poolex.poolex.battle.service.dto.request.BattleFindRequest;
+import com.poolex.poolex.battle.service.dto.response.BattleResponse;
 import com.poolex.poolex.battle.service.dto.response.FindingBattleResponse;
 import com.poolex.poolex.battle.service.dto.response.MemberCompleteBattleResponse;
 import com.poolex.poolex.battle.service.dto.response.MemberProgressBattleResponse;
+import com.poolex.poolex.battle.service.dto.response.ParticipantRankingResponse;
 import com.poolex.poolex.support.RestDocsDocumentationTest;
+import java.time.LocalDate;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -196,6 +200,58 @@ class BattleDocumentationTest extends RestDocsDocumentationTest {
                             fieldWithPath("battleParticipantCount").type(JsonFieldType.NUMBER)
                                 .description("배틀 참가자 수")
                         )
+                ));
+    }
+
+    @Test
+    void find_one_battle() throws Exception {
+        //given
+        mockingTokenInterceptor();
+        mockingMemberArgumentResolver();
+        given(battleService.getBattleInfo(any(), any()))
+            .willReturn(new BattleResponse(
+                    "배틀명",
+                    10,
+                    10,
+                    10000,
+                    5,
+                    List.of(
+                        new ParticipantRankingResponse(1, 1, true, "참가자 닉네임1", 1000L),
+                        new ParticipantRankingResponse(1, 2, false, "참가자 닉네임2", 1000L),
+                        new ParticipantRankingResponse(3, 3, false, "참가자 닉네임3", 2000L)
+                    )
+                )
+            );
+        final BattleFindRequest request = new BattleFindRequest(LocalDate.now());
+
+        //when
+        final ResultActions result = mockMvc.perform(get("/battles/{battleId}", 1)
+            .content(objectMapper.writeValueAsString(request))
+            .contentType(MediaType.APPLICATION_JSON)
+        );
+
+        //then
+        result.andExpect(MockMvcResultMatchers.status().isOk())
+            .andDo(
+                document("battle-find-by-id",
+                    preprocessRequest(prettyPrint()),
+                    preprocessResponse(prettyPrint()),
+                    requestFields(
+                        fieldWithPath("date").type(JsonFieldType.STRING).description("조회 날짜")
+                    ),
+                    responseFields(
+                        fieldWithPath("battleName").type(JsonFieldType.STRING).description("배틀 명"),
+                        fieldWithPath("maxParticipantSize").type(JsonFieldType.NUMBER).description("배틀 최대 참가자 수"),
+                        fieldWithPath("currentParticipantSize").type(JsonFieldType.NUMBER).description("현재 배틀 참가자 수"),
+                        fieldWithPath("battleBudget").type(JsonFieldType.NUMBER).description("배틀 예산"),
+                        fieldWithPath("battleDDay").type(JsonFieldType.NUMBER).description("배틀 종료까지 D-Day")
+                    ).andWithPrefix(".rankings[].",
+                        fieldWithPath("rank").type(JsonFieldType.NUMBER).description("참가자 랭킹"),
+                        fieldWithPath("level").type(JsonFieldType.NUMBER).description("참자가 레벨"),
+                        fieldWithPath("manager").type(JsonFieldType.BOOLEAN).description("참가자 매니저 여부"),
+                        fieldWithPath("nickname").type(JsonFieldType.STRING).description("참가자 닉네임"),
+                        fieldWithPath("expenditure").type(JsonFieldType.NUMBER).description("참가자 지출")
+                    )
                 ));
     }
 }
