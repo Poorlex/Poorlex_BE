@@ -8,7 +8,9 @@ import com.poolex.poolex.goal.domain.GoalRepository;
 import com.poolex.poolex.goal.domain.GoalStatus;
 import com.poolex.poolex.goal.domain.GoalType;
 import com.poolex.poolex.goal.service.dto.request.GoalCreateRequest;
+import com.poolex.poolex.goal.service.dto.response.GoalIdResponse;
 import com.poolex.poolex.member.domain.MemberRepository;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,5 +39,12 @@ public class GoalService {
         final GoalAmount goalAmount = new GoalAmount(request.getAmount());
 
         return Goal.withoutId(memberId, goalType, goalName, goalAmount, goalDuration, GoalStatus.PROGRESS);
+    }
+
+    public List<GoalIdResponse> findMemberGoalIds(final Long memberId) {
+        final List<Long> memberGoalIds = goalRepository.findIdsByMemberId(memberId);
+        return memberGoalIds.stream()
+            .map(GoalIdResponse::new)
+            .toList();
     }
 }
