@@ -1,0 +1,13 @@
+== 목표 API
+
+=== 목표 등록
+
+operation::goal-create[snippets='http-request']
+operation::goal-create[snippets='request-fields']
+operation::goal-create[snippets='http-response']
+
+=== 회원 목표 Id 조회
+
+operation::goal-find-ids[snippets='http-request']
+operation::goal-find-ids[snippets='http-response']
+operation::goal-find-ids[snippets='response-fields']

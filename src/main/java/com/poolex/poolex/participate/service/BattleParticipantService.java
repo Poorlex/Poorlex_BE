@@ -1,10 +1,10 @@
 package com.poolex.poolex.participate.service;
 
-import com.poolex.poolex.auth.domain.MemberRepository;
 import com.poolex.poolex.battle.domain.Battle;
 import com.poolex.poolex.battle.domain.BattleRepository;
 import com.poolex.poolex.battle.domain.BattleStatus;
 import com.poolex.poolex.config.event.Events;
+import com.poolex.poolex.member.domain.MemberRepository;
 import com.poolex.poolex.participate.domain.BattleParticipant;
 import com.poolex.poolex.participate.domain.BattleParticipantRepository;
 import com.poolex.poolex.participate.service.event.BattleParticipantAddedEvent;

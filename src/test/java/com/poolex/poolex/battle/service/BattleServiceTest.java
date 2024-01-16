@@ -2,9 +2,9 @@ package com.poolex.poolex.battle.service;
 
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
-import com.poolex.poolex.auth.domain.Member;
-import com.poolex.poolex.auth.domain.MemberNickname;
-import com.poolex.poolex.auth.domain.MemberRepository;
+import com.poolex.poolex.alarm.domain.AlarmRepository;
+import com.poolex.poolex.alarm.domain.BattleAlarmViewHistoryRepository;
+import com.poolex.poolex.alarm.service.AlarmService;
 import com.poolex.poolex.battle.domain.Battle;
 import com.poolex.poolex.battle.domain.BattleBudget;
 import com.poolex.poolex.battle.domain.BattleDuration;
@@ -18,8 +18,15 @@ import com.poolex.poolex.battle.service.dto.response.MemberCompleteBattleRespons
 import com.poolex.poolex.battle.service.dto.response.MemberProgressBattleResponse;
 import com.poolex.poolex.expenditure.domain.ExpenditureRepository;
 import com.poolex.poolex.expenditure.fixture.ExpenditureFixture;
+import com.poolex.poolex.expenditure.service.ExpenditureService;
+import com.poolex.poolex.member.domain.Member;
+import com.poolex.poolex.member.domain.MemberNickname;
+import com.poolex.poolex.member.domain.MemberRepository;
+import com.poolex.poolex.member.service.MemberService;
 import com.poolex.poolex.participate.domain.BattleParticipant;
 import com.poolex.poolex.participate.domain.BattleParticipantRepository;
+import com.poolex.poolex.point.domain.MemberPointRepository;
+import com.poolex.poolex.point.service.MemberPointService;
 import com.poolex.poolex.support.ReplaceUnderScoreTest;
 import com.poolex.poolex.support.UsingDataJpaTest;
 import java.time.LocalDate;
@@ -52,6 +59,15 @@ class BattleServiceTest extends UsingDataJpaTest implements ReplaceUnderScoreTes
     private BattleRepository battleRepository;
 
     @Autowired
+    private MemberPointRepository memberPointRepository;
+
+    @Autowired
+    private AlarmRepository alarmRepository;
+
+    @Autowired
+    private BattleAlarmViewHistoryRepository battleAlarmViewHistoryRepository;
+
+    @Autowired
     private MemberRepository memberRepository;
 
     @Autowired
@@ -62,7 +78,14 @@ class BattleServiceTest extends UsingDataJpaTest implements ReplaceUnderScoreTes
 
     @BeforeEach
     void setUp() {
-        battleService = new BattleService(battleRepository, battleParticipantRepository);
+        battleService = new BattleService(
+            battleRepository,
+            battleParticipantRepository,
+            new AlarmService(alarmRepository, battleAlarmViewHistoryRepository),
+            new MemberPointService(memberPointRepository, memberRepository),
+            new ExpenditureService(expenditureRepository),
+            new MemberService(memberRepository)
+        );
     }
 
     @Test

@@ -3,12 +3,12 @@ package com.poolex.poolex.weeklybudget.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
-import com.poolex.poolex.auth.domain.Member;
-import com.poolex.poolex.auth.domain.MemberNickname;
-import com.poolex.poolex.auth.domain.MemberRepository;
 import com.poolex.poolex.expenditure.domain.Expenditure;
 import com.poolex.poolex.expenditure.domain.ExpenditureRepository;
 import com.poolex.poolex.expenditure.fixture.ExpenditureFixture;
+import com.poolex.poolex.member.domain.Member;
+import com.poolex.poolex.member.domain.MemberNickname;
+import com.poolex.poolex.member.domain.MemberRepository;
 import com.poolex.poolex.support.ReplaceUnderScoreTest;
 import com.poolex.poolex.support.UsingDataJpaTest;
 import com.poolex.poolex.weeklybudget.domain.WeeklyBudget;
@@ -18,6 +18,7 @@ import com.poolex.poolex.weeklybudget.domain.WeeklyBudgetRepository;
 import com.poolex.poolex.weeklybudget.service.dto.response.WeeklyBudgetLeftResponse;
 import com.poolex.poolex.weeklybudget.service.dto.response.WeeklyBudgetResponse;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -90,7 +91,7 @@ class WeeklyBudgetServiceTest extends UsingDataJpaTest implements ReplaceUnderSc
         //when
         final WeeklyBudgetResponse weeklyBudgetResponse = weeklyBudgetService.findCurrentBudgetByMemberIdAndDate(
             member.getId(),
-            LocalDateTime.now()
+            LocalDateTime.now().truncatedTo(ChronoUnit.MICROS)
         );
 
         //then
@@ -120,7 +121,7 @@ class WeeklyBudgetServiceTest extends UsingDataJpaTest implements ReplaceUnderSc
     void 멤버의_현재날짜_기준_남은_주간_예산을_조회한다_등록된_주간_예산이_없을때() {
         //given
         final Member member = memberRepository.save(Member.withoutId("oauthId", new MemberNickname("nickname")));
-        final LocalDateTime date = LocalDateTime.now();
+        final LocalDateTime date = LocalDateTime.now().truncatedTo(ChronoUnit.MICROS);
         final Expenditure expenditure = createExpenditure(1000, member.getId(), date);
 
         //when

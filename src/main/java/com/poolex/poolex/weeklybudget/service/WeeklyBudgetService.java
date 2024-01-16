@@ -1,7 +1,7 @@
 package com.poolex.poolex.weeklybudget.service;
 
-import com.poolex.poolex.auth.domain.MemberRepository;
 import com.poolex.poolex.expenditure.domain.ExpenditureRepository;
+import com.poolex.poolex.member.domain.MemberRepository;
 import com.poolex.poolex.weeklybudget.domain.WeeklyBudget;
 import com.poolex.poolex.weeklybudget.domain.WeeklyBudgetAmount;
 import com.poolex.poolex.weeklybudget.domain.WeeklyBudgetDuration;
@@ -34,10 +34,10 @@ public class WeeklyBudgetService {
 
     public WeeklyBudgetResponse findCurrentBudgetByMemberIdAndDate(final Long memberId, final LocalDateTime date) {
         validateMemberId(memberId);
-        final WeeklyBudget weeklyBudget = weeklyBudgetRepository.findByMemberIdAndCurrentDate(memberId, date)
-            .orElse(null);
 
-        return WeeklyBudgetResponse.from(weeklyBudget);
+        return weeklyBudgetRepository.findByMemberIdAndCurrentDate(memberId, date)
+            .map(findWeeklyBudget -> WeeklyBudgetResponse.exist(findWeeklyBudget, findWeeklyBudget.getDDay(date)))
+            .orElseGet(WeeklyBudgetResponse::empty);
     }
 
     private void validateMemberId(final Long memberId) {

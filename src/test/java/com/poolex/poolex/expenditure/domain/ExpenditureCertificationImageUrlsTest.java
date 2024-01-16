@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.poolex.poolex.support.ReplaceUnderScoreTest;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.stream.IntStream;
 import org.junit.jupiter.api.DisplayName;
@@ -50,7 +51,7 @@ class ExpenditureCertificationImageUrlsTest implements ReplaceUnderScoreTest {
     private Expenditure simpleWithoutId(final ExpenditureCertificationImageUrls imageUrls) {
         final long memberId = 1L;
         final ExpenditureAmount amount = new ExpenditureAmount(0L);
-        final LocalDateTime date = LocalDateTime.now();
+        final LocalDateTime date = LocalDateTime.now().truncatedTo(ChronoUnit.MICROS);
         final ExpenditureDescription description = new ExpenditureDescription("description");
 
         return new Expenditure(null, memberId, amount, date, description, imageUrls);

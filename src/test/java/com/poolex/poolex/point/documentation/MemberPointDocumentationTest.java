@@ -16,9 +16,11 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.poolex.poolex.member.domain.MemberLevel;
 import com.poolex.poolex.point.controller.MemberPointController;
 import com.poolex.poolex.point.service.MemberPointService;
 import com.poolex.poolex.point.service.dto.request.PointCreateRequest;
+import com.poolex.poolex.point.service.dto.response.MemberLevelBarResponse;
 import com.poolex.poolex.point.service.dto.response.MemberPointResponse;
 import com.poolex.poolex.support.RestDocsDocumentationTest;
 import org.junit.jupiter.api.Test;
@@ -70,11 +72,12 @@ class MemberPointDocumentationTest extends RestDocsDocumentationTest {
     }
 
     @Test
-    void find_total_point() throws Exception {
+    void find_total_point_and_level() throws Exception {
         //given
         mockingTokenInterceptor();
         mockingMemberArgumentResolver();
-        given(memberPointService.findMemberSumPoint(any())).willReturn(new MemberPointResponse(1000));
+        given(memberPointService.findMemberTotalPoint(any()))
+            .willReturn(new MemberPointResponse(1000, MemberLevel.LEVEL_4.getNumber()));
 
         //when
         final ResultActions result = mockMvc.perform(
@@ -89,7 +92,36 @@ class MemberPointDocumentationTest extends RestDocsDocumentationTest {
                     preprocessRequest(prettyPrint()),
                     preprocessResponse(prettyPrint()),
                     responseFields(
-                        fieldWithPath("totalPoint").type(JsonFieldType.NUMBER).description("멤버 총 포인트")
+                        fieldWithPath("totalPoint").type(JsonFieldType.NUMBER).description("멤버 총 포인트"),
+                        fieldWithPath("level").type(JsonFieldType.NUMBER).description("멤버 레벨")
+                    )
+                ));
+    }
+
+    @Test
+    void find_info_for_level_bar() throws Exception {
+        //given
+        mockingTokenInterceptor();
+        mockingMemberArgumentResolver();
+        given(memberPointService.findPointsForLevelBar(any()))
+            .willReturn(new MemberLevelBarResponse(MemberLevel.LEVEL_1.getLevelRange(), 10, 10));
+
+        //when
+        final ResultActions result = mockMvc.perform(
+            get("/points/level-bar")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer {accessToken}")
+        );
+
+        //then
+        result.andExpect(status().isOk())
+            .andDo(
+                document("member-level-bar",
+                    preprocessRequest(prettyPrint()),
+                    preprocessResponse(prettyPrint()),
+                    responseFields(
+                        fieldWithPath("levelRange").type(JsonFieldType.NUMBER).description("래밸 구간의 길이"),
+                        fieldWithPath("currentPoint").type(JsonFieldType.NUMBER).description("현재 레벨 도달 이후 얻은 총 포인트"),
+                        fieldWithPath("recentPoint").type(JsonFieldType.NUMBER).description("가장 최근에 얻은 포인트")
                     )
                 ));
     }

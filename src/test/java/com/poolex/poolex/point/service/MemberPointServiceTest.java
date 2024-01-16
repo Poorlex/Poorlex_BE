@@ -3,13 +3,15 @@ package com.poolex.poolex.point.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
-import com.poolex.poolex.auth.domain.Member;
-import com.poolex.poolex.auth.domain.MemberNickname;
-import com.poolex.poolex.auth.domain.MemberRepository;
+import com.poolex.poolex.member.domain.Member;
+import com.poolex.poolex.member.domain.MemberLevel;
+import com.poolex.poolex.member.domain.MemberNickname;
+import com.poolex.poolex.member.domain.MemberRepository;
 import com.poolex.poolex.point.domain.MemberPoint;
 import com.poolex.poolex.point.domain.MemberPointRepository;
 import com.poolex.poolex.point.domain.Point;
 import com.poolex.poolex.point.service.dto.request.PointCreateRequest;
+import com.poolex.poolex.point.service.dto.response.MemberLevelBarResponse;
 import com.poolex.poolex.point.service.dto.response.MemberPointResponse;
 import com.poolex.poolex.support.ReplaceUnderScoreTest;
 import com.poolex.poolex.support.UsingDataJpaTest;
@@ -61,9 +63,54 @@ class MemberPointServiceTest extends UsingDataJpaTest implements ReplaceUnderSco
         memberPointRepository.save(MemberPoint.withoutId(new Point(10), member.getId()));
 
         //when
-        final MemberPointResponse response = memberPointService.findMemberSumPoint(member.getId());
+        final MemberPointResponse response = memberPointService.findMemberTotalPoint(member.getId());
 
         //then
         assertThat(response.getTotalPoint()).isEqualTo(10);
+    }
+
+    @Test
+    void 멤버_레벨바에_필요한_정보를_조회한다() {
+        //given
+        final Member member = memberRepository.save(Member.withoutId("oauthId", new MemberNickname("nickname")));
+        final MemberPoint memberPoint = memberPointRepository.save(
+            MemberPoint.withoutId(new Point(10), member.getId())
+        );
+
+        //when
+        final MemberLevelBarResponse response = memberPointService.findPointsForLevelBar(member.getId());
+
+        //then
+        assertSoftly(
+            softly -> {
+                final int expectRange = MemberLevel.findByPoint(new Point(memberPoint.getPoint()))
+                    .orElseThrow(IllegalArgumentException::new)
+                    .getLevelRange();
+
+                softly.assertThat(response.getLevelRange()).isEqualTo(expectRange);
+                softly.assertThat(response.getCurrentPoint()).isEqualTo(memberPoint.getPoint());
+                softly.assertThat(response.getRecentPoint()).isEqualTo(memberPoint.getPoint());
+            }
+        );
+    }
+
+    @Test
+    void 멤버_레벨바에_필요한_정보를_조회한다_포인트가_없을_때() {
+        //given
+        final Member member = memberRepository.save(Member.withoutId("oauthId", new MemberNickname("nickname")));
+
+        //when
+        final MemberLevelBarResponse response = memberPointService.findPointsForLevelBar(member.getId());
+
+        //then
+        assertSoftly(
+            softly -> {
+                final int expectRange = MemberLevel.LEVEL_1.getLevelRange();
+
+                softly.assertThat(response.getLevelRange()).isEqualTo(expectRange);
+                softly.assertThat(response.getCurrentPoint()).isEqualTo(0);
+                softly.assertThat(response.getRecentPoint()).isEqualTo(0);
+            }
+        );
     }
 }

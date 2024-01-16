@@ -6,12 +6,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.poolex.poolex.auth.domain.Member;
-import com.poolex.poolex.auth.domain.MemberNickname;
-import com.poolex.poolex.auth.domain.MemberRepository;
 import com.poolex.poolex.expenditure.domain.Expenditure;
 import com.poolex.poolex.expenditure.domain.ExpenditureRepository;
 import com.poolex.poolex.expenditure.fixture.ExpenditureFixture;
+import com.poolex.poolex.member.domain.Member;
+import com.poolex.poolex.member.domain.MemberNickname;
+import com.poolex.poolex.member.domain.MemberRepository;
 import com.poolex.poolex.support.IntegrationTest;
 import com.poolex.poolex.support.ReplaceUnderScoreTest;
 import com.poolex.poolex.support.TestMemberTokenGenerator;
@@ -24,6 +24,7 @@ import com.poolex.poolex.weeklybudget.service.dto.request.WeeklyBudgetCreateRequ
 import com.poolex.poolex.weeklybudget.service.dto.request.WeeklyBudgetLeftRequest;
 import com.poolex.poolex.weeklybudget.service.dto.request.WeeklyBudgetRequest;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -88,7 +89,8 @@ class WeeklyBudgetControllerTest extends IntegrationTest implements ReplaceUnder
             .andDo(print())
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.exist").value(true))
-            .andExpect(jsonPath("$.amount").value(10000));
+            .andExpect(jsonPath("$.amount").value(10000))
+            .andExpect(jsonPath("$.dday").value(6));
     }
 
     @Test
@@ -96,7 +98,7 @@ class WeeklyBudgetControllerTest extends IntegrationTest implements ReplaceUnder
         //given
         final Member member = createMember("oauthId");
         final String accessToken = memberTokenGenerator.createAccessToken(member);
-        final WeeklyBudgetRequest request = new WeeklyBudgetRequest(LocalDateTime.now());
+        final WeeklyBudgetRequest request = new WeeklyBudgetRequest(LocalDateTime.now().truncatedTo(ChronoUnit.MICROS));
 
         //when
         //then
@@ -109,7 +111,8 @@ class WeeklyBudgetControllerTest extends IntegrationTest implements ReplaceUnder
             .andDo(print())
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.exist").value(false))
-            .andExpect(jsonPath("$.amount").value(0));
+            .andExpect(jsonPath("$.amount").value(0))
+            .andExpect(jsonPath("$.dday").value(0));
     }
 
     @Test
@@ -140,7 +143,7 @@ class WeeklyBudgetControllerTest extends IntegrationTest implements ReplaceUnder
     void 남은_주간_예산을_조회한다_등록된_주간_예산이_없을때() throws Exception {
         //given
         final Member member = createMember("oauthId");
-        final LocalDateTime date = LocalDateTime.now();
+        final LocalDateTime date = LocalDateTime.now().truncatedTo(ChronoUnit.MICROS);
         createExpenditure(1000, member.getId(), date);
 
         final String accessToken = memberTokenGenerator.createAccessToken(member);

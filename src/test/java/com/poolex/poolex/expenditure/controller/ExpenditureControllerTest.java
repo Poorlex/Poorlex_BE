@@ -7,19 +7,20 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.poolex.poolex.auth.domain.Member;
-import com.poolex.poolex.auth.domain.MemberNickname;
-import com.poolex.poolex.auth.domain.MemberRepository;
 import com.poolex.poolex.expenditure.domain.ExpenditureRepository;
 import com.poolex.poolex.expenditure.fixture.ExpenditureFixture;
 import com.poolex.poolex.expenditure.fixture.ExpenditureRequestFixture;
 import com.poolex.poolex.expenditure.service.dto.request.ExpenditureCreateRequest;
 import com.poolex.poolex.expenditure.service.dto.request.MemberWeeklyTotalExpenditureRequest;
+import com.poolex.poolex.member.domain.Member;
+import com.poolex.poolex.member.domain.MemberNickname;
+import com.poolex.poolex.member.domain.MemberRepository;
 import com.poolex.poolex.support.IntegrationTest;
 import com.poolex.poolex.support.ReplaceUnderScoreTest;
 import com.poolex.poolex.support.TestMemberTokenGenerator;
 import com.poolex.poolex.token.JwtTokenProvider;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -69,7 +70,7 @@ class ExpenditureControllerTest extends IntegrationTest implements ReplaceUnderS
     void 멤버의_기간중의_지출의_총합을_구한다_지출이_있을_때() throws Exception {
         //given
         final Member member = createMember("oauthId");
-        final LocalDateTime dateTime = LocalDateTime.now();
+        final LocalDateTime dateTime = LocalDateTime.now().truncatedTo(ChronoUnit.MICROS);
 
         createExpenditure(1000, member.getId(), dateTime);
         createExpenditure(2000, member.getId(), dateTime);
@@ -94,7 +95,7 @@ class ExpenditureControllerTest extends IntegrationTest implements ReplaceUnderS
     void 멤버의_기간중의_지출의_총합을_구한다_지출이_없을_때() throws Exception {
         //given
         final Member member = createMember("oauthId");
-        final LocalDateTime dateTime = LocalDateTime.now();
+        final LocalDateTime dateTime = LocalDateTime.now().truncatedTo(ChronoUnit.MICROS);
 
         createExpenditure(1000, member.getId(), dateTime);
         createExpenditure(2000, member.getId(), dateTime);

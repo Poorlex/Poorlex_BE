@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class EventConfig {
-    
+
     @Bean
     public InitializingBean eventsInitializer(@Autowired ApplicationContext applicationContext) {
         return () -> Events.setPublisher(applicationContext);

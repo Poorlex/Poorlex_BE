@@ -20,6 +20,7 @@ import com.poolex.poolex.expenditure.service.dto.request.MemberWeeklyTotalExpend
 import com.poolex.poolex.expenditure.service.dto.response.MemberWeeklyTotalExpenditureResponse;
 import com.poolex.poolex.support.RestDocsDocumentationTest;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +48,7 @@ class ExpenditureDocumentationTest extends RestDocsDocumentationTest {
             1000,
             "지출 설명",
             List.of("지출 이미지 링크"),
-            LocalDateTime.now()
+            LocalDateTime.now().truncatedTo(ChronoUnit.MICROS)
         );
 
         mockingTokenInterceptor();
@@ -81,7 +82,7 @@ class ExpenditureDocumentationTest extends RestDocsDocumentationTest {
     void find_weekly_expenditure() throws Exception {
         //given
         final MemberWeeklyTotalExpenditureRequest request = new MemberWeeklyTotalExpenditureRequest(
-            LocalDateTime.now());
+            LocalDateTime.now().truncatedTo(ChronoUnit.MICROS));
 
         mockingTokenInterceptor();
         mockingMemberArgumentResolver();

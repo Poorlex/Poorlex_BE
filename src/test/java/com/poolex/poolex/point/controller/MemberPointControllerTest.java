@@ -6,9 +6,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.poolex.poolex.auth.domain.Member;
-import com.poolex.poolex.auth.domain.MemberNickname;
-import com.poolex.poolex.auth.domain.MemberRepository;
+import com.poolex.poolex.member.domain.Member;
+import com.poolex.poolex.member.domain.MemberLevel;
+import com.poolex.poolex.member.domain.MemberNickname;
+import com.poolex.poolex.member.domain.MemberRepository;
 import com.poolex.poolex.point.domain.MemberPoint;
 import com.poolex.poolex.point.domain.MemberPointRepository;
 import com.poolex.poolex.point.domain.Point;
@@ -60,7 +61,7 @@ class MemberPointControllerTest extends IntegrationTest implements ReplaceUnderS
     }
 
     @Test
-    void 멤버포인트의_합을_조회한다() throws Exception {
+    void 멤버포인트의_합과_레벨을_조회한다() throws Exception {
         //given
         final Member member = createMember("oauthId");
         final MemberPoint memberPoint = createMemberPoint(10, member);
@@ -74,7 +75,28 @@ class MemberPointControllerTest extends IntegrationTest implements ReplaceUnderS
             )
             .andDo(print())
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.totalPoint").value(memberPoint.getPoint()));
+            .andExpect(jsonPath("$.totalPoint").value(memberPoint.getPoint()))
+            .andExpect(jsonPath("$.level").value(MemberLevel.LEVEL_1.getNumber()));
+    }
+
+    @Test
+    void 멤버_레벨바에_필요한_정보를_조회한다() throws Exception {
+        //given
+        final Member member = createMember("oauthId");
+        final MemberPoint memberPoint = createMemberPoint(10, member);
+        final String accessToken = memberTokenGenerator.createAccessToken(member);
+
+        //when
+        //then
+        mockMvc.perform(
+                get("/points/level-bar")
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+            )
+            .andDo(print())
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.levelRange").value(MemberLevel.LEVEL_1.getLevelRange()))
+            .andExpect(jsonPath("$.currentPoint").value(memberPoint.getPoint()))
+            .andExpect(jsonPath("$.recentPoint").value(memberPoint.getPoint()));
     }
 
     private Member createMember(final String oauthId) {
@@ -82,6 +104,6 @@ class MemberPointControllerTest extends IntegrationTest implements ReplaceUnderS
     }
 
     private MemberPoint createMemberPoint(final int point, final Member member) {
-        return memberPointRepository.save(MemberPoint.withoutId(new Point(10), member.getId()));
+        return memberPointRepository.save(MemberPoint.withoutId(new Point(point), member.getId()));
     }
 }

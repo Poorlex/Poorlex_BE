@@ -1,5 +1,6 @@
 package com.poolex.poolex.participate.domain;
 
+import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -12,4 +13,8 @@ public interface BattleParticipantRepository extends JpaRepository<BattlePartici
     boolean existsByBattleIdAndMemberIdAndRole(final Long battleId,
                                                final Long memberId,
                                                final BattleParticipantRole role);
+
+    boolean existsByBattleIdAndMemberId(final Long battleId, final Long memberId);
+
+    List<BattleParticipant> findAllByBattleId(final Long battleId);
 }

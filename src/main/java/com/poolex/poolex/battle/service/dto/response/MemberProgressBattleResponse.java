@@ -2,7 +2,6 @@ package com.poolex.poolex.battle.service.dto.response;
 
 import com.poolex.poolex.battle.domain.Battle;
 import com.poolex.poolex.battle.domain.BattleWithMemberExpenditure;
-import java.time.LocalDate;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -18,11 +17,13 @@ public class MemberProgressBattleResponse {
     private final int budgetLeft;
     private final int currentParticipantRank;
     private final int battleParticipantCount;
+    private final int uncheckedAlarmCount;
 
     public static MemberProgressBattleResponse from(final BattleWithMemberExpenditure battleInfo,
-                                                    final LocalDate current,
+                                                    final long dDay,
                                                     final int currentParticipantRank,
-                                                    final int battleParticipantCount) {
+                                                    final int battleParticipantCount,
+                                                    final int uncheckedAlarmCount) {
         final Battle battle = battleInfo.getBattle();
 
         return new MemberProgressBattleResponse(
@@ -30,10 +31,11 @@ public class MemberProgressBattleResponse {
             battle.getName(),
             battle.getImageUrl(),
             battle.getDifficulty().name(),
-            battle.getDDay(current),
+            dDay,
             battle.getBudgetLeft(battleInfo.getExpenditure()),
             currentParticipantRank,
-            battleParticipantCount
+            battleParticipantCount,
+            uncheckedAlarmCount
         );
     }
 }
