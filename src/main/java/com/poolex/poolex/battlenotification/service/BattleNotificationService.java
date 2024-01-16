@@ -93,7 +93,7 @@ public class BattleNotificationService {
 
     public BattleNotificationResponse findNotificationByBattleId(final Long battleId) {
         final Optional<BattleNotification> battleNotification = battleNotificationRepository.findByBattleId(battleId);
-        
+
         return battleNotification.map(BattleNotificationResponse::from)
             .orElseGet(BattleNotificationResponse::empty);
     }

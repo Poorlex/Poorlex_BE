@@ -33,7 +33,7 @@ public class TokenInterceptor implements HandlerInterceptor {
         final String pathInfo = request.getPathInfo();
         final boolean isHandleablePattern = EXCLUDE_PATTERNS.stream()
             .noneMatch(pattern -> pattern.matcher(pathInfo).matches());
-        
+
         if (isHandleablePattern) {
             final String token = parseToken(request);
             final Claims payload = tokenProvider.getPayload(token);

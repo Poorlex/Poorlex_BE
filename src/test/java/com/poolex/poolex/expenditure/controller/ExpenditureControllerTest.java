@@ -20,6 +20,7 @@ import com.poolex.poolex.support.ReplaceUnderScoreTest;
 import com.poolex.poolex.support.TestMemberTokenGenerator;
 import com.poolex.poolex.token.JwtTokenProvider;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -69,7 +70,7 @@ class ExpenditureControllerTest extends IntegrationTest implements ReplaceUnderS
     void 멤버의_기간중의_지출의_총합을_구한다_지출이_있을_때() throws Exception {
         //given
         final Member member = createMember("oauthId");
-        final LocalDateTime dateTime = LocalDateTime.now();
+        final LocalDateTime dateTime = LocalDateTime.now().truncatedTo(ChronoUnit.MICROS);
 
         createExpenditure(1000, member.getId(), dateTime);
         createExpenditure(2000, member.getId(), dateTime);
@@ -94,7 +95,7 @@ class ExpenditureControllerTest extends IntegrationTest implements ReplaceUnderS
     void 멤버의_기간중의_지출의_총합을_구한다_지출이_없을_때() throws Exception {
         //given
         final Member member = createMember("oauthId");
-        final LocalDateTime dateTime = LocalDateTime.now();
+        final LocalDateTime dateTime = LocalDateTime.now().truncatedTo(ChronoUnit.MICROS);
 
         createExpenditure(1000, member.getId(), dateTime);
         createExpenditure(2000, member.getId(), dateTime);

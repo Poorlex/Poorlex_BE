@@ -17,6 +17,7 @@ import com.poolex.poolex.member.domain.MemberRepository;
 import com.poolex.poolex.support.ReplaceUnderScoreTest;
 import com.poolex.poolex.support.UsingDataJpaTest;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -72,7 +73,7 @@ class ExpenditureServiceTest extends UsingDataJpaTest implements ReplaceUnderSco
     void 멤버의_기간중의_지출의_총합을_구한다_지출이_있을_때() {
         //given
         final Member member = createMember("oauthId");
-        final LocalDateTime date = LocalDateTime.now();
+        final LocalDateTime date = LocalDateTime.now().truncatedTo(ChronoUnit.MICROS);
 
         createExpenditure(1000, member.getId(), date);
         createExpenditure(2000, member.getId(), date);
@@ -94,7 +95,7 @@ class ExpenditureServiceTest extends UsingDataJpaTest implements ReplaceUnderSco
     void 멤버의_기간중의_지출의_총합을_구한다_지출이_없을_때() {
         //given
         final Member member = createMember("oauthId");
-        final LocalDateTime date = LocalDateTime.now();
+        final LocalDateTime date = LocalDateTime.now().truncatedTo(ChronoUnit.MICROS);
 
         createExpenditure(1000, member.getId(), date);
         createExpenditure(2000, member.getId(), date);

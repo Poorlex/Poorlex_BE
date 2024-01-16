@@ -24,6 +24,7 @@ import com.poolex.poolex.weeklybudget.service.dto.request.WeeklyBudgetRequest;
 import com.poolex.poolex.weeklybudget.service.dto.response.WeeklyBudgetLeftResponse;
 import com.poolex.poolex.weeklybudget.service.dto.response.WeeklyBudgetResponse;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -76,7 +77,7 @@ class WeeklyBudgetDocumentationTest extends RestDocsDocumentationTest {
     @Test
     void find_member_weekly_budget() throws Exception {
         //given
-        final WeeklyBudgetRequest request = new WeeklyBudgetRequest(LocalDateTime.now());
+        final WeeklyBudgetRequest request = new WeeklyBudgetRequest(LocalDateTime.now().truncatedTo(ChronoUnit.MICROS));
 
         mockingTokenInterceptor();
         mockingMemberArgumentResolver();
@@ -113,7 +114,7 @@ class WeeklyBudgetDocumentationTest extends RestDocsDocumentationTest {
     @Test
     void find_member_left_weekly_budget() throws Exception {
         //given
-        final WeeklyBudgetLeftRequest request = new WeeklyBudgetLeftRequest(LocalDateTime.now());
+        final WeeklyBudgetLeftRequest request = new WeeklyBudgetLeftRequest(LocalDateTime.now().truncatedTo(ChronoUnit.MICROS));
 
         mockingTokenInterceptor();
         mockingMemberArgumentResolver();

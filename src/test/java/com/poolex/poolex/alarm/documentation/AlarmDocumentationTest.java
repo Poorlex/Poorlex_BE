@@ -19,6 +19,7 @@ import com.poolex.poolex.alarm.service.dto.response.BattleAlarmResponse;
 import com.poolex.poolex.alarm.service.dto.response.UncheckedBattleAlarmCountResponse;
 import com.poolex.poolex.support.RestDocsDocumentationTest;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,11 +45,13 @@ class AlarmDocumentationTest extends RestDocsDocumentationTest {
         //given
         mockingTokenInterceptor();
         mockingMemberArgumentResolver();
-        final BattleAlarmRequest request = new BattleAlarmRequest(LocalDateTime.now());
+        final BattleAlarmRequest request = new BattleAlarmRequest(LocalDateTime.now().truncatedTo(ChronoUnit.MICROS));
         given(alarmService.findBattleAlarms(any(), any(), any())).willReturn(
             List.of(
-                new BattleAlarmResponse(1L, 1L, "EXPENDITURE_CREATED", LocalDateTime.now()),
-                new BattleAlarmResponse(1L, 1L, "BATTLE_NOTIFICATION_CHANGED", LocalDateTime.now())
+                new BattleAlarmResponse(1L, 1L, "EXPENDITURE_CREATED",
+                    LocalDateTime.now().truncatedTo(ChronoUnit.MICROS)),
+                new BattleAlarmResponse(1L, 1L, "BATTLE_NOTIFICATION_CHANGED",
+                    LocalDateTime.now().truncatedTo(ChronoUnit.MICROS))
             )
         );
 

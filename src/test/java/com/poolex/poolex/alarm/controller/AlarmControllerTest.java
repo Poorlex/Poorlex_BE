@@ -24,6 +24,7 @@ import com.poolex.poolex.support.IntegrationTest;
 import com.poolex.poolex.support.ReplaceUnderScoreTest;
 import com.poolex.poolex.token.JwtTokenProvider;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,7 +65,7 @@ class AlarmControllerTest extends IntegrationTest implements ReplaceUnderScoreTe
         final Member member = createMemberWithOauthId("oauthId");
         join(member, battle);
         final Alarm alarm = createAlarm(battle, member.getId());
-        final BattleAlarmRequest request = new BattleAlarmRequest(LocalDateTime.now());
+        final BattleAlarmRequest request = new BattleAlarmRequest(LocalDateTime.now().truncatedTo(ChronoUnit.MICROS));
         final String accessToken = jwtTokenProvider.createAccessToken(member.getId());
 
         //when
@@ -106,7 +107,7 @@ class AlarmControllerTest extends IntegrationTest implements ReplaceUnderScoreTe
         final Battle battle = createBattle();
         final Member member = createMemberWithOauthId("oauthId");
         join(member, battle);
-        final BattleAlarmRequest request = new BattleAlarmRequest(LocalDateTime.now());
+        final BattleAlarmRequest request = new BattleAlarmRequest(LocalDateTime.now().truncatedTo(ChronoUnit.MICROS));
         final String accessToken = jwtTokenProvider.createAccessToken(member.getId());
 
         //when

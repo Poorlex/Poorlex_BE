@@ -37,7 +37,7 @@ public class AlarmReactionService {
     private void validateReactableAlarmType(final Long alarmId) {
         final Alarm alarm = alarmRepository.findById(alarmId)
             .orElseThrow(IllegalArgumentException::new);
-        
+
         if (!alarm.isReactable()) {
             throw new IllegalArgumentException();
         }

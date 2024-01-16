@@ -24,6 +24,7 @@ import com.poolex.poolex.weeklybudget.service.dto.request.WeeklyBudgetCreateRequ
 import com.poolex.poolex.weeklybudget.service.dto.request.WeeklyBudgetLeftRequest;
 import com.poolex.poolex.weeklybudget.service.dto.request.WeeklyBudgetRequest;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -97,7 +98,7 @@ class WeeklyBudgetControllerTest extends IntegrationTest implements ReplaceUnder
         //given
         final Member member = createMember("oauthId");
         final String accessToken = memberTokenGenerator.createAccessToken(member);
-        final WeeklyBudgetRequest request = new WeeklyBudgetRequest(LocalDateTime.now());
+        final WeeklyBudgetRequest request = new WeeklyBudgetRequest(LocalDateTime.now().truncatedTo(ChronoUnit.MICROS));
 
         //when
         //then
@@ -142,7 +143,7 @@ class WeeklyBudgetControllerTest extends IntegrationTest implements ReplaceUnder
     void 남은_주간_예산을_조회한다_등록된_주간_예산이_없을때() throws Exception {
         //given
         final Member member = createMember("oauthId");
-        final LocalDateTime date = LocalDateTime.now();
+        final LocalDateTime date = LocalDateTime.now().truncatedTo(ChronoUnit.MICROS);
         createExpenditure(1000, member.getId(), date);
 
         final String accessToken = memberTokenGenerator.createAccessToken(member);

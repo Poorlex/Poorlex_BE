@@ -21,6 +21,7 @@ import com.poolex.poolex.participate.domain.BattleParticipantRepository;
 import com.poolex.poolex.support.ReplaceUnderScoreTest;
 import com.poolex.poolex.support.UsingDataJpaTest;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -55,7 +56,7 @@ class AlarmServiceTest extends UsingDataJpaTest implements ReplaceUnderScoreTest
         //given
         final long battleId = 1L;
         final long memberId = 1L;
-        final BattleAlarmRequest request = new BattleAlarmRequest(LocalDateTime.now());
+        final BattleAlarmRequest request = new BattleAlarmRequest(LocalDateTime.now().truncatedTo(ChronoUnit.MICROS));
 
         //when
         final List<BattleAlarmResponse> battleAlarms = alarmService.findBattleAlarms(battleId, memberId, request);
@@ -69,7 +70,7 @@ class AlarmServiceTest extends UsingDataJpaTest implements ReplaceUnderScoreTest
         //given
         final long battleId = 1L;
         final long memberId = 1L;
-        final BattleAlarmRequest request = new BattleAlarmRequest(LocalDateTime.now());
+        final BattleAlarmRequest request = new BattleAlarmRequest(LocalDateTime.now().truncatedTo(ChronoUnit.MICROS));
         final Alarm alarm1 = createAlarm(battleId, memberId, AlarmType.EXPENDITURE_CREATED);
         final Alarm alarm2 = createAlarm(battleId, memberId, AlarmType.EXPENDITURE_NEEDED);
         final Alarm alarm3 = createAlarm(battleId, memberId, AlarmType.OVER_BUDGET);

@@ -27,6 +27,7 @@ import com.poolex.poolex.participate.domain.BattleParticipantRepository;
 import com.poolex.poolex.support.IntegrationTest;
 import com.poolex.poolex.support.ReplaceUnderScoreTest;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -89,7 +90,8 @@ class AlarmEventHandlerTest extends IntegrationTest implements ReplaceUnderScore
                 softly.assertThat(alarm.getType()).isEqualTo(AlarmType.BATTLE_NOTIFICATION_CHANGED);
                 softly.assertThat(alarm.getBattleId()).isEqualTo(battle.getId());
                 softly.assertThat(alarm.getMemberId()).isEqualTo(member.getId());
-                softly.assertThat(alarm.getCreatedAt()).isBeforeOrEqualTo(LocalDateTime.now());
+                softly.assertThat(alarm.getCreatedAt())
+                    .isBeforeOrEqualTo(LocalDateTime.now().truncatedTo(ChronoUnit.MICROS));
             }
         );
     }
@@ -121,7 +123,8 @@ class AlarmEventHandlerTest extends IntegrationTest implements ReplaceUnderScore
                 softly.assertThat(alarm.getType()).isEqualTo(AlarmType.BATTLE_NOTIFICATION_CHANGED);
                 softly.assertThat(alarm.getBattleId()).isEqualTo(battle.getId());
                 softly.assertThat(alarm.getMemberId()).isEqualTo(member.getId());
-                softly.assertThat(alarm.getCreatedAt()).isBeforeOrEqualTo(LocalDateTime.now());
+                softly.assertThat(alarm.getCreatedAt())
+                    .isBeforeOrEqualTo(LocalDateTime.now().truncatedTo(ChronoUnit.MICROS));
             }
         );
     }
@@ -144,7 +147,9 @@ class AlarmEventHandlerTest extends IntegrationTest implements ReplaceUnderScore
                 softly.assertThat(alarm.getType()).isEqualTo(AlarmType.BATTLE_NOTIFICATION_CHANGED);
                 softly.assertThat(alarm.getBattleId()).isEqualTo(1L);
                 softly.assertThat(alarm.getMemberId()).isEqualTo(1L);
-                softly.assertThat(alarm.getCreatedAt()).isBeforeOrEqualTo(LocalDateTime.now());
+                softly.assertThat(alarm.getCreatedAt())
+                    .isBeforeOrEqualTo(
+                        LocalDateTime.now().truncatedTo(ChronoUnit.MICROS).truncatedTo(ChronoUnit.MICROS));
             }
         );
     }
@@ -181,7 +186,8 @@ class AlarmEventHandlerTest extends IntegrationTest implements ReplaceUnderScore
                 softly.assertThat(alarm.getType()).isEqualTo(AlarmType.EXPENDITURE_CREATED);
                 softly.assertThat(alarm.getBattleId()).isEqualTo(battle.getId());
                 softly.assertThat(alarm.getMemberId()).isEqualTo(member.getId());
-                softly.assertThat(alarm.getCreatedAt()).isBeforeOrEqualTo(LocalDateTime.now());
+                softly.assertThat(alarm.getCreatedAt())
+                    .isBeforeOrEqualTo(LocalDateTime.now().truncatedTo(ChronoUnit.MICROS));
             }
         );
     }
@@ -218,7 +224,8 @@ class AlarmEventHandlerTest extends IntegrationTest implements ReplaceUnderScore
                 softly.assertThat(alarm.getType()).isEqualTo(AlarmType.OVER_BUDGET);
                 softly.assertThat(alarm.getBattleId()).isEqualTo(battle.getId());
                 softly.assertThat(alarm.getMemberId()).isEqualTo(member.getId());
-                softly.assertThat(alarm.getCreatedAt()).isBeforeOrEqualTo(LocalDateTime.now());
+                softly.assertThat(alarm.getCreatedAt())
+                    .isBeforeOrEqualTo(LocalDateTime.now().truncatedTo(ChronoUnit.MICROS));
             }
         );
     }
