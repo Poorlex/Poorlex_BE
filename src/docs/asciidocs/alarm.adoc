@@ -6,8 +6,8 @@ operation::battle-alarm-find[snippets='http-request']
 operation::battle-alarm-find[snippets='http-response']
 operation::battle-alarm-find[snippets='response-fields']
 
-=== 알림 반응 생성
+=== 배틀 알림 반응 생성
 
-operation::alarm-reaction-create[snippets='http-request']
-operation::alarm-reaction-create[snippets='request-fields']
-operation::alarm-reaction-create[snippets='http-response']
+operation::battle-alarm-reaction-create[snippets='http-request']
+operation::battle-alarm-reaction-create[snippets='request-fields']
+operation::battle-alarm-reaction-create[snippets='http-response']
