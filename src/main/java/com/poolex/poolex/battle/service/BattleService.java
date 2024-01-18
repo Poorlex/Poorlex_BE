@@ -1,6 +1,6 @@
 package com.poolex.poolex.battle.service;
 
-import com.poolex.poolex.alarm.service.AlarmService;
+import com.poolex.poolex.alarm.battlealarm.service.BattleAlarmService;
 import com.poolex.poolex.battle.domain.Battle;
 import com.poolex.poolex.battle.domain.BattleParticipantWithExpenditure;
 import com.poolex.poolex.battle.domain.BattleRepository;
@@ -41,7 +41,7 @@ public class BattleService {
 
     private final BattleRepository battleRepository;
     private final BattleParticipantRepository battleParticipantRepository;
-    private final AlarmService alarmService;
+    private final BattleAlarmService battleAlarmService;
     private final MemberPointService memberPointService;
     private final ExpenditureService expenditureService;
     private final MemberService memberService;
@@ -78,7 +78,7 @@ public class BattleService {
         final Battle battle = battleInfo.getBattle();
         final Long battleId = battle.getId();
         final int battleParticipantCount = battleParticipantRepository.countBattleParticipantByBattleId(battleId);
-        final int uncheckedAlarmCount = alarmService.getBattleParticipantUncheckedAlarmCount(battleId, memberId)
+        final int uncheckedAlarmCount = battleAlarmService.getBattleParticipantUncheckedAlarmCount(battleId, memberId)
             .getCount();
 
         return MemberProgressBattleResponse.from(
