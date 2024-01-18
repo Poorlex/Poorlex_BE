@@ -15,4 +15,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
         + "from Member m "
         + "where m.id in :memberIds")
     List<MemberIdAndNicknameDto> getMemberNicknamesByMemberIds(final List<Long> memberIds);
+
+    @Query(value = "select m.nickname.value from Member m where m.id = :memberId")
+    String findMemberNicknameByMemberId(final Long memberId);
 }
