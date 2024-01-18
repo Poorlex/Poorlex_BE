@@ -7,11 +7,11 @@ operation::battle-alarm-find[snippets='request-fields']
 operation::battle-alarm-find[snippets='http-response']
 operation::battle-alarm-find[snippets='response-fields']
 
-=== 알림 반응 생성
+=== 배틀 알림 반응 생성
 
-operation::alarm-reaction-create[snippets='http-request']
-operation::alarm-reaction-create[snippets='request-fields']
-operation::alarm-reaction-create[snippets='http-response']
+operation::battle-alarm-reaction-create[snippets='http-request']
+operation::battle-alarm-reaction-create[snippets='request-fields']
+operation::battle-alarm-reaction-create[snippets='http-response']
 
 === 회원이 읽지 않은 배틀 알림 개수 조회
 
