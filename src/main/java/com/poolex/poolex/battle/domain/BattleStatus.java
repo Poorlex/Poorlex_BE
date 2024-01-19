@@ -1,6 +1,7 @@
 package com.poolex.poolex.battle.domain;
 
 import java.util.Arrays;
+import java.util.List;
 
 public enum BattleStatus {
     RECRUITING,
@@ -13,5 +14,9 @@ public enum BattleStatus {
             .filter(status -> status.name().equals(statusName.toUpperCase()))
             .findFirst()
             .orElseThrow(IllegalArgumentException::new);
+    }
+
+    public static List<BattleStatus> getReadiedStatues() {
+        return List.of(BattleStatus.RECRUITING, BattleStatus.RECRUITING_FINISHED);
     }
 }

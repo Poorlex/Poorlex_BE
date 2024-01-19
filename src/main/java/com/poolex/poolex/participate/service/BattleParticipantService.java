@@ -17,14 +17,17 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class BattleParticipantService {
 
+    private static final int MAX_READIED_BATTLE_COUNT = 3;
+
     private final MemberRepository memberRepository;
     private final BattleRepository battleRepository;
     private final BattleParticipantRepository battleParticipantRepository;
 
     @Transactional
     public Long create(final Long battleId, final Long memberId) {
-        validateBattle(battleId);
         validateMemberExist(memberId);
+        validateMemberCanCreateBattle(memberId);
+        validateBattle(battleId);
         final BattleParticipant battleParticipant = BattleParticipant.normalPlayer(battleId, memberId);
         final BattleParticipant savedBattleParticipant = battleParticipantRepository.save(battleParticipant);
         Events.raise(new BattleParticipantAddedEvent(battleId));
@@ -35,6 +38,16 @@ public class BattleParticipantService {
     private void validateMemberExist(final Long memberId) {
         if (!memberRepository.existsById(memberId)) {
             throw new IllegalArgumentException();
+        }
+    }
+
+    private void validateMemberCanCreateBattle(final Long memberId) {
+        final int readiedBattleCount = battleRepository.countMemberBattleWithStatuses(
+            memberId,
+            BattleStatus.getReadiedStatues()
+        );
+        if (readiedBattleCount >= MAX_READIED_BATTLE_COUNT) {
+            throw new IllegalArgumentException("배틀은 최대 3개까지 참여할 수 있습니다.");
         }
     }
 

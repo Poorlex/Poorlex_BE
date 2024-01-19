@@ -71,6 +71,26 @@ class BattleParticipantServiceTest extends UsingDataJpaTest implements ReplaceUn
     }
 
     @Test
+    void 배틀참가자가_이미_3개의_배틀이_참가되어있을_경우_예외를_던진다() {
+        //given
+        final Member member = createMember();
+
+        final Battle battle1 = createBattleWithStatus(BattleStatus.RECRUITING);
+        final Battle battle2 = createBattleWithStatus(BattleStatus.RECRUITING);
+        final Battle battle3 = createBattleWithStatus(BattleStatus.RECRUITING);
+        final Battle battle4 = createBattleWithStatus(BattleStatus.RECRUITING);
+        
+        join(member, battle1);
+        join(member, battle2);
+        join(member, battle3);
+
+        //when
+        //then
+        assertThatThrownBy(() -> battleParticipantService.create(battle4.getId(), member.getId()))
+            .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
     void 배틀참가자가_참가하려는_배틀이_꽉_찼을_때_예외를_던진다() {
         //given
         final Long memberId = createMember().getId();
@@ -163,5 +183,13 @@ class BattleParticipantServiceTest extends UsingDataJpaTest implements ReplaceUn
             .build();
 
         return battleRepository.save(battle);
+    }
+
+    private Member join(final Member member, final Battle battle) {
+        memberRepository.save(member);
+        final BattleParticipant battleParticipant = BattleParticipant.normalPlayer(battle.getId(), member.getId());
+        battleParticipantRepository.save(battleParticipant);
+
+        return member;
     }
 }

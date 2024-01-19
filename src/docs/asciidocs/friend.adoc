@@ -1,0 +1,25 @@
+== 친구 API
+
+=== 친구 요청
+
+operation::friend-invite[snippets='http-request']
+operation::friend-invite[snippets='request-fields']
+operation::friend-invite[snippets='http-response']
+
+=== 친구 요청 수락
+
+operation::friend-invite-accept[snippets='http-request']
+operation::friend-invite-accept[snippets='request-fields']
+operation::friend-invite-accept[snippets='http-response']
+
+=== 친구 요청 거절
+
+operation::friend-invite-deny[snippets='http-request']
+operation::friend-invite-deny[snippets='request-fields']
+operation::friend-invite-deny[snippets='http-response']
+
+=== 친구 목록 조회
+
+operation::friend-find[snippets='http-request']
+operation::friend-find[snippets='http-response']
+operation::friend-find[snippets='response-fields']

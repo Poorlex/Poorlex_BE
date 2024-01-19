@@ -90,6 +90,7 @@ create table battle_alarm
                                     'EXPENDITURE_NEEDED',
                                     'OVER_BUDGET',
                                     'ZERO_EXPENDITURE',
+                                    'PARTICIPANT_ESCAPE',
                                     'BATTLE_NOTIFICATION_CHANGED')),
     created_at timestamp(6),
     primary key (id)
