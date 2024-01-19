@@ -86,4 +86,11 @@ public interface BattleRepository extends JpaRepository<Battle, Long> {
     List<BattleParticipantWithExpenditure> findBattleParticipantsWithExpenditureByBattleId(
         @Param("battleId") final Long battleId
     );
+
+    @Query(
+        "select count(b) from Battle b "
+            + "left join BattleParticipant p on b.id = p.battleId and p.memberId = :memberId "
+            + "where b.status in :statuses"
+    )
+    int countMemberBattleWithStatuses(final Long memberId, final List<BattleStatus> statuses);
 }

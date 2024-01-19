@@ -39,6 +39,8 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class BattleService {
 
+    private static final int MAX_READIED_BATTLE_COUNT = 3;
+
     private final BattleRepository battleRepository;
     private final BattleParticipantRepository battleParticipantRepository;
     private final BattleAlarmService battleAlarmService;
@@ -48,10 +50,21 @@ public class BattleService {
 
     @Transactional
     public Long create(final Long memberId, final BattleCreateRequest request) {
+        validateMemberCanCreateBattle(memberId);
         final Battle battle = BattleMapper.createRequestToBattle(request);
         battleRepository.save(battle);
         Events.raise(new BattleCreatedEvent(battle.getId(), memberId));
         return battle.getId();
+    }
+
+    private void validateMemberCanCreateBattle(final Long memberId) {
+        final int readiedBattleCount = battleRepository.countMemberBattleWithStatuses(
+            memberId,
+            BattleStatus.getReadiedStatues()
+        );
+        if (readiedBattleCount >= MAX_READIED_BATTLE_COUNT) {
+            throw new IllegalArgumentException("배틀은 최대 3개까지 참여할 수 있습니다.");
+        }
     }
 
     public List<FindingBattleResponse> findBattlesToPlay() {

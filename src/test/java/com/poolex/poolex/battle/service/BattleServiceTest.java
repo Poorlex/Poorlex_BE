@@ -1,5 +1,6 @@
 package com.poolex.poolex.battle.service;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import com.poolex.poolex.alarm.battlealarm.domain.BattleAlarmRepository;
@@ -107,6 +108,27 @@ class BattleServiceTest extends UsingDataJpaTest implements ReplaceUnderScoreTes
                     .isEqualTo(BattleFixture.simple());
             }
         );
+    }
+
+    @Test
+    void 배틀을_생성한다_참여한_배틀이_3개일_경우_예외를_던진다() {
+        //given
+        final Member member = createMemberWithOauthId("oauthId");
+
+        final Battle battle1 = battleRepository.save(BattleFixture.simple());
+        final Battle battle2 = battleRepository.save(BattleFixture.simple());
+        final Battle battle3 = battleRepository.save(BattleFixture.simple());
+
+        join(member, battle1);
+        join(member, battle2);
+        join(member, battle3);
+
+        final BattleCreateRequest request = BattleCreateRequestFixture.simple();
+
+        //when
+        //then
+        assertThatThrownBy(() -> battleService.create(member.getId(), request))
+            .isInstanceOf(IllegalArgumentException.class);
     }
 
     @ParameterizedTest(name = "멤버1의 지출이 {0}, 멤버2의 지출이 {1} 일 때")
