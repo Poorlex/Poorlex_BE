@@ -9,7 +9,9 @@ import com.poorlex.poorlex.goal.domain.GoalStatus;
 import com.poorlex.poorlex.goal.domain.GoalType;
 import com.poorlex.poorlex.goal.service.dto.request.GoalCreateRequest;
 import com.poorlex.poorlex.goal.service.dto.response.GoalIdResponse;
+import com.poorlex.poorlex.goal.service.dto.response.GoalTypeResponse;
 import com.poorlex.poorlex.member.domain.MemberRepository;
+import java.util.Arrays;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -45,6 +47,12 @@ public class GoalService {
         final List<Long> memberGoalIds = goalRepository.findIdsByMemberId(memberId);
         return memberGoalIds.stream()
             .map(GoalIdResponse::new)
+            .toList();
+    }
+
+    public List<GoalTypeResponse> findAllGoalType() {
+        return Arrays.stream(GoalType.values())
+            .map(GoalTypeResponse::from)
             .toList();
     }
 }

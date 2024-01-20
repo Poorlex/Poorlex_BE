@@ -15,9 +15,11 @@ import com.poorlex.poorlex.goal.domain.GoalType;
 import com.poorlex.poorlex.goal.service.GoalService;
 import com.poorlex.poorlex.goal.service.dto.request.GoalCreateRequest;
 import com.poorlex.poorlex.goal.service.dto.response.GoalIdResponse;
+import com.poorlex.poorlex.goal.service.dto.response.GoalTypeResponse;
 import com.poorlex.poorlex.support.RestDocsDocumentationTest;
 import com.poorlex.poorlex.util.ApiDocumentUtils;
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -105,6 +107,34 @@ class GoalDocumentationTest extends RestDocsDocumentationTest {
                     responseFields(fieldWithPath("[]").description("목표 리스트"))
                         .andWithPrefix("[].",
                             fieldWithPath("goalId").type(JsonFieldType.NUMBER).description("회원이 등록한 목표 Id")
+                        )
+                )
+            );
+    }
+
+    @Test
+    void goal_find_types() throws Exception {
+        //given
+        given(goalService.findAllGoalType())
+            .willReturn(
+                Arrays.stream(GoalType.values())
+                    .map(GoalTypeResponse::from)
+                    .toList()
+            );
+
+        //when
+        //then
+        final ResultActions result = mockMvc.perform(get("/goals/types"));
+
+        result.andExpect(status().isOk())
+            .andDo(
+                document("goal-find-types",
+                    ApiDocumentUtils.getDocumentRequest(),
+                    ApiDocumentUtils.getDocumentResponse(),
+                    responseFields()
+                        .andWithPrefix("[].",
+                            fieldWithPath("recommendGoalNames[]").description("목표 타입별 추천 목표명"),
+                            fieldWithPath("typeName").type(JsonFieldType.STRING).description("목표 타입명")
                         )
                 )
             );

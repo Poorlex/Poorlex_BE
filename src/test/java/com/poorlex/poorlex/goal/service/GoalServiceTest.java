@@ -12,12 +12,14 @@ import com.poorlex.poorlex.goal.domain.GoalStatus;
 import com.poorlex.poorlex.goal.domain.GoalType;
 import com.poorlex.poorlex.goal.service.dto.request.GoalCreateRequest;
 import com.poorlex.poorlex.goal.service.dto.response.GoalIdResponse;
+import com.poorlex.poorlex.goal.service.dto.response.GoalTypeResponse;
 import com.poorlex.poorlex.member.domain.Member;
 import com.poorlex.poorlex.member.domain.MemberNickname;
 import com.poorlex.poorlex.member.domain.MemberRepository;
 import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
 import com.poorlex.poorlex.support.UsingDataJpaTest;
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -56,6 +58,19 @@ class GoalServiceTest extends UsingDataJpaTest implements ReplaceUnderScoreTest 
         //then
         final Optional<Goal> findGoal = goalRepository.findById(createdGoalId);
         assertThat(findGoal).isPresent();
+    }
+
+    @Test
+    void 목표타입_목록을_조회한다() {
+        //given
+        //when
+        final List<GoalTypeResponse> responses = goalService.findAllGoalType();
+
+        //then
+        final List<GoalTypeResponse> expected = Arrays.stream(GoalType.values())
+            .map(goalType -> new GoalTypeResponse(goalType.getName(), goalType.getRecommendNames()))
+            .toList();
+        assertThat(responses).usingRecursiveComparison().isEqualTo(expected);
     }
 
     @Test

@@ -68,6 +68,19 @@ class GoalControllerTest extends IntegrationTest implements ReplaceUnderScoreTes
     }
 
     @Test
+    void 목표_타입_목록을_조회한다() throws Exception {
+        //given
+        final GoalType[] goalTypes = GoalType.values();
+
+        //when
+        //then
+        mockMvc.perform(get("/goals/types"))
+            .andDo(print())
+            .andExpect(MockMvcResultMatchers.status().isOk())
+            .andExpect(MockMvcResultMatchers.jsonPath("$.length()").value(goalTypes.length));
+    }
+
+    @Test
     void 멤버의_목표들의_Id를_조회한다() throws Exception {
         //given
         final Member member = memberRepository.save(Member.withoutId("oauthId", new MemberNickname("nickname")));
