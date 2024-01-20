@@ -1,0 +1,7 @@
+== 회원 API
+
+=== 회원 프로필 업데이트
+
+operation::member-profile-update[snippets='http-request']
+operation::member-profile-update[snippets='request-fields']
+operation::member-profile-update[snippets='http-response']
