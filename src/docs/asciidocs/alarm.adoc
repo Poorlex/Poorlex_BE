@@ -13,8 +13,15 @@ operation::battle-alarm-reaction-create[snippets='http-request']
 operation::battle-alarm-reaction-create[snippets='request-fields']
 operation::battle-alarm-reaction-create[snippets='http-response']
 
-=== 회원이 읽지 않은 배틀 알림 개수 조회
+=== 배틀 알림 미확인 개수 조회
 
 operation::battle-unchecked-alarm-count[snippets='http-request']
 operation::battle-unchecked-alarm-count[snippets='http-response']
 operation::battle-unchecked-alarm-count[snippets='response-fields']
+
+=== 마이페이지 알림 조회
+
+operation::member-alarm-find[snippets='http-request']
+operation::member-alarm-find[snippets='request-fields']
+operation::member-alarm-find[snippets='http-response']
+operation::member-alarm-find[snippets='response-fields']
