@@ -1,0 +1,96 @@
+package com.poolex.poolex.alarm.memberalram.service;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+import com.poolex.poolex.alarm.memberalram.domain.MemberAlarm;
+import com.poolex.poolex.alarm.memberalram.domain.MemberAlarmRepository;
+import com.poolex.poolex.alarm.memberalram.domain.MemberAlarmType;
+import com.poolex.poolex.alarm.memberalram.service.dto.request.MemberAlarmRequest;
+import com.poolex.poolex.alarm.memberalram.service.dto.response.MemberAlarmResponse;
+import com.poolex.poolex.battle.domain.Battle;
+import com.poolex.poolex.battle.domain.BattleRepository;
+import com.poolex.poolex.battle.domain.BattleStatus;
+import com.poolex.poolex.battle.fixture.BattleFixture;
+import com.poolex.poolex.member.domain.Member;
+import com.poolex.poolex.member.domain.MemberNickname;
+import com.poolex.poolex.member.domain.MemberRepository;
+import com.poolex.poolex.participate.domain.BattleParticipant;
+import com.poolex.poolex.participate.domain.BattleParticipantRepository;
+import com.poolex.poolex.support.ReplaceUnderScoreTest;
+import com.poolex.poolex.support.UsingDataJpaTest;
+import java.time.LocalDateTime;
+import java.util.List;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+
+class MemberAlarmServiceTest extends UsingDataJpaTest implements ReplaceUnderScoreTest {
+
+    @Autowired
+    private MemberAlarmRepository memberAlarmRepository;
+
+    @Autowired
+    private MemberRepository memberRepository;
+
+    @Autowired
+    private BattleRepository battleRepository;
+
+    @Autowired
+    private BattleParticipantRepository battleParticipantRepository;
+    private MemberAlarmService memberAlarmService;
+
+    @BeforeEach
+    void setUp() {
+        this.memberAlarmService = new MemberAlarmService(
+            memberAlarmRepository,
+            new MemberAlarmResponseConverter(memberRepository, battleRepository, battleParticipantRepository)
+        );
+    }
+
+    @Test
+    void 멤버의_알림목록을_조회한다() {
+        //given
+        final Battle battle = createBattle();
+        final Member me = createMemberWithOauthId("oauthId2");
+        final Member other = createMemberWithOauthId("oauthId1");
+        final BattleParticipant battleParticipant = join(battle, other);
+
+        final MemberAlarm battleInvitationAlarm = memberAlarmRepository.save(MemberAlarm.withoutId(
+            me.getId(),
+            battleParticipant.getId(),
+            MemberAlarmType.BATTLE_INVITATION)
+        );
+        final MemberAlarm friendInvitation = memberAlarmRepository.save(MemberAlarm.withoutId(
+            me.getId(),
+            other.getId(),
+            MemberAlarmType.FRIEND_INVITATION)
+        );
+        final LocalDateTime requestDateTime = LocalDateTime.now().plusMinutes(10);
+        final MemberAlarmRequest request = new MemberAlarmRequest(requestDateTime);
+
+        //when
+        final List<MemberAlarmResponse> responses = memberAlarmService.findMemberAlarms(me.getId(), request);
+
+        //then
+        assertThat(responses).hasSize(2)
+            .usingRecursiveFieldByFieldElementComparatorOnFields()
+            .containsExactly(
+                MemberAlarmResponse.from(battleInvitationAlarm, other.getNickname(), battle.getName(), requestDateTime),
+                MemberAlarmResponse.from(friendInvitation, other.getNickname(), null, requestDateTime)
+            );
+    }
+
+    private Member createMemberWithOauthId(final String oauthId) {
+        final Member member = Member.withoutId(oauthId, new MemberNickname("nickname"));
+        return memberRepository.save(member);
+    }
+
+    private Battle createBattle() {
+        return battleRepository.save(BattleFixture.initialBattleBuilder()
+            .status(BattleStatus.RECRUITING).build());
+    }
+
+    private BattleParticipant join(final Battle battle, final Member member) {
+        return battleParticipantRepository.save(BattleParticipant.normalPlayer(battle.getId(), member.getId()));
+    }
+}
