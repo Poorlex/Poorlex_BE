@@ -30,10 +30,10 @@ class BattleIntroductionTest implements ReplaceUnderScoreTest {
         final String introduction = "a가@#$😁";
 
         //when
-        final BattleIntroduction battleName = new BattleIntroduction(introduction);
+        final BattleIntroduction battleIntroduction = new BattleIntroduction(introduction);
 
         //then
-        assertThat(battleName.getValue()).isEqualTo("a가@#$😁");
+        assertThat(battleIntroduction.getValue()).isEqualTo("a가@#$😁");
     }
 
     @Test
@@ -53,9 +53,9 @@ class BattleIntroductionTest implements ReplaceUnderScoreTest {
         final String introduction = "  aaa   ";
 
         //when
-        final BattleIntroduction battleName = new BattleIntroduction(introduction);
+        final BattleIntroduction battleIntroduction = new BattleIntroduction(introduction);
 
         //then
-        assertThat(battleName.getValue()).isEqualTo("aaa");
+        assertThat(battleIntroduction.getValue()).isEqualTo("aaa");
     }
 }
