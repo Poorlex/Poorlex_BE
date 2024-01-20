@@ -6,6 +6,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import java.util.Optional;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -20,8 +21,12 @@ public class Member {
 
     @Column(unique = true, columnDefinition = "TEXT")
     private String oauthId;
+
     @Embedded
     private MemberNickname nickname;
+
+    @Embedded
+    private MemberDescription description;
 
     public Member(final Long id, final String oauthId, @NonNull final MemberNickname nickname) {
         this.id = id;
@@ -37,6 +42,14 @@ public class Member {
         this.nickname = newNickname;
     }
 
+    public void changeDescription(final MemberDescription description) {
+        this.description = description;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
     public String getOauthId() {
         return oauthId;
     }
@@ -45,7 +58,7 @@ public class Member {
         return nickname.getValue();
     }
 
-    public Long getId() {
-        return id;
+    public Optional<String> getDescription() {
+        return Optional.ofNullable(description.getValue());
     }
 }
