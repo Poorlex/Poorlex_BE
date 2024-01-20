@@ -1,12 +1,12 @@
 package com.poorlex.poorlex.friend.service.event;
 
+import lombok.Builder;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
 @Getter
-@RequiredArgsConstructor
+@Builder
 public class FriendAcceptedEvent {
 
-    private final Long inviteMemberId;
-    private final Long acceptMemberId;
+    private Long inviteMemberId;
+    private Long acceptMemberId;
 }

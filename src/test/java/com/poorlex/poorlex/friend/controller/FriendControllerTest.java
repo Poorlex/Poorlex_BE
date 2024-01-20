@@ -1,11 +1,15 @@
 package com.poorlex.poorlex.friend.controller;
 
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.poorlex.poorlex.alarm.memberalram.domain.MemberAlarm;
+import com.poorlex.poorlex.alarm.memberalram.domain.MemberAlarmRepository;
+import com.poorlex.poorlex.alarm.memberalram.domain.MemberAlarmType;
 import com.poorlex.poorlex.friend.domain.Friend;
 import com.poorlex.poorlex.friend.domain.FriendRepository;
 import com.poorlex.poorlex.friend.service.dto.request.FriendCreateRequest;
@@ -17,6 +21,7 @@ import com.poorlex.poorlex.member.domain.MemberRepository;
 import com.poorlex.poorlex.support.IntegrationTest;
 import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
 import com.poorlex.poorlex.token.JwtTokenProvider;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -31,15 +36,18 @@ class FriendControllerTest extends IntegrationTest implements ReplaceUnderScoreT
     private JwtTokenProvider jwtTokenProvider;
 
     @Autowired
+    private MemberAlarmRepository memberAlarmRepository;
+
+    @Autowired
     private FriendRepository friendRepository;
 
     @Test
     void 친구요청을_생성한다() throws Exception {
         //given
-        final Member member = createMember("oauthId1", "nickname");
-        final Member friend = createMember("oauthId2", "nickname");
-        final String accessToken = jwtTokenProvider.createAccessToken(member.getId());
-        final FriendInviteRequest request = new FriendInviteRequest(friend.getId());
+        final Member inviteMember = createMember("oauthId1", "nickname");
+        final Member invitedMember = createMember("oauthId2", "nickname");
+        final String accessToken = jwtTokenProvider.createAccessToken(inviteMember.getId());
+        final FriendInviteRequest request = new FriendInviteRequest(invitedMember.getId());
 
         //when
         //then
@@ -50,15 +58,27 @@ class FriendControllerTest extends IntegrationTest implements ReplaceUnderScoreT
                     .contentType(MediaType.APPLICATION_JSON)
             ).andDo(print())
             .andExpect(status().isOk());
+
+        final List<MemberAlarm> memberAlarms = memberAlarmRepository.findAll();
+        assertSoftly(
+            softly -> {
+                softly.assertThat(memberAlarms).hasSize(1);
+
+                final MemberAlarm memberAlarm = memberAlarms.get(0);
+                softly.assertThat(memberAlarm.getMemberId()).isEqualTo(invitedMember.getId());
+                softly.assertThat(memberAlarm.getTargetId()).isEqualTo(inviteMember.getId());
+                softly.assertThat(memberAlarm.getType()).isEqualTo(MemberAlarmType.FRIEND_INVITATION);
+            }
+        );
     }
 
     @Test
     void 친구요청을_수락한다() throws Exception {
         //given
-        final Member member = createMember("oauthId1", "nickname");
-        final Member friend = createMember("oauthId2", "nickname");
-        final String accessToken = jwtTokenProvider.createAccessToken(member.getId());
-        final FriendCreateRequest request = new FriendCreateRequest(friend.getId());
+        final Member acceptMember = createMember("oauthId1", "nickname");
+        final Member inviteMember = createMember("oauthId2", "nickname");
+        final String accessToken = jwtTokenProvider.createAccessToken(acceptMember.getId());
+        final FriendCreateRequest request = new FriendCreateRequest(inviteMember.getId());
 
         //when
         //then
@@ -69,15 +89,27 @@ class FriendControllerTest extends IntegrationTest implements ReplaceUnderScoreT
                     .contentType(MediaType.APPLICATION_JSON)
             ).andDo(print())
             .andExpect(status().isCreated());
+
+        final List<MemberAlarm> memberAlarms = memberAlarmRepository.findAll();
+        assertSoftly(
+            softly -> {
+                softly.assertThat(memberAlarms).hasSize(1);
+
+                final MemberAlarm memberAlarm = memberAlarms.get(0);
+                softly.assertThat(memberAlarm.getMemberId()).isEqualTo(inviteMember.getId());
+                softly.assertThat(memberAlarm.getTargetId()).isEqualTo(acceptMember.getId());
+                softly.assertThat(memberAlarm.getType()).isEqualTo(MemberAlarmType.FRIEND_ACCEPTED);
+            }
+        );
     }
 
     @Test
     void 친구요청을_거절한다() throws Exception {
         //given
-        final Member member = createMember("oauthId1", "nickname");
-        final Member friend = createMember("oauthId2", "nickname");
-        final String accessToken = jwtTokenProvider.createAccessToken(member.getId());
-        final FriendDenyRequest request = new FriendDenyRequest(friend.getId());
+        final Member denyMember = createMember("oauthId1", "nickname");
+        final Member inviteMember = createMember("oauthId2", "nickname");
+        final String accessToken = jwtTokenProvider.createAccessToken(denyMember.getId());
+        final FriendDenyRequest request = new FriendDenyRequest(inviteMember.getId());
 
         //when
         //then
@@ -88,6 +120,18 @@ class FriendControllerTest extends IntegrationTest implements ReplaceUnderScoreT
                     .contentType(MediaType.APPLICATION_JSON)
             ).andDo(print())
             .andExpect(status().isOk());
+
+        final List<MemberAlarm> memberAlarms = memberAlarmRepository.findAll();
+        assertSoftly(
+            softly -> {
+                softly.assertThat(memberAlarms).hasSize(1);
+
+                final MemberAlarm memberAlarm = memberAlarms.get(0);
+                softly.assertThat(memberAlarm.getMemberId()).isEqualTo(inviteMember.getId());
+                softly.assertThat(memberAlarm.getTargetId()).isEqualTo(denyMember.getId());
+                softly.assertThat(memberAlarm.getType()).isEqualTo(MemberAlarmType.FRIEND_DENIED);
+            }
+        );
     }
 
     @Test

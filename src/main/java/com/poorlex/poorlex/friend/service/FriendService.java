@@ -35,19 +35,35 @@ public class FriendService {
 
     @Transactional
     public void inviteFriend(final Long memberId, final FriendInviteRequest request) {
-        Events.raise(new FriendInvitedEvent(memberId, request.getInviteMemberId()));
+        final FriendInvitedEvent friendInvitedEvent = FriendInvitedEvent.builder()
+            .inviteMemberId(memberId)
+            .invitedMemberId(request.getInviteMemberId())
+            .build();
+
+        Events.raise(friendInvitedEvent);
     }
 
     @Transactional
     public void inviteDeny(final Long memberId, final FriendDenyRequest request) {
-        Events.raise(new FriendDeniedEvent(memberId, request.getInviteMemberId()));
+        final FriendDeniedEvent friendDeniedEvent = FriendDeniedEvent.builder()
+            .inviteMemberId(request.getInviteMemberId())
+            .denyMemberId(memberId)
+            .build();
+        
+        Events.raise(friendDeniedEvent);
     }
 
     @Transactional
     public void createFriend(final Long memberId, final FriendCreateRequest request) {
         final Friend friend = Friend.withoutId(memberId, request.getFriendMemberId());
         friendRepository.save(friend);
-        Events.raise(new FriendAcceptedEvent(memberId, request.getFriendMemberId()));
+
+        final FriendAcceptedEvent friendAcceptedEvent = FriendAcceptedEvent.builder()
+            .inviteMemberId(request.getFriendMemberId())
+            .acceptMemberId(memberId)
+            .build();
+
+        Events.raise(friendAcceptedEvent);
     }
 
     public List<FriendResponse> findMemberFriends(final Long memberId) {
