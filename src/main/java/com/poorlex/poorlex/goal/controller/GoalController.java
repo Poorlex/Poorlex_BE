@@ -5,6 +5,7 @@ import com.poorlex.poorlex.config.auth.argumentresolver.MemberOnly;
 import com.poorlex.poorlex.goal.service.GoalService;
 import com.poorlex.poorlex.goal.service.dto.request.GoalCreateRequest;
 import com.poorlex.poorlex.goal.service.dto.response.GoalIdResponse;
+import com.poorlex.poorlex.goal.service.dto.response.GoalTypeResponse;
 import java.net.URI;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +28,12 @@ public class GoalController {
                                            @RequestBody final GoalCreateRequest request) {
         final Long createdGoalId = goalService.createGoal(memberInfo.getMemberId(), request);
         return ResponseEntity.created(URI.create("/goals/" + createdGoalId)).build();
+    }
+
+    @GetMapping("/types")
+    public ResponseEntity<List<GoalTypeResponse>> findGoalTypes() {
+        final List<GoalTypeResponse> response = goalService.findAllGoalType();
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping
