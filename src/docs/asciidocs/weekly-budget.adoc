@@ -6,14 +6,14 @@ operation::weekly-budget-create[snippets='http-request']
 operation::weekly-budget-create[snippets='request-fields']
 operation::weekly-budget-create[snippets='http-response']
 
-=== 주간 예산 조회 [ 총 예산 ]
+=== 주간 예산 조회
 
 operation::weekly-budget-find[snippets='http-request']
 operation::weekly-budget-find[snippets='request-fields']
 operation::weekly-budget-find[snippets='http-response']
 operation::weekly-budget-find[snippets='response-fields']
 
-=== 주간 예산 조회 [ (총 예산) - (총 주간 지출) ]
+=== 주간 예산 남은 금액 조회
 
 operation::weekly-budget-left-find[snippets='http-request']
 operation::weekly-budget-left-find[snippets='request-fields']

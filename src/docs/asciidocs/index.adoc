@@ -5,12 +5,12 @@
 :toclevels: 2
 :sectlinks:
 
-include::battle.adoc[]
+include::login-or-register.adoc[]
+include::member.adoc[]
+include::point.adoc[]
+include::friend.adoc[]
 include::weekly-budget.adoc[]
 include::expenditure.adoc[]
-include::point.adoc[]
-include::alarm.adoc[]
-include::login-or-register.adoc[]
 include::goal.adoc[]
-include::friend.adoc[]
-include::member.adoc[]
+include::battle.adoc[]
+include::alarm.adoc[]

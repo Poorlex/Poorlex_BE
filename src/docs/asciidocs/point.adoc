@@ -6,13 +6,13 @@ operation::member-point-create[snippets='http-request']
 operation::member-point-create[snippets='request-fields']
 operation::member-point-create[snippets='http-response']
 
-=== 멤버 총 포인트, 레벨 조회
+=== 멤버 포인트 총합, 레벨 조회
 
 operation::member-total-point-find[snippets='http-request']
 operation::member-total-point-find[snippets='http-response']
 operation::member-total-point-find[snippets='response-fields']
 
-=== 멤버 레벨바 조회 [ 레벨 구간 길이, 레벨 이후 얻은 총 포인트, 가장 최근 얻은 포인트 ]
+=== 멤버 레벨자 정보 조회
 
 operation::member-level-bar[snippets='http-request']
 operation::member-level-bar[snippets='http-response']
