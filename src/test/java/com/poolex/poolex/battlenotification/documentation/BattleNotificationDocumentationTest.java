@@ -5,9 +5,6 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
@@ -22,6 +19,7 @@ import com.poolex.poolex.battlenotification.service.dto.request.BattleNotificati
 import com.poolex.poolex.battlenotification.service.dto.request.BattleNotificationUpdateRequest;
 import com.poolex.poolex.battlenotification.service.dto.response.BattleNotificationResponse;
 import com.poolex.poolex.support.RestDocsDocumentationTest;
+import com.poolex.poolex.util.ApiDocumentUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -63,8 +61,8 @@ class BattleNotificationDocumentationTest extends RestDocsDocumentationTest {
         result.andExpect(status().isCreated())
             .andDo(
                 document("battle-notification-create",
-                    preprocessRequest(prettyPrint()),
-                    preprocessResponse(prettyPrint()),
+                    ApiDocumentUtils.getDocumentRequest(),
+                    ApiDocumentUtils.getDocumentResponse(),
                     requestFields(
                         fieldWithPath("content").type(JsonFieldType.STRING).description("배틀 공지 내용"),
                         fieldWithPath("imageUrl").type(JsonFieldType.STRING).description("배틀 공지 이미지 링크").optional()
@@ -94,8 +92,8 @@ class BattleNotificationDocumentationTest extends RestDocsDocumentationTest {
         result.andExpect(status().isOk())
             .andDo(
                 document("battle-notification-update",
-                    preprocessRequest(prettyPrint()),
-                    preprocessResponse(prettyPrint()),
+                    ApiDocumentUtils.getDocumentRequest(),
+                    ApiDocumentUtils.getDocumentResponse(),
                     requestFields(
                         fieldWithPath("content").type(JsonFieldType.STRING).description("변경할 배틀 공지 내용"),
                         fieldWithPath("imageUrl").type(JsonFieldType.STRING).description("변경할 배틀 이미지 링크").optional()
@@ -121,8 +119,8 @@ class BattleNotificationDocumentationTest extends RestDocsDocumentationTest {
         result.andExpect(status().isOk())
             .andDo(
                 document("battle-notification-find",
-                    preprocessRequest(prettyPrint()),
-                    preprocessResponse(prettyPrint()),
+                    ApiDocumentUtils.getDocumentRequest(),
+                    ApiDocumentUtils.getDocumentResponse(),
                     responseFields(
                         fieldWithPath("content").type(JsonFieldType.STRING).description("배틀 공지 내용"),
                         fieldWithPath("imageUrl").type(JsonFieldType.STRING).description("배틀 이미지 링크").optional()

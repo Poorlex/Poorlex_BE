@@ -4,9 +4,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.doNothing;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
@@ -22,6 +19,7 @@ import com.poolex.poolex.friend.service.dto.request.FriendInviteRequest;
 import com.poolex.poolex.friend.service.dto.response.FriendResponse;
 import com.poolex.poolex.support.ReplaceUnderScoreTest;
 import com.poolex.poolex.support.RestDocsDocumentationTest;
+import com.poolex.poolex.util.ApiDocumentUtils;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,8 +60,8 @@ class FriendDocumentationTest extends RestDocsDocumentationTest implements Repla
         result.andExpect(status().isOk())
             .andDo(
                 document("friend-invite",
-                    preprocessRequest(prettyPrint()),
-                    preprocessResponse(prettyPrint()),
+                    ApiDocumentUtils.getDocumentRequest(),
+                    ApiDocumentUtils.getDocumentResponse(),
                     requestFields(
                         fieldWithPath("inviteMemberId").type(JsonFieldType.NUMBER).description("친구 요청할 멤버 Id")
                     )
@@ -91,8 +89,8 @@ class FriendDocumentationTest extends RestDocsDocumentationTest implements Repla
         result.andExpect(status().isCreated())
             .andDo(
                 document("friend-invite-accept",
-                    preprocessRequest(prettyPrint()),
-                    preprocessResponse(prettyPrint()),
+                    ApiDocumentUtils.getDocumentRequest(),
+                    ApiDocumentUtils.getDocumentResponse(),
                     requestFields(
                         fieldWithPath("friendMemberId").type(JsonFieldType.NUMBER).description("친구 요청한 멤버 Id")
                     )
@@ -120,8 +118,8 @@ class FriendDocumentationTest extends RestDocsDocumentationTest implements Repla
         result.andExpect(status().isOk())
             .andDo(
                 document("friend-invite-deny",
-                    preprocessRequest(prettyPrint()),
-                    preprocessResponse(prettyPrint()),
+                    ApiDocumentUtils.getDocumentRequest(),
+                    ApiDocumentUtils.getDocumentResponse(),
                     requestFields(
                         fieldWithPath("inviteMemberId").type(JsonFieldType.NUMBER).description("친구 요청한 멤버 Id")
                     )
@@ -151,9 +149,9 @@ class FriendDocumentationTest extends RestDocsDocumentationTest implements Repla
         result.andExpect(status().isOk())
             .andDo(
                 document("friend-find",
-                    preprocessRequest(prettyPrint()),
-                    preprocessResponse(prettyPrint()),
-                    responseFields()
+                    ApiDocumentUtils.getDocumentRequest(),
+                    ApiDocumentUtils.getDocumentResponse(),
+                    responseFields(fieldWithPath("[]").description("친구 리스트"))
                         .andWithPrefix("[].",
                             fieldWithPath("level").type(JsonFieldType.NUMBER).description("친구의 레벨"),
                             fieldWithPath("nickname").type(JsonFieldType.STRING).description("친구의 닉네임"),

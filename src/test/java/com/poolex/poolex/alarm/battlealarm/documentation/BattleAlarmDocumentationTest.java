@@ -3,9 +3,6 @@ package com.poolex.poolex.alarm.battlealarm.documentation;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
@@ -18,6 +15,7 @@ import com.poolex.poolex.alarm.battlealarm.service.dto.request.BattleAlarmReques
 import com.poolex.poolex.alarm.battlealarm.service.dto.response.BattleAlarmResponse;
 import com.poolex.poolex.alarm.battlealarm.service.dto.response.UncheckedBattleAlarmCountResponse;
 import com.poolex.poolex.support.RestDocsDocumentationTest;
+import com.poolex.poolex.util.ApiDocumentUtils;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -67,18 +65,18 @@ class BattleAlarmDocumentationTest extends RestDocsDocumentationTest {
         result.andExpect(status().isOk())
             .andDo(
                 document("battle-alarm-find",
-                    preprocessRequest(prettyPrint()),
-                    preprocessResponse(prettyPrint()),
+                    ApiDocumentUtils.getDocumentRequest(),
+                    ApiDocumentUtils.getDocumentResponse(),
                     requestFields(
-                        fieldWithPath("dateTime").type(JsonFieldType.STRING).description("요청 시간 [ yyyy-mm-ddThh:mm ]")
+                        fieldWithPath("dateTime").type(JsonFieldType.STRING).description("요청 시간")
                     ),
-                    responseFields()
+                    responseFields(fieldWithPath("[]").description("배틀 알림 리스트"))
                         .andWithPrefix("[].",
                             fieldWithPath("alarmId").type(JsonFieldType.NUMBER).description("알림 Id"),
                             fieldWithPath("memberId").type(JsonFieldType.NUMBER).description("알림 생성 멤버 Id"),
                             fieldWithPath("alarmType").type(JsonFieldType.STRING).description("알림 타입"),
                             fieldWithPath("createdAt").type(JsonFieldType.STRING)
-                                .description("알림 생성 시간 [ yyyy-mm-ddThh:mm ]")
+                                .description("알림 생성 시간")
                         )
                 ));
     }
@@ -101,8 +99,8 @@ class BattleAlarmDocumentationTest extends RestDocsDocumentationTest {
         result.andExpect(status().isOk())
             .andDo(
                 document("battle-unchecked-alarm-count",
-                    preprocessRequest(prettyPrint()),
-                    preprocessResponse(prettyPrint()),
+                    ApiDocumentUtils.getDocumentRequest(),
+                    ApiDocumentUtils.getDocumentResponse(),
                     responseFields(
                         fieldWithPath("count").type(JsonFieldType.NUMBER).description("회원이 읽지 않은 배틀 알림 수")
                     )

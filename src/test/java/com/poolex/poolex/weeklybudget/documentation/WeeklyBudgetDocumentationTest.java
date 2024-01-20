@@ -6,9 +6,6 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
@@ -16,6 +13,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 import com.poolex.poolex.support.RestDocsDocumentationTest;
+import com.poolex.poolex.util.ApiDocumentUtils;
 import com.poolex.poolex.weeklybudget.controller.WeeklyBudgetController;
 import com.poolex.poolex.weeklybudget.service.WeeklyBudgetService;
 import com.poolex.poolex.weeklybudget.service.dto.request.WeeklyBudgetCreateRequest;
@@ -66,8 +64,8 @@ class WeeklyBudgetDocumentationTest extends RestDocsDocumentationTest {
         result.andExpect(MockMvcResultMatchers.status().isCreated())
             .andDo(
                 document("weekly-budget-create",
-                    preprocessRequest(prettyPrint()),
-                    preprocessResponse(prettyPrint()),
+                    ApiDocumentUtils.getDocumentRequest(),
+                    ApiDocumentUtils.getDocumentResponse(),
                     requestFields(
                         fieldWithPath("budget").type(JsonFieldType.NUMBER).description("주간 예산 금액")
                     )
@@ -97,11 +95,11 @@ class WeeklyBudgetDocumentationTest extends RestDocsDocumentationTest {
         result.andExpect(MockMvcResultMatchers.status().isOk())
             .andDo(
                 document("weekly-budget-find",
-                    preprocessRequest(prettyPrint()),
-                    preprocessResponse(prettyPrint()),
+                    ApiDocumentUtils.getDocumentRequest(),
+                    ApiDocumentUtils.getDocumentResponse(),
                     requestFields(
                         fieldWithPath("dateTime").type(JsonFieldType.STRING)
-                            .description("조회하려는 시간 [ yyyy-mm-ddThh:mm ]")
+                            .description("조회하려는 시간 ")
                     ),
                     responseFields(
                         fieldWithPath("exist").type(JsonFieldType.BOOLEAN).description("요청 시간이 포함된 주의 주간 예산 등록 여부"),
@@ -114,7 +112,8 @@ class WeeklyBudgetDocumentationTest extends RestDocsDocumentationTest {
     @Test
     void find_member_left_weekly_budget() throws Exception {
         //given
-        final WeeklyBudgetLeftRequest request = new WeeklyBudgetLeftRequest(LocalDateTime.now().truncatedTo(ChronoUnit.MICROS));
+        final WeeklyBudgetLeftRequest request = new WeeklyBudgetLeftRequest(
+            LocalDateTime.now().truncatedTo(ChronoUnit.MICROS));
 
         mockingTokenInterceptor();
         mockingMemberArgumentResolver();
@@ -134,11 +133,11 @@ class WeeklyBudgetDocumentationTest extends RestDocsDocumentationTest {
         result.andExpect(MockMvcResultMatchers.status().isOk())
             .andDo(
                 document("weekly-budget-left-find",
-                    preprocessRequest(prettyPrint()),
-                    preprocessResponse(prettyPrint()),
+                    ApiDocumentUtils.getDocumentRequest(),
+                    ApiDocumentUtils.getDocumentResponse(),
                     requestFields(
                         fieldWithPath("dateTime").type(JsonFieldType.STRING)
-                            .description("조회하려는 시간 [ yyyy-mm-ddThh:mm ]")
+                            .description("조회하려는 시간 ")
                     ),
                     responseFields(
                         fieldWithPath("exist").type(JsonFieldType.BOOLEAN).description("요청 시간이 포함된 주의 주간 예산 등록 여부"),

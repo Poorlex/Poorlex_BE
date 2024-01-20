@@ -3,9 +3,6 @@ package com.poolex.poolex.goal.documentation;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
@@ -19,6 +16,7 @@ import com.poolex.poolex.goal.service.GoalService;
 import com.poolex.poolex.goal.service.dto.request.GoalCreateRequest;
 import com.poolex.poolex.goal.service.dto.response.GoalIdResponse;
 import com.poolex.poolex.support.RestDocsDocumentationTest;
+import com.poolex.poolex.util.ApiDocumentUtils;
 import java.time.LocalDate;
 import java.util.List;
 import org.junit.jupiter.api.Test;
@@ -67,8 +65,8 @@ class GoalDocumentationTest extends RestDocsDocumentationTest {
         result.andExpect(status().isCreated())
             .andDo(
                 document("goal-create",
-                    preprocessRequest(prettyPrint()),
-                    preprocessResponse(prettyPrint()),
+                    ApiDocumentUtils.getDocumentRequest(),
+                    ApiDocumentUtils.getDocumentResponse(),
                     requestFields(
                         fieldWithPath("type").type(JsonFieldType.STRING).description("목표 타입"),
                         fieldWithPath("name").type(JsonFieldType.STRING).description("목표 명"),
@@ -102,9 +100,9 @@ class GoalDocumentationTest extends RestDocsDocumentationTest {
         result.andExpect(status().isOk())
             .andDo(
                 document("goal-find-ids",
-                    preprocessRequest(prettyPrint()),
-                    preprocessResponse(prettyPrint()),
-                    responseFields()
+                    ApiDocumentUtils.getDocumentRequest(),
+                    ApiDocumentUtils.getDocumentResponse(),
+                    responseFields(fieldWithPath("[]").description("목표 리스트"))
                         .andWithPrefix("[].",
                             fieldWithPath("goalId").type(JsonFieldType.NUMBER).description("회원이 등록한 목표 Id")
                         )

@@ -6,9 +6,6 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
@@ -23,6 +20,7 @@ import com.poolex.poolex.point.service.dto.request.PointCreateRequest;
 import com.poolex.poolex.point.service.dto.response.MemberLevelBarResponse;
 import com.poolex.poolex.point.service.dto.response.MemberPointResponse;
 import com.poolex.poolex.support.RestDocsDocumentationTest;
+import com.poolex.poolex.util.ApiDocumentUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -63,8 +61,8 @@ class MemberPointDocumentationTest extends RestDocsDocumentationTest {
         result.andExpect(status().isCreated())
             .andDo(
                 document("member-point-create",
-                    preprocessRequest(prettyPrint()),
-                    preprocessResponse(prettyPrint()),
+                    ApiDocumentUtils.getDocumentRequest(),
+                    ApiDocumentUtils.getDocumentResponse(),
                     requestFields(
                         fieldWithPath("point").type(JsonFieldType.NUMBER).description("멤버 지급 포인트")
                     )
@@ -89,8 +87,8 @@ class MemberPointDocumentationTest extends RestDocsDocumentationTest {
         result.andExpect(status().isOk())
             .andDo(
                 document("member-total-point-find",
-                    preprocessRequest(prettyPrint()),
-                    preprocessResponse(prettyPrint()),
+                    ApiDocumentUtils.getDocumentRequest(),
+                    ApiDocumentUtils.getDocumentResponse(),
                     responseFields(
                         fieldWithPath("totalPoint").type(JsonFieldType.NUMBER).description("멤버 총 포인트"),
                         fieldWithPath("level").type(JsonFieldType.NUMBER).description("멤버 레벨")
@@ -116,8 +114,8 @@ class MemberPointDocumentationTest extends RestDocsDocumentationTest {
         result.andExpect(status().isOk())
             .andDo(
                 document("member-level-bar",
-                    preprocessRequest(prettyPrint()),
-                    preprocessResponse(prettyPrint()),
+                    ApiDocumentUtils.getDocumentRequest(),
+                    ApiDocumentUtils.getDocumentResponse(),
                     responseFields(
                         fieldWithPath("levelRange").type(JsonFieldType.NUMBER).description("래밸 구간의 길이"),
                         fieldWithPath("currentPoint").type(JsonFieldType.NUMBER).description("현재 레벨 도달 이후 얻은 총 포인트"),

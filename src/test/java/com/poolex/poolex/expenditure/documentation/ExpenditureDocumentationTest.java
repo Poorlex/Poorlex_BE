@@ -3,9 +3,6 @@ package com.poolex.poolex.expenditure.documentation;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
@@ -19,6 +16,7 @@ import com.poolex.poolex.expenditure.service.dto.request.ExpenditureCreateReques
 import com.poolex.poolex.expenditure.service.dto.request.MemberWeeklyTotalExpenditureRequest;
 import com.poolex.poolex.expenditure.service.dto.response.MemberWeeklyTotalExpenditureResponse;
 import com.poolex.poolex.support.RestDocsDocumentationTest;
+import com.poolex.poolex.util.ApiDocumentUtils;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -67,13 +65,13 @@ class ExpenditureDocumentationTest extends RestDocsDocumentationTest {
         result.andExpect(status().isCreated())
             .andDo(
                 document("expenditure-create",
-                    preprocessRequest(prettyPrint()),
-                    preprocessResponse(prettyPrint()),
+                    ApiDocumentUtils.getDocumentRequest(),
+                    ApiDocumentUtils.getDocumentResponse(),
                     requestFields(
                         fieldWithPath("amount").type(JsonFieldType.NUMBER).description("지출 금액"),
                         fieldWithPath("description").type(JsonFieldType.STRING).description("지출 설명"),
                         fieldWithPath("imageUrls").type(JsonFieldType.ARRAY).description("지출 이미지 목록 (최대 2개)"),
-                        fieldWithPath("dateTime").type(JsonFieldType.STRING).description("지출 시간 [ yyyy-mm-ddThh:mm ]")
+                        fieldWithPath("dateTime").type(JsonFieldType.STRING).description("지출 시간 ")
                     )
                 ));
     }
@@ -101,10 +99,10 @@ class ExpenditureDocumentationTest extends RestDocsDocumentationTest {
         result.andExpect(status().isOk())
             .andDo(
                 document("expenditure-find",
-                    preprocessRequest(prettyPrint()),
-                    preprocessResponse(prettyPrint()),
+                    ApiDocumentUtils.getDocumentRequest(),
+                    ApiDocumentUtils.getDocumentResponse(),
                     requestFields(
-                        fieldWithPath("dateTime").type(JsonFieldType.STRING).description("조회 시간 [ yyyy-mm-ddThh:mm ]")
+                        fieldWithPath("dateTime").type(JsonFieldType.STRING).description("조회 시간 ")
                     ),
                     responseFields(
                         fieldWithPath("amount").type(JsonFieldType.NUMBER).description("주간 총 지출 금액")

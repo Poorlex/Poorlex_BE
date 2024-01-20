@@ -3,9 +3,6 @@ package com.poolex.poolex.battle.documentation;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
@@ -21,6 +18,7 @@ import com.poolex.poolex.battle.service.dto.response.MemberCompleteBattleRespons
 import com.poolex.poolex.battle.service.dto.response.MemberProgressBattleResponse;
 import com.poolex.poolex.battle.service.dto.response.ParticipantRankingResponse;
 import com.poolex.poolex.support.RestDocsDocumentationTest;
+import com.poolex.poolex.util.ApiDocumentUtils;
 import java.time.LocalDate;
 import java.util.List;
 import org.junit.jupiter.api.Test;
@@ -70,8 +68,8 @@ class BattleDocumentationTest extends RestDocsDocumentationTest {
         result.andExpect(MockMvcResultMatchers.status().isCreated())
             .andDo(
                 document("battle-create",
-                    preprocessRequest(prettyPrint()),
-                    preprocessResponse(prettyPrint()),
+                    ApiDocumentUtils.getDocumentRequest(),
+                    ApiDocumentUtils.getDocumentResponse(),
                     requestFields(
                         fieldWithPath("name").type(JsonFieldType.STRING).description("배틀 이름"),
                         fieldWithPath("introduction").type(JsonFieldType.STRING).description("배틀 설명"),
@@ -105,9 +103,9 @@ class BattleDocumentationTest extends RestDocsDocumentationTest {
         result.andExpect(MockMvcResultMatchers.status().isOk())
             .andDo(
                 document("battle-find-recruiting",
-                    preprocessRequest(prettyPrint()),
-                    preprocessResponse(prettyPrint()),
-                    responseFields()
+                    ApiDocumentUtils.getDocumentRequest(),
+                    ApiDocumentUtils.getDocumentResponse(),
+                    responseFields(fieldWithPath("[]").description("모집중 배틀방 리스트"))
                         .andWithPrefix("[].",
                             fieldWithPath("battleId").type(JsonFieldType.NUMBER).description("배틀 ID"),
                             fieldWithPath("name").type(JsonFieldType.STRING).description("배틀방 이름"),
@@ -142,9 +140,9 @@ class BattleDocumentationTest extends RestDocsDocumentationTest {
         result.andExpect(MockMvcResultMatchers.status().isOk())
             .andDo(
                 document("battle-find-participated",
-                    preprocessRequest(prettyPrint()),
-                    preprocessResponse(prettyPrint()),
-                    responseFields()
+                    ApiDocumentUtils.getDocumentRequest(),
+                    ApiDocumentUtils.getDocumentResponse(),
+                    responseFields(fieldWithPath("[]").description("참가중 배틀방 리스트"))
                         .andWithPrefix("[].",
                             fieldWithPath("battleId").type(JsonFieldType.NUMBER).description("배틀 ID"),
                             fieldWithPath("name").type(JsonFieldType.STRING).description("배틀방 이름"),
@@ -184,9 +182,9 @@ class BattleDocumentationTest extends RestDocsDocumentationTest {
         result.andExpect(MockMvcResultMatchers.status().isOk())
             .andDo(
                 document("battle-find-complete",
-                    preprocessRequest(prettyPrint()),
-                    preprocessResponse(prettyPrint()),
-                    responseFields()
+                    ApiDocumentUtils.getDocumentRequest(),
+                    ApiDocumentUtils.getDocumentResponse(),
+                    responseFields(fieldWithPath("[]").description("종료된 배틀방 리스트"))
                         .andWithPrefix("[].",
                             fieldWithPath("battleId").type(JsonFieldType.NUMBER).description("배틀 ID"),
                             fieldWithPath("name").type(JsonFieldType.STRING).description("배틀방 이름"),
@@ -234,8 +232,8 @@ class BattleDocumentationTest extends RestDocsDocumentationTest {
         result.andExpect(MockMvcResultMatchers.status().isOk())
             .andDo(
                 document("battle-find-by-id",
-                    preprocessRequest(prettyPrint()),
-                    preprocessResponse(prettyPrint()),
+                    ApiDocumentUtils.getDocumentRequest(),
+                    ApiDocumentUtils.getDocumentResponse(),
                     requestFields(
                         fieldWithPath("date").type(JsonFieldType.STRING).description("조회 날짜")
                     ),
@@ -244,7 +242,8 @@ class BattleDocumentationTest extends RestDocsDocumentationTest {
                         fieldWithPath("maxParticipantSize").type(JsonFieldType.NUMBER).description("배틀 최대 참가자 수"),
                         fieldWithPath("currentParticipantSize").type(JsonFieldType.NUMBER).description("현재 배틀 참가자 수"),
                         fieldWithPath("battleBudget").type(JsonFieldType.NUMBER).description("배틀 예산"),
-                        fieldWithPath("battleDDay").type(JsonFieldType.NUMBER).description("배틀 종료까지 D-Day")
+                        fieldWithPath("battleDDay").type(JsonFieldType.NUMBER).description("배틀 종료까지 D-Day"),
+                        fieldWithPath(".rankings[]").description("배틀 참가자 랭킹 리스트")
                     ).andWithPrefix(".rankings[].",
                         fieldWithPath("rank").type(JsonFieldType.NUMBER).description("참가자 랭킹"),
                         fieldWithPath("level").type(JsonFieldType.NUMBER).description("참자가 레벨"),

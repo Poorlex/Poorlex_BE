@@ -4,9 +4,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.anyLong;
 import static org.mockito.BDDMockito.doNothing;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -16,6 +13,7 @@ import com.poolex.poolex.battlealarmreaction.controller.AlarmReactionController;
 import com.poolex.poolex.battlealarmreaction.service.AlarmReactionService;
 import com.poolex.poolex.battlealarmreaction.service.dto.request.AlarmReactionCreateRequest;
 import com.poolex.poolex.support.RestDocsDocumentationTest;
+import com.poolex.poolex.util.ApiDocumentUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -56,8 +54,8 @@ class BattleAlarmReactionDocumentationTest extends RestDocsDocumentationTest {
         result.andExpect(status().isCreated())
             .andDo(
                 document("battle-alarm-reaction-create",
-                    preprocessRequest(prettyPrint()),
-                    preprocessResponse(prettyPrint()),
+                    ApiDocumentUtils.getDocumentRequest(),
+                    ApiDocumentUtils.getDocumentResponse(),
                     requestFields(
                         fieldWithPath("alarmId").type(JsonFieldType.NUMBER).description("알림 Id"),
                         fieldWithPath("type").type(JsonFieldType.STRING).description("알림 반응 타입 [ 칭찬하기, 혼내기 ]"),

@@ -4,7 +4,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -12,6 +11,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 import com.poolex.poolex.participate.service.BattleParticipantService;
 import com.poolex.poolex.support.RestDocsDocumentationTest;
+import com.poolex.poolex.util.ApiDocumentUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -47,7 +47,7 @@ class BattleParticipantDocumentationTest extends RestDocsDocumentationTest {
         result.andExpect(MockMvcResultMatchers.status().isCreated())
             .andDo(
                 document("battle-participate",
-                    preprocessRequest(prettyPrint()),
+                    ApiDocumentUtils.getDocumentRequest(),
                     preprocessResponse(prettyPrint())
                 ));
     }
@@ -69,7 +69,7 @@ class BattleParticipantDocumentationTest extends RestDocsDocumentationTest {
         result.andExpect(MockMvcResultMatchers.status().isNoContent())
             .andDo(
                 document("battle-participate-cancel",
-                    preprocessRequest(prettyPrint()),
+                    ApiDocumentUtils.getDocumentRequest(),
                     preprocessResponse(prettyPrint())
                 ));
     }
