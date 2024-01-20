@@ -1,7 +1,7 @@
 package com.poorlex.poorlex.battlenotification.controller;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -79,7 +79,7 @@ class BattleNotificationControllerTest extends IntegrationTest implements Replac
         //when
         //then
         mockMvc.perform(
-                put("/battles/{battleId}/notification", battleId)
+                patch("/battles/{battleId}/notification", battleId)
                     .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
                     .content(objectMapper.writeValueAsString(request))
                     .contentType(MediaType.APPLICATION_JSON)
@@ -101,7 +101,7 @@ class BattleNotificationControllerTest extends IntegrationTest implements Replac
         //when
         //then
         mockMvc.perform(
-                put("/battles/{battleId}/notification", battleId)
+                patch("/battles/{battleId}/notification", battleId)
                     .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
                     .content(objectMapper.writeValueAsString(request))
                     .contentType(MediaType.APPLICATION_JSON)
