@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public class GoalCreateRequest implements GoalModifyRequest {
+public class GoalUpdateRequest implements GoalModifyRequest {
 
     private final String type;
     private final String name;
