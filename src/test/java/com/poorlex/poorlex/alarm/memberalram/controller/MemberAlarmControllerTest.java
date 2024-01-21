@@ -55,7 +55,7 @@ class MemberAlarmControllerTest extends IntegrationTest implements ReplaceUnderS
             MemberAlarm.withoutId(
                 me.getId(),
                 battleParticipant.getId(),
-                MemberAlarmType.BATTLE_INVITATION)
+                MemberAlarmType.BATTLE_INVITATION_NOT_ACCEPTED)
         );
         final LocalDateTime requestDateTime = LocalDateTime.now().plusHours(25);
         final MemberAlarmRequest request = new MemberAlarmRequest(requestDateTime);
