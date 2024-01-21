@@ -3,6 +3,7 @@ package com.poorlex.poorlex.friend.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
+import com.poorlex.poorlex.alarm.memberalram.service.MemberAlarmEventHandler;
 import com.poorlex.poorlex.friend.domain.Friend;
 import com.poorlex.poorlex.friend.domain.FriendRepository;
 import com.poorlex.poorlex.friend.service.dto.request.FriendCreateRequest;
@@ -19,6 +20,7 @@ import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.event.ApplicationEvents;
 import org.springframework.test.context.event.RecordApplicationEvents;
 
@@ -36,6 +38,9 @@ class FriendServiceTest extends IntegrationTest implements ReplaceUnderScoreTest
 
     @Autowired
     private FriendService friendService;
+
+    @MockBean
+    private MemberAlarmEventHandler memberAlarmEventHandler;
 
     @Test
     void 친구를_생성한다() {
