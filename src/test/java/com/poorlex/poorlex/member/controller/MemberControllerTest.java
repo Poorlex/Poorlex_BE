@@ -1,7 +1,7 @@
 package com.poorlex.poorlex.member.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -37,7 +37,7 @@ class MemberControllerTest extends IntegrationTest implements ReplaceUnderScoreT
 
         //when
         mockMvc.perform(
-                put("/member/profile")
+                patch("/member/profile")
                     .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
                     .content(objectMapper.writeValueAsString(request))
                     .contentType(MediaType.APPLICATION_JSON)

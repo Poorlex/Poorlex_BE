@@ -5,7 +5,7 @@ import static org.mockito.BDDMockito.doNothing;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 
 import com.poorlex.poorlex.member.controller.MemberController;
 import com.poorlex.poorlex.member.service.MemberService;
@@ -42,7 +42,7 @@ class MemberDocumentationTest extends RestDocsDocumentationTest {
         //when
         //then
         final ResultActions result = mockMvc.perform(
-            put("/member/profile")
+            patch("/member/profile")
                 .header(HttpHeaders.AUTHORIZATION, "Bearer {accessToken}")
                 .content(objectMapper.writeValueAsString(request))
                 .contentType(MediaType.APPLICATION_JSON)

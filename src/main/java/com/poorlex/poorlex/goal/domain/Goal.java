@@ -8,6 +8,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -55,6 +56,30 @@ public class Goal {
         return new Goal(null, memberId, type, name, amount, duration, status);
     }
 
+    public void pasteValueFieldsFrom(final Goal other) {
+        this.type = other.type;
+        this.name = other.name;
+        this.amount = other.amount;
+        this.duration = other.duration;
+        this.status = other.status;
+    }
+
+    public boolean hasSameMemberId(final Long memberId) {
+        return this.memberId.equals(memberId);
+    }
+
+    public long getDayLeft(final LocalDate localDate) {
+        return ChronoUnit.DAYS.between(localDate, getEndDate());
+    }
+
+    public long getMonthLeft(final LocalDate localDate) {
+        return ChronoUnit.MONTHS.between(localDate, getEndDate());
+    }
+
+    public void finish() {
+        this.status = GoalStatus.FINISH;
+    }
+
     public Long getId() {
         return id;
     }
@@ -71,11 +96,11 @@ public class Goal {
         return amount.getValue();
     }
 
-    public LocalDate getStart() {
+    public LocalDate getStartDate() {
         return duration.getStart();
     }
 
-    public LocalDate getEnd() {
+    public LocalDate getEndDate() {
         return duration.getEnd();
     }
 

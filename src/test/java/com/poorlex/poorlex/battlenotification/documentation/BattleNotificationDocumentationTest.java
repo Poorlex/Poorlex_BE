@@ -9,8 +9,8 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWit
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.poorlex.poorlex.battlenotification.controller.BattleNotificationController;
@@ -82,7 +82,7 @@ class BattleNotificationDocumentationTest extends RestDocsDocumentationTest {
 
         //when
         final ResultActions result = mockMvc.perform(
-            put("/battles/1/notification")
+            patch("/battles/1/notification")
                 .header(HttpHeaders.AUTHORIZATION, "Bearer {accessToken}")
                 .content(objectMapper.writeValueAsString(request))
                 .contentType(MediaType.APPLICATION_JSON)
