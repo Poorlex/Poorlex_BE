@@ -25,7 +25,7 @@ public class MemberAlarmEventHandler {
         final MemberAlarm memberAlarm = MemberAlarm.withoutId(
             event.getInvitedMemberId(),
             event.getInviteMemberId(),
-            MemberAlarmType.FRIEND_INVITATION
+            MemberAlarmType.FRIEND_INVITATION_NOT_ACCEPTED
         );
 
         memberAlarmRepository.save(memberAlarm);
@@ -33,23 +33,37 @@ public class MemberAlarmEventHandler {
 
     @TransactionalEventListener(value = FriendAcceptedEvent.class, phase = TransactionPhase.BEFORE_COMMIT)
     public void friendInvitationAccepted(final FriendAcceptedEvent event) {
+        updateInvitedMemberMemberAlarmToAccepted(event);
+        saveInviteMemberAcceptedAlarm(event);
+    }
+
+    private void saveInviteMemberAcceptedAlarm(final FriendAcceptedEvent event) {
         final MemberAlarm memberAlarm = MemberAlarm.withoutId(
             event.getInviteMemberId(),
             event.getAcceptMemberId(),
             MemberAlarmType.FRIEND_ACCEPTED
         );
-
         memberAlarmRepository.save(memberAlarm);
+    }
+
+    private void updateInvitedMemberMemberAlarmToAccepted(final FriendAcceptedEvent event) {
+        final MemberAlarm memberAlarm = memberAlarmRepository.findMemberAlarmByMemberIdAndTargetIdAndType(
+            event.getAcceptMemberId(),
+            event.getInviteMemberId(),
+            MemberAlarmType.FRIEND_INVITATION_NOT_ACCEPTED
+        ).orElseThrow(() -> new IllegalArgumentException("친구 요청을 받은 멤버의 초대 알림을 찾을 수 없습니다"));
+
+        memberAlarm.updateType(MemberAlarmType.FRIEND_INVITATION_ACCEPTED);
     }
 
     @TransactionalEventListener(value = FriendDeniedEvent.class, phase = TransactionPhase.BEFORE_COMMIT)
     public void friendInvitationDenied(final FriendDeniedEvent event) {
-        final MemberAlarm memberAlarm = MemberAlarm.withoutId(
-            event.getInviteMemberId(),
+        final MemberAlarm memberAlarm = memberAlarmRepository.findMemberAlarmByMemberIdAndTargetIdAndType(
             event.getDenyMemberId(),
-            MemberAlarmType.FRIEND_DENIED
-        );
+            event.getInviteMemberId(),
+            MemberAlarmType.FRIEND_INVITATION_NOT_ACCEPTED
+        ).orElseThrow(() -> new IllegalArgumentException("친구 요청을 받은 멤버의 초대 알림을 찾을 수 없습니다"));
 
-        memberAlarmRepository.save(memberAlarm);
+        memberAlarm.updateType(MemberAlarmType.FRIEND_INVITATION_DENIED);
     }
 }
