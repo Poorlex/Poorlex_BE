@@ -8,6 +8,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.poorlex.poorlex.expenditure.domain.ExpenditureRepository;
+import com.poorlex.poorlex.expenditure.domain.WeeklyExpenditureDuration;
 import com.poorlex.poorlex.expenditure.fixture.ExpenditureFixture;
 import com.poorlex.poorlex.expenditure.fixture.ExpenditureRequestFixture;
 import com.poorlex.poorlex.expenditure.service.dto.request.ExpenditureCreateRequest;
@@ -71,9 +72,10 @@ class ExpenditureControllerTest extends IntegrationTest implements ReplaceUnderS
         //given
         final Member member = createMember("oauthId");
         final LocalDateTime dateTime = LocalDateTime.now().truncatedTo(ChronoUnit.MICROS);
+        final WeeklyExpenditureDuration weeklyExpenditureDuration = WeeklyExpenditureDuration.from(dateTime);
 
-        createExpenditure(1000, member.getId(), dateTime);
-        createExpenditure(2000, member.getId(), dateTime);
+        createExpenditure(1000, member.getId(), weeklyExpenditureDuration.getStart());
+        createExpenditure(2000, member.getId(), weeklyExpenditureDuration.getStart());
 
         final String accessToken = testMemberTokenGenerator.createAccessToken(member);
         final MemberWeeklyTotalExpenditureRequest request = new MemberWeeklyTotalExpenditureRequest(dateTime);
