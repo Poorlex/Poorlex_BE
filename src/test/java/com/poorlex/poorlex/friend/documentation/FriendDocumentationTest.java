@@ -74,7 +74,7 @@ class FriendDocumentationTest extends RestDocsDocumentationTest implements Repla
         //given
         mockingTokenInterceptor();
         mockingMemberArgumentResolver();
-        doNothing().when(friendService).createFriend(any(), any());
+        doNothing().when(friendService).inviteAccept(any(), any());
 
         final FriendCreateRequest request = new FriendCreateRequest(1L);
 
