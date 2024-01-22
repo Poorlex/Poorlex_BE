@@ -1,6 +1,7 @@
 package com.poorlex.poorlex.friend.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import com.poorlex.poorlex.alarm.memberalram.service.MemberAlarmEventHandler;
@@ -49,7 +50,7 @@ class FriendServiceTest extends IntegrationTest implements ReplaceUnderScoreTest
         final FriendCreateRequest request = new FriendCreateRequest(2L);
 
         //when
-        friendService.createFriend(memberId, request);
+        friendService.inviteAccept(memberId, request);
 
         //then
         final List<Friend> friends = friendRepository.findAll();
@@ -59,6 +60,19 @@ class FriendServiceTest extends IntegrationTest implements ReplaceUnderScoreTest
             .usingRecursiveComparison()
             .ignoringFields("id")
             .isEqualTo(expected);
+    }
+
+    @Test
+    void 친구를_생성한다_이미_친구일_때() {
+        //given
+        final Long memberId = 1L;
+        final FriendCreateRequest request = new FriendCreateRequest(2L);
+        friendRepository.save(Friend.withoutId(memberId, request.getFriendMemberId()));
+
+        //when
+        //then
+        assertThatThrownBy(() -> friendService.inviteAccept(memberId, request))
+            .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
