@@ -55,7 +55,7 @@ class BattleParticipantServiceTest extends UsingDataJpaTest implements ReplaceUn
 
         //when
         //then
-        assertDoesNotThrow(() -> battleParticipantService.create(recruitingBattle.getId(), memberId));
+        assertDoesNotThrow(() -> battleParticipantService.participate(recruitingBattle.getId(), memberId));
     }
 
     @Test
@@ -66,7 +66,7 @@ class BattleParticipantServiceTest extends UsingDataJpaTest implements ReplaceUn
 
         //when
         //then
-        assertThatThrownBy(() -> battleParticipantService.create(notExistBattleId, memberId))
+        assertThatThrownBy(() -> battleParticipantService.participate(notExistBattleId, memberId))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -79,14 +79,14 @@ class BattleParticipantServiceTest extends UsingDataJpaTest implements ReplaceUn
         final Battle battle2 = createBattleWithStatus(BattleStatus.RECRUITING);
         final Battle battle3 = createBattleWithStatus(BattleStatus.RECRUITING);
         final Battle battle4 = createBattleWithStatus(BattleStatus.RECRUITING);
-        
+
         join(member, battle1);
         join(member, battle2);
         join(member, battle3);
 
         //when
         //then
-        assertThatThrownBy(() -> battleParticipantService.create(battle4.getId(), member.getId()))
+        assertThatThrownBy(() -> battleParticipantService.participate(battle4.getId(), member.getId()))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -100,7 +100,7 @@ class BattleParticipantServiceTest extends UsingDataJpaTest implements ReplaceUn
 
         //when
         //then
-        assertThatThrownBy(() -> battleParticipantService.create(battleId, memberId))
+        assertThatThrownBy(() -> battleParticipantService.participate(battleId, memberId))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -114,7 +114,7 @@ class BattleParticipantServiceTest extends UsingDataJpaTest implements ReplaceUn
 
         //when
         //then
-        assertThatThrownBy(() -> battleParticipantService.create(battleId, memberId))
+        assertThatThrownBy(() -> battleParticipantService.participate(battleId, memberId))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -127,7 +127,7 @@ class BattleParticipantServiceTest extends UsingDataJpaTest implements ReplaceUn
         battleParticipantRepository.save(BattleParticipant.normalPlayer(battle.getId(), member.getId()));
 
         //when
-        battleParticipantService.remove(battle.getId(), member.getId());
+        battleParticipantService.withdraw(battle.getId(), member.getId());
 
         //then
         final Optional<BattleParticipant> removedBattleParticipant = battleParticipantRepository.findByBattleIdAndMemberId(
@@ -138,8 +138,8 @@ class BattleParticipantServiceTest extends UsingDataJpaTest implements ReplaceUn
     }
 
     @ParameterizedTest(name = "배틀의 상태가 {0} 일 때")
-    @CsvSource(value = {"PROGRESS", "COMPLETE"})
-    void 배틀이_시작_후_배틀_참자가를_제거시_예외를_던진다(final BattleStatus battleStatus) {
+    @CsvSource(value = {"COMPLETE"})
+    void 배틀이_종료된_후_배틀_참자가를_제거시_예외를_던진다(final BattleStatus battleStatus) {
         //given
         final Member member = createMember();
         final Battle battle = createBattleWithStatus(battleStatus);
@@ -147,7 +147,7 @@ class BattleParticipantServiceTest extends UsingDataJpaTest implements ReplaceUn
 
         //when
         //then
-        assertThatThrownBy(() -> battleParticipantService.remove(battle.getId(), member.getId()))
+        assertThatThrownBy(() -> battleParticipantService.withdraw(battle.getId(), member.getId()))
             .isInstanceOf(IllegalArgumentException.class);
 
     }
@@ -162,7 +162,7 @@ class BattleParticipantServiceTest extends UsingDataJpaTest implements ReplaceUn
 
         //when
         //then
-        assertThatThrownBy(() -> battleParticipantService.remove(battle.getId(), member.getId()))
+        assertThatThrownBy(() -> battleParticipantService.withdraw(battle.getId(), member.getId()))
             .isInstanceOf(IllegalArgumentException.class);
     }
 

@@ -20,18 +20,18 @@ public class BattleParticipantController {
     private final BattleParticipantService battleParticipantService;
 
     @PostMapping
-    public ResponseEntity<Void> createParticipant(@PathVariable(value = "battleId") final Long battleId,
-                                                  @MemberOnly MemberInfo memberInfo) {
-        final Long battleParticipantId = battleParticipantService.create(battleId, memberInfo.getMemberId());
+    public ResponseEntity<Void> participate(@PathVariable(value = "battleId") final Long battleId,
+                                            @MemberOnly MemberInfo memberInfo) {
+        final Long battleParticipantId = battleParticipantService.participate(battleId, memberInfo.getMemberId());
         final String locationHeader = "/battles/" + battleId + "/participants/" + battleParticipantId;
 
         return ResponseEntity.created(URI.create(locationHeader)).build();
     }
 
     @DeleteMapping
-    public ResponseEntity<Void> removeParticipant(@PathVariable(value = "battleId") final Long battleId,
-                                                  @MemberOnly MemberInfo memberInfo) {
-        battleParticipantService.remove(battleId, memberInfo.getMemberId());
+    public ResponseEntity<Void> withdraw(@PathVariable(value = "battleId") final Long battleId,
+                                         @MemberOnly MemberInfo memberInfo) {
+        battleParticipantService.withdraw(battleId, memberInfo.getMemberId());
         return ResponseEntity.noContent().build();
     }
 }
