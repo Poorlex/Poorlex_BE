@@ -62,3 +62,23 @@ operation::battle-notification-create[snippets='http-response']
 operation::battle-notification-update[snippets='http-request']
 operation::battle-notification-update[snippets='request-fields']
 operation::battle-notification-update[snippets='http-response']
+
+== 배틀 초대 API
+
+=== 배틀 초대
+
+operation::battle-invite[snippets='http-request']
+operation::battle-invite[snippets='request-fields']
+operation::battle-invite[snippets='http-response']
+
+=== 배틀 초대 수락
+
+operation::battle-invite-accept[snippets='http-request']
+operation::battle-invite-accept[snippets='request-fields']
+operation::battle-invite-accept[snippets='http-response']
+
+=== 배틀 초대 거절
+
+operation::battle-invite-deny[snippets='http-request']
+operation::battle-invite-deny[snippets='request-fields']
+operation::battle-invite-deny[snippets='http-response']
