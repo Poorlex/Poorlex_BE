@@ -14,6 +14,7 @@ import com.poorlex.poorlex.expenditure.domain.WeeklyExpenditureDuration;
 import com.poorlex.poorlex.expenditure.fixture.ExpenditureFixture;
 import com.poorlex.poorlex.expenditure.fixture.ExpenditureRequestFixture;
 import com.poorlex.poorlex.expenditure.service.dto.request.ExpenditureCreateRequest;
+import com.poorlex.poorlex.expenditure.service.dto.request.ExpenditureUpdateRequest;
 import com.poorlex.poorlex.expenditure.service.dto.request.MemberWeeklyTotalExpenditureRequest;
 import com.poorlex.poorlex.expenditure.service.dto.response.BattleExpenditureResponse;
 import com.poorlex.poorlex.expenditure.service.dto.response.ExpenditureResponse;
@@ -285,6 +286,30 @@ class ExpenditureServiceTest extends UsingDataJpaTest implements ReplaceUnderSco
 
         //then
         assertThat(responses).isEmpty();
+    }
+
+    @Test
+    void 지출을_수정한다() {
+        //given
+        final Member member = createMember("oauthId");
+        final Expenditure expenditure = createExpenditure(1000, member.getId(), LocalDateTime.now());
+        final ExpenditureUpdateRequest request = new ExpenditureUpdateRequest(2000, "updated", List.of("newImageUrl"));
+
+        //when
+        expenditureService.updateExpenditure(member.getId(), expenditure.getId(), request);
+
+        //then
+        final Expenditure updateExpenditure = expenditureRepository.findById(expenditure.getId())
+            .orElseThrow(IllegalArgumentException::new);
+        final List<String> updateExpenditureImageUrls = updateExpenditure.getImageUrls().getUrls().stream()
+            .map(ExpenditureCertificationImageUrl::getValue).toList();
+
+        assertThat(updateExpenditure.getId()).isEqualTo(expenditure.getId());
+        assertThat(updateExpenditure.getMemberId()).isEqualTo(member.getId());
+        assertThat(updateExpenditure.getAmount()).isEqualTo(request.getAmount());
+        assertThat(updateExpenditure.getDescription()).isEqualTo(request.getDescription());
+        assertThat(updateExpenditureImageUrls).isEqualTo(request.getImageUrls());
+        assertThat(updateExpenditure.getDate()).isEqualTo(expenditure.getDate());
     }
 
     private Member createMember(final String oauthId) {

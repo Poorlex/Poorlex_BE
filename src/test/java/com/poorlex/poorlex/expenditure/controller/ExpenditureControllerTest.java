@@ -1,6 +1,7 @@
 package com.poorlex.poorlex.expenditure.controller;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
@@ -17,6 +18,7 @@ import com.poorlex.poorlex.expenditure.domain.WeeklyExpenditureDuration;
 import com.poorlex.poorlex.expenditure.fixture.ExpenditureFixture;
 import com.poorlex.poorlex.expenditure.fixture.ExpenditureRequestFixture;
 import com.poorlex.poorlex.expenditure.service.dto.request.ExpenditureCreateRequest;
+import com.poorlex.poorlex.expenditure.service.dto.request.ExpenditureUpdateRequest;
 import com.poorlex.poorlex.expenditure.service.dto.request.MemberWeeklyTotalExpenditureRequest;
 import com.poorlex.poorlex.member.domain.Member;
 import com.poorlex.poorlex.member.domain.MemberNickname;
@@ -30,6 +32,7 @@ import com.poorlex.poorlex.token.JwtTokenProvider;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -79,6 +82,27 @@ class ExpenditureControllerTest extends IntegrationTest implements ReplaceUnderS
             .andDo(print())
             .andExpect(status().isCreated())
             .andExpect(header().exists(HttpHeaders.LOCATION));
+    }
+
+    @Test
+    void 지출을_수정한다() throws Exception {
+        //given
+        final Member member = createMember("oauthId");
+        final Expenditure expenditure = createExpenditure(1000, member.getId(), LocalDateTime.now());
+
+        final String accessToken = testMemberTokenGenerator.createAccessToken(member);
+        final ExpenditureUpdateRequest request = new ExpenditureUpdateRequest(2000, "updated", List.of("newImageUrl"));
+
+        //when
+        //then
+        mockMvc.perform(
+                patch("/expenditures/{expenditureId}", expenditure.getId())
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                    .content(objectMapper.writeValueAsString(request))
+                    .contentType(MediaType.APPLICATION_JSON)
+            )
+            .andDo(print())
+            .andExpect(status().isOk());
     }
 
     @Test

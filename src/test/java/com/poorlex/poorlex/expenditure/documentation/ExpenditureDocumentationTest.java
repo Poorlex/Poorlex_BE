@@ -2,17 +2,20 @@ package com.poorlex.poorlex.expenditure.documentation;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doNothing;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.poorlex.poorlex.expenditure.controller.ExpenditureController;
 import com.poorlex.poorlex.expenditure.service.ExpenditureService;
 import com.poorlex.poorlex.expenditure.service.dto.request.ExpenditureCreateRequest;
+import com.poorlex.poorlex.expenditure.service.dto.request.ExpenditureUpdateRequest;
 import com.poorlex.poorlex.expenditure.service.dto.request.MemberWeeklyTotalExpenditureRequest;
 import com.poorlex.poorlex.expenditure.service.dto.response.BattleExpenditureResponse;
 import com.poorlex.poorlex.expenditure.service.dto.response.ExpenditureResponse;
@@ -75,6 +78,40 @@ class ExpenditureDocumentationTest extends RestDocsDocumentationTest {
                         fieldWithPath("description").type(JsonFieldType.STRING).description("지출 설명"),
                         fieldWithPath("imageUrls").type(JsonFieldType.ARRAY).description("지출 이미지 목록 (최대 2개)"),
                         fieldWithPath("dateTime").type(JsonFieldType.STRING).description("지출 시간 ")
+                    )
+                ));
+    }
+
+    @Test
+    void update() throws Exception {
+        //given
+        mockingTokenInterceptor();
+        mockingMemberArgumentResolver();
+        doNothing().when(expenditureService).updateExpenditure(any(), any(), any());
+        final ExpenditureUpdateRequest request = new ExpenditureUpdateRequest(
+            1000,
+            "지출 설명",
+            List.of("지출 이미지 링크")
+        );
+
+        //when
+        final ResultActions result = mockMvc.perform(
+            patch("/expenditures/1")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer {accessToken}")
+                .content(objectMapper.writeValueAsString(request))
+                .contentType(MediaType.APPLICATION_JSON)
+        );
+
+        //then
+        result.andExpect(status().isOk())
+            .andDo(
+                document("expenditure-update",
+                    ApiDocumentUtils.getDocumentRequest(),
+                    ApiDocumentUtils.getDocumentResponse(),
+                    requestFields(
+                        fieldWithPath("amount").type(JsonFieldType.NUMBER).description("수정할 지출 금액"),
+                        fieldWithPath("description").type(JsonFieldType.STRING).description("수정할 지출 설명"),
+                        fieldWithPath("imageUrls").type(JsonFieldType.ARRAY).description("수정할 지출 이미지 목록 (최대 2개)")
                     )
                 ));
     }
