@@ -41,7 +41,7 @@ class BattleParticipantChangedEventHandlerTest extends IntegrationTest implement
         final Member member = createMember("oauthId");
 
         //when
-        battleParticipantService.create(battle.getId(), member.getId());
+        battleParticipantService.participate(battle.getId(), member.getId());
 
         //then
         final BattleStatus battleStatus = battleRepository.findById(battle.getId())

@@ -6,6 +6,7 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import com.poorlex.poorlex.expenditure.domain.Expenditure;
 import com.poorlex.poorlex.expenditure.domain.ExpenditureCertificationImageUrl;
 import com.poorlex.poorlex.expenditure.domain.ExpenditureRepository;
+import com.poorlex.poorlex.expenditure.domain.WeeklyExpenditureDuration;
 import com.poorlex.poorlex.expenditure.fixture.ExpenditureFixture;
 import com.poorlex.poorlex.expenditure.fixture.ExpenditureRequestFixture;
 import com.poorlex.poorlex.expenditure.service.dto.request.ExpenditureCreateRequest;
@@ -74,9 +75,10 @@ class ExpenditureServiceTest extends UsingDataJpaTest implements ReplaceUnderSco
         //given
         final Member member = createMember("oauthId");
         final LocalDateTime date = LocalDateTime.now().truncatedTo(ChronoUnit.MICROS);
+        final WeeklyExpenditureDuration weeklyExpenditureDuration = WeeklyExpenditureDuration.from(date);
 
-        createExpenditure(1000, member.getId(), date);
-        createExpenditure(2000, member.getId(), date);
+        createExpenditure(1000, member.getId(), weeklyExpenditureDuration.getStart());
+        createExpenditure(2000, member.getId(), weeklyExpenditureDuration.getStart());
 
         final MemberWeeklyTotalExpenditureRequest request =
             new MemberWeeklyTotalExpenditureRequest(LocalDateTime.from(date));

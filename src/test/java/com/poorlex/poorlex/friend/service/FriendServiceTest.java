@@ -1,8 +1,10 @@
 package com.poorlex.poorlex.friend.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
+import com.poorlex.poorlex.alarm.memberalram.service.MemberAlarmEventHandler;
 import com.poorlex.poorlex.friend.domain.Friend;
 import com.poorlex.poorlex.friend.domain.FriendRepository;
 import com.poorlex.poorlex.friend.service.dto.request.FriendCreateRequest;
@@ -19,6 +21,7 @@ import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.event.ApplicationEvents;
 import org.springframework.test.context.event.RecordApplicationEvents;
 
@@ -37,6 +40,9 @@ class FriendServiceTest extends IntegrationTest implements ReplaceUnderScoreTest
     @Autowired
     private FriendService friendService;
 
+    @MockBean
+    private MemberAlarmEventHandler memberAlarmEventHandler;
+
     @Test
     void 친구를_생성한다() {
         //given
@@ -44,7 +50,7 @@ class FriendServiceTest extends IntegrationTest implements ReplaceUnderScoreTest
         final FriendCreateRequest request = new FriendCreateRequest(2L);
 
         //when
-        friendService.createFriend(memberId, request);
+        friendService.inviteAccept(memberId, request);
 
         //then
         final List<Friend> friends = friendRepository.findAll();
@@ -54,6 +60,19 @@ class FriendServiceTest extends IntegrationTest implements ReplaceUnderScoreTest
             .usingRecursiveComparison()
             .ignoringFields("id")
             .isEqualTo(expected);
+    }
+
+    @Test
+    void 친구를_생성한다_이미_친구일_때() {
+        //given
+        final Long memberId = 1L;
+        final FriendCreateRequest request = new FriendCreateRequest(2L);
+        friendRepository.save(Friend.withoutId(memberId, request.getFriendMemberId()));
+
+        //when
+        //then
+        assertThatThrownBy(() -> friendService.inviteAccept(memberId, request))
+            .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test

@@ -24,9 +24,9 @@ public class BattleParticipantService {
     private final BattleParticipantRepository battleParticipantRepository;
 
     @Transactional
-    public Long create(final Long battleId, final Long memberId) {
+    public Long participate(final Long battleId, final Long memberId) {
         validateMemberExist(memberId);
-        validateMemberCanCreateBattle(memberId);
+        validateMemberCanParticipateBattle(memberId);
         validateBattle(battleId);
         final BattleParticipant battleParticipant = BattleParticipant.normalPlayer(battleId, memberId);
         final BattleParticipant savedBattleParticipant = battleParticipantRepository.save(battleParticipant);
@@ -41,7 +41,7 @@ public class BattleParticipantService {
         }
     }
 
-    private void validateMemberCanCreateBattle(final Long memberId) {
+    private void validateMemberCanParticipateBattle(final Long memberId) {
         final int readiedBattleCount = battleRepository.countMemberBattleWithStatuses(
             memberId,
             BattleStatus.getReadiedStatues()
@@ -62,20 +62,20 @@ public class BattleParticipantService {
     }
 
     @Transactional
-    public void remove(final Long battleId, final Long memberId) {
+    public void withdraw(final Long battleId, final Long memberId) {
         final BattleParticipant battleParticipant = battleParticipantRepository.findByBattleIdAndMemberId(
-                battleId,
-                memberId)
-            .orElseThrow(IllegalArgumentException::new);
-        validateBattleNotStarted(battleId);
+            battleId,
+            memberId
+        ).orElseThrow(IllegalArgumentException::new);
+        validateBattleCanWithdraw(battleId);
         validateParticipantNotManager(battleParticipant);
         battleParticipantRepository.delete(battleParticipant);
     }
 
-    private void validateBattleNotStarted(final Long battleId) {
+    private void validateBattleCanWithdraw(final Long battleId) {
         final Battle battle = battleRepository.findById(battleId)
             .orElseThrow(IllegalArgumentException::new);
-        if (battle.hasSameStatus(BattleStatus.PROGRESS) || battle.hasSameStatus(BattleStatus.COMPLETE)) {
+        if (battle.hasSameStatus(BattleStatus.COMPLETE)) {
             throw new IllegalArgumentException();
         }
     }

@@ -35,7 +35,7 @@ class BattleParticipantDocumentationTest extends RestDocsDocumentationTest {
         //given
         mockingTokenInterceptor();
         mockingMemberArgumentResolver();
-        given(battleParticipantService.create(any(), any())).willReturn(1L);
+        given(battleParticipantService.participate(any(), any())).willReturn(1L);
 
         //when
         final ResultActions result = mockMvc.perform(
@@ -57,7 +57,7 @@ class BattleParticipantDocumentationTest extends RestDocsDocumentationTest {
         //given
         mockingTokenInterceptor();
         mockingMemberArgumentResolver();
-        doNothing().when(battleParticipantService).remove(any(), any());
+        doNothing().when(battleParticipantService).withdraw(any(), any());
 
         //when
         final ResultActions result = mockMvc.perform(

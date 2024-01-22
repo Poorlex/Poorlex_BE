@@ -11,4 +11,6 @@ public interface FriendRepository extends JpaRepository<Friend, Long> {
         + "from Friend f "
         + "where f.firstMemberId = :memberId or f.secondMemberId = :memberId")
     List<Long> findMembersFriendMemberId(final Long memberId);
+
+    boolean existsByFirstMemberIdAndSecondMemberId(final Long firstMemberId, final Long secondMemberId);
 }

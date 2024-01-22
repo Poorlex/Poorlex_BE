@@ -34,7 +34,7 @@ public class FriendController {
     @PostMapping("/invite/accept")
     public ResponseEntity<Void> inviteAccept(@MemberOnly final MemberInfo memberInfo,
                                              @RequestBody final FriendCreateRequest request) {
-        friendService.createFriend(memberInfo.getMemberId(), request);
+        friendService.inviteAccept(memberInfo.getMemberId(), request);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 

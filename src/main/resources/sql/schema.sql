@@ -148,11 +148,14 @@ create table member_alarm
     member_id  bigint,
     target_id  bigint,
     type       varchar(255) check (type in
-                                   ('FRIEND_INVITATION',
-                                    'BATTLE_INVITATION',
-                                    'BATTLE_KICKED_OUT',
+                                   ('FRIEND_INVITATION_NOT_ACCEPTED',
+                                    'FRIEND_INVITATION_ACCEPTED',
+                                    'FRIEND_INVITATION_DENIED',
                                     'FRIEND_ACCEPTED',
-                                    'FRIEND_DENIED')),
+                                    'BATTLE_INVITATION_NOT_ACCEPTED',
+                                    'BATTLE_INVITATION_ACCEPTED',
+                                    'BATTLE_INVITATION_ACCEPT',
+                                    'BATTLE_KICKED_OUT')),
     created_at timestamp(6),
     primary key (id)
 );

@@ -1,15 +1,12 @@
 package com.poorlex.poorlex.friend.controller;
 
-import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.poorlex.poorlex.alarm.memberalram.domain.MemberAlarm;
-import com.poorlex.poorlex.alarm.memberalram.domain.MemberAlarmRepository;
-import com.poorlex.poorlex.alarm.memberalram.domain.MemberAlarmType;
+import com.poorlex.poorlex.alarm.memberalram.service.MemberAlarmEventHandler;
 import com.poorlex.poorlex.friend.domain.Friend;
 import com.poorlex.poorlex.friend.domain.FriendRepository;
 import com.poorlex.poorlex.friend.service.dto.request.FriendCreateRequest;
@@ -21,9 +18,9 @@ import com.poorlex.poorlex.member.domain.MemberRepository;
 import com.poorlex.poorlex.support.IntegrationTest;
 import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
 import com.poorlex.poorlex.token.JwtTokenProvider;
-import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 
@@ -36,10 +33,10 @@ class FriendControllerTest extends IntegrationTest implements ReplaceUnderScoreT
     private JwtTokenProvider jwtTokenProvider;
 
     @Autowired
-    private MemberAlarmRepository memberAlarmRepository;
-
-    @Autowired
     private FriendRepository friendRepository;
+
+    @MockBean
+    private MemberAlarmEventHandler memberAlarmEventHandler;
 
     @Test
     void 친구요청을_생성한다() throws Exception {
@@ -58,18 +55,6 @@ class FriendControllerTest extends IntegrationTest implements ReplaceUnderScoreT
                     .contentType(MediaType.APPLICATION_JSON)
             ).andDo(print())
             .andExpect(status().isOk());
-
-        final List<MemberAlarm> memberAlarms = memberAlarmRepository.findAll();
-        assertSoftly(
-            softly -> {
-                softly.assertThat(memberAlarms).hasSize(1);
-
-                final MemberAlarm memberAlarm = memberAlarms.get(0);
-                softly.assertThat(memberAlarm.getMemberId()).isEqualTo(invitedMember.getId());
-                softly.assertThat(memberAlarm.getTargetId()).isEqualTo(inviteMember.getId());
-                softly.assertThat(memberAlarm.getType()).isEqualTo(MemberAlarmType.FRIEND_INVITATION);
-            }
-        );
     }
 
     @Test
@@ -89,18 +74,6 @@ class FriendControllerTest extends IntegrationTest implements ReplaceUnderScoreT
                     .contentType(MediaType.APPLICATION_JSON)
             ).andDo(print())
             .andExpect(status().isCreated());
-
-        final List<MemberAlarm> memberAlarms = memberAlarmRepository.findAll();
-        assertSoftly(
-            softly -> {
-                softly.assertThat(memberAlarms).hasSize(1);
-
-                final MemberAlarm memberAlarm = memberAlarms.get(0);
-                softly.assertThat(memberAlarm.getMemberId()).isEqualTo(inviteMember.getId());
-                softly.assertThat(memberAlarm.getTargetId()).isEqualTo(acceptMember.getId());
-                softly.assertThat(memberAlarm.getType()).isEqualTo(MemberAlarmType.FRIEND_ACCEPTED);
-            }
-        );
     }
 
     @Test
@@ -120,18 +93,6 @@ class FriendControllerTest extends IntegrationTest implements ReplaceUnderScoreT
                     .contentType(MediaType.APPLICATION_JSON)
             ).andDo(print())
             .andExpect(status().isOk());
-
-        final List<MemberAlarm> memberAlarms = memberAlarmRepository.findAll();
-        assertSoftly(
-            softly -> {
-                softly.assertThat(memberAlarms).hasSize(1);
-
-                final MemberAlarm memberAlarm = memberAlarms.get(0);
-                softly.assertThat(memberAlarm.getMemberId()).isEqualTo(inviteMember.getId());
-                softly.assertThat(memberAlarm.getTargetId()).isEqualTo(denyMember.getId());
-                softly.assertThat(memberAlarm.getType()).isEqualTo(MemberAlarmType.FRIEND_DENIED);
-            }
-        );
     }
 
     @Test

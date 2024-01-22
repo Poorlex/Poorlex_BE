@@ -49,21 +49,30 @@ public class FriendService {
             .inviteMemberId(request.getInviteMemberId())
             .denyMemberId(memberId)
             .build();
-        
+
         Events.raise(friendDeniedEvent);
     }
 
     @Transactional
-    public void createFriend(final Long memberId, final FriendCreateRequest request) {
-        final Friend friend = Friend.withoutId(memberId, request.getFriendMemberId());
-        friendRepository.save(friend);
+    public void inviteAccept(final Long memberId, final FriendCreateRequest request) {
+        final Long friendMemberId = request.getFriendMemberId();
+        validateFriendExist(memberId, friendMemberId);
+        friendRepository.save(Friend.withoutId(memberId, friendMemberId));
 
-        final FriendAcceptedEvent friendAcceptedEvent = FriendAcceptedEvent.builder()
-            .inviteMemberId(request.getFriendMemberId())
-            .acceptMemberId(memberId)
-            .build();
+        Events.raise(
+            FriendAcceptedEvent.builder()
+                .inviteMemberId(friendMemberId)
+                .acceptMemberId(memberId)
+                .build()
+        );
+    }
 
-        Events.raise(friendAcceptedEvent);
+    private void validateFriendExist(final Long memberId, final Long friendId) {
+        final boolean firstExistCheck = friendRepository.existsByFirstMemberIdAndSecondMemberId(memberId, friendId);
+        final boolean secondExistCheck = friendRepository.existsByFirstMemberIdAndSecondMemberId(friendId, memberId);
+        if (firstExistCheck || secondExistCheck) {
+            throw new IllegalArgumentException("이미 존재하는 친구입니다.");
+        }
     }
 
     public List<FriendResponse> findMemberFriends(final Long memberId) {

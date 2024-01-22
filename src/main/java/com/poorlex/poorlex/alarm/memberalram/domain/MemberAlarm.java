@@ -44,6 +44,10 @@ public class MemberAlarm {
         this.createdAt = LocalDateTime.now();
     }
 
+    public void updateType(final MemberAlarmType updateType) {
+        this.type = updateType;
+    }
+
     public long getMinutePassed(final LocalDateTime dateTime) {
         return ChronoUnit.MINUTES.between(createdAt, dateTime);
     }

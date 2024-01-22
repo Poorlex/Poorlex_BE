@@ -58,12 +58,12 @@ class MemberAlarmServiceTest extends UsingDataJpaTest implements ReplaceUnderSco
         final MemberAlarm battleInvitationAlarm = memberAlarmRepository.save(MemberAlarm.withoutId(
             me.getId(),
             battleParticipant.getId(),
-            MemberAlarmType.BATTLE_INVITATION)
+            MemberAlarmType.BATTLE_INVITATION_NOT_ACCEPTED)
         );
         final MemberAlarm friendInvitation = memberAlarmRepository.save(MemberAlarm.withoutId(
             me.getId(),
             other.getId(),
-            MemberAlarmType.FRIEND_INVITATION)
+            MemberAlarmType.FRIEND_INVITATION_NOT_ACCEPTED)
         );
         final LocalDateTime requestDateTime = LocalDateTime.now().plusMinutes(10);
         final MemberAlarmRequest request = new MemberAlarmRequest(requestDateTime);
