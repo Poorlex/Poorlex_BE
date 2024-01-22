@@ -6,9 +6,39 @@ operation::expenditure-create[snippets='http-request']
 operation::expenditure-create[snippets='request-fields']
 operation::expenditure-create[snippets='http-response']
 
-=== 지출 조회 [ 주간 총 지출 ]
+=== 지출 수정
+
+operation::expenditure-update[snippets='http-request']
+operation::expenditure-update[snippets='request-fields']
+operation::expenditure-update[snippets='http-response']
+
+=== 지출 상세 조회
 
 operation::expenditure-find[snippets='http-request']
-operation::expenditure-find[snippets='request-fields']
 operation::expenditure-find[snippets='http-response']
 operation::expenditure-find[snippets='response-fields']
+
+=== 회원 지출 조회
+
+operation::expenditure-find-member[snippets='http-request']
+operation::expenditure-find-member[snippets='http-response']
+operation::expenditure-find-member[snippets='response-fields']
+
+=== 회원 주간 총 지출 조회
+
+operation::expenditure-weekly-total[snippets='http-request']
+operation::expenditure-weekly-total[snippets='request-fields']
+operation::expenditure-weekly-total[snippets='http-response']
+operation::expenditure-weekly-total[snippets='response-fields']
+
+=== 배틀 기간 지출 조회 [ 요일별 ]
+
+operation::expenditure-find-battle-dayOfWeek[snippets='http-request']
+operation::expenditure-find-battle-dayOfWeek[snippets='http-response']
+operation::expenditure-find-battle-dayOfWeek[snippets='response-fields']
+
+=== 배틀 기간 지출 조회 [ 회원 ]
+
+operation::expenditure-find-battle-member[snippets='http-request']
+operation::expenditure-find-battle-member[snippets='http-response']
+operation::expenditure-find-battle-member[snippets='response-fields']

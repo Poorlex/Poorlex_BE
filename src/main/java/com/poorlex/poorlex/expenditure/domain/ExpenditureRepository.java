@@ -23,4 +23,16 @@ public interface ExpenditureRepository extends JpaRepository<Expenditure, Long> 
         @Param(value = "start") final LocalDateTime start,
         @Param(value = "end") final LocalDateTime end
     );
+
+    @Query("select e from Expenditure e "
+        + "left join BattleParticipant bp on bp.battleId = :battleId and e.memberId = bp.memberId "
+        + "left join Battle b on bp.battleId = b.id "
+        + "where e.date between b.duration.start and b.duration.end")
+    List<Expenditure> findBattleExpenditureByBattleId(final Long battleId);
+
+    List<Expenditure> findExpendituresByMemberIdAndDateBetween(final Long memberId,
+                                                               final LocalDateTime start,
+                                                               final LocalDateTime end);
+
+    List<Expenditure> findAllByMemberId(final Long memberId);
 }

@@ -35,7 +35,7 @@ public class ExpenditureCertificationImageUrls {
         }
     }
 
-    public List<ExpenditureCertificationImageUrl> getImageUrls() {
+    public List<ExpenditureCertificationImageUrl> getUrls() {
         return new ArrayList<>(imageUrls);
     }
 }

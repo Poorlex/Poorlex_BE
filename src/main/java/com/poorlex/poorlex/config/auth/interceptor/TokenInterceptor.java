@@ -1,16 +1,18 @@
 package com.poorlex.poorlex.config.auth.interceptor;
 
+import com.poorlex.poorlex.config.auth.ExcludePattern;
 import com.poorlex.poorlex.member.domain.Member;
 import com.poorlex.poorlex.member.domain.MemberRepository;
 import com.poorlex.poorlex.token.JwtTokenProvider;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Pattern;
 import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
@@ -18,21 +20,20 @@ import org.springframework.web.servlet.HandlerInterceptor;
 @RequiredArgsConstructor
 public class TokenInterceptor implements HandlerInterceptor {
 
-    //AntPatchMatcher 에서 숫자와 문자열을 구분할 수 없기에 따로 관리하는 정규식 모음
-    private static final List<Pattern> EXCLUDE_PATTERNS = List.of(Pattern.compile("/battles/\\d+"));
     private static final String TOKEN_AUTHORIZATION_TYPE = "Bearer";
 
     private final JwtTokenProvider tokenProvider;
     private final MemberRepository memberRepository;
     private final RequestMemberInfo requestMemberInfo;
+    private List<ExcludePattern> excludePatterns = new ArrayList<>();
 
     @Override
     public boolean preHandle(final HttpServletRequest request,
                              final HttpServletResponse response,
                              final Object handler) {
         final String pathInfo = request.getPathInfo();
-        final boolean isHandleablePattern = EXCLUDE_PATTERNS.stream()
-            .noneMatch(pattern -> pattern.matcher(pathInfo).matches());
+        final boolean isHandleablePattern = excludePatterns.stream()
+            .noneMatch(excludePattern -> excludePattern.matches(pathInfo, HttpMethod.valueOf(request.getMethod())));
 
         if (isHandleablePattern) {
             final String token = parseToken(request);
@@ -43,6 +44,10 @@ public class TokenInterceptor implements HandlerInterceptor {
             requestMemberInfo.setMemberId(member.getId());
         }
         return true;
+    }
+
+    public void addExcludePattern(final ExcludePattern excludePattern) {
+        this.excludePatterns.add(excludePattern);
     }
 
     private String parseToken(final HttpServletRequest request) {
