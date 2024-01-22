@@ -53,7 +53,7 @@ class ExpenditureServiceTest extends UsingDataJpaTest implements ReplaceUnderSco
 
     @BeforeEach
     void setUp() {
-        this.expenditureService = new ExpenditureService(expenditureRepository);
+        this.expenditureService = new ExpenditureService(battleRepository, expenditureRepository);
     }
 
     @Test
@@ -191,7 +191,10 @@ class ExpenditureServiceTest extends UsingDataJpaTest implements ReplaceUnderSco
         final Battle battle = createBattle();
         final Member member = createMember("oauthId");
         join(battle, member);
-        final Expenditure expenditure = createExpenditure(1000, member.getId(), battle.getDuration().getStart());
+
+        final LocalDateTime battleStart = battle.getDuration().getStart();
+        createExpenditure(1000, member.getId(), battleStart.minusDays(1));
+        final Expenditure expenditure = createExpenditure(1000, member.getId(), battleStart);
 
         //when
         final List<BattleExpenditureResponse> responses =
@@ -223,8 +226,10 @@ class ExpenditureServiceTest extends UsingDataJpaTest implements ReplaceUnderSco
         join(battle, member);
         join(battle, other);
 
-        final Expenditure memberExpenditure = createExpenditure(1000, member.getId(), battle.getDuration().getStart());
-        final Expenditure otherExpenditure = createExpenditure(1000, other.getId(), battle.getDuration().getStart());
+        final LocalDateTime battleStart = battle.getDuration().getStart();
+        final Expenditure memberExpenditure = createExpenditure(1000, member.getId(), battleStart);
+        createExpenditure(2000, member.getId(), battleStart.minusWeeks(1));
+        final Expenditure otherExpenditure = createExpenditure(1000, other.getId(), battleStart);
 
         //when
         final List<BattleExpenditureResponse> responses = expenditureService.findBattleExpendituresInDayOfWeek(

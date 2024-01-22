@@ -184,9 +184,10 @@ class ExpenditureControllerTest extends IntegrationTest implements ReplaceUnderS
         join(member, battle);
         join(other, battle);
 
-        final LocalDateTime expenditureDate = LocalDateTime.now();
-        final Expenditure memberExpenditure = createExpenditure(1000, member.getId(), expenditureDate);
-        final Expenditure otherExpenditure = createExpenditure(1000, other.getId(), expenditureDate);
+        final LocalDateTime battleStart = battle.getDuration().getStart();
+        final Expenditure memberExpenditure = createExpenditure(1000, member.getId(), battleStart);
+        createExpenditure(1000, member.getId(), battleStart.minusWeeks(1));
+        final Expenditure otherExpenditure = createExpenditure(1000, other.getId(), battleStart);
         final String accessToken = jwtTokenProvider.createAccessToken(member.getId());
 
         //when
@@ -194,7 +195,7 @@ class ExpenditureControllerTest extends IntegrationTest implements ReplaceUnderS
         mockMvc.perform(
                 get("/battles/{battleId}/expenditures?dayOfWeek={dayOfWeek}",
                     battle.getId(),
-                    expenditureDate.getDayOfWeek().name()
+                    battleStart.getDayOfWeek().name()
                 ).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
             ).andDo(print())
             .andExpect(status().isOk())
@@ -210,7 +211,7 @@ class ExpenditureControllerTest extends IntegrationTest implements ReplaceUnderS
     }
 
     @Test
-    void 멤버의_배틀의_지출목록을_조회한다() throws Exception {
+    void 멤버의_배틀_지출목록을_조회한다() throws Exception {
         //given
         final Member member = createMember("oauthId1");
         final Member other = createMember("oauthId2");
@@ -219,9 +220,11 @@ class ExpenditureControllerTest extends IntegrationTest implements ReplaceUnderS
         join(member, battle);
         join(other, battle);
 
-        final LocalDateTime expenditureDate = LocalDateTime.now();
-        final Expenditure memberExpenditure = createExpenditure(1000, member.getId(), expenditureDate);
-        createExpenditure(1000, other.getId(), expenditureDate);
+        final LocalDateTime battleStart = battle.getDuration().getStart();
+        createExpenditure(3000, member.getId(), battleStart.minusDays(1));
+        createExpenditure(2000, other.getId(), battleStart);
+        final Expenditure memberExpenditure = createExpenditure(1000, member.getId(), battleStart);
+
         final String accessToken = jwtTokenProvider.createAccessToken(member.getId());
 
         //when

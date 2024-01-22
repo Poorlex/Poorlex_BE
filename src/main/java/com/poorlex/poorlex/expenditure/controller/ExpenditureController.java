@@ -39,9 +39,9 @@ public class ExpenditureController {
     public ResponseEntity<ExpenditureResponse> findExpenditure(
         @PathVariable(name = "expenditureId") final Long expenditureId
     ) {
-        final ExpenditureResponse responses = expenditureService.findExpenditureById(expenditureId);
+        final ExpenditureResponse response = expenditureService.findExpenditureById(expenditureId);
 
-        return ResponseEntity.ok(responses);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/expenditures")

@@ -1,5 +1,7 @@
 package com.poorlex.poorlex.expenditure.service;
 
+import com.poorlex.poorlex.battle.domain.Battle;
+import com.poorlex.poorlex.battle.domain.BattleRepository;
 import com.poorlex.poorlex.config.event.Events;
 import com.poorlex.poorlex.expenditure.domain.Expenditure;
 import com.poorlex.poorlex.expenditure.domain.ExpenditureRepository;
@@ -28,6 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class ExpenditureService {
 
+    private final BattleRepository battleRepository;
     private final ExpenditureRepository expenditureRepository;
 
     @Transactional
@@ -111,10 +114,16 @@ public class ExpenditureService {
     }
 
     public List<BattleExpenditureResponse> findMemberBattleExpenditures(final Long battleId, final Long memberId) {
-        final List<Expenditure> memberBattleExpenditures =
-            expenditureRepository.findBattleExpenditureByBattleIdAndMemberId(battleId, memberId);
+        final Battle battle = battleRepository.findById(battleId)
+            .orElseThrow(() -> new IllegalArgumentException("Id에 해당하는 배틀이 없습니다."));
 
-        return memberBattleExpenditures.stream()
+        final List<Expenditure> expenditures = expenditureRepository.findExpendituresByMemberIdAndDateBetween(
+            memberId,
+            battle.getDuration().getStart(),
+            battle.getDuration().getEnd()
+        );
+
+        return expenditures.stream()
             .map(expenditure -> BattleExpenditureResponse.from(expenditure, true))
             .toList();
     }
