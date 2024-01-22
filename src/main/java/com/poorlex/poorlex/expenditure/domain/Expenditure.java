@@ -53,6 +53,10 @@ public class Expenditure {
         return instance;
     }
 
+    public boolean hasSameMemberId(final Long memberId) {
+        return this.memberId.equals(memberId);
+    }
+
     public Long getId() {
         return id;
     }

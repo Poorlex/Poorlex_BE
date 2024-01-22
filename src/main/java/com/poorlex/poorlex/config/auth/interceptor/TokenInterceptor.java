@@ -19,7 +19,10 @@ import org.springframework.web.servlet.HandlerInterceptor;
 public class TokenInterceptor implements HandlerInterceptor {
 
     //AntPatchMatcher 에서 숫자와 문자열을 구분할 수 없기에 따로 관리하는 정규식 모음
-    private static final List<Pattern> EXCLUDE_PATTERNS = List.of(Pattern.compile("/battles/\\d+"));
+    private static final List<Pattern> EXCLUDE_PATTERNS = List.of(
+        Pattern.compile("/battles/\\d+"),
+        Pattern.compile("/expenditures/\\d+")
+    );
     private static final String TOKEN_AUTHORIZATION_TYPE = "Bearer";
 
     private final JwtTokenProvider tokenProvider;

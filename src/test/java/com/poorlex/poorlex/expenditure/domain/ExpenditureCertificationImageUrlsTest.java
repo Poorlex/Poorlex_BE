@@ -43,7 +43,7 @@ class ExpenditureCertificationImageUrlsTest implements ReplaceUnderScoreTest {
         imageUrls.belongTo(expenditure);
 
         //then
-        assertThat(imageUrls.getImageUrls())
+        assertThat(imageUrls.getUrls())
             .map(ExpenditureCertificationImageUrl::getExpenditure)
             .containsOnly(expenditure);
     }
