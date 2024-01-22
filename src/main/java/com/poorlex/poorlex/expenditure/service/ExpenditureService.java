@@ -9,6 +9,7 @@ import com.poorlex.poorlex.expenditure.domain.TotalExpenditureAndMemberIdDto;
 import com.poorlex.poorlex.expenditure.domain.WeeklyExpenditureDuration;
 import com.poorlex.poorlex.expenditure.service.dto.RankAndTotalExpenditureDto;
 import com.poorlex.poorlex.expenditure.service.dto.request.ExpenditureCreateRequest;
+import com.poorlex.poorlex.expenditure.service.dto.request.ExpenditureUpdateRequest;
 import com.poorlex.poorlex.expenditure.service.dto.request.MemberWeeklyTotalExpenditureRequest;
 import com.poorlex.poorlex.expenditure.service.dto.response.BattleExpenditureResponse;
 import com.poorlex.poorlex.expenditure.service.dto.response.ExpenditureResponse;
@@ -126,5 +127,23 @@ public class ExpenditureService {
         return expenditures.stream()
             .map(expenditure -> BattleExpenditureResponse.from(expenditure, true))
             .toList();
+    }
+
+    public void updateExpenditure(final Long memberId,
+                                  final Long expenditureId,
+                                  final ExpenditureUpdateRequest request) {
+        final Expenditure expenditure = expenditureRepository.findById(expenditureId)
+            .orElseThrow(() -> new IllegalArgumentException("Id에 해당하는 지출이 없습니다."));
+
+        validateExpenditureOwnership(memberId, expenditure);
+        expenditure.pasteAmountAndDescriptionAndImageUrls(
+            ExpenditureMapper.createRequestToExpenditure(memberId, request)
+        );
+    }
+
+    private void validateExpenditureOwnership(final Long memberId, final Expenditure expenditure) {
+        if (!expenditure.hasSameMemberId(memberId)) {
+            throw new IllegalArgumentException("다른 회원의 지출은 수정할 수 없습니다.");
+        }
     }
 }

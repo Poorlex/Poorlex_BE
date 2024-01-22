@@ -57,6 +57,12 @@ public class Expenditure {
         return this.memberId.equals(memberId);
     }
 
+    public void pasteAmountAndDescriptionAndImageUrls(final Expenditure other) {
+        this.amount = other.amount;
+        this.description = other.description;
+        this.imageUrls = other.imageUrls;
+    }
+
     public Long getId() {
         return id;
     }
