@@ -14,9 +14,12 @@ import com.poorlex.poorlex.expenditure.controller.ExpenditureController;
 import com.poorlex.poorlex.expenditure.service.ExpenditureService;
 import com.poorlex.poorlex.expenditure.service.dto.request.ExpenditureCreateRequest;
 import com.poorlex.poorlex.expenditure.service.dto.request.MemberWeeklyTotalExpenditureRequest;
+import com.poorlex.poorlex.expenditure.service.dto.response.BattleExpenditureResponse;
+import com.poorlex.poorlex.expenditure.service.dto.response.ExpenditureResponse;
 import com.poorlex.poorlex.expenditure.service.dto.response.MemberWeeklyTotalExpenditureResponse;
 import com.poorlex.poorlex.support.RestDocsDocumentationTest;
 import com.poorlex.poorlex.util.ApiDocumentUtils;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -79,11 +82,11 @@ class ExpenditureDocumentationTest extends RestDocsDocumentationTest {
     @Test
     void find_weekly_expenditure() throws Exception {
         //given
-        final MemberWeeklyTotalExpenditureRequest request = new MemberWeeklyTotalExpenditureRequest(
-            LocalDateTime.now().truncatedTo(ChronoUnit.MICROS));
-
         mockingTokenInterceptor();
         mockingMemberArgumentResolver();
+
+        final MemberWeeklyTotalExpenditureRequest request = new MemberWeeklyTotalExpenditureRequest(
+            LocalDateTime.now().truncatedTo(ChronoUnit.MICROS));
         given(expenditureService.findMemberWeeklyTotalExpenditure(any(), any()))
             .willReturn(new MemberWeeklyTotalExpenditureResponse(1000));
 
@@ -98,7 +101,7 @@ class ExpenditureDocumentationTest extends RestDocsDocumentationTest {
         //then
         result.andExpect(status().isOk())
             .andDo(
-                document("expenditure-find",
+                document("expenditure-weekly-total",
                     ApiDocumentUtils.getDocumentRequest(),
                     ApiDocumentUtils.getDocumentResponse(),
                     requestFields(
@@ -106,6 +109,167 @@ class ExpenditureDocumentationTest extends RestDocsDocumentationTest {
                     ),
                     responseFields(
                         fieldWithPath("amount").type(JsonFieldType.NUMBER).description("주간 총 지출 금액")
+                    )
+                ));
+    }
+
+    @Test
+    void find_expenditure() throws Exception {
+        //given
+        mockingTokenInterceptor();
+        mockingMemberArgumentResolver();
+
+        given(expenditureService.findExpenditureById(any()))
+            .willReturn(
+                new ExpenditureResponse(
+                    1L,
+                    LocalDate.now(),
+                    1000,
+                    "지출 설명", List.of("imageUrl1", "imageUrl2")
+                )
+            );
+
+        //when
+        //then
+        final ResultActions result = mockMvc.perform(get("/expenditures/{expenditureId}", 1L));
+
+        result.andExpect(status().isOk())
+            .andDo(
+                document("expenditure-find",
+                    ApiDocumentUtils.getDocumentRequest(),
+                    ApiDocumentUtils.getDocumentResponse(),
+                    responseFields(
+                        fieldWithPath("id").type(JsonFieldType.NUMBER).description("지출 Id"),
+                        fieldWithPath("date").type(JsonFieldType.STRING).description("지출 날짜"),
+                        fieldWithPath("amount").type(JsonFieldType.NUMBER).description("지출 금액"),
+                        fieldWithPath("description").type(JsonFieldType.STRING).description("지출 설명"),
+                        fieldWithPath("imageUrls").type(JsonFieldType.ARRAY).description("지출 이미지 링크 목록 (최대 2개)")
+                    )
+                ));
+    }
+
+    @Test
+    void find_battle_expenditure_by_dayOfWeek() throws Exception {
+        //given
+        mockingTokenInterceptor();
+        mockingMemberArgumentResolver();
+
+        given(expenditureService.findBattleExpendituresInDayOfWeek(any(), any(), any()))
+            .willReturn(
+                List.of(
+                    new BattleExpenditureResponse(1L, "대표 이미지 URL", 2, true),
+                    new BattleExpenditureResponse(2L, "대표 이미지 URL", 1, false),
+                    new BattleExpenditureResponse(3L, "대표 이미지 URL", 1, true),
+                    new BattleExpenditureResponse(4L, "대표 이미지 URL", 2, false)
+                )
+            );
+
+        //when
+        //then
+        final ResultActions result = mockMvc.perform(
+            get("/battles/1/expenditures?dayOfWeek=MONDAY")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer {accessToken}")
+        );
+
+        result.andExpect(status().isOk())
+            .andDo(
+                document("expenditure-find-battle-dayOfWeek",
+                    ApiDocumentUtils.getDocumentRequest(),
+                    ApiDocumentUtils.getDocumentResponse(),
+                    responseFields(
+                        fieldWithPath("[]").description("배틀 요일별 지출 목록")
+                    ).andWithPrefix("[].",
+                        fieldWithPath("id").type(JsonFieldType.NUMBER).description("지출 Id"),
+                        fieldWithPath("imageUrl").type(JsonFieldType.STRING).description("지출 대표 이미지 링크"),
+                        fieldWithPath("imageCount").type(JsonFieldType.NUMBER).description("지출 이미지 갯수"),
+                        fieldWithPath("own").type(JsonFieldType.BOOLEAN).description("멤버 소유 여부")
+                    )
+                ));
+    }
+
+    @Test
+    void find_member_battle_expenditure() throws Exception {
+        //given
+        mockingTokenInterceptor();
+        mockingMemberArgumentResolver();
+
+        given(expenditureService.findMemberBattleExpenditures(any(), any()))
+            .willReturn(
+                List.of(
+                    new BattleExpenditureResponse(1L, "대표 이미지 URL", 2, true),
+                    new BattleExpenditureResponse(2L, "대표 이미지 URL", 1, true),
+                    new BattleExpenditureResponse(3L, "대표 이미지 URL", 1, true),
+                    new BattleExpenditureResponse(4L, "대표 이미지 URL", 2, true)
+                )
+            );
+
+        //when
+        //then
+        final ResultActions result = mockMvc.perform(
+            get("/battles/1/expenditures")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer {accessToken}")
+        );
+
+        result.andExpect(status().isOk())
+            .andDo(
+                document("expenditure-find-battle-member",
+                    ApiDocumentUtils.getDocumentRequest(),
+                    ApiDocumentUtils.getDocumentResponse(),
+                    responseFields(
+                        fieldWithPath("[]").description("회원 배틀 지출 목록")
+                    ).andWithPrefix("[].",
+                        fieldWithPath("id").type(JsonFieldType.NUMBER).description("지출 Id"),
+                        fieldWithPath("imageUrl").type(JsonFieldType.STRING).description("지출 대표 이미지 링크"),
+                        fieldWithPath("imageCount").type(JsonFieldType.NUMBER).description("지출 이미지 갯수"),
+                        fieldWithPath("own").type(JsonFieldType.BOOLEAN).description("고정값 = true")
+                    )
+                ));
+    }
+
+    @Test
+    void find_member_expenditure() throws Exception {
+        //given
+        mockingTokenInterceptor();
+        mockingMemberArgumentResolver();
+
+        given(expenditureService.findMemberExpenditures(any()))
+            .willReturn(
+                List.of(
+                    new ExpenditureResponse(
+                        1L,
+                        LocalDate.now().minusDays(1),
+                        1000,
+                        "지출 설명", List.of("imageUrl1", "imageUrl2")
+                    ),
+                    new ExpenditureResponse(
+                        2L,
+                        LocalDate.now(),
+                        4000,
+                        "지출 설명", List.of("imageUrl3")
+                    )
+                )
+            );
+
+        //when
+        //then
+        final ResultActions result = mockMvc.perform(
+            get("/expenditures")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer {accessToken}")
+        );
+
+        result.andExpect(status().isOk())
+            .andDo(
+                document("expenditure-find-member",
+                    ApiDocumentUtils.getDocumentRequest(),
+                    ApiDocumentUtils.getDocumentResponse(),
+                    responseFields(
+                        fieldWithPath("[]").description("회원 지출 목록")
+                    ).andWithPrefix("[].",
+                        fieldWithPath("id").type(JsonFieldType.NUMBER).description("지출 Id"),
+                        fieldWithPath("date").type(JsonFieldType.STRING).description("지출 날짜"),
+                        fieldWithPath("amount").type(JsonFieldType.NUMBER).description("지출 금액"),
+                        fieldWithPath("description").type(JsonFieldType.STRING).description("지출 설명"),
+                        fieldWithPath("imageUrls").type(JsonFieldType.ARRAY).description("지출 이미지 링크 목록 (최대 2개)")
                     )
                 ));
     }
