@@ -17,6 +17,8 @@ import com.poorlex.poorlex.battleinvititation.service.dto.request.BattleInviteRe
 import com.poorlex.poorlex.battleinvititation.service.event.BattleInviteAcceptedEvent;
 import com.poorlex.poorlex.battleinvititation.service.event.BattleInviteDeniedEvent;
 import com.poorlex.poorlex.battleinvititation.service.event.BattleInvitedEvent;
+import com.poorlex.poorlex.friend.domain.Friend;
+import com.poorlex.poorlex.friend.domain.FriendRepository;
 import com.poorlex.poorlex.member.domain.Member;
 import com.poorlex.poorlex.member.domain.MemberNickname;
 import com.poorlex.poorlex.member.domain.MemberRepository;
@@ -46,6 +48,9 @@ class BattleInviteServiceTest extends IntegrationTest implements ReplaceUnderSco
     private MemberRepository memberRepository;
 
     @Autowired
+    private FriendRepository friendRepository;
+
+    @Autowired
     private MemberAlarmRepository memberAlarmRepository;
 
     @Autowired
@@ -60,6 +65,7 @@ class BattleInviteServiceTest extends IntegrationTest implements ReplaceUnderSco
         final Battle battle = createBattle();
         final Member inviteMember = createMember("oauthId1", "invitor");
         final Member invitedMember = createMember("oauthId2", "invited");
+        beFriend(inviteMember, invitedMember);
         join(inviteMember, battle);
         final BattleInviteRequest request = new BattleInviteRequest(invitedMember.getId());
 
@@ -77,12 +83,30 @@ class BattleInviteServiceTest extends IntegrationTest implements ReplaceUnderSco
         final Battle battle = createBattle();
         final Member inviteMember = createMember("oauthId1", "invitor");
         final Member invitedMember = createMember("oauthId2", "invited");
+        beFriend(inviteMember, invitedMember);
         final BattleInviteRequest request = new BattleInviteRequest(invitedMember.getId());
 
         //when
         //then
         assertThatThrownBy(() -> battleInviteService.invite(battle.getId(), inviteMember.getId(), request))
-            .isInstanceOf(IllegalArgumentException.class);
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessage("초대자가 배틀 참가자가 아닙니다.");
+    }
+
+    @Test
+    void 배틀에_초대한다_친구가_아닐떄() {
+        //given
+        final Battle battle = createBattle();
+        final Member inviteMember = createMember("oauthId1", "invitor");
+        final Member invitedMember = createMember("oauthId2", "invited");
+        join(inviteMember, battle);
+        final BattleInviteRequest request = new BattleInviteRequest(invitedMember.getId());
+
+        //when
+        //then
+        assertThatThrownBy(() -> battleInviteService.invite(battle.getId(), inviteMember.getId(), request))
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessage("초대한 멤버가 친구가 아닙니다.");
     }
 
     @Test
@@ -167,6 +191,10 @@ class BattleInviteServiceTest extends IntegrationTest implements ReplaceUnderSco
 
     private BattleParticipant join(final Member member, final Battle battle) {
         return battleParticipantRepository.save(BattleParticipant.normalPlayer(battle.getId(), member.getId()));
+    }
+
+    private void beFriend(final Member member, final Member other) {
+        friendRepository.save(Friend.withoutId(member.getId(), other.getId()));
     }
 
     private void createBattleInviteAlarm(final BattleParticipant inviteBattleParticipant, final Member invitedMember) {

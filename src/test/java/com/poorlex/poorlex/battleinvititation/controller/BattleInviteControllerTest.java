@@ -15,6 +15,8 @@ import com.poorlex.poorlex.battle.fixture.BattleFixture;
 import com.poorlex.poorlex.battleinvititation.service.dto.request.BattleInviteAcceptRequest;
 import com.poorlex.poorlex.battleinvititation.service.dto.request.BattleInviteDenyRequest;
 import com.poorlex.poorlex.battleinvititation.service.dto.request.BattleInviteRequest;
+import com.poorlex.poorlex.friend.domain.Friend;
+import com.poorlex.poorlex.friend.domain.FriendRepository;
 import com.poorlex.poorlex.member.domain.Member;
 import com.poorlex.poorlex.member.domain.MemberNickname;
 import com.poorlex.poorlex.member.domain.MemberRepository;
@@ -40,6 +42,9 @@ class BattleInviteControllerTest extends IntegrationTest implements ReplaceUnder
     private JwtTokenProvider jwtTokenProvider;
 
     @Autowired
+    private FriendRepository friendRepository;
+
+    @Autowired
     private BattleRepository battleRepository;
 
     @Autowired
@@ -57,6 +62,7 @@ class BattleInviteControllerTest extends IntegrationTest implements ReplaceUnder
         final Battle battle = createBattle();
         final Member inviteMember = createMember("oauthId1", "invitor");
         final Member invitedMember = createMember("oauthId2", "invited");
+        beFriend(inviteMember, invitedMember);
         join(inviteMember, battle);
 
         final String accessToken = jwtTokenProvider.createAccessToken(inviteMember.getId());
@@ -129,6 +135,10 @@ class BattleInviteControllerTest extends IntegrationTest implements ReplaceUnder
 
     private BattleParticipant join(final Member member, final Battle battle) {
         return battleParticipantRepository.save(BattleParticipant.normalPlayer(battle.getId(), member.getId()));
+    }
+
+    private void beFriend(final Member member, final Member other) {
+        friendRepository.save(Friend.withoutId(member.getId(), other.getId()));
     }
 
     private void createBattleInviteAlarm(final BattleParticipant inviteBattleParticipant, final Member invitedMember) {
