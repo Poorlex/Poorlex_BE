@@ -25,15 +25,15 @@ public class TokenInterceptor implements HandlerInterceptor {
     private final JwtTokenProvider tokenProvider;
     private final MemberRepository memberRepository;
     private final RequestMemberInfo requestMemberInfo;
-    private List<ExcludePattern> excludePatterns = new ArrayList<>();
+    private final List<ExcludePattern> excludePatterns = new ArrayList<>();
 
     @Override
     public boolean preHandle(final HttpServletRequest request,
                              final HttpServletResponse response,
                              final Object handler) {
-        final String pathInfo = request.getPathInfo();
+        final String requestURI = request.getRequestURI();
         final boolean isHandleablePattern = excludePatterns.stream()
-            .noneMatch(excludePattern -> excludePattern.matches(pathInfo, HttpMethod.valueOf(request.getMethod())));
+            .noneMatch(excludePattern -> excludePattern.matches(requestURI, HttpMethod.valueOf(request.getMethod())));
 
         if (isHandleablePattern) {
             final String token = parseToken(request);
