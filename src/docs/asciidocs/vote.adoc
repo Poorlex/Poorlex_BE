@@ -1,0 +1,13 @@
+== 배틀 투표 API
+
+=== 배틀 투표 생성
+
+operation::battle-vote-create[snippets='http-request']
+operation::battle-vote-create[snippets='request-fields']
+operation::battle-vote-create[snippets='http-response']
+
+=== 배틀 투표에 투표
+
+operation::battle-voting-paper-create[snippets='http-request']
+operation::battle-voting-paper-create[snippets='request-fields']
+operation::battle-voting-paper-create[snippets='http-response']
