@@ -1,20 +1,18 @@
 package com.poorlex.poorlex.alarm.battlealarm.domain;
 
+import com.poorlex.poorlex.common.BaseCreatedAtEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.PrePersist;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class BattleAlarm {
+public class BattleAlarm extends BaseCreatedAtEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,8 +24,6 @@ public class BattleAlarm {
 
     @Enumerated(value = EnumType.STRING)
     private BattleAlarmType type;
-
-    private LocalDateTime createdAt;
 
     public BattleAlarm(final Long id,
                        final Long battleId,
@@ -43,11 +39,6 @@ public class BattleAlarm {
                                         final Long memberId,
                                         final BattleAlarmType type) {
         return new BattleAlarm(null, battleId, memberId, type);
-    }
-
-    @PrePersist
-    public void prePersist() {
-        this.createdAt = LocalDateTime.now().truncatedTo(ChronoUnit.MICROS);
     }
 
     public boolean isReactable() {
@@ -69,9 +60,5 @@ public class BattleAlarm {
 
     public BattleAlarmType getType() {
         return type;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
     }
 }

@@ -7,9 +7,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.PrePersist;
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -33,13 +31,6 @@ public class Vote {
     private VoteName name;
     @Enumerated(EnumType.STRING)
     private VoteStatus status;
-
-    private LocalDateTime createdAt;
-
-    @PrePersist
-    public void prePersist() {
-        this.createdAt = LocalDateTime.now().truncatedTo(ChronoUnit.MICROS);
-    }
 
     public Vote(final Long id,
                 final Long battleId,
@@ -96,9 +87,5 @@ public class Vote {
 
     public VoteStatus getStatus() {
         return status;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
     }
 }

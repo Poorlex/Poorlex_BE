@@ -1,12 +1,12 @@
 package com.poorlex.poorlex.alarm.memberalram.domain;
 
+import com.poorlex.poorlex.common.BaseCreatedAtEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.PrePersist;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import lombok.AccessLevel;
@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class MemberAlarm {
+public class MemberAlarm extends BaseCreatedAtEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,8 +26,6 @@ public class MemberAlarm {
     @Enumerated(value = EnumType.STRING)
     private MemberAlarmType type;
 
-    private LocalDateTime createdAt;
-
     public MemberAlarm(final Long id, final Long memberId, final Long targetId, final MemberAlarmType type) {
         this.id = id;
         this.memberId = memberId;
@@ -37,11 +35,6 @@ public class MemberAlarm {
 
     public static MemberAlarm withoutId(final Long memberId, final Long targetId, final MemberAlarmType type) {
         return new MemberAlarm(null, memberId, targetId, type);
-    }
-
-    @PrePersist
-    public void prePersist() {
-        this.createdAt = LocalDateTime.now();
     }
 
     public void updateType(final MemberAlarmType updateType) {
@@ -75,9 +68,5 @@ public class MemberAlarm {
 
     public MemberAlarmType getType() {
         return type;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
     }
 }

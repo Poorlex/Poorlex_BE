@@ -2,7 +2,6 @@ package com.poorlex.poorlex.alarm.battlealarm.controller;
 
 import com.poorlex.poorlex.alarm.battlealarm.service.BattleAlarmService;
 import com.poorlex.poorlex.alarm.battlealarm.service.dto.request.BattleAlarmRequest;
-import com.poorlex.poorlex.alarm.battlealarm.service.dto.response.BattleAlarmResponse;
 import com.poorlex.poorlex.alarm.battlealarm.service.dto.response.UncheckedBattleAlarmCountResponse;
 import com.poorlex.poorlex.config.auth.argumentresolver.MemberInfo;
 import com.poorlex.poorlex.config.auth.argumentresolver.MemberOnly;
@@ -21,10 +20,10 @@ public class BattleAlarmController {
     private final BattleAlarmService battleAlarmService;
 
     @GetMapping("/battles/{battleId}/alarms")
-    public ResponseEntity<List<BattleAlarmResponse>> findBattleAlarms(@MemberOnly final MemberInfo memberInfo,
-                                                                      @PathVariable(name = "battleId") final Long battleId,
-                                                                      @RequestBody final BattleAlarmRequest request) {
-        final List<BattleAlarmResponse> battleAlarms =
+    public ResponseEntity<List<Object>> findBattleAlarms(@MemberOnly final MemberInfo memberInfo,
+                                                         @PathVariable(name = "battleId") final Long battleId,
+                                                         @RequestBody final BattleAlarmRequest request) {
+        final List<Object> battleAlarms =
             battleAlarmService.findBattleAlarms(battleId, memberInfo.getMemberId(), request);
 
         return ResponseEntity.ok(battleAlarms);

@@ -1,15 +1,20 @@
 package com.poorlex.poorlex.alarm.battlealarm.service;
 
-import com.poorlex.poorlex.alarm.battlealarm.service.dto.request.BattleAlarmRequest;
-import com.poorlex.poorlex.alarm.battlealarm.service.event.BattleAlarmViewedEvent;
-import com.poorlex.poorlex.alarm.battlealarm.domain.BattleAlarm;
 import com.poorlex.poorlex.alarm.battlealarm.domain.BattleAlarmRepository;
 import com.poorlex.poorlex.alarm.battlealarm.domain.BattleAlarmViewHistory;
 import com.poorlex.poorlex.alarm.battlealarm.domain.BattleAlarmViewHistoryRepository;
+import com.poorlex.poorlex.alarm.battlealarm.service.dto.request.BattleAlarmRequest;
 import com.poorlex.poorlex.alarm.battlealarm.service.dto.response.BattleAlarmResponse;
 import com.poorlex.poorlex.alarm.battlealarm.service.dto.response.UncheckedBattleAlarmCountResponse;
+import com.poorlex.poorlex.alarm.battlealarm.service.event.BattleAlarmViewedEvent;
+import com.poorlex.poorlex.battlealarmreaction.service.AlarmReactionService;
+import com.poorlex.poorlex.common.AbstractCreatedAtResponse;
 import com.poorlex.poorlex.config.event.Events;
+import com.poorlex.poorlex.voting.vote.service.VoteService;
+import com.poorlex.poorlex.voting.votingpaper.service.VotingPaperService;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -22,14 +27,22 @@ import org.springframework.transaction.annotation.Transactional;
 public class BattleAlarmService {
 
     private final BattleAlarmRepository battleAlarmRepository;
+    private final VoteService voteService;
+    private final VotingPaperService votingPaperService;
+    private final AlarmReactionService alarmReactionService;
     private final BattleAlarmViewHistoryRepository battleAlarmViewHistoryRepository;
 
-    public List<BattleAlarmResponse> findBattleAlarms(final Long battleId,
-                                                      final Long memberId,
-                                                      final BattleAlarmRequest request) {
-        final List<BattleAlarm> battleBattleAlarms = battleAlarmRepository.findAllByBattleId(battleId);
+    public List<Object> findBattleAlarms(final Long battleId,
+                                         final Long memberId,
+                                         final BattleAlarmRequest request) {
+        final List<Object> responses = new ArrayList<>();
+        responses.addAll(BattleAlarmResponse.mapToList(battleAlarmRepository.findAllByBattleId(battleId)));
+        responses.addAll(voteService.findBattleVotes(battleId));
+        responses.addAll(votingPaperService.findBattleVotingPapers(battleId));
+        responses.addAll(alarmReactionService.findBattleAlarmReactions(battleId));
+        responses.sort(Comparator.comparing(o -> ((AbstractCreatedAtResponse) o).getCreatedAt()));
         Events.raise(new BattleAlarmViewedEvent(battleId, memberId, request.getDateTime()));
-        return BattleAlarmResponse.mapToList(battleBattleAlarms);
+        return responses;
     }
 
     public UncheckedBattleAlarmCountResponse getBattleParticipantUncheckedAlarmCount(final Long battleId,
@@ -42,14 +55,14 @@ public class BattleAlarmService {
     }
 
     private UncheckedBattleAlarmCountResponse getResponseHistoryNotExist(final Long battleId, final Long memberId) {
-        final int uncheckedCount = battleAlarmRepository.countAlarmByBattleIdAndMemberId(battleId, memberId);
+        final int uncheckedCount = battleAlarmRepository.countBattleAlarmByBattleIdAndMemberId(battleId, memberId);
         return new UncheckedBattleAlarmCountResponse(uncheckedCount);
     }
 
     private UncheckedBattleAlarmCountResponse getResponseHistoryExist(final Long battleId,
                                                                       final Long memberId,
                                                                       final LocalDateTime lastViewTime) {
-        final int uncheckedAlarmCount = battleAlarmRepository.countAlarmByBattleIdAndMemberIdAndAndCreatedAtAfter(
+        final int uncheckedAlarmCount = battleAlarmRepository.countBattleAlarmByBattleIdAndMemberIdAndCreatedAtAfter(
             battleId,
             memberId,
             lastViewTime

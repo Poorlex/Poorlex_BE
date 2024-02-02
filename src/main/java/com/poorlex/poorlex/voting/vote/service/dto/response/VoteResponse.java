@@ -11,7 +11,7 @@ public class VoteResponse extends AbstractCreatedAtResponse {
     private final String nickname;
     private final String name;
     private final String status;
-    private final int amount;
+    private final long amount;
     private final int agreeCount;
     private final int disagreeCount;
 
@@ -19,7 +19,7 @@ public class VoteResponse extends AbstractCreatedAtResponse {
                         final String nickname,
                         final String name,
                         final String status,
-                        final int amount,
+                        final long amount,
                         final int agreeCount,
                         final int disagreeCount,
                         final LocalDateTime createdAt) {
