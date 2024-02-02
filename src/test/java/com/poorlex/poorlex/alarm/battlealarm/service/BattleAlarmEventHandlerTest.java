@@ -19,6 +19,7 @@ import com.poorlex.poorlex.battlenotification.service.event.BattleNotificationCh
 import com.poorlex.poorlex.expenditure.service.ExpenditureService;
 import com.poorlex.poorlex.expenditure.service.dto.request.ExpenditureCreateRequest;
 import com.poorlex.poorlex.expenditure.service.event.ExpenditureCreatedEvent;
+import com.poorlex.poorlex.expenditure.service.event.ZeroExpenditureCreatedEvent;
 import com.poorlex.poorlex.member.domain.Member;
 import com.poorlex.poorlex.member.domain.MemberNickname;
 import com.poorlex.poorlex.member.domain.MemberRepository;
@@ -35,7 +36,7 @@ import org.springframework.test.context.event.ApplicationEvents;
 import org.springframework.test.context.event.RecordApplicationEvents;
 
 @RecordApplicationEvents
-class BattleBattleAlarmEventHandlerTest extends IntegrationTest implements ReplaceUnderScoreTest {
+class BattleAlarmEventHandlerTest extends IntegrationTest implements ReplaceUnderScoreTest {
 
     @Autowired
     private ApplicationEvents events;
@@ -188,6 +189,43 @@ class BattleBattleAlarmEventHandlerTest extends IntegrationTest implements Repla
 
                 final BattleAlarm battleAlarm = expenditureCreatedBattleAlarms.get(0);
                 softly.assertThat(battleAlarm.getType()).isEqualTo(BattleAlarmType.EXPENDITURE_CREATED);
+                softly.assertThat(battleAlarm.getBattleId()).isEqualTo(battle.getId());
+                softly.assertThat(battleAlarm.getMemberId()).isEqualTo(member.getId());
+                softly.assertThat(battleAlarm.getCreatedAt())
+                    .isBeforeOrEqualTo(LocalDateTime.now().truncatedTo(ChronoUnit.MICROS));
+            }
+        );
+    }
+
+    @Test
+    void 금액이_0인_지출이_등록되면_무지출_이벤트를_처리한다() {
+        //given
+        final Member member = createMember("oauthId");
+        final Battle battle = createBattle(BattleStatus.PROGRESS);
+        joinAsManager(battle, member);
+
+        final ExpenditureCreateRequest request = new ExpenditureCreateRequest(
+            0,
+            "description",
+            List.of("imageUrl"),
+            battle.getDuration().getStart()
+        );
+
+        //when
+        expenditureService.createExpenditure(member.getId(), request);
+
+        //then
+        final List<BattleAlarm> zeroExpenditureAlarms =
+            battleAlarmRepository.findByType(BattleAlarmType.ZERO_EXPENDITURE);
+
+        assertSoftly(
+            softly -> {
+                final long eventListenCount = events.stream(ZeroExpenditureCreatedEvent.class).count();
+                softly.assertThat(eventListenCount).isOne();
+
+                softly.assertThat(zeroExpenditureAlarms).hasSize(1);
+                final BattleAlarm battleAlarm = zeroExpenditureAlarms.get(0);
+                softly.assertThat(battleAlarm.getType()).isEqualTo(BattleAlarmType.ZERO_EXPENDITURE);
                 softly.assertThat(battleAlarm.getBattleId()).isEqualTo(battle.getId());
                 softly.assertThat(battleAlarm.getMemberId()).isEqualTo(member.getId());
                 softly.assertThat(battleAlarm.getCreatedAt())
