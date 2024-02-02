@@ -9,6 +9,7 @@ import com.poorlex.poorlex.battle.domain.BattleStatus;
 import com.poorlex.poorlex.battle.domain.BattleWithMemberExpenditure;
 import com.poorlex.poorlex.battlenotification.service.event.BattleNotificationChangedEvent;
 import com.poorlex.poorlex.expenditure.service.event.ExpenditureCreatedEvent;
+import com.poorlex.poorlex.expenditure.service.event.ZeroExpenditureCreatedEvent;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -47,19 +48,15 @@ public class BattleAlarmEventHandler {
             final Battle battle = battleInfo.getBattle();
             final Integer expenditure = battleInfo.getExpenditure();
 
-            if (!battle.hasSameStatus(BattleStatus.PROGRESS)) {
-                continue;
-            }
-
-            createExpenditureCreatedAlarm(battle, memberId);
+            createExpenditureCreatedAlarm(battle.getId(), memberId);
             createOverBudgetAlarmIfNeed(battle, expenditure, memberId);
         }
     }
 
-    private void createExpenditureCreatedAlarm(final Battle battle, final Long memberId) {
-        final BattleAlarm battleAlarm = BattleAlarm.withoutId(battle.getId(), memberId,
-            BattleAlarmType.EXPENDITURE_CREATED);
-        battleAlarmRepository.save(battleAlarm);
+    private void createExpenditureCreatedAlarm(final Long battleId, final Long memberId) {
+        battleAlarmRepository.save(
+            BattleAlarm.withoutId(battleId, memberId, BattleAlarmType.EXPENDITURE_CREATED)
+        );
     }
 
     private void createOverBudgetAlarmIfNeed(final Battle battle, final Integer expenditure, final Long memberId) {
@@ -68,5 +65,24 @@ public class BattleAlarmEventHandler {
         }
         final BattleAlarm battleAlarm = BattleAlarm.withoutId(battle.getId(), memberId, BattleAlarmType.OVER_BUDGET);
         battleAlarmRepository.save(battleAlarm);
+    }
+
+    @TransactionalEventListener(value = ZeroExpenditureCreatedEvent.class, phase = TransactionPhase.BEFORE_COMMIT)
+    public void zeroExpenditureCreateEvent(final ZeroExpenditureCreatedEvent event) {
+        final List<BattleWithMemberExpenditure> battleInfos =
+            battleRepository.findMemberBattlesByMemberIdAndStatusWithExpenditure(
+                event.getMemberId(),
+                BattleStatus.PROGRESS
+            );
+
+        for (BattleWithMemberExpenditure battleInfo : battleInfos) {
+            createZeroExpenditureCreatedAlarm(battleInfo.getBattle().getId(), event.getMemberId());
+        }
+    }
+
+    private void createZeroExpenditureCreatedAlarm(final Long battleId, final Long memberId) {
+        battleAlarmRepository.save(
+            BattleAlarm.withoutId(battleId, memberId, BattleAlarmType.ZERO_EXPENDITURE)
+        );
     }
 }
