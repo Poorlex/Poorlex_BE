@@ -1,5 +1,6 @@
 package com.poorlex.poorlex.battlealarmreaction.domain;
 
+import com.poorlex.poorlex.common.BaseCreatedAtEntity;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -7,15 +8,12 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.PrePersist;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class AlarmReaction {
+public class AlarmReaction extends BaseCreatedAtEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,8 +28,6 @@ public class AlarmReaction {
 
     @Embedded
     private AlarmReactionContent content;
-
-    private LocalDateTime createdAt;
 
     private AlarmReaction(final Long id,
                           final Long alarmId,
@@ -62,11 +58,6 @@ public class AlarmReaction {
                                                final Long memberId,
                                                final AlarmReactionContent content) {
         return withoutId(alarmId, memberId, AlarmReactionType.SCOLD, content);
-    }
-
-    @PrePersist
-    public void prePersist() {
-        this.createdAt = LocalDateTime.now().truncatedTo(ChronoUnit.MICROS);
     }
 
     public Long getId() {
