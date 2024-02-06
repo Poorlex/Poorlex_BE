@@ -5,6 +5,7 @@ import jakarta.persistence.Embeddable;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -19,7 +20,7 @@ public class VoteDuration {
     private VoteDurationType type;
 
     public VoteDuration(final LocalDateTime start, final VoteDurationType type) {
-        this.start = start;
+        this.start = start.truncatedTo(ChronoUnit.MICROS);
         this.type = type;
     }
 
