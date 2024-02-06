@@ -2,6 +2,7 @@ package com.poorlex.poorlex.voting.vote.service;
 
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
+import com.poorlex.poorlex.participate.domain.BattleParticipantRepository;
 import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
 import com.poorlex.poorlex.support.UsingDataJpaTest;
 import com.poorlex.poorlex.voting.vote.domain.Vote;
@@ -23,11 +24,14 @@ class VoteServiceTest extends UsingDataJpaTest implements ReplaceUnderScoreTest 
     @Autowired
     private VoteRepository voteRepository;
 
+    @Autowired
+    private BattleParticipantRepository battleParticipantRepository;
+
     private VoteService voteService;
 
     @BeforeEach
     void setUp() {
-        this.voteService = new VoteService(voteRepository);
+        this.voteService = new VoteService(voteRepository, battleParticipantRepository);
     }
 
     @Test

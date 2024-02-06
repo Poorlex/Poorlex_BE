@@ -99,8 +99,8 @@ class BattleServiceTest extends UsingDataJpaTest implements ReplaceUnderScoreTes
             battleParticipantRepository,
             new BattleAlarmService(
                 battleAlarmRepository,
-                new VoteService(voteRepository),
-                new VotingPaperService(voteRepository, votingPaperRepository),
+                new VoteService(voteRepository, battleParticipantRepository),
+                new VotingPaperService(voteRepository, votingPaperRepository, battleParticipantRepository),
                 new AlarmReactionService(alarmReactionRepository, battleAlarmRepository),
                 battleAlarmViewHistoryRepository
             ),

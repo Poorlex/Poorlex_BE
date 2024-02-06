@@ -75,7 +75,7 @@ class ExpenditureServiceTest extends UsingDataJpaTest implements ReplaceUnderSco
                 softly.assertThat(expenditure.getMemberId()).isEqualTo(member.getId());
                 softly.assertThat(expenditure.getAmount()).isEqualTo(createRequest.getAmount());
                 softly.assertThat(expenditure.getDescription()).isEqualTo(createRequest.getDescription());
-                softly.assertThat(expenditure.getDate()).isNotNull();
+                softly.assertThat(expenditure.getDateTime()).isNotNull();
                 softly.assertThat(expenditure.getImageUrls().getUrls())
                     .usingRecursiveComparison().ignoringFields("id")
                     .isEqualTo(List.of(
@@ -149,7 +149,7 @@ class ExpenditureServiceTest extends UsingDataJpaTest implements ReplaceUnderSco
         assertSoftly(
             softly -> {
                 softly.assertThat(response.getId()).isEqualTo(expenditure.getId());
-                softly.assertThat(response.getDate()).isEqualTo(LocalDate.from(expenditure.getDate()));
+                softly.assertThat(response.getDate()).isEqualTo(LocalDate.from(expenditure.getDateTime()));
                 softly.assertThat(response.getAmount()).isEqualTo(expenditure.getAmount());
                 softly.assertThat(response.getDescription()).isEqualTo(expenditure.getDescription());
                 softly.assertThat(response.getImageUrls()).containsExactlyElementsOf(expectedImageUrls);
@@ -178,7 +178,7 @@ class ExpenditureServiceTest extends UsingDataJpaTest implements ReplaceUnderSco
 
                 final ExpenditureResponse response = responses.get(0);
                 softly.assertThat(response.getId()).isEqualTo(expenditure.getId());
-                softly.assertThat(response.getDate()).isEqualTo(LocalDate.from(expenditure.getDate()));
+                softly.assertThat(response.getDate()).isEqualTo(LocalDate.from(expenditure.getDateTime()));
                 softly.assertThat(response.getAmount()).isEqualTo(expenditure.getAmount());
                 softly.assertThat(response.getDescription()).isEqualTo(expenditure.getDescription());
                 softly.assertThat(response.getImageUrls()).containsExactlyElementsOf(expectedImageUrls);
@@ -236,7 +236,7 @@ class ExpenditureServiceTest extends UsingDataJpaTest implements ReplaceUnderSco
         final List<BattleExpenditureResponse> responses = expenditureService.findBattleExpendituresInDayOfWeek(
             battle.getId(),
             member.getId(),
-            memberExpenditure.getDate().getDayOfWeek().name()
+            memberExpenditure.getDateTime().getDayOfWeek().name()
         );
 
         //then
@@ -281,7 +281,7 @@ class ExpenditureServiceTest extends UsingDataJpaTest implements ReplaceUnderSco
         final List<BattleExpenditureResponse> responses = expenditureService.findBattleExpendituresInDayOfWeek(
             battle.getId(),
             member.getId(),
-            memberExpenditure.getDate().getDayOfWeek().plus(1).name()
+            memberExpenditure.getDateTime().getDayOfWeek().plus(1).name()
         );
 
         //then
@@ -309,7 +309,7 @@ class ExpenditureServiceTest extends UsingDataJpaTest implements ReplaceUnderSco
         assertThat(updateExpenditure.getAmount()).isEqualTo(request.getAmount());
         assertThat(updateExpenditure.getDescription()).isEqualTo(request.getDescription());
         assertThat(updateExpenditureImageUrls).isEqualTo(request.getImageUrls());
-        assertThat(updateExpenditure.getDate()).isEqualTo(expenditure.getDate());
+        assertThat(updateExpenditure.getDateTime()).isEqualTo(expenditure.getDateTime());
     }
 
     private Member createMember(final String oauthId) {

@@ -64,7 +64,7 @@ public interface BattleRepository extends JpaRepository<Battle, Long> {
     @Query(
         "select b as battle, sum(coalesce(e.amount.value, 0)) as expenditure from Battle b "
             + "left join BattleParticipant p on p.battleId = b.id "
-            + "left join Expenditure e on e.memberId = p.memberId and e.date between b.duration.start and b.duration.end "
+            + "left join Expenditure e on e.memberId = p.memberId and e.dateTime between b.duration.start and b.duration.end "
             + "where b.status = :status "
             + "and p.memberId = :memberId "
             + "group by b.id"

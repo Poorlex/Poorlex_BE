@@ -23,7 +23,7 @@ public class Expenditure {
     @Embedded
     private ExpenditureAmount amount;
     @Column(nullable = false)
-    private LocalDateTime date;
+    private LocalDateTime dateTime;
     @Embedded
     private ExpenditureDescription description;
     @Embedded
@@ -32,23 +32,23 @@ public class Expenditure {
     protected Expenditure(final Long id,
                           @NonNull final Long memberId,
                           @NonNull final ExpenditureAmount amount,
-                          @NonNull final LocalDateTime date,
+                          @NonNull final LocalDateTime dateTime,
                           @NonNull final ExpenditureDescription description,
                           @NonNull final ExpenditureCertificationImageUrls imageUrls) {
         this.id = id;
         this.memberId = memberId;
         this.amount = amount;
-        this.date = date;
+        this.dateTime = dateTime;
         this.description = description;
         this.imageUrls = imageUrls;
     }
 
     public static Expenditure withoutId(final ExpenditureAmount amount,
                                         final Long memberId,
-                                        final LocalDateTime date,
+                                        final LocalDateTime dateTime,
                                         final ExpenditureDescription description,
                                         final ExpenditureCertificationImageUrls imageUrls) {
-        final Expenditure instance = new Expenditure(null, memberId, amount, date, description, imageUrls);
+        final Expenditure instance = new Expenditure(null, memberId, amount, dateTime, description, imageUrls);
         imageUrls.belongTo(instance);
         return instance;
     }
@@ -75,8 +75,8 @@ public class Expenditure {
         return amount.getValue();
     }
 
-    public LocalDateTime getDate() {
-        return date;
+    public LocalDateTime getDateTime() {
+        return dateTime;
     }
 
     public String getDescription() {

@@ -36,7 +36,7 @@ public class ExpenditureResponse {
 
         return new ExpenditureResponse(
             expenditure.getId(),
-            LocalDate.from(expenditure.getDate()),
+            LocalDate.from(expenditure.getDateTime()),
             expenditure.getAmount(),
             expenditure.getDescription(),
             imageUrls

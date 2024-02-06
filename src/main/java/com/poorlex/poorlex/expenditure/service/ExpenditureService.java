@@ -118,7 +118,7 @@ public class ExpenditureService {
         final List<Expenditure> battleExpenditures = expenditureRepository.findBattleExpenditureByBattleId(battleId);
 
         return battleExpenditures.stream()
-            .filter(expenditure -> expenditure.getDate().getDayOfWeek() == targetDayOfWeek)
+            .filter(expenditure -> expenditure.getDateTime().getDayOfWeek() == targetDayOfWeek)
             .map(expenditure -> BattleExpenditureResponse.from(expenditure, expenditure.hasSameMemberId(memberId)))
             .toList();
     }
@@ -127,7 +127,7 @@ public class ExpenditureService {
         final Battle battle = battleRepository.findById(battleId)
             .orElseThrow(() -> new IllegalArgumentException("Id에 해당하는 배틀이 없습니다."));
 
-        final List<Expenditure> expenditures = expenditureRepository.findExpendituresByMemberIdAndDateBetween(
+        final List<Expenditure> expenditures = expenditureRepository.findExpendituresByMemberIdAndDateTimeBetween(
             memberId,
             battle.getDuration().getStart(),
             battle.getDuration().getEnd()
