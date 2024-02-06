@@ -10,6 +10,8 @@ import com.poorlex.poorlex.battle.domain.BattleWithMemberExpenditure;
 import com.poorlex.poorlex.battlenotification.service.event.BattleNotificationChangedEvent;
 import com.poorlex.poorlex.expenditure.service.event.ExpenditureCreatedEvent;
 import com.poorlex.poorlex.expenditure.service.event.ZeroExpenditureCreatedEvent;
+import com.poorlex.poorlex.voting.vote.service.event.VoteCreatedEvent;
+import com.poorlex.poorlex.voting.votingpaper.service.event.VotingPaperCreatedEvent;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -83,6 +85,20 @@ public class BattleAlarmEventHandler {
     private void createZeroExpenditureCreatedAlarm(final Long battleId, final Long memberId) {
         battleAlarmRepository.save(
             BattleAlarm.withoutId(battleId, memberId, BattleAlarmType.ZERO_EXPENDITURE)
+        );
+    }
+
+    @TransactionalEventListener(value = VoteCreatedEvent.class, phase = TransactionPhase.BEFORE_COMMIT)
+    public void voteCreatedEvent(final VoteCreatedEvent event) {
+        battleAlarmRepository.save(
+            BattleAlarm.withoutId(event.getBattleId(), event.getMemberId(), BattleAlarmType.VOTE_CREATED)
+        );
+    }
+
+    @TransactionalEventListener(value = VotingPaperCreatedEvent.class, phase = TransactionPhase.BEFORE_COMMIT)
+    public void votingPaperCreatedEvent(final VotingPaperCreatedEvent event) {
+        battleAlarmRepository.save(
+            BattleAlarm.withoutId(event.getBattleId(), event.getMemberId(), BattleAlarmType.VOTING_PAPER_CREATED)
         );
     }
 }
