@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.poorlex.poorlex.alarm.battlealarm.domain.BattleAlarm;
 import com.poorlex.poorlex.alarm.battlealarm.domain.BattleAlarmRepository;
 import com.poorlex.poorlex.alarm.battlealarm.domain.BattleAlarmType;
+import com.poorlex.poorlex.alarm.battlealarm.domain.BattleAlarmViewHistory;
 import com.poorlex.poorlex.alarm.battlealarm.domain.BattleAlarmViewHistoryRepository;
 import com.poorlex.poorlex.alarm.battlealarm.service.dto.request.BattleAlarmRequest;
 import com.poorlex.poorlex.alarm.battlealarm.service.dto.response.BattleAlarmResponse;
@@ -78,8 +79,8 @@ class BattleAlarmServiceTest extends UsingDataJpaTest implements ReplaceUnderSco
     void setUp() {
         this.battleAlarmService = new BattleAlarmService(
             battleAlarmRepository,
-            new VoteService(voteRepository),
-            new VotingPaperService(voteRepository, votingPaperRepository),
+            new VoteService(voteRepository, battleParticipantRepository),
+            new VotingPaperService(voteRepository, votingPaperRepository, battleParticipantRepository),
             new AlarmReactionService(alarmReactionRepository, battleAlarmRepository),
             battleAlarmViewHistoryRepository);
     }
@@ -137,12 +138,30 @@ class BattleAlarmServiceTest extends UsingDataJpaTest implements ReplaceUnderSco
     }
 
     @Test
-    void 배틀_참가자가_읽지_않은_알림의_개수를_반환한다() {
+    void 배틀_참가자가_읽지_않은_알림의_개수를_반환한다_알림을_조회한적이_없을_때() {
         //given
         final Battle battle = createBattle();
         final Member member = createMemberWithOauthId("oauthID");
         join(member, battle);
         createAlarm(battle.getId(), member.getId(), BattleAlarmType.EXPENDITURE_CREATED);
+
+        //when
+        final UncheckedBattleAlarmCountResponse response =
+            battleAlarmService.getBattleParticipantUncheckedAlarmCount(battle.getId(), member.getId());
+
+        //then
+        assertThat(response.getCount()).isOne();
+    }
+
+    @Test
+    void 배틀_참가자가_읽지_않은_알림의_개수를_반환한다_알림을_조회한적이_있을_때() {
+        //given
+        final Battle battle = createBattle();
+        final Member member = createMemberWithOauthId("oauthID");
+        join(member, battle);
+        createAlarm(battle.getId(), member.getId(), BattleAlarmType.EXPENDITURE_CREATED);
+        viewAlarm(battle, member);
+        createAlarm(battle.getId(), member.getId(), BattleAlarmType.EXPENDITURE_NEEDED);
 
         //when
         final UncheckedBattleAlarmCountResponse response =
@@ -165,6 +184,16 @@ class BattleAlarmServiceTest extends UsingDataJpaTest implements ReplaceUnderSco
 
         //then
         assertThat(response.getCount()).isZero();
+    }
+
+    private void viewAlarm(final Battle battle, final Member member) {
+        battleAlarmViewHistoryRepository.save(
+            BattleAlarmViewHistory.withoutId(
+                battle.getId(),
+                member.getId(),
+                LocalDateTime.now().truncatedTo(ChronoUnit.MICROS)
+            )
+        );
     }
 
     private BattleAlarm createAlarm(final Long battleId, final Long memberId, final BattleAlarmType battleAlarmType) {
