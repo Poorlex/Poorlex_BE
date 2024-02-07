@@ -1,20 +1,24 @@
 package com.poorlex.poorlex.battlealarmreaction.service.dto.response;
 
+import com.poorlex.poorlex.alarm.battlealarm.service.dto.response.AbstractBattleAlarmResponse;
 import com.poorlex.poorlex.battlealarmreaction.domain.AlarmReaction;
-import com.poorlex.poorlex.common.AbstractCreatedAtResponse;
 import java.time.LocalDateTime;
 import lombok.Getter;
 
 @Getter
-public class AlarmReactionResponse extends AbstractCreatedAtResponse {
+public class AlarmReactionResponse extends AbstractBattleAlarmResponse {
 
-    private final String type;
-    private final String content;
+    private static final String ALARM_TYPE = "ALARM_REACTION";
 
-    public AlarmReactionResponse(final String type, final String content, final LocalDateTime createdAt) {
-        super(createdAt);
-        this.type = type;
-        this.content = content;
+    private final String alarmReactionType;
+    private final String alarmReactionContent;
+
+    public AlarmReactionResponse(final String alarmReactionType,
+                                 final String alarmReactionContent,
+                                 final LocalDateTime createdAt) {
+        super(ALARM_TYPE, createdAt);
+        this.alarmReactionType = alarmReactionType;
+        this.alarmReactionContent = alarmReactionContent;
     }
 
     public static AlarmReactionResponse from(final AlarmReaction alarmReaction) {

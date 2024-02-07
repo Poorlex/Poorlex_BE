@@ -8,6 +8,7 @@ import com.poorlex.poorlex.alarm.battlealarm.domain.BattleAlarmType;
 import com.poorlex.poorlex.alarm.battlealarm.domain.BattleAlarmViewHistory;
 import com.poorlex.poorlex.alarm.battlealarm.domain.BattleAlarmViewHistoryRepository;
 import com.poorlex.poorlex.alarm.battlealarm.service.dto.request.BattleAlarmRequest;
+import com.poorlex.poorlex.alarm.battlealarm.service.dto.response.AbstractBattleAlarmResponse;
 import com.poorlex.poorlex.alarm.battlealarm.service.dto.response.BattleAlarmResponse;
 import com.poorlex.poorlex.alarm.battlealarm.service.dto.response.UncheckedBattleAlarmCountResponse;
 import com.poorlex.poorlex.battle.domain.Battle;
@@ -19,7 +20,6 @@ import com.poorlex.poorlex.battlealarmreaction.domain.AlarmReactionContent;
 import com.poorlex.poorlex.battlealarmreaction.domain.AlarmReactionRepository;
 import com.poorlex.poorlex.battlealarmreaction.service.AlarmReactionService;
 import com.poorlex.poorlex.battlealarmreaction.service.dto.response.AlarmReactionResponse;
-import com.poorlex.poorlex.common.AbstractCreatedAtResponse;
 import com.poorlex.poorlex.member.domain.Member;
 import com.poorlex.poorlex.member.domain.MemberNickname;
 import com.poorlex.poorlex.member.domain.MemberRepository;
@@ -132,7 +132,7 @@ class BattleAlarmServiceTest extends UsingDataJpaTest implements ReplaceUnderSco
                 vote2.getName(), vote2.getStatus().name(), vote2.getAmount(), 0, 0, vote2.getStart()
             )
         ));
-        expectedResponse.sort(Comparator.comparing(o1 -> ((AbstractCreatedAtResponse) o1).getCreatedAt()));
+        expectedResponse.sort(Comparator.comparing(o1 -> ((AbstractBattleAlarmResponse) o1).getCreatedAt()));
 
         assertThat(battleAlarms).usingRecursiveComparison().isEqualTo(expectedResponse);
     }

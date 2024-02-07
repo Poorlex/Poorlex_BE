@@ -51,9 +51,9 @@ class VoteServiceTest extends UsingDataJpaTest implements ReplaceUnderScoreTest 
         assertSoftly(
             softly -> {
                 softly.assertThat(battleVotes).hasSize(3);
-                softly.assertThat(battleVotes.get(0).getName()).isEqualTo(vote1.getName());
-                softly.assertThat(battleVotes.get(1).getName()).isEqualTo(vote2.getName());
-                softly.assertThat(battleVotes.get(2).getName()).isEqualTo(vote3.getName());
+                softly.assertThat(battleVotes.get(0).getVoteName()).isEqualTo(vote1.getName());
+                softly.assertThat(battleVotes.get(1).getVoteName()).isEqualTo(vote2.getName());
+                softly.assertThat(battleVotes.get(2).getVoteName()).isEqualTo(vote3.getName());
             }
         );
     }

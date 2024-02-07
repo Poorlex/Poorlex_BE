@@ -4,11 +4,11 @@ import com.poorlex.poorlex.alarm.battlealarm.domain.BattleAlarmRepository;
 import com.poorlex.poorlex.alarm.battlealarm.domain.BattleAlarmViewHistory;
 import com.poorlex.poorlex.alarm.battlealarm.domain.BattleAlarmViewHistoryRepository;
 import com.poorlex.poorlex.alarm.battlealarm.service.dto.request.BattleAlarmRequest;
+import com.poorlex.poorlex.alarm.battlealarm.service.dto.response.AbstractBattleAlarmResponse;
 import com.poorlex.poorlex.alarm.battlealarm.service.dto.response.BattleAlarmResponse;
 import com.poorlex.poorlex.alarm.battlealarm.service.dto.response.UncheckedBattleAlarmCountResponse;
 import com.poorlex.poorlex.alarm.battlealarm.service.event.BattleAlarmViewedEvent;
 import com.poorlex.poorlex.battlealarmreaction.service.AlarmReactionService;
-import com.poorlex.poorlex.common.AbstractCreatedAtResponse;
 import com.poorlex.poorlex.config.event.Events;
 import com.poorlex.poorlex.voting.vote.service.VoteService;
 import com.poorlex.poorlex.voting.votingpaper.service.VotingPaperService;
@@ -40,7 +40,7 @@ public class BattleAlarmService {
         responses.addAll(voteService.findBattleVotes(battleId));
         responses.addAll(votingPaperService.findBattleVotingPapers(battleId));
         responses.addAll(alarmReactionService.findBattleAlarmReactions(battleId));
-        responses.sort(Comparator.comparing(o -> ((AbstractCreatedAtResponse) o).getCreatedAt()));
+        responses.sort(Comparator.comparing(o -> ((AbstractBattleAlarmResponse) o).getCreatedAt()));
         Events.raise(new BattleAlarmViewedEvent(battleId, memberId, request.getDateTime()));
         return responses;
     }
