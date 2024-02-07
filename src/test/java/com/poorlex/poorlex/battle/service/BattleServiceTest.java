@@ -17,6 +17,8 @@ import com.poorlex.poorlex.battle.fixture.BattleFixture;
 import com.poorlex.poorlex.battle.service.dto.request.BattleCreateRequest;
 import com.poorlex.poorlex.battle.service.dto.response.MemberCompleteBattleResponse;
 import com.poorlex.poorlex.battle.service.dto.response.MemberProgressBattleResponse;
+import com.poorlex.poorlex.battlealarmreaction.domain.AlarmReactionRepository;
+import com.poorlex.poorlex.battlealarmreaction.service.AlarmReactionService;
 import com.poorlex.poorlex.expenditure.domain.ExpenditureRepository;
 import com.poorlex.poorlex.expenditure.fixture.ExpenditureFixture;
 import com.poorlex.poorlex.expenditure.service.ExpenditureService;
@@ -30,6 +32,10 @@ import com.poorlex.poorlex.point.domain.MemberPointRepository;
 import com.poorlex.poorlex.point.service.MemberPointService;
 import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
 import com.poorlex.poorlex.support.UsingDataJpaTest;
+import com.poorlex.poorlex.voting.vote.domain.VoteRepository;
+import com.poorlex.poorlex.voting.vote.service.VoteService;
+import com.poorlex.poorlex.voting.votingpaper.domain.VotingPaperRepository;
+import com.poorlex.poorlex.voting.votingpaper.service.VotingPaperService;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -60,10 +66,19 @@ class BattleServiceTest extends UsingDataJpaTest implements ReplaceUnderScoreTes
     private BattleRepository battleRepository;
 
     @Autowired
+    private VoteRepository voteRepository;
+
+    @Autowired
+    private VotingPaperRepository votingPaperRepository;
+
+    @Autowired
     private MemberPointRepository memberPointRepository;
 
     @Autowired
     private BattleAlarmRepository battleAlarmRepository;
+
+    @Autowired
+    private AlarmReactionRepository alarmReactionRepository;
 
     @Autowired
     private BattleAlarmViewHistoryRepository battleAlarmViewHistoryRepository;
@@ -82,7 +97,13 @@ class BattleServiceTest extends UsingDataJpaTest implements ReplaceUnderScoreTes
         battleService = new BattleService(
             battleRepository,
             battleParticipantRepository,
-            new BattleAlarmService(battleAlarmRepository, battleAlarmViewHistoryRepository),
+            new BattleAlarmService(
+                battleAlarmRepository,
+                new VoteService(voteRepository, battleParticipantRepository),
+                new VotingPaperService(voteRepository, votingPaperRepository, battleParticipantRepository),
+                new AlarmReactionService(alarmReactionRepository, battleAlarmRepository),
+                battleAlarmViewHistoryRepository
+            ),
             new MemberPointService(memberPointRepository, memberRepository),
             new ExpenditureService(battleRepository, expenditureRepository),
             new MemberService(memberRepository)

@@ -35,7 +35,7 @@ import org.springframework.test.context.event.RecordApplicationEvents;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 @RecordApplicationEvents
-class BattleBattleAlarmControllerTest extends IntegrationTest implements ReplaceUnderScoreTest {
+class BattleAlarmControllerTest extends IntegrationTest implements ReplaceUnderScoreTest {
 
     @Autowired
     private BattleRepository battleRepository;

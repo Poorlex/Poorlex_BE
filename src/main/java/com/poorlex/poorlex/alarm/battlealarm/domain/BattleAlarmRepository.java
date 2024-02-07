@@ -10,9 +10,9 @@ public interface BattleAlarmRepository extends JpaRepository<BattleAlarm, Long> 
 
     List<BattleAlarm> findAllByBattleId(final Long battleId);
 
-    int countAlarmByBattleIdAndMemberId(final Long battleId, final Long memberId);
+    int countBattleAlarmByBattleIdAndMemberId(final Long battleId, final Long memberId);
 
-    int countAlarmByBattleIdAndMemberIdAndAndCreatedAtAfter(final Long battleId,
-                                                            final Long memberId,
-                                                            final LocalDateTime localDateTime);
+    int countBattleAlarmByBattleIdAndMemberIdAndCreatedAtAfter(final Long battleId,
+                                                               final Long memberId,
+                                                               final LocalDateTime localDateTime);
 }

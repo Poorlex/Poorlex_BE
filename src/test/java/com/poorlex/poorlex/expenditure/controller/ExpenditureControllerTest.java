@@ -169,7 +169,7 @@ class ExpenditureControllerTest extends IntegrationTest implements ReplaceUnderS
             .andDo(print())
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.id").value(expenditure.getId()))
-            .andExpect(jsonPath("$.date").value(LocalDate.from(expenditure.getDate()).toString()))
+            .andExpect(jsonPath("$.date").value(LocalDate.from(expenditure.getDateTime()).toString()))
             .andExpect(jsonPath("$.amount").value(1000))
             .andExpect(jsonPath("$.description").value(expenditure.getDescription()))
             .andExpect(jsonPath("$.imageUrls.length()").value(expenditure.getImageUrls().getUrls().size()));
@@ -192,7 +192,7 @@ class ExpenditureControllerTest extends IntegrationTest implements ReplaceUnderS
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.length()").value(1))
             .andExpect(jsonPath("$[0].id").value(expenditure.getId()))
-            .andExpect(jsonPath("$[0].date").value(LocalDate.from(expenditure.getDate()).toString()))
+            .andExpect(jsonPath("$[0].date").value(LocalDate.from(expenditure.getDateTime()).toString()))
             .andExpect(jsonPath("$[0].amount").value(1000))
             .andExpect(jsonPath("$[0].description").value(expenditure.getDescription()))
             .andExpect(jsonPath("$[0].imageUrls.length()").value(expenditure.getImageUrls().getUrls().size()));

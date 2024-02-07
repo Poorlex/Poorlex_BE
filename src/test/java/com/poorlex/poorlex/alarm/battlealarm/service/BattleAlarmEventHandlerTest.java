@@ -19,6 +19,7 @@ import com.poorlex.poorlex.battlenotification.service.event.BattleNotificationCh
 import com.poorlex.poorlex.expenditure.service.ExpenditureService;
 import com.poorlex.poorlex.expenditure.service.dto.request.ExpenditureCreateRequest;
 import com.poorlex.poorlex.expenditure.service.event.ExpenditureCreatedEvent;
+import com.poorlex.poorlex.expenditure.service.event.ZeroExpenditureCreatedEvent;
 import com.poorlex.poorlex.member.domain.Member;
 import com.poorlex.poorlex.member.domain.MemberNickname;
 import com.poorlex.poorlex.member.domain.MemberRepository;
@@ -26,6 +27,19 @@ import com.poorlex.poorlex.participate.domain.BattleParticipant;
 import com.poorlex.poorlex.participate.domain.BattleParticipantRepository;
 import com.poorlex.poorlex.support.IntegrationTest;
 import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
+import com.poorlex.poorlex.voting.vote.domain.Vote;
+import com.poorlex.poorlex.voting.vote.domain.VoteAmount;
+import com.poorlex.poorlex.voting.vote.domain.VoteDuration;
+import com.poorlex.poorlex.voting.vote.domain.VoteDurationType;
+import com.poorlex.poorlex.voting.vote.domain.VoteName;
+import com.poorlex.poorlex.voting.vote.domain.VoteRepository;
+import com.poorlex.poorlex.voting.vote.domain.VoteStatus;
+import com.poorlex.poorlex.voting.vote.service.VoteService;
+import com.poorlex.poorlex.voting.vote.service.dto.request.VoteCreateRequest;
+import com.poorlex.poorlex.voting.vote.service.event.VoteCreatedEvent;
+import com.poorlex.poorlex.voting.votingpaper.service.VotingPaperService;
+import com.poorlex.poorlex.voting.votingpaper.service.dto.request.VotingPaperCreateRequest;
+import com.poorlex.poorlex.voting.votingpaper.service.event.VotingPaperCreatedEvent;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -35,7 +49,7 @@ import org.springframework.test.context.event.ApplicationEvents;
 import org.springframework.test.context.event.RecordApplicationEvents;
 
 @RecordApplicationEvents
-class BattleBattleAlarmEventHandlerTest extends IntegrationTest implements ReplaceUnderScoreTest {
+class BattleAlarmEventHandlerTest extends IntegrationTest implements ReplaceUnderScoreTest {
 
     @Autowired
     private ApplicationEvents events;
@@ -63,6 +77,15 @@ class BattleBattleAlarmEventHandlerTest extends IntegrationTest implements Repla
 
     @Autowired
     private ExpenditureService expenditureService;
+
+    @Autowired
+    private VoteService voteService;
+
+    @Autowired
+    private VoteRepository voteRepository;
+
+    @Autowired
+    private VotingPaperService votingPaperService;
 
     @Test
     void 공지가_생성되면_공지_변경_이벤트를_처리한다() {
@@ -197,6 +220,43 @@ class BattleBattleAlarmEventHandlerTest extends IntegrationTest implements Repla
     }
 
     @Test
+    void 금액이_0인_지출이_등록되면_무지출_이벤트를_처리한다() {
+        //given
+        final Member member = createMember("oauthId");
+        final Battle battle = createBattle(BattleStatus.PROGRESS);
+        joinAsManager(battle, member);
+
+        final ExpenditureCreateRequest request = new ExpenditureCreateRequest(
+            0,
+            "description",
+            List.of("imageUrl"),
+            battle.getDuration().getStart()
+        );
+
+        //when
+        expenditureService.createExpenditure(member.getId(), request);
+
+        //then
+        final List<BattleAlarm> zeroExpenditureAlarms =
+            battleAlarmRepository.findByType(BattleAlarmType.ZERO_EXPENDITURE);
+
+        assertSoftly(
+            softly -> {
+                final long eventListenCount = events.stream(ZeroExpenditureCreatedEvent.class).count();
+                softly.assertThat(eventListenCount).isOne();
+
+                softly.assertThat(zeroExpenditureAlarms).hasSize(1);
+                final BattleAlarm battleAlarm = zeroExpenditureAlarms.get(0);
+                softly.assertThat(battleAlarm.getType()).isEqualTo(BattleAlarmType.ZERO_EXPENDITURE);
+                softly.assertThat(battleAlarm.getBattleId()).isEqualTo(battle.getId());
+                softly.assertThat(battleAlarm.getMemberId()).isEqualTo(member.getId());
+                softly.assertThat(battleAlarm.getCreatedAt())
+                    .isBeforeOrEqualTo(LocalDateTime.now().truncatedTo(ChronoUnit.MICROS));
+            }
+        );
+    }
+
+    @Test
     void 지출_생성_이벤트를_처리할_때_배틀의_예산보다_주간_지출이_클_경우_지출_초과_알림을_생성한다() {
         //given
         final Member member = createMember("oauthId");
@@ -235,6 +295,81 @@ class BattleBattleAlarmEventHandlerTest extends IntegrationTest implements Repla
         );
     }
 
+    @Test
+    void 투표가_생성되면_투표_생성_이벤트를_처리한다() {
+        //given
+        final Member member = createMember("oauthId");
+        final Battle battle = createBattle(BattleStatus.PROGRESS);
+        joinAsPlayer(battle, member);
+
+        //when
+        final VoteCreateRequest request = new VoteCreateRequest(1000, LocalDateTime.now(), 10, "초코우유");
+        voteService.createVote(member.getId(), battle.getId(), request);
+
+        //then
+        final List<BattleAlarm> voteCreatedAlarm = battleAlarmRepository.findByType(BattleAlarmType.VOTE_CREATED);
+
+        assertSoftly(
+            softly -> {
+                final long eventListenCount = events.stream(VoteCreatedEvent.class).count();
+                softly.assertThat(eventListenCount).isOne();
+
+                softly.assertThat(voteCreatedAlarm).hasSize(1);
+
+                final BattleAlarm battleAlarm = voteCreatedAlarm.get(0);
+                softly.assertThat(battleAlarm.getBattleId()).isEqualTo(battle.getId());
+                softly.assertThat(battleAlarm.getMemberId()).isEqualTo(member.getId());
+                softly.assertThat(battleAlarm.getCreatedAt())
+                    .isBeforeOrEqualTo(LocalDateTime.now().truncatedTo(ChronoUnit.MICROS));
+            }
+        );
+    }
+
+    @Test
+    void 투표표가_생성되면_투표표_생성_이벤트를_처리한다() {
+        //given
+        final Member member = createMember("oauthId");
+        final Battle battle = createBattle(BattleStatus.PROGRESS);
+        final Vote vote = createVote(member.getId(), battle.getId());
+        joinAsPlayer(battle, member);
+
+        //when
+        final VotingPaperCreateRequest request = new VotingPaperCreateRequest(true);
+        votingPaperService.createVotingPaper(member.getId(), vote.getId(), request);
+
+        //then
+        final List<BattleAlarm> votingPaperCreatedAlarms =
+            battleAlarmRepository.findByType(BattleAlarmType.VOTING_PAPER_CREATED);
+
+        assertSoftly(
+            softly -> {
+                final long eventListenCount = events.stream(VotingPaperCreatedEvent.class).count();
+                softly.assertThat(eventListenCount).isOne();
+
+                softly.assertThat(votingPaperCreatedAlarms).hasSize(1);
+
+                final BattleAlarm battleAlarm = votingPaperCreatedAlarms.get(0);
+                softly.assertThat(battleAlarm.getBattleId()).isEqualTo(battle.getId());
+                softly.assertThat(battleAlarm.getMemberId()).isEqualTo(member.getId());
+                softly.assertThat(battleAlarm.getCreatedAt())
+                    .isBeforeOrEqualTo(LocalDateTime.now().truncatedTo(ChronoUnit.MICROS));
+            }
+        );
+    }
+
+    private Vote createVote(final Long memberId, final Long battleId) {
+        return voteRepository.save(
+            Vote.withoutId(
+                battleId,
+                memberId,
+                new VoteAmount(1000),
+                new VoteDuration(LocalDateTime.now(), VoteDurationType.TEN_MINUTE),
+                new VoteName("초코우유"),
+                VoteStatus.PROGRESS
+            )
+        );
+    }
+
     private Member createMember(final String oauthId) {
         final Member member = Member.withoutId(oauthId, new MemberNickname("nickname"));
         return memberRepository.save(member);
@@ -250,6 +385,10 @@ class BattleBattleAlarmEventHandlerTest extends IntegrationTest implements Repla
 
     private void joinAsManager(final Battle battle, final Member member) {
         battleParticipantRepository.save(BattleParticipant.manager(battle.getId(), member.getId()));
+    }
+
+    private void joinAsPlayer(final Battle battle, final Member member) {
+        battleParticipantRepository.save(BattleParticipant.normalPlayer(battle.getId(), member.getId()));
     }
 
     private void createBattleNotification(final Battle battle) {

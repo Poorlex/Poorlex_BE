@@ -15,6 +15,7 @@ import com.poorlex.poorlex.expenditure.service.dto.response.BattleExpenditureRes
 import com.poorlex.poorlex.expenditure.service.dto.response.ExpenditureResponse;
 import com.poorlex.poorlex.expenditure.service.dto.response.MemberWeeklyTotalExpenditureResponse;
 import com.poorlex.poorlex.expenditure.service.event.ExpenditureCreatedEvent;
+import com.poorlex.poorlex.expenditure.service.event.ZeroExpenditureCreatedEvent;
 import com.poorlex.poorlex.expenditure.service.mapper.ExpenditureMapper;
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
@@ -36,11 +37,19 @@ public class ExpenditureService {
 
     @Transactional
     public Long createExpenditure(final Long memberId, final ExpenditureCreateRequest request) {
-        final Expenditure expenditure = ExpenditureMapper.createRequestToExpenditure(memberId, request);
-        final Expenditure savedExpenditure = expenditureRepository.save(expenditure);
-        Events.raise(new ExpenditureCreatedEvent(memberId));
+        final Expenditure expenditure = expenditureRepository.save(
+            ExpenditureMapper.createRequestToExpenditure(memberId, request)
+        );
+        raiseEvent(expenditure.getAmount(), memberId);
+        return expenditure.getId();
+    }
 
-        return savedExpenditure.getId();
+    private void raiseEvent(final long expenditureAmount, final Long memberId) {
+        if (expenditureAmount == 0) {
+            Events.raise(new ZeroExpenditureCreatedEvent(memberId));
+            return;
+        }
+        Events.raise(new ExpenditureCreatedEvent(memberId));
     }
 
     public MemberWeeklyTotalExpenditureResponse findMemberWeeklyTotalExpenditure(final Long memberId,
@@ -109,7 +118,7 @@ public class ExpenditureService {
         final List<Expenditure> battleExpenditures = expenditureRepository.findBattleExpenditureByBattleId(battleId);
 
         return battleExpenditures.stream()
-            .filter(expenditure -> expenditure.getDate().getDayOfWeek() == targetDayOfWeek)
+            .filter(expenditure -> expenditure.getDateTime().getDayOfWeek() == targetDayOfWeek)
             .map(expenditure -> BattleExpenditureResponse.from(expenditure, expenditure.hasSameMemberId(memberId)))
             .toList();
     }
@@ -118,7 +127,7 @@ public class ExpenditureService {
         final Battle battle = battleRepository.findById(battleId)
             .orElseThrow(() -> new IllegalArgumentException("Id에 해당하는 배틀이 없습니다."));
 
-        final List<Expenditure> expenditures = expenditureRepository.findExpendituresByMemberIdAndDateBetween(
+        final List<Expenditure> expenditures = expenditureRepository.findExpendituresByMemberIdAndDateTimeBetween(
             memberId,
             battle.getDuration().getStart(),
             battle.getDuration().getEnd()

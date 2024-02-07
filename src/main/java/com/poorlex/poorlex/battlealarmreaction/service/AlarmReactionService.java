@@ -7,6 +7,9 @@ import com.poorlex.poorlex.battlealarmreaction.domain.AlarmReactionContent;
 import com.poorlex.poorlex.battlealarmreaction.domain.AlarmReactionRepository;
 import com.poorlex.poorlex.battlealarmreaction.domain.AlarmReactionType;
 import com.poorlex.poorlex.battlealarmreaction.service.dto.request.AlarmReactionCreateRequest;
+import com.poorlex.poorlex.battlealarmreaction.service.dto.response.AlarmReactionResponse;
+import com.poorlex.poorlex.battlealarmreaction.service.mapper.AlarmReactionResponseMapper;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,5 +44,11 @@ public class AlarmReactionService {
         if (!battleAlarm.isReactable()) {
             throw new IllegalArgumentException();
         }
+    }
+
+    public List<AlarmReactionResponse> findBattleAlarmReactions(final Long battleId) {
+        return alarmReactionRepository.findAllByBattleId(battleId).stream()
+            .map(AlarmReactionResponseMapper::mapToResponse)
+            .toList();
     }
 }
