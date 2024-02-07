@@ -23,3 +23,10 @@ jwt:
   token:
     secret-key: testtokensecretkeytesttokensecretkeytesttokensecretkey
     access-expire-length: ${JWT_ACCESS_EXPIRE:3600000}
+
+
+schedules:
+  battle-start:
+    cron: "* * */5 * * *"
+  battle-end:
+    cron: "* * */5 * * *"
