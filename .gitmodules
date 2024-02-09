@@ -1,0 +1,3 @@
+[submodule "src/main/resources/secure"]
+	path = src/main/resources/secure
+	url = https://github.com/Poorlex/poorlex-sub-module.git
