@@ -37,8 +37,11 @@ dependencies {
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
 
-    //DB
+    //DB - H2
     runtimeOnly 'com.h2database:h2'
+
+    //DB - MySQL
+    runtimeOnly 'com.mysql:mysql-connector-j'
 
     //TOKEN
     implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
