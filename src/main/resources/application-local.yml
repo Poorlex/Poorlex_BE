@@ -2,40 +2,12 @@ spring:
   config:
     activate:
       on-profile: local
-  jpa:
-    hibernate:
-      ddl-auto: validate
-    properties:
-      hibernate:
-        show_sql: true
-        format_sql: true
-  sql:
-    init:
-      schema-locations: classpath:sql/schema.sql
-  h2:
-    console:
-      enabled: true
+    import: classpath:application-local-info.yml
+
   datasource:
     driver-class-name: org.h2.Driver
     url: jdbc:h2:mem:poorlex
 
-  batch:
-    job:
-      enabled: false
-    jdbc:
-      initialize-schema: always
-
-logging:
-  level:
-    org.hibernate.orm.jdbc.bind: trace
-
-jwt:
-  token:
-    secret-key: localtestscretkeylocaltestscretkeylocaltestscretkey
-    access-expire-length: 3600000
-
-schedules:
-  battle-start:
-    cron: "0 * * * * MON-FRI"
-  battle-end:
-    cron: "30 * * * * MON-FRI"
+  h2:
+    console:
+      enabled: true
