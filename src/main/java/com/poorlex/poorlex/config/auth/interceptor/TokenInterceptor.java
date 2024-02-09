@@ -32,6 +32,8 @@ public class TokenInterceptor implements HandlerInterceptor {
                              final HttpServletResponse response,
                              final Object handler) {
         final String requestURI = request.getRequestURI();
+        
+        //anyMatch 로 최적화
         final boolean isHandleablePattern = excludePatterns.stream()
             .noneMatch(excludePattern -> excludePattern.matches(requestURI, HttpMethod.valueOf(request.getMethod())));
 

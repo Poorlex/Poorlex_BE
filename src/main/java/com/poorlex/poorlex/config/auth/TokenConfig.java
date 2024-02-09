@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.regex.Pattern;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -34,10 +33,9 @@ public class TokenConfig implements WebMvcConfigurer {
     }
 
     private void addExcludePattern(final TokenInterceptor tokenInterceptor) {
-        final Pattern excludeBattleUrlPattern = Pattern.compile("/battles/\\d+");
-        final Pattern excludeExpenditureUrlPattern = Pattern.compile("/expenditures/\\d+");
-        tokenInterceptor.addExcludePattern(new ExcludePattern(excludeBattleUrlPattern, List.of(HttpMethod.GET)));
-        tokenInterceptor.addExcludePattern(new ExcludePattern(excludeExpenditureUrlPattern, List.of(HttpMethod.GET)));
+        tokenInterceptor.addExcludePattern(ExcludePattern.withGet(Pattern.compile("/battles/\\d+")));
+        tokenInterceptor.addExcludePattern(ExcludePattern.withGet(Pattern.compile("/battles")));
+        tokenInterceptor.addExcludePattern(ExcludePattern.withGet(Pattern.compile("/expenditures/\\d+")));
     }
 
     @Override

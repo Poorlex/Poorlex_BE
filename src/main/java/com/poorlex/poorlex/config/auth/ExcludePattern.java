@@ -14,6 +14,10 @@ public class ExcludePattern {
         this.methods = methods;
     }
 
+    public static ExcludePattern withGet(final Pattern pattern) {
+        return new ExcludePattern(pattern, List.of(HttpMethod.GET));
+    }
+
     public boolean matches(final String url, final HttpMethod method) {
         return pattern.matcher(url).matches() && methods.contains(method);
     }
