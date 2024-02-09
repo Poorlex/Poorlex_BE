@@ -87,13 +87,9 @@ class BattleControllerTest extends IntegrationTest implements ReplaceUnderScoreT
         final Long battleId = createBattle();
         joinNewNormalPlayerWithOauthId("oauthId", battleId);
 
-        final String accessToken = testMemberTokenGenerator.createTokenWithNewMember("oauthId2");
-
         //when
         //then
-        mockMvc.perform(get("/battles")
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
-            )
+        mockMvc.perform(get("/battles"))
             .andDo(print())
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.length()").value(1))
@@ -121,8 +117,9 @@ class BattleControllerTest extends IntegrationTest implements ReplaceUnderScoreT
 
         //when
         //then
-        mockMvc.perform(get("/battles?status=progress")
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+        mockMvc.perform(
+                get("/battles/progress")
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
             )
             .andDo(print())
             .andExpect(status().isOk())
@@ -154,7 +151,7 @@ class BattleControllerTest extends IntegrationTest implements ReplaceUnderScoreT
 
         //when
         //then
-        mockMvc.perform(get("/battles?status=complete")
+        mockMvc.perform(get("/battles/complete")
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
             )
             .andDo(print())

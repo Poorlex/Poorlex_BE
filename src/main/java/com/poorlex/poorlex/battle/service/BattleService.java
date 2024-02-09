@@ -71,7 +71,7 @@ public class BattleService {
         final List<BattleStatus> statuses = List.of(BattleStatus.RECRUITING, BattleStatus.RECRUITING_FINISHED);
 
         final List<BattleWithCurrentParticipantSize> battlesByMemberIdWithCurrentParticipantSize =
-            battleRepository.findBattlesByStatusesWithCurrentParticipantSizeIn(statuses);
+            battleRepository.findBattlesWithCurrentParticipantSizeByStatusesIn(statuses);
 
         return FindingBattleResponse.parseToList(battlesByMemberIdWithCurrentParticipantSize);
     }

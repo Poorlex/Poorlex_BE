@@ -132,7 +132,7 @@ class BattleDocumentationTest extends RestDocsDocumentationTest {
         );
 
         //when
-        final ResultActions result = mockMvc.perform(get("/battles?status=progress")
+        final ResultActions result = mockMvc.perform(get("/battles/progress")
             .header(HttpHeaders.AUTHORIZATION, "Bearer {accessToken}")
         );
 
@@ -174,7 +174,7 @@ class BattleDocumentationTest extends RestDocsDocumentationTest {
         );
 
         //when
-        final ResultActions result = mockMvc.perform(get("/battles?status=complete")
+        final ResultActions result = mockMvc.perform(get("/battles/complete")
             .header(HttpHeaders.AUTHORIZATION, "Bearer {accessToken}")
         );
 

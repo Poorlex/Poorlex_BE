@@ -46,7 +46,7 @@ public interface BattleRepository extends JpaRepository<Battle, Long> {
             + "where b.status in :status "
             + "group by b.id"
     )
-    List<BattleWithCurrentParticipantSize> findBattlesByStatusesWithCurrentParticipantSizeIn(
+    List<BattleWithCurrentParticipantSize> findBattlesWithCurrentParticipantSizeByStatusesIn(
         @Param("status") List<BattleStatus> battleStatus
     );
 

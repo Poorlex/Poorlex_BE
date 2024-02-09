@@ -48,7 +48,7 @@ public class BattleController {
         return ResponseEntity.ok(battlesToPlay);
     }
 
-    @GetMapping(params = "status=progress")
+    @GetMapping("/progress")
     public ResponseEntity<List<MemberProgressBattleResponse>> findMemberProgressBattles(
         @MemberOnly final MemberInfo memberInfo) {
         final List<MemberProgressBattleResponse> memberProgressBattleResponses =
@@ -57,17 +57,12 @@ public class BattleController {
         return ResponseEntity.ok(memberProgressBattleResponses);
     }
 
-    @GetMapping(params = "status=complete")
+    @GetMapping("/complete")
     public ResponseEntity<List<MemberCompleteBattleResponse>> findMemberCompleteBattles(
         @MemberOnly final MemberInfo memberInfo) {
         final List<MemberCompleteBattleResponse> memberCompleteBattleResponses =
             battleService.findCompleteMemberBattles(memberInfo.getMemberId(), LocalDate.now());
 
         return ResponseEntity.ok(memberCompleteBattleResponses);
-    }
-
-    @GetMapping(params = "status")
-    public ResponseEntity<List<Void>> invalidBattleStatusRequest() {
-        throw new IllegalArgumentException("입력값에 해당하는 상태가 존재하지 않습니다.");
     }
 }
