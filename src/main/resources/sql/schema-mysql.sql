@@ -104,7 +104,7 @@ create table if not exists member
     id          bigint not null auto_increment,
     nickname    varchar(255),
     description varchar(255),
-    oauth_id    varchar(1024) unique,
+    oauth_id    varchar(100) unique,
     primary key (id)
 ) engine = InnoDB;
 
