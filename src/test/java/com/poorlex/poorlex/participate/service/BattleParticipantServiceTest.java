@@ -12,6 +12,7 @@ import com.poorlex.poorlex.battle.fixture.BattleFixture;
 import com.poorlex.poorlex.member.domain.Member;
 import com.poorlex.poorlex.member.domain.MemberNickname;
 import com.poorlex.poorlex.member.domain.MemberRepository;
+import com.poorlex.poorlex.member.domain.Oauth2RegistrationId;
 import com.poorlex.poorlex.participate.domain.BattleParticipant;
 import com.poorlex.poorlex.participate.domain.BattleParticipantRepository;
 import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
@@ -167,7 +168,8 @@ class BattleParticipantServiceTest extends UsingDataJpaTest implements ReplaceUn
     }
 
     private Member createMember() {
-        return memberRepository.save(Member.withoutId("oauthId", new MemberNickname("nickname")));
+        return memberRepository.save(
+            Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname")));
     }
 
     private Battle createBattleWithStatus(final BattleStatus status) {

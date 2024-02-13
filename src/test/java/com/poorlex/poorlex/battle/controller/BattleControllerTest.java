@@ -18,6 +18,7 @@ import com.poorlex.poorlex.expenditure.fixture.ExpenditureFixture;
 import com.poorlex.poorlex.member.domain.Member;
 import com.poorlex.poorlex.member.domain.MemberNickname;
 import com.poorlex.poorlex.member.domain.MemberRepository;
+import com.poorlex.poorlex.member.domain.Oauth2RegistrationId;
 import com.poorlex.poorlex.participate.domain.BattleParticipant;
 import com.poorlex.poorlex.participate.domain.BattleParticipantRepository;
 import com.poorlex.poorlex.support.IntegrationTest;
@@ -105,7 +106,7 @@ class BattleControllerTest extends IntegrationTest implements ReplaceUnderScoreT
     @Test
     void 현재_진행중인_배틀들을_조회시_상태코드_200_과_배틀의_데이터를_반환한다() throws Exception {
         //given
-        final Member member = Member.withoutId("oauthId", new MemberNickname("nickname"));
+        final Member member = Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname"));
         final Long battleId = createBattle();
         final Battle battle = battleRepository.findById(battleId).orElseThrow(IllegalArgumentException::new);
 
@@ -138,7 +139,7 @@ class BattleControllerTest extends IntegrationTest implements ReplaceUnderScoreT
     @Test
     void 완료된_배틀들을_조회시_상태코드_200_과_배틀의_데이터를_반환한다() throws Exception {
         //given
-        final Member member = Member.withoutId("oauthId", new MemberNickname("nickname"));
+        final Member member = Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname"));
         final Long battleId = createBattle();
         final Battle battle = battleRepository.findById(battleId).orElseThrow(IllegalArgumentException::new);
 
@@ -171,7 +172,7 @@ class BattleControllerTest extends IntegrationTest implements ReplaceUnderScoreT
     @Test
     void Id에_해당하는_배틀을_조회시_상태코드_200_과_배틀의_데이터를_반환한다() throws Exception {
         //given
-        final Member member = Member.withoutId("oauthId", new MemberNickname("nickname"));
+        final Member member = Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname"));
         final Long battleId = createBattle();
         final Battle battle = battleRepository.findById(battleId).orElseThrow(IllegalArgumentException::new);
 
@@ -225,7 +226,7 @@ class BattleControllerTest extends IntegrationTest implements ReplaceUnderScoreT
     }
 
     private Member joinNewNormalPlayerWithOauthId(final String oauthId, final Long battleId) {
-        final Member member = Member.withoutId(oauthId, new MemberNickname("nickname"));
+        final Member member = Member.withoutId(Oauth2RegistrationId.APPLE, oauthId, new MemberNickname("nickname"));
         memberRepository.save(member);
 
         final BattleParticipant battleParticipant = BattleParticipant.normalPlayer(battleId, member.getId());

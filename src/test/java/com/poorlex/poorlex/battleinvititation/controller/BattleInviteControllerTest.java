@@ -20,6 +20,7 @@ import com.poorlex.poorlex.friend.domain.FriendRepository;
 import com.poorlex.poorlex.member.domain.Member;
 import com.poorlex.poorlex.member.domain.MemberNickname;
 import com.poorlex.poorlex.member.domain.MemberRepository;
+import com.poorlex.poorlex.member.domain.Oauth2RegistrationId;
 import com.poorlex.poorlex.participate.domain.BattleParticipant;
 import com.poorlex.poorlex.participate.domain.BattleParticipantRepository;
 import com.poorlex.poorlex.support.IntegrationTest;
@@ -126,7 +127,8 @@ class BattleInviteControllerTest extends IntegrationTest implements ReplaceUnder
     }
 
     private Member createMember(final String oauthId, final String nickname) {
-        return memberRepository.save(Member.withoutId(oauthId, new MemberNickname(nickname)));
+        return memberRepository.save(
+            Member.withoutId(Oauth2RegistrationId.APPLE, oauthId, new MemberNickname(nickname)));
     }
 
     private Battle createBattle() {

@@ -6,6 +6,7 @@ import com.poorlex.poorlex.member.domain.Member;
 import com.poorlex.poorlex.member.domain.MemberDescription;
 import com.poorlex.poorlex.member.domain.MemberNickname;
 import com.poorlex.poorlex.member.domain.MemberRepository;
+import com.poorlex.poorlex.member.domain.Oauth2RegistrationId;
 import com.poorlex.poorlex.member.service.dto.request.MemberProfileUpdateRequest;
 import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
 import com.poorlex.poorlex.support.UsingDataJpaTest;
@@ -27,7 +28,8 @@ class MemberServiceTest extends UsingDataJpaTest implements ReplaceUnderScoreTes
     @Test
     void 멤버의_프로필을_업데이트한다() {
         //given
-        final Member member = memberRepository.save(Member.withoutId("oauthId", new MemberNickname("nickname")));
+        final Member member = memberRepository.save(
+            Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname")));
         final MemberProfileUpdateRequest request = new MemberProfileUpdateRequest("newNickname", "newDescription");
 
         //when
@@ -44,7 +46,8 @@ class MemberServiceTest extends UsingDataJpaTest implements ReplaceUnderScoreTes
     @Test
     void 멤버의_프로필을_업데이트한다_닉네임이_null일_경우() {
         //given
-        final Member prevMember = Member.withoutId("oauthId", new MemberNickname("nickname"));
+        final Member prevMember = Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId",
+            new MemberNickname("nickname"));
         prevMember.changeDescription(new MemberDescription("description"));
         memberRepository.save(prevMember);
         final MemberProfileUpdateRequest request = new MemberProfileUpdateRequest(null, "newDescription");
@@ -63,7 +66,8 @@ class MemberServiceTest extends UsingDataJpaTest implements ReplaceUnderScoreTes
     @Test
     void 멤버의_프로필을_업데이트한다_소개가_null일_경우() {
         //given
-        final Member prevMember = Member.withoutId("oauthId", new MemberNickname("nickname"));
+        final Member prevMember = Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId",
+            new MemberNickname("nickname"));
         prevMember.changeDescription(new MemberDescription("description"));
         memberRepository.save(prevMember);
         final MemberProfileUpdateRequest request = new MemberProfileUpdateRequest("newNickname", null);
@@ -82,7 +86,8 @@ class MemberServiceTest extends UsingDataJpaTest implements ReplaceUnderScoreTes
     @Test
     void 멤버의_프로필을_업데이트한다_둘다_null일_경우() {
         //given
-        final Member prevMember = Member.withoutId("oauthId", new MemberNickname("nickname"));
+        final Member prevMember = Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId",
+            new MemberNickname("nickname"));
         prevMember.changeDescription(new MemberDescription("description"));
         memberRepository.save(prevMember);
         final MemberProfileUpdateRequest request = new MemberProfileUpdateRequest(null, null);

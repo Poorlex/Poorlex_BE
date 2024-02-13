@@ -25,6 +25,7 @@ import com.poorlex.poorlex.expenditure.service.ExpenditureService;
 import com.poorlex.poorlex.member.domain.Member;
 import com.poorlex.poorlex.member.domain.MemberNickname;
 import com.poorlex.poorlex.member.domain.MemberRepository;
+import com.poorlex.poorlex.member.domain.Oauth2RegistrationId;
 import com.poorlex.poorlex.member.service.MemberService;
 import com.poorlex.poorlex.participate.domain.BattleParticipant;
 import com.poorlex.poorlex.participate.domain.BattleParticipantRepository;
@@ -222,7 +223,7 @@ class BattleServiceTest extends UsingDataJpaTest implements ReplaceUnderScoreTes
     }
 
     private Member createMemberWithOauthId(final String oauthId) {
-        final Member member = Member.withoutId(oauthId, new MemberNickname("nickname"));
+        final Member member = Member.withoutId(Oauth2RegistrationId.APPLE, oauthId, new MemberNickname("nickname"));
         return memberRepository.save(member);
     }
 

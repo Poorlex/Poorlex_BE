@@ -10,6 +10,7 @@ import com.poorlex.poorlex.battle.fixture.BattleFixture;
 import com.poorlex.poorlex.member.domain.Member;
 import com.poorlex.poorlex.member.domain.MemberNickname;
 import com.poorlex.poorlex.member.domain.MemberRepository;
+import com.poorlex.poorlex.member.domain.Oauth2RegistrationId;
 import com.poorlex.poorlex.participate.service.BattleParticipantService;
 import com.poorlex.poorlex.participate.service.event.BattleParticipantAddedEvent;
 import com.poorlex.poorlex.support.IntegrationTest;
@@ -54,7 +55,8 @@ class BattleParticipantChangedEventHandlerTest extends IntegrationTest implement
     }
 
     public Member createMember(final String oauthId) {
-        return memberRepository.save(Member.withoutId(oauthId, new MemberNickname("nickname")));
+        return memberRepository.save(
+            Member.withoutId(Oauth2RegistrationId.APPLE, oauthId, new MemberNickname("nickname")));
     }
 
     public Battle createBattleWithMaxSize(final int count) {

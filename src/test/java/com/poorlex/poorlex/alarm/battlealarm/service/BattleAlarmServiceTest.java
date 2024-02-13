@@ -23,6 +23,7 @@ import com.poorlex.poorlex.battlealarmreaction.service.dto.response.AlarmReactio
 import com.poorlex.poorlex.member.domain.Member;
 import com.poorlex.poorlex.member.domain.MemberNickname;
 import com.poorlex.poorlex.member.domain.MemberRepository;
+import com.poorlex.poorlex.member.domain.Oauth2RegistrationId;
 import com.poorlex.poorlex.participate.domain.BattleParticipant;
 import com.poorlex.poorlex.participate.domain.BattleParticipantRepository;
 import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
@@ -211,7 +212,7 @@ class BattleAlarmServiceTest extends UsingDataJpaTest implements ReplaceUnderSco
     }
 
     private Member createMemberWithOauthId(final String oauthId) {
-        final Member member = Member.withoutId(oauthId, new MemberNickname("nickname"));
+        final Member member = Member.withoutId(Oauth2RegistrationId.APPLE, oauthId, new MemberNickname("nickname"));
         return memberRepository.save(member);
     }
 

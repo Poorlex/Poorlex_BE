@@ -8,6 +8,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.poorlex.poorlex.member.domain.Member;
 import com.poorlex.poorlex.member.domain.MemberNickname;
 import com.poorlex.poorlex.member.domain.MemberRepository;
+import com.poorlex.poorlex.member.domain.Oauth2RegistrationId;
 import com.poorlex.poorlex.member.service.dto.request.MemberProfileUpdateRequest;
 import com.poorlex.poorlex.support.IntegrationTest;
 import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
@@ -31,7 +32,8 @@ class MemberControllerTest extends IntegrationTest implements ReplaceUnderScoreT
     @Transactional
     void 멤버의_프로필을_변경한다() throws Exception {
         //given
-        final Member member = memberRepository.save(Member.withoutId("oauthId", new MemberNickname("nickname")));
+        final Member member = memberRepository.save(
+            Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname")));
         final MemberProfileUpdateRequest request = new MemberProfileUpdateRequest("newNickname", "newDescription");
         final String accessToken = jwtTokenProvider.createAccessToken(member.getId());
 

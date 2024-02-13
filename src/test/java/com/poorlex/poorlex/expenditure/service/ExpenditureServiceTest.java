@@ -22,6 +22,7 @@ import com.poorlex.poorlex.expenditure.service.dto.response.MemberWeeklyTotalExp
 import com.poorlex.poorlex.member.domain.Member;
 import com.poorlex.poorlex.member.domain.MemberNickname;
 import com.poorlex.poorlex.member.domain.MemberRepository;
+import com.poorlex.poorlex.member.domain.Oauth2RegistrationId;
 import com.poorlex.poorlex.participate.domain.BattleParticipant;
 import com.poorlex.poorlex.participate.domain.BattleParticipantRepository;
 import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
@@ -60,7 +61,8 @@ class ExpenditureServiceTest extends UsingDataJpaTest implements ReplaceUnderSco
     @Test
     void 지출을_생성한다() {
         //given
-        final Member member = memberRepository.save(Member.withoutId("oauthId", new MemberNickname("nickname")));
+        final Member member = memberRepository.save(
+            Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname")));
         final ExpenditureCreateRequest createRequest = ExpenditureRequestFixture.getSimpleCreateRequest();
 
         //when
@@ -313,7 +315,8 @@ class ExpenditureServiceTest extends UsingDataJpaTest implements ReplaceUnderSco
     }
 
     private Member createMember(final String oauthId) {
-        return memberRepository.save(Member.withoutId(oauthId, new MemberNickname("nickname")));
+        return memberRepository.save(
+            Member.withoutId(Oauth2RegistrationId.APPLE, oauthId, new MemberNickname("nickname")));
     }
 
     private Expenditure createExpenditure(final int amount, final Long memberId, final LocalDateTime date) {

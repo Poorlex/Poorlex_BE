@@ -23,6 +23,7 @@ import com.poorlex.poorlex.expenditure.service.dto.request.MemberWeeklyTotalExpe
 import com.poorlex.poorlex.member.domain.Member;
 import com.poorlex.poorlex.member.domain.MemberNickname;
 import com.poorlex.poorlex.member.domain.MemberRepository;
+import com.poorlex.poorlex.member.domain.Oauth2RegistrationId;
 import com.poorlex.poorlex.participate.domain.BattleParticipant;
 import com.poorlex.poorlex.participate.domain.BattleParticipantRepository;
 import com.poorlex.poorlex.support.IntegrationTest;
@@ -275,7 +276,8 @@ class ExpenditureControllerTest extends IntegrationTest implements ReplaceUnderS
     }
 
     private Member createMember(final String oauthId) {
-        return memberRepository.save(Member.withoutId(oauthId, new MemberNickname("nickname")));
+        return memberRepository.save(
+            Member.withoutId(Oauth2RegistrationId.APPLE, oauthId, new MemberNickname("nickname")));
     }
 
     private Expenditure createExpenditure(final int amount, final Long memberId, final LocalDateTime date) {

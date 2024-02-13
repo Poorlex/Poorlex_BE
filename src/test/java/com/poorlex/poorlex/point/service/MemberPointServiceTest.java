@@ -7,6 +7,7 @@ import com.poorlex.poorlex.member.domain.Member;
 import com.poorlex.poorlex.member.domain.MemberLevel;
 import com.poorlex.poorlex.member.domain.MemberNickname;
 import com.poorlex.poorlex.member.domain.MemberRepository;
+import com.poorlex.poorlex.member.domain.Oauth2RegistrationId;
 import com.poorlex.poorlex.point.domain.MemberPoint;
 import com.poorlex.poorlex.point.domain.MemberPointRepository;
 import com.poorlex.poorlex.point.domain.Point;
@@ -38,7 +39,8 @@ class MemberPointServiceTest extends UsingDataJpaTest implements ReplaceUnderSco
     @Test
     void 멤버_포인트를_생성한다() {
         //given
-        final Member member = memberRepository.save(Member.withoutId("oauthId", new MemberNickname("nickname")));
+        final Member member = memberRepository.save(
+            Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname")));
         final PointCreateRequest request = new PointCreateRequest(10);
 
         //when
@@ -59,7 +61,8 @@ class MemberPointServiceTest extends UsingDataJpaTest implements ReplaceUnderSco
     @Test
     void 멤버_포인트의_총합을_조회한다() {
         //given
-        final Member member = memberRepository.save(Member.withoutId("oauthId", new MemberNickname("nickname")));
+        final Member member = memberRepository.save(
+            Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname")));
         memberPointRepository.save(MemberPoint.withoutId(new Point(10), member.getId()));
 
         //when
@@ -72,7 +75,8 @@ class MemberPointServiceTest extends UsingDataJpaTest implements ReplaceUnderSco
     @Test
     void 멤버_레벨바에_필요한_정보를_조회한다() {
         //given
-        final Member member = memberRepository.save(Member.withoutId("oauthId", new MemberNickname("nickname")));
+        final Member member = memberRepository.save(
+            Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname")));
         final MemberPoint memberPoint = memberPointRepository.save(
             MemberPoint.withoutId(new Point(10), member.getId())
         );
@@ -97,7 +101,8 @@ class MemberPointServiceTest extends UsingDataJpaTest implements ReplaceUnderSco
     @Test
     void 멤버_레벨바에_필요한_정보를_조회한다_포인트가_없을_때() {
         //given
-        final Member member = memberRepository.save(Member.withoutId("oauthId", new MemberNickname("nickname")));
+        final Member member = memberRepository.save(
+            Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname")));
 
         //when
         final MemberLevelBarResponse response = memberPointService.findPointsForLevelBar(member.getId());

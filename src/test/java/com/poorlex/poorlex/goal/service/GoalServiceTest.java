@@ -21,6 +21,7 @@ import com.poorlex.poorlex.goal.service.dto.response.GoalTypeResponse;
 import com.poorlex.poorlex.member.domain.Member;
 import com.poorlex.poorlex.member.domain.MemberNickname;
 import com.poorlex.poorlex.member.domain.MemberRepository;
+import com.poorlex.poorlex.member.domain.Oauth2RegistrationId;
 import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
 import com.poorlex.poorlex.support.UsingDataJpaTest;
 import java.time.LocalDate;
@@ -48,7 +49,8 @@ class GoalServiceTest extends UsingDataJpaTest implements ReplaceUnderScoreTest 
     @Test
     void 목표를_생성한다() {
         //given
-        final Member member = memberRepository.save(Member.withoutId("oauthId", new MemberNickname("nickname")));
+        final Member member = memberRepository.save(
+            Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname")));
         final GoalCreateRequest request = new GoalCreateRequest(
             GoalType.REST_AND_REFRESH.name(),
             "목표명",
@@ -68,7 +70,8 @@ class GoalServiceTest extends UsingDataJpaTest implements ReplaceUnderScoreTest 
     @Test
     void 목표를_수정한다() {
         //given
-        final Member member = memberRepository.save(Member.withoutId("oauthId", new MemberNickname("nickname")));
+        final Member member = memberRepository.save(
+            Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname")));
         final Goal goal = saveGoalWithMemberId(member.getId());
         final GoalUpdateRequest request = new GoalUpdateRequest(
             GoalType.REST_AND_REFRESH.name(),
@@ -98,7 +101,8 @@ class GoalServiceTest extends UsingDataJpaTest implements ReplaceUnderScoreTest 
     @Test
     void 목표를_삭제한다() {
         //given
-        final Member member = memberRepository.save(Member.withoutId("oauthId", new MemberNickname("nickname")));
+        final Member member = memberRepository.save(
+            Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname")));
         final Goal goal = saveGoalWithMemberId(member.getId());
 
         //when
@@ -112,7 +116,8 @@ class GoalServiceTest extends UsingDataJpaTest implements ReplaceUnderScoreTest 
     @Test
     void 목표를_완료한다() {
         //given
-        final Member member = memberRepository.save(Member.withoutId("oauthId", new MemberNickname("nickname")));
+        final Member member = memberRepository.save(
+            Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname")));
         final Goal goal = saveGoalWithMemberId(member.getId());
 
         //when
@@ -158,7 +163,8 @@ class GoalServiceTest extends UsingDataJpaTest implements ReplaceUnderScoreTest 
     @Test
     void 회원이_진행중인_목표들을_조회한다() {
         //given
-        final Member member = memberRepository.save(Member.withoutId("oauthId", new MemberNickname("nickname")));
+        final Member member = memberRepository.save(
+            Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname")));
         final LocalDate requestDate = LocalDate.now();
         final Goal goal1 = saveGoalWithMemberId(member.getId(), requestDate, requestDate.plusDays(100));
         final Goal goal2 = saveGoalWithMemberId(member.getId(), requestDate, requestDate.plusYears(2));
@@ -192,7 +198,8 @@ class GoalServiceTest extends UsingDataJpaTest implements ReplaceUnderScoreTest 
     @Test
     void 회원의_완료된_목표들을_조회한다() {
         //given
-        final Member member = memberRepository.save(Member.withoutId("oauthId", new MemberNickname("nickname")));
+        final Member member = memberRepository.save(
+            Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname")));
         final LocalDate requestDate = LocalDate.now();
         final Goal goal1 = saveGoalWithMemberId(member.getId(), requestDate, requestDate.plusDays(100));
         final Goal goal2 = saveGoalWithMemberId(member.getId(), requestDate, requestDate.plusYears(2));
@@ -222,7 +229,8 @@ class GoalServiceTest extends UsingDataJpaTest implements ReplaceUnderScoreTest 
     @Test
     void 회원이_등록한_목표들의_Id를_조회한다() {
         //given
-        final Member member = memberRepository.save(Member.withoutId("oauthId", new MemberNickname("nickname")));
+        final Member member = memberRepository.save(
+            Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname")));
         final Goal goal1 = saveGoalWithMemberId(member.getId());
         final Goal goal2 = saveGoalWithMemberId(member.getId());
         final Goal goal3 = saveGoalWithMemberId(member.getId());

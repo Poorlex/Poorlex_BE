@@ -5,6 +5,7 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import com.poorlex.poorlex.member.domain.Member;
 import com.poorlex.poorlex.member.domain.MemberNickname;
 import com.poorlex.poorlex.member.domain.MemberRepository;
+import com.poorlex.poorlex.member.domain.Oauth2RegistrationId;
 import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
 import com.poorlex.poorlex.support.UsingDataJpaTest;
 import com.poorlex.poorlex.voting.votingpaper.domain.VotingPaper;
@@ -28,8 +29,10 @@ class VoteRepositoryTest extends UsingDataJpaTest implements ReplaceUnderScoreTe
     @Test
     void find() {
         //given
-        final Member member = memberRepository.save(Member.withoutId("oauthId", new MemberNickname("nickname1")));
-        final Member member2 = memberRepository.save(Member.withoutId("oauthId2", new MemberNickname("nickname2")));
+        final Member member = memberRepository.save(
+            Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname1")));
+        final Member member2 = memberRepository.save(
+            Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId2", new MemberNickname("nickname2")));
         final long battleId = 1L;
         final Vote vote = voteRepository.save(
             Vote.withoutId(

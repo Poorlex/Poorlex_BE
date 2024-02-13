@@ -14,6 +14,7 @@ import com.poorlex.poorlex.battlenotification.service.dto.request.BattleNotifica
 import com.poorlex.poorlex.member.domain.Member;
 import com.poorlex.poorlex.member.domain.MemberNickname;
 import com.poorlex.poorlex.member.domain.MemberRepository;
+import com.poorlex.poorlex.member.domain.Oauth2RegistrationId;
 import com.poorlex.poorlex.support.IntegrationTest;
 import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
 import com.poorlex.poorlex.support.TestMemberTokenGenerator;
@@ -48,7 +49,8 @@ class BattleNotificationControllerTest extends IntegrationTest implements Replac
     @Test
     void 배틀공지를_등록한다() throws Exception {
         //given
-        final Member member = memberRepository.save(Member.withoutId("oauthId", new MemberNickname("nickname")));
+        final Member member = memberRepository.save(
+            Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname")));
         final Long battleId = battleService.create(member.getId(), BattleCreateRequestFixture.simple());
         final String content = "12345678901234567890";
         final BattleNotificationCreateRequest request = new BattleNotificationCreateRequest(content, "imageUrl");
@@ -69,7 +71,8 @@ class BattleNotificationControllerTest extends IntegrationTest implements Replac
     @Test
     void 배틀공지를_수정한다_이미지_포함() throws Exception {
         //given
-        final Member member = memberRepository.save(Member.withoutId("oauthId", new MemberNickname("nickname")));
+        final Member member = memberRepository.save(
+            Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname")));
         final BattleNotification battleNotification = createBattleNotification(member);
         final Long battleId = battleNotification.getBattleId();
         final String newContent = "newContentNewContent";
@@ -91,7 +94,8 @@ class BattleNotificationControllerTest extends IntegrationTest implements Replac
     @Test
     void 배틀공지를_수정한다_이미지_제거() throws Exception {
         //given
-        final Member member = memberRepository.save(Member.withoutId("oauthId", new MemberNickname("nickname")));
+        final Member member = memberRepository.save(
+            Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname")));
         final BattleNotification battleNotification = createBattleNotification(member);
         final Long battleId = battleNotification.getBattleId();
         final String newContent = "newContentNewContent";

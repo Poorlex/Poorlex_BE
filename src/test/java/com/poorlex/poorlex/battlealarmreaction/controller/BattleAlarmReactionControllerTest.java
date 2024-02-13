@@ -14,6 +14,7 @@ import com.poorlex.poorlex.battlealarmreaction.service.dto.request.AlarmReaction
 import com.poorlex.poorlex.member.domain.Member;
 import com.poorlex.poorlex.member.domain.MemberNickname;
 import com.poorlex.poorlex.member.domain.MemberRepository;
+import com.poorlex.poorlex.member.domain.Oauth2RegistrationId;
 import com.poorlex.poorlex.support.IntegrationTest;
 import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
 import com.poorlex.poorlex.support.TestMemberTokenGenerator;
@@ -96,7 +97,8 @@ class BattleAlarmReactionControllerTest extends IntegrationTest implements Repla
     }
 
     private Member createMember(final String oauthId) {
-        return memberRepository.save(Member.withoutId(oauthId, new MemberNickname("nicknmae")));
+        return memberRepository.save(
+            Member.withoutId(Oauth2RegistrationId.APPLE, oauthId, new MemberNickname("nicknmae")));
     }
 
     private BattleAlarm createAlarm(final Battle battle, final Member member, final BattleAlarmType type) {
