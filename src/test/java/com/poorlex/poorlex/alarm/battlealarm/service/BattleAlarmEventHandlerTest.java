@@ -26,8 +26,8 @@ import com.poorlex.poorlex.member.domain.MemberRepository;
 import com.poorlex.poorlex.member.domain.Oauth2RegistrationId;
 import com.poorlex.poorlex.participate.domain.BattleParticipant;
 import com.poorlex.poorlex.participate.domain.BattleParticipantRepository;
-import com.poorlex.poorlex.support.IntegrationTest;
 import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
+import com.poorlex.poorlex.support.SpringEventTest;
 import com.poorlex.poorlex.voting.vote.domain.Vote;
 import com.poorlex.poorlex.voting.vote.domain.VoteAmount;
 import com.poorlex.poorlex.voting.vote.domain.VoteDuration;
@@ -46,14 +46,8 @@ import java.time.temporal.ChronoUnit;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.event.ApplicationEvents;
-import org.springframework.test.context.event.RecordApplicationEvents;
 
-@RecordApplicationEvents
-class BattleAlarmEventHandlerTest extends IntegrationTest implements ReplaceUnderScoreTest {
-
-    @Autowired
-    private ApplicationEvents events;
+class BattleAlarmEventHandlerTest extends SpringEventTest implements ReplaceUnderScoreTest {
 
     @Autowired
     private BattleAlarmRepository battleAlarmRepository;

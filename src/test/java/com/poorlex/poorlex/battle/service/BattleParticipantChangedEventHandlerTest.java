@@ -13,18 +13,12 @@ import com.poorlex.poorlex.member.domain.MemberRepository;
 import com.poorlex.poorlex.member.domain.Oauth2RegistrationId;
 import com.poorlex.poorlex.participate.service.BattleParticipantService;
 import com.poorlex.poorlex.participate.service.event.BattleParticipantAddedEvent;
-import com.poorlex.poorlex.support.IntegrationTest;
 import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
+import com.poorlex.poorlex.support.SpringEventTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.event.ApplicationEvents;
-import org.springframework.test.context.event.RecordApplicationEvents;
 
-@RecordApplicationEvents
-class BattleParticipantChangedEventHandlerTest extends IntegrationTest implements ReplaceUnderScoreTest {
-
-    @Autowired
-    private ApplicationEvents events;
+class BattleParticipantChangedEventHandlerTest extends SpringEventTest implements ReplaceUnderScoreTest {
 
     @Autowired
     private BattleParticipantService battleParticipantService;
