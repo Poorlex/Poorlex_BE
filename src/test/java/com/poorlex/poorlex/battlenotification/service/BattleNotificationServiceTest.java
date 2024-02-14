@@ -68,7 +68,10 @@ class BattleNotificationServiceTest extends UsingDataJpaTest implements ReplaceU
                 softly.assertThat(battleNotification.getBattleId()).isEqualTo(battle.getId());
                 softly.assertThat(battleNotification.getContent()).isEqualTo(request.getContent());
                 softly.assertThat(battleNotification.getImageUrl()).isPresent();
-                softly.assertThat(battleNotification.getImageUrl().get()).isEqualTo(request.getImageUrl());
+                softly.assertThat(battleNotification.getImageUrl())
+                    .isPresent()
+                    .get()
+                    .isEqualTo(request.getImageUrl());
             }
         );
     }

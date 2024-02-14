@@ -19,8 +19,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 class AuthServiceTest extends UsingDataJpaTest implements ReplaceUnderScoreTest {
 
-    private static String SECRET_KEY = "testtokensecretkeytesttokensecretkeytesttokensecretkey";
-    private static int ACCESS_EXPIRE_LENGTH = 3600000;
+    private static final String SECRET_KEY = "testtokensecretkeytesttokensecretkeytesttokensecretkey";
+    private static final int ACCESS_EXPIRE_LENGTH = 3600000;
 
     @Autowired
     private MemberRepository memberRepository;

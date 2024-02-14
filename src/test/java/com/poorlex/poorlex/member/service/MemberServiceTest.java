@@ -36,7 +36,8 @@ class MemberServiceTest extends UsingDataJpaTest implements ReplaceUnderScoreTes
         memberService.updateProfile(member.getId(), request);
 
         //then
-        final Member updatedMember = memberRepository.findById(member.getId()).get();
+        final Member updatedMember = memberRepository.findById(member.getId())
+            .orElseThrow(IllegalArgumentException::new);
         assertThat(updatedMember.getNickname()).isEqualTo(request.getNickname());
         assertThat(updatedMember.getDescription()).isPresent()
             .get()
@@ -56,7 +57,8 @@ class MemberServiceTest extends UsingDataJpaTest implements ReplaceUnderScoreTes
         memberService.updateProfile(prevMember.getId(), request);
 
         //then
-        final Member updatedMember = memberRepository.findById(prevMember.getId()).get();
+        final Member updatedMember = memberRepository.findById(prevMember.getId())
+            .orElseThrow(IllegalArgumentException::new);
         assertThat(updatedMember.getNickname()).isEqualTo("nickname");
         assertThat(updatedMember.getDescription()).isPresent()
             .get()
@@ -76,7 +78,8 @@ class MemberServiceTest extends UsingDataJpaTest implements ReplaceUnderScoreTes
         memberService.updateProfile(prevMember.getId(), request);
 
         //then
-        final Member updatedMember = memberRepository.findById(prevMember.getId()).get();
+        final Member updatedMember = memberRepository.findById(prevMember.getId())
+            .orElseThrow(IllegalArgumentException::new);
         assertThat(updatedMember.getNickname()).isEqualTo(request.getNickname());
         assertThat(updatedMember.getDescription()).isPresent()
             .get()
@@ -96,7 +99,8 @@ class MemberServiceTest extends UsingDataJpaTest implements ReplaceUnderScoreTes
         memberService.updateProfile(prevMember.getId(), request);
 
         //then
-        final Member updatedMember = memberRepository.findById(prevMember.getId()).get();
+        final Member updatedMember = memberRepository.findById(prevMember.getId())
+            .orElseThrow(IllegalArgumentException::new);
         assertThat(updatedMember.getNickname()).isEqualTo("nickname");
         assertThat(updatedMember.getDescription()).isPresent()
             .get()

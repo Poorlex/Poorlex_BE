@@ -14,7 +14,7 @@ import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 
 public class TokenOauth2AuthenticationSuccessHandlerFacade extends AbstractTokenOauth2AuthenticationSuccessHandler {
 
-    private List<AbstractTokenOauth2AuthenticationSuccessHandler> handlers = new ArrayList<>();
+    private final List<AbstractTokenOauth2AuthenticationSuccessHandler> handlers = new ArrayList<>();
 
     public TokenOauth2AuthenticationSuccessHandlerFacade(final MemberRepository memberRepository,
                                                          final JwtTokenProvider jwtTokenProvider) {
