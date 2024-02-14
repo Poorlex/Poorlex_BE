@@ -22,6 +22,7 @@ import com.poorlex.poorlex.goal.service.dto.request.MemberGoalRequest;
 import com.poorlex.poorlex.member.domain.Member;
 import com.poorlex.poorlex.member.domain.MemberNickname;
 import com.poorlex.poorlex.member.domain.MemberRepository;
+import com.poorlex.poorlex.member.domain.Oauth2RegistrationId;
 import com.poorlex.poorlex.support.IntegrationTest;
 import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
 import com.poorlex.poorlex.support.TestMemberTokenGenerator;
@@ -76,7 +77,8 @@ class GoalControllerTest extends IntegrationTest implements ReplaceUnderScoreTes
     @Test
     void 목표를_수정한다() throws Exception {
         //given
-        final Member member = memberRepository.save(Member.withoutId("oauthId", new MemberNickname("nickname")));
+        final Member member = memberRepository.save(
+            Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname")));
         final Goal goal = saveGoalWithMemberId(member.getId());
         final String accessToken = jwtTokenProvider.createAccessToken(member.getId());
         final GoalUpdateRequest request = new GoalUpdateRequest(
@@ -102,7 +104,8 @@ class GoalControllerTest extends IntegrationTest implements ReplaceUnderScoreTes
     @Test
     void 목표를_삭제한다() throws Exception {
         //given
-        final Member member = memberRepository.save(Member.withoutId("oauthId", new MemberNickname("nickname")));
+        final Member member = memberRepository.save(
+            Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname")));
         final Goal goal = saveGoalWithMemberId(member.getId());
         final String accessToken = jwtTokenProvider.createAccessToken(member.getId());
 
@@ -118,7 +121,8 @@ class GoalControllerTest extends IntegrationTest implements ReplaceUnderScoreTes
     @Test
     void 목표를_완료한다() throws Exception {
         //given
-        final Member member = memberRepository.save(Member.withoutId("oauthId", new MemberNickname("nickname")));
+        final Member member = memberRepository.save(
+            Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname")));
         final Goal goal = saveGoalWithMemberId(member.getId());
         final String accessToken = jwtTokenProvider.createAccessToken(member.getId());
 
@@ -147,7 +151,8 @@ class GoalControllerTest extends IntegrationTest implements ReplaceUnderScoreTes
     @Test
     void 회원이_진행중인_목표목록을_조회한다() throws Exception {
         //given
-        final Member member = memberRepository.save(Member.withoutId("oauthId", new MemberNickname("nickname")));
+        final Member member = memberRepository.save(
+            Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname")));
         final LocalDate requestDate = LocalDate.now();
         final Goal goal = saveGoalWithMemberId(member.getId(), requestDate.minusYears(1), requestDate.plusDays(10));
         final MemberGoalRequest request = new MemberGoalRequest("PROGRESS", requestDate);
@@ -175,7 +180,8 @@ class GoalControllerTest extends IntegrationTest implements ReplaceUnderScoreTes
     @Test
     void 회원이_완료한_목표목록을_조회한다() throws Exception {
         //given
-        final Member member = memberRepository.save(Member.withoutId("oauthId", new MemberNickname("nickname")));
+        final Member member = memberRepository.save(
+            Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname")));
         final LocalDate requestDate = LocalDate.now();
         final Goal goal = saveGoalWithMemberId(member.getId(), requestDate.minusYears(1), requestDate.plusYears(3));
         final String accessToken = jwtTokenProvider.createAccessToken(member.getId());
@@ -204,7 +210,8 @@ class GoalControllerTest extends IntegrationTest implements ReplaceUnderScoreTes
     @Test
     void 멤버의_목표들의_Id를_조회한다() throws Exception {
         //given
-        final Member member = memberRepository.save(Member.withoutId("oauthId", new MemberNickname("nickname")));
+        final Member member = memberRepository.save(
+            Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname")));
 
         final String accessToken = testMemberTokenGenerator.createAccessToken(member);
         final Goal goal1 = saveGoalWithMemberId(member.getId());

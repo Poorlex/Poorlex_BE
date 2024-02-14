@@ -5,6 +5,7 @@ import com.poorlex.poorlex.auth.service.dto.response.LoginTokenResponse;
 import com.poorlex.poorlex.member.domain.Member;
 import com.poorlex.poorlex.member.domain.MemberNickname;
 import com.poorlex.poorlex.member.domain.MemberRepository;
+import com.poorlex.poorlex.member.domain.Oauth2RegistrationId;
 import com.poorlex.poorlex.token.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -29,7 +30,8 @@ public class AuthService {
 
     private Member createMember(final LoginRequest request) {
         return memberRepository.save(
-            Member.withoutId(request.getOauthId(), new MemberNickname(request.getNickname()))
+            Member.withoutId(Oauth2RegistrationId.APPLE, request.getOauthId(),
+                new MemberNickname(request.getNickname()))
         );
     }
 }

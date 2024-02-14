@@ -101,12 +101,16 @@ create table if not exists goal
 
 create table if not exists member
 (
-    id          bigint not null auto_increment,
-    nickname    varchar(255),
-    description varchar(255),
-    oauth_id    varchar(100) unique,
+    id                    bigint not null auto_increment,
+    oauth2registration_id enum ('KAKAO', 'APPLE'),
+    oauth_id              varchar(100),
+    nickname              varchar(255),
+    description           varchar(255),
     primary key (id)
 ) engine = InnoDB;
+
+alter table member
+    add unique key (oauth2registration_id, oauth_id);
 
 create table if not exists member_alarm
 (

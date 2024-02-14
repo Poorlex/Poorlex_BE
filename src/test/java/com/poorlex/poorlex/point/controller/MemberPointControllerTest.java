@@ -10,6 +10,7 @@ import com.poorlex.poorlex.member.domain.Member;
 import com.poorlex.poorlex.member.domain.MemberLevel;
 import com.poorlex.poorlex.member.domain.MemberNickname;
 import com.poorlex.poorlex.member.domain.MemberRepository;
+import com.poorlex.poorlex.member.domain.Oauth2RegistrationId;
 import com.poorlex.poorlex.point.domain.MemberPoint;
 import com.poorlex.poorlex.point.domain.MemberPointRepository;
 import com.poorlex.poorlex.point.domain.Point;
@@ -100,7 +101,8 @@ class MemberPointControllerTest extends IntegrationTest implements ReplaceUnderS
     }
 
     private Member createMember(final String oauthId) {
-        return memberRepository.save(Member.withoutId(oauthId, new MemberNickname("nickname")));
+        return memberRepository.save(
+            Member.withoutId(Oauth2RegistrationId.APPLE, oauthId, new MemberNickname("nickname")));
     }
 
     private MemberPoint createMemberPoint(final int point, final Member member) {

@@ -3,6 +3,7 @@ package com.poorlex.poorlex.support;
 import com.poorlex.poorlex.member.domain.Member;
 import com.poorlex.poorlex.member.domain.MemberNickname;
 import com.poorlex.poorlex.member.domain.MemberRepository;
+import com.poorlex.poorlex.member.domain.Oauth2RegistrationId;
 import com.poorlex.poorlex.token.JwtTokenProvider;
 
 public class TestMemberTokenGenerator {
@@ -21,7 +22,7 @@ public class TestMemberTokenGenerator {
     }
 
     private Member createMember(final String oauthId) {
-        final Member member = Member.withoutId(oauthId, new MemberNickname("nickname"));
+        final Member member = Member.withoutId(Oauth2RegistrationId.APPLE, oauthId, new MemberNickname("nickname"));
         return memberRepository.save(member);
     }
 

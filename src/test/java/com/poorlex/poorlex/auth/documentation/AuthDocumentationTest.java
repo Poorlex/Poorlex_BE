@@ -5,6 +5,7 @@ import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 import com.poorlex.poorlex.auth.controller.AuthController;
@@ -12,6 +13,7 @@ import com.poorlex.poorlex.auth.service.AuthService;
 import com.poorlex.poorlex.auth.service.dto.request.LoginRequest;
 import com.poorlex.poorlex.auth.service.dto.response.LoginTokenResponse;
 import com.poorlex.poorlex.support.RestDocsDocumentationTest;
+import com.poorlex.poorlex.support.security.DocumentTestMockMvcConfigure;
 import com.poorlex.poorlex.util.ApiDocumentUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +25,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+@DocumentTestMockMvcConfigure
 @WebMvcTest(AuthController.class)
 class AuthDocumentationTest extends RestDocsDocumentationTest {
 
@@ -43,6 +46,7 @@ class AuthDocumentationTest extends RestDocsDocumentationTest {
             post("/login")
                 .content(objectMapper.writeValueAsString(request))
                 .contentType(MediaType.APPLICATION_JSON)
+                .with(csrf())
         );
 
         //then

@@ -9,8 +9,9 @@ import com.poorlex.poorlex.expenditure.fixture.ExpenditureFixture;
 import com.poorlex.poorlex.member.domain.Member;
 import com.poorlex.poorlex.member.domain.MemberNickname;
 import com.poorlex.poorlex.member.domain.MemberRepository;
+import com.poorlex.poorlex.member.domain.Oauth2RegistrationId;
 import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
-import com.poorlex.poorlex.support.UsingDataJpaTest;
+import com.poorlex.poorlex.support.db.UsingDataJpaTest;
 import com.poorlex.poorlex.weeklybudget.domain.WeeklyBudget;
 import com.poorlex.poorlex.weeklybudget.domain.WeeklyBudgetAmount;
 import com.poorlex.poorlex.weeklybudget.domain.WeeklyBudgetDuration;
@@ -46,7 +47,8 @@ class WeeklyBudgetServiceTest extends UsingDataJpaTest implements ReplaceUnderSc
     @Test
     void 주간_예산을_생성한다() {
         //given
-        final Member member = memberRepository.save(Member.withoutId("oauthId", new MemberNickname("nickname")));
+        final Member member = memberRepository.save(
+            Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname")));
 
         //when
         weeklyBudgetService.createBudget(member.getId(), 10000);
@@ -69,7 +71,8 @@ class WeeklyBudgetServiceTest extends UsingDataJpaTest implements ReplaceUnderSc
     @Test
     void 멤버의_현재날짜_기준_주간_예산을_조회한다_존재할때() {
         //given
-        final Member member = memberRepository.save(Member.withoutId("oauthId", new MemberNickname("nickname")));
+        final Member member = memberRepository.save(
+            Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname")));
         final WeeklyBudget weaklyBudget = createWeaklyBudget(member.getId(), 10000);
 
         //when
@@ -86,7 +89,8 @@ class WeeklyBudgetServiceTest extends UsingDataJpaTest implements ReplaceUnderSc
     @Test
     void 멤버의_현재날짜_기준_주간_예산을_조회한다_존재하지_않을_때() {
         //given
-        final Member member = memberRepository.save(Member.withoutId("oauthId", new MemberNickname("nickname")));
+        final Member member = memberRepository.save(
+            Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname")));
 
         //when
         final WeeklyBudgetResponse weeklyBudgetResponse = weeklyBudgetService.findCurrentBudgetByMemberIdAndDate(
@@ -102,7 +106,8 @@ class WeeklyBudgetServiceTest extends UsingDataJpaTest implements ReplaceUnderSc
     @Test
     void 멤버의_현재날짜_기준_남은_주간_예산을_조회한다() {
         //given
-        final Member member = memberRepository.save(Member.withoutId("oauthId", new MemberNickname("nickname")));
+        final Member member = memberRepository.save(
+            Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname")));
         final WeeklyBudget weaklyBudget = createWeaklyBudget(member.getId(), 10000);
         final Expenditure expenditure = createExpenditure(1000, member.getId(), weaklyBudget.getDuration().getStart());
 
@@ -120,7 +125,8 @@ class WeeklyBudgetServiceTest extends UsingDataJpaTest implements ReplaceUnderSc
     @Test
     void 멤버의_현재날짜_기준_남은_주간_예산을_조회한다_등록된_주간_예산이_없을때() {
         //given
-        final Member member = memberRepository.save(Member.withoutId("oauthId", new MemberNickname("nickname")));
+        final Member member = memberRepository.save(
+            Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname")));
         final LocalDateTime date = LocalDateTime.now().truncatedTo(ChronoUnit.MICROS);
         final Expenditure expenditure = createExpenditure(1000, member.getId(), date);
 

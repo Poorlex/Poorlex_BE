@@ -15,6 +15,7 @@ import com.poorlex.poorlex.friend.service.dto.request.FriendInviteRequest;
 import com.poorlex.poorlex.member.domain.Member;
 import com.poorlex.poorlex.member.domain.MemberNickname;
 import com.poorlex.poorlex.member.domain.MemberRepository;
+import com.poorlex.poorlex.member.domain.Oauth2RegistrationId;
 import com.poorlex.poorlex.support.IntegrationTest;
 import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
 import com.poorlex.poorlex.token.JwtTokenProvider;
@@ -129,7 +130,8 @@ class FriendControllerTest extends IntegrationTest implements ReplaceUnderScoreT
     }
 
     private Member createMember(final String oauthId, final String nickname) {
-        return memberRepository.save(Member.withoutId(oauthId, new MemberNickname(nickname)));
+        return memberRepository.save(
+            Member.withoutId(Oauth2RegistrationId.APPLE, oauthId, new MemberNickname(nickname)));
     }
 
     private void beFriend(final Member member, final Member other) {

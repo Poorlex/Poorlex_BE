@@ -46,4 +46,8 @@ public class JwtTokenProvider {
             throw new IllegalArgumentException();
         }
     }
+
+    public <T> T getPayload(final String token, final String claimName, final Class<T> type) {
+        return getPayload(token).get(claimName, type);
+    }
 }

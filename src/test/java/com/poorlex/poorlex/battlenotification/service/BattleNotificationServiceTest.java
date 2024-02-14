@@ -15,10 +15,11 @@ import com.poorlex.poorlex.battlenotification.service.dto.request.BattleNotifica
 import com.poorlex.poorlex.member.domain.Member;
 import com.poorlex.poorlex.member.domain.MemberNickname;
 import com.poorlex.poorlex.member.domain.MemberRepository;
+import com.poorlex.poorlex.member.domain.Oauth2RegistrationId;
 import com.poorlex.poorlex.participate.domain.BattleParticipant;
 import com.poorlex.poorlex.participate.domain.BattleParticipantRepository;
 import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
-import com.poorlex.poorlex.support.UsingDataJpaTest;
+import com.poorlex.poorlex.support.db.UsingDataJpaTest;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -67,7 +68,10 @@ class BattleNotificationServiceTest extends UsingDataJpaTest implements ReplaceU
                 softly.assertThat(battleNotification.getBattleId()).isEqualTo(battle.getId());
                 softly.assertThat(battleNotification.getContent()).isEqualTo(request.getContent());
                 softly.assertThat(battleNotification.getImageUrl()).isPresent();
-                softly.assertThat(battleNotification.getImageUrl().get()).isEqualTo(request.getImageUrl());
+                softly.assertThat(battleNotification.getImageUrl())
+                    .isPresent()
+                    .get()
+                    .isEqualTo(request.getImageUrl());
             }
         );
     }
@@ -193,12 +197,14 @@ class BattleNotificationServiceTest extends UsingDataJpaTest implements ReplaceU
     }
 
     private BattleParticipant createManager(final Battle battle) {
-        final Member member = memberRepository.save(Member.withoutId("oauthId", new MemberNickname("nickname")));
+        final Member member = memberRepository.save(
+            Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname")));
         return battleParticipantRepository.save(BattleParticipant.manager(battle.getId(), member.getId()));
     }
 
     private BattleParticipant createNormalPlayer(final Battle battle) {
-        final Member member = memberRepository.save(Member.withoutId("oauthId", new MemberNickname("nickname")));
+        final Member member = memberRepository.save(
+            Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname")));
         return battleParticipantRepository.save(BattleParticipant.normalPlayer(battle.getId(), member.getId()));
     }
 

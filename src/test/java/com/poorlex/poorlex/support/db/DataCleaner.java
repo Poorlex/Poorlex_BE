@@ -1,4 +1,4 @@
-package com.poorlex.poorlex.support;
+package com.poorlex.poorlex.support.db;
 
 import io.jsonwebtoken.lang.Strings;
 import jakarta.annotation.PostConstruct;

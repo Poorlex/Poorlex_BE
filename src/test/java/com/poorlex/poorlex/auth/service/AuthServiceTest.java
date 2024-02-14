@@ -8,8 +8,9 @@ import com.poorlex.poorlex.auth.service.dto.response.LoginTokenResponse;
 import com.poorlex.poorlex.member.domain.Member;
 import com.poorlex.poorlex.member.domain.MemberNickname;
 import com.poorlex.poorlex.member.domain.MemberRepository;
+import com.poorlex.poorlex.member.domain.Oauth2RegistrationId;
 import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
-import com.poorlex.poorlex.support.UsingDataJpaTest;
+import com.poorlex.poorlex.support.db.UsingDataJpaTest;
 import com.poorlex.poorlex.token.JwtTokenProvider;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,8 +19,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 class AuthServiceTest extends UsingDataJpaTest implements ReplaceUnderScoreTest {
 
-    private static String SECRET_KEY = "testtokensecretkeytesttokensecretkeytesttokensecretkey";
-    private static int ACCESS_EXPIRE_LENGTH = 3600000;
+    private static final String SECRET_KEY = "testtokensecretkeytesttokensecretkeytesttokensecretkey";
+    private static final int ACCESS_EXPIRE_LENGTH = 3600000;
 
     @Autowired
     private MemberRepository memberRepository;
@@ -59,7 +60,8 @@ class AuthServiceTest extends UsingDataJpaTest implements ReplaceUnderScoreTest 
         final LoginTokenResponse loginTokenResponse = authService.loginAfterRegisterIfNotExist(request);
 
         //then
-        final Member expectedMember = Member.withoutId(request.getOauthId(), new MemberNickname(request.getNickname()));
+        final Member expectedMember = Member.withoutId(Oauth2RegistrationId.APPLE, request.getOauthId(),
+            new MemberNickname(request.getNickname()));
         final Optional<Member> member = memberRepository.findByOauthId(request.getOauthId());
         assertSoftly(
             softly -> {
@@ -74,6 +76,7 @@ class AuthServiceTest extends UsingDataJpaTest implements ReplaceUnderScoreTest 
     }
 
     private Member createMember(final String oauthId, final String nickname) {
-        return memberRepository.save(Member.withoutId(oauthId, new MemberNickname(nickname)));
+        return memberRepository.save(
+            Member.withoutId(Oauth2RegistrationId.APPLE, oauthId, new MemberNickname(nickname)));
     }
 }

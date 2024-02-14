@@ -9,6 +9,9 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
     boolean existsById(final Long id);
 
+    Optional<Member> findByOauth2RegistrationIdAndOauthId(final Oauth2RegistrationId registrationId,
+                                                          final String oauthId);
+
     Optional<Member> findByOauthId(final String oauthId);
 
     @Query(value = "select m.id as memberId, m.nickname.value as nickname "

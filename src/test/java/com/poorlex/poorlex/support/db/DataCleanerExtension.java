@@ -1,4 +1,4 @@
-package com.poorlex.poorlex.support;
+package com.poorlex.poorlex.support.db;
 
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;

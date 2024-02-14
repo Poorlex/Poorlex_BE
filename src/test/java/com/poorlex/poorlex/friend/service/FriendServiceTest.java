@@ -16,6 +16,7 @@ import com.poorlex.poorlex.friend.service.event.FriendInvitedEvent;
 import com.poorlex.poorlex.member.domain.Member;
 import com.poorlex.poorlex.member.domain.MemberNickname;
 import com.poorlex.poorlex.member.domain.MemberRepository;
+import com.poorlex.poorlex.member.domain.Oauth2RegistrationId;
 import com.poorlex.poorlex.support.IntegrationTest;
 import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
 import java.util.List;
@@ -135,7 +136,8 @@ class FriendServiceTest extends IntegrationTest implements ReplaceUnderScoreTest
     }
 
     private Member createMember(final String oauthId, final String nickname) {
-        return memberRepository.save(Member.withoutId(oauthId, new MemberNickname(nickname)));
+        return memberRepository.save(
+            Member.withoutId(Oauth2RegistrationId.APPLE, oauthId, new MemberNickname(nickname)));
     }
 
     private void beFriend(final Member member, final Member other) {
