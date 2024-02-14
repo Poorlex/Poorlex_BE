@@ -1,7 +1,4 @@
 spring:
-  config:
-    activate:
-      on-profile: "test"
   datasource:
     driver-class-name: org.h2.Driver
     url: jdbc:h2:mem:poorlex-test
@@ -13,21 +10,35 @@ spring:
       hibernate:
         show_sql: true
         format_sql: true
-  #        use_sql_comments: true
+
   sql:
     init:
       mode: never
-      
+
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: id
+            client-secret: secret
+            scope:
+              - profile
+              - email
+
 logging:
   level:
+    root: INFO
     org.hibernate.orm.jdbc.bind: trace
+    org.springframework.web: INFO
+    org.springframework.security: DEBUG
+
 
 # JWT-TOKEN
 jwt:
   token:
     secret-key: testtokensecretkeytesttokensecretkeytesttokensecretkey
     access-expire-length: ${JWT_ACCESS_EXPIRE:3600000}
-
 
 schedules:
   battle-start:
