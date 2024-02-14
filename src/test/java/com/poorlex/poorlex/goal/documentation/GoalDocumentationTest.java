@@ -7,6 +7,7 @@ import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.docu
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
@@ -70,6 +71,7 @@ class GoalDocumentationTest extends RestDocsDocumentationTest {
                 .header(HttpHeaders.AUTHORIZATION, "Bearer {accessToken}")
                 .content(objectMapper.writeValueAsString(request))
                 .contentType(MediaType.APPLICATION_JSON)
+                .with(csrf())
         );
 
         result.andExpect(status().isCreated())
@@ -100,6 +102,7 @@ class GoalDocumentationTest extends RestDocsDocumentationTest {
         final ResultActions result = mockMvc.perform(
             delete("/goals/{goalId}", 1L)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer {accessToken}")
+                .with(csrf())
         );
 
         result.andExpect(status().isNoContent())
@@ -133,6 +136,7 @@ class GoalDocumentationTest extends RestDocsDocumentationTest {
                 .header(HttpHeaders.AUTHORIZATION, "Bearer {accessToken}")
                 .content(objectMapper.writeValueAsString(request))
                 .contentType(MediaType.APPLICATION_JSON)
+                .with(csrf())
         );
 
         result.andExpect(status().isOk())
@@ -316,6 +320,9 @@ class GoalDocumentationTest extends RestDocsDocumentationTest {
     @Test
     void goal_find_types() throws Exception {
         //given
+        mockingTokenInterceptor();
+        mockingMemberArgumentResolver();
+
         given(goalService.findAllGoalType())
             .willReturn(
                 Arrays.stream(GoalType.values())

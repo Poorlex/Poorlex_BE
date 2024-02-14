@@ -6,6 +6,7 @@ import static org.mockito.Mockito.doNothing;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
@@ -41,6 +42,7 @@ class BattleParticipantDocumentationTest extends RestDocsDocumentationTest {
         final ResultActions result = mockMvc.perform(
             post("/battles/1/participants")
                 .header(HttpHeaders.AUTHORIZATION, "Bearer {accessToken}")
+                .with(csrf())
         );
 
         //then
@@ -63,6 +65,7 @@ class BattleParticipantDocumentationTest extends RestDocsDocumentationTest {
         final ResultActions result = mockMvc.perform(
             delete("/battles/1/participants")
                 .header(HttpHeaders.AUTHORIZATION, "Bearer {accessToken}")
+                .with(csrf())
         );
 
         //then

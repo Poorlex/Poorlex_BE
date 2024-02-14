@@ -7,7 +7,7 @@ import com.poorlex.poorlex.member.domain.MemberNickname;
 import com.poorlex.poorlex.member.domain.MemberRepository;
 import com.poorlex.poorlex.member.domain.Oauth2RegistrationId;
 import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
-import com.poorlex.poorlex.support.UsingDataJpaTest;
+import com.poorlex.poorlex.support.db.UsingDataJpaTest;
 import com.poorlex.poorlex.voting.votingpaper.domain.VotingPaper;
 import com.poorlex.poorlex.voting.votingpaper.domain.VotingPaperRepository;
 import com.poorlex.poorlex.voting.votingpaper.domain.VotingPaperType;

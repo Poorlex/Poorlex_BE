@@ -8,6 +8,7 @@ import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.docu
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -55,6 +56,7 @@ class BattleNotificationDocumentationTest extends RestDocsDocumentationTest {
                 .header(HttpHeaders.AUTHORIZATION, "Bearer {accessToken}")
                 .content(objectMapper.writeValueAsString(request))
                 .contentType(MediaType.APPLICATION_JSON)
+                .with(csrf())
         );
 
         //then
@@ -86,6 +88,7 @@ class BattleNotificationDocumentationTest extends RestDocsDocumentationTest {
                 .header(HttpHeaders.AUTHORIZATION, "Bearer {accessToken}")
                 .content(objectMapper.writeValueAsString(request))
                 .contentType(MediaType.APPLICATION_JSON)
+                .with(csrf())
         );
 
         //then

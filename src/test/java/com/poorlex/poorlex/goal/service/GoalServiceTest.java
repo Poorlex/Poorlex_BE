@@ -23,7 +23,7 @@ import com.poorlex.poorlex.member.domain.MemberNickname;
 import com.poorlex.poorlex.member.domain.MemberRepository;
 import com.poorlex.poorlex.member.domain.Oauth2RegistrationId;
 import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
-import com.poorlex.poorlex.support.UsingDataJpaTest;
+import com.poorlex.poorlex.support.db.UsingDataJpaTest;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;

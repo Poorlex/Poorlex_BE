@@ -15,7 +15,7 @@ import com.poorlex.poorlex.point.service.dto.request.PointCreateRequest;
 import com.poorlex.poorlex.point.service.dto.response.MemberLevelBarResponse;
 import com.poorlex.poorlex.point.service.dto.response.MemberPointResponse;
 import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
-import com.poorlex.poorlex.support.UsingDataJpaTest;
+import com.poorlex.poorlex.support.db.UsingDataJpaTest;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

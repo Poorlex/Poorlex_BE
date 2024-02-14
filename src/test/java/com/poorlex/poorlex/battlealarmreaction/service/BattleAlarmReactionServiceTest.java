@@ -9,7 +9,7 @@ import com.poorlex.poorlex.alarm.battlealarm.domain.BattleAlarmType;
 import com.poorlex.poorlex.battlealarmreaction.domain.AlarmReactionRepository;
 import com.poorlex.poorlex.battlealarmreaction.service.dto.request.AlarmReactionCreateRequest;
 import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
-import com.poorlex.poorlex.support.UsingDataJpaTest;
+import com.poorlex.poorlex.support.db.UsingDataJpaTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;

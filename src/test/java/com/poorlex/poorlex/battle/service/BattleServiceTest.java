@@ -32,7 +32,7 @@ import com.poorlex.poorlex.participate.domain.BattleParticipantRepository;
 import com.poorlex.poorlex.point.domain.MemberPointRepository;
 import com.poorlex.poorlex.point.service.MemberPointService;
 import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
-import com.poorlex.poorlex.support.UsingDataJpaTest;
+import com.poorlex.poorlex.support.db.UsingDataJpaTest;
 import com.poorlex.poorlex.voting.vote.domain.VoteRepository;
 import com.poorlex.poorlex.voting.vote.service.VoteService;
 import com.poorlex.poorlex.voting.votingpaper.domain.VotingPaperRepository;
