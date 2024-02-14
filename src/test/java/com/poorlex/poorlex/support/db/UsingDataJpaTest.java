@@ -1,4 +1,4 @@
-package com.poorlex.poorlex.support;
+package com.poorlex.poorlex.support.db;
 
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.ActiveProfiles;
