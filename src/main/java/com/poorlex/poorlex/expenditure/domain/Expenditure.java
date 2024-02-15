@@ -53,6 +53,10 @@ public class Expenditure {
         return instance;
     }
 
+    public void addImageUrl(final ExpenditureCertificationImageUrl imageUrl) {
+        imageUrls.addImageUrl(imageUrl);
+    }
+
     public boolean hasSameMemberId(final Long memberId) {
         return this.memberId.equals(memberId);
     }

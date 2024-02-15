@@ -19,6 +19,7 @@ import com.poorlex.poorlex.battle.service.dto.response.MemberCompleteBattleRespo
 import com.poorlex.poorlex.battle.service.dto.response.MemberProgressBattleResponse;
 import com.poorlex.poorlex.battlealarmreaction.domain.AlarmReactionRepository;
 import com.poorlex.poorlex.battlealarmreaction.service.AlarmReactionService;
+import com.poorlex.poorlex.config.aws.AWSS3Service;
 import com.poorlex.poorlex.expenditure.domain.ExpenditureRepository;
 import com.poorlex.poorlex.expenditure.fixture.ExpenditureFixture;
 import com.poorlex.poorlex.expenditure.service.ExpenditureService;
@@ -93,6 +94,9 @@ class BattleServiceTest extends UsingDataJpaTest implements ReplaceUnderScoreTes
     @Autowired
     private ExpenditureRepository expenditureRepository;
 
+    @Autowired
+    private AWSS3Service awss3Service;
+
     @BeforeEach
     void setUp() {
         battleService = new BattleService(
@@ -106,7 +110,7 @@ class BattleServiceTest extends UsingDataJpaTest implements ReplaceUnderScoreTes
                 battleAlarmViewHistoryRepository
             ),
             new MemberPointService(memberPointRepository, memberRepository),
-            new ExpenditureService(battleRepository, expenditureRepository),
+            new ExpenditureService("directory", battleRepository, expenditureRepository, awss3Service),
             new MemberService(memberRepository)
         );
     }

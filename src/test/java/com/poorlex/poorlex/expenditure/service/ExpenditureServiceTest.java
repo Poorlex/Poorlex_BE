@@ -7,6 +7,7 @@ import com.poorlex.poorlex.battle.domain.Battle;
 import com.poorlex.poorlex.battle.domain.BattleRepository;
 import com.poorlex.poorlex.battle.domain.BattleStatus;
 import com.poorlex.poorlex.battle.fixture.BattleFixture;
+import com.poorlex.poorlex.config.aws.AWSS3Service;
 import com.poorlex.poorlex.expenditure.domain.Expenditure;
 import com.poorlex.poorlex.expenditure.domain.ExpenditureCertificationImageUrl;
 import com.poorlex.poorlex.expenditure.domain.ExpenditureRepository;
@@ -51,11 +52,15 @@ class ExpenditureServiceTest extends UsingDataJpaTest implements ReplaceUnderSco
     @Autowired
     private BattleParticipantRepository battleParticipantRepository;
 
+    @Autowired
+    private AWSS3Service awss3Service;
+
     private ExpenditureService expenditureService;
 
     @BeforeEach
     void setUp() {
-        this.expenditureService = new ExpenditureService(battleRepository, expenditureRepository);
+        this.expenditureService =
+            new ExpenditureService("directory", battleRepository, expenditureRepository, awss3Service);
     }
 
     @Test

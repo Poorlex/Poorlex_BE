@@ -1,6 +1,5 @@
 package com.poorlex.poorlex.expenditure.domain;
 
-import io.jsonwebtoken.lang.Collections;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.OneToMany;
@@ -23,10 +22,17 @@ public class ExpenditureCertificationImageUrls {
     private List<ExpenditureCertificationImageUrl> imageUrls;
 
     public ExpenditureCertificationImageUrls(final List<ExpenditureCertificationImageUrl> imageUrls) {
-        if (Collections.isEmpty(imageUrls) || imageUrls.size() > MAX_IMAGE_COUNT) {
+        if (imageUrls.size() > MAX_IMAGE_COUNT) {
             throw new IllegalArgumentException();
         }
         this.imageUrls = imageUrls;
+    }
+
+    public void addImageUrl(final ExpenditureCertificationImageUrl imageUrl) {
+        if (imageUrls.size() >= MAX_IMAGE_COUNT) {
+            throw new IllegalArgumentException("이미지의 갯수는 최대 2개입니다.");
+        }
+        imageUrls.add(imageUrl);
     }
 
     protected void belongTo(final Expenditure expenditure) {

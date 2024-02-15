@@ -2,8 +2,10 @@ package com.poorlex.poorlex.expenditure.service;
 
 import com.poorlex.poorlex.battle.domain.Battle;
 import com.poorlex.poorlex.battle.domain.BattleRepository;
+import com.poorlex.poorlex.config.aws.AWSS3Service;
 import com.poorlex.poorlex.config.event.Events;
 import com.poorlex.poorlex.expenditure.domain.Expenditure;
+import com.poorlex.poorlex.expenditure.domain.ExpenditureCertificationImageUrl;
 import com.poorlex.poorlex.expenditure.domain.ExpenditureRepository;
 import com.poorlex.poorlex.expenditure.domain.TotalExpenditureAndMemberIdDto;
 import com.poorlex.poorlex.expenditure.domain.WeeklyExpenditureDuration;
@@ -17,23 +19,36 @@ import com.poorlex.poorlex.expenditure.service.dto.response.MemberWeeklyTotalExp
 import com.poorlex.poorlex.expenditure.service.event.ExpenditureCreatedEvent;
 import com.poorlex.poorlex.expenditure.service.event.ZeroExpenditureCreatedEvent;
 import com.poorlex.poorlex.expenditure.service.mapper.ExpenditureMapper;
+import io.jsonwebtoken.lang.Collections;
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @Transactional(readOnly = true)
-@RequiredArgsConstructor
 public class ExpenditureService {
 
+    private final String bucketDirectory;
     private final BattleRepository battleRepository;
     private final ExpenditureRepository expenditureRepository;
+    private final AWSS3Service awss3Service;
+
+    public ExpenditureService(@Value("${aws.s3.expenditure-directory}") final String bucketDirectory,
+                              final BattleRepository battleRepository,
+                              final ExpenditureRepository expenditureRepository,
+                              final AWSS3Service awss3Service) {
+        this.battleRepository = battleRepository;
+        this.expenditureRepository = expenditureRepository;
+        this.awss3Service = awss3Service;
+        this.bucketDirectory = bucketDirectory;
+    }
 
     @Transactional
     public Long createExpenditure(final Long memberId, final ExpenditureCreateRequest request) {
@@ -42,6 +57,27 @@ public class ExpenditureService {
         );
         raiseEvent(expenditure.getAmount(), memberId);
         return expenditure.getId();
+    }
+
+    @Transactional
+    public Long createExpenditure(final Long memberId,
+                                  final List<MultipartFile> images,
+                                  final ExpenditureCreateRequest request) {
+        final Expenditure expenditure = ExpenditureMapper.createRequestToExpenditure(memberId, request);
+        expenditureRepository.save(expenditure);
+        saveAndAddImages(expenditure, images);
+        raiseEvent(expenditure.getAmount(), memberId);
+        return expenditure.getId();
+    }
+
+    private void saveAndAddImages(final Expenditure expenditure, final List<MultipartFile> images) {
+        if (Collections.isEmpty(images)) {
+            throw new IllegalArgumentException("이미지는 반드시 필요합니다.");
+        }
+        images.stream()
+            .map(image -> awss3Service.uploadMultipartFile(image, bucketDirectory))
+            .map(imageUrl -> ExpenditureCertificationImageUrl.withoutId(imageUrl, expenditure))
+            .forEach(expenditure::addImageUrl);
     }
 
     private void raiseEvent(final long expenditureAmount, final Long memberId) {
@@ -138,6 +174,7 @@ public class ExpenditureService {
             .toList();
     }
 
+    @Transactional
     public void updateExpenditure(final Long memberId,
                                   final Long expenditureId,
                                   final ExpenditureUpdateRequest request) {

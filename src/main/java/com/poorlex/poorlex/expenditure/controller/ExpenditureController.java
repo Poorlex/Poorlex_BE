@@ -19,7 +19,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
@@ -30,8 +32,9 @@ public class ExpenditureController {
 
     @PostMapping("/expenditures")
     public ResponseEntity<Void> createExpenditure(@MemberOnly final MemberInfo memberInfo,
-                                                  @RequestBody final ExpenditureCreateRequest request) {
-        final Long expenditureID = expenditureService.createExpenditure(memberInfo.getMemberId(), request);
+                                                  @RequestPart(name = "file") final List<MultipartFile> images,
+                                                  @RequestPart(value = "expenditureCreateRequest") final ExpenditureCreateRequest request) {
+        final Long expenditureID = expenditureService.createExpenditure(memberInfo.getMemberId(), images, request);
         final String locationHeader = CONTROLLER_MAPPED_URL + "/" + expenditureID;
 
         return ResponseEntity.created(URI.create(locationHeader)).build();
@@ -95,7 +98,7 @@ public class ExpenditureController {
                                                                  @PathVariable(name = "expenditureId") final Long expenditureId,
                                                                  @RequestBody final ExpenditureUpdateRequest request) {
         expenditureService.updateExpenditure(memberInfo.getMemberId(), expenditureId, request);
-        
+
         return ResponseEntity.ok().build();
     }
 }
