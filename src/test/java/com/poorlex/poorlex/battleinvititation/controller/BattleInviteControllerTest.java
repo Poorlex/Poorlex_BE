@@ -7,7 +7,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.poorlex.poorlex.alarm.memberalram.domain.MemberAlarm;
 import com.poorlex.poorlex.alarm.memberalram.domain.MemberAlarmRepository;
 import com.poorlex.poorlex.alarm.memberalram.domain.MemberAlarmType;
-import com.poorlex.poorlex.alarm.memberalram.service.MemberAlarmEventHandler;
 import com.poorlex.poorlex.battle.domain.Battle;
 import com.poorlex.poorlex.battle.domain.BattleRepository;
 import com.poorlex.poorlex.battle.domain.BattleStatus;
@@ -29,7 +28,6 @@ import com.poorlex.poorlex.token.JwtTokenProvider;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 
@@ -53,9 +51,6 @@ class BattleInviteControllerTest extends IntegrationTest implements ReplaceUnder
 
     @Autowired
     private MemberAlarmRepository memberAlarmRepository;
-
-    @MockBean
-    private MemberAlarmEventHandler memberAlarmEventHandler;
 
     @Test
     void 배틀에_초대한다() throws Exception {

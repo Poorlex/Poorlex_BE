@@ -6,7 +6,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.poorlex.poorlex.alarm.memberalram.service.MemberAlarmEventHandler;
+import com.poorlex.poorlex.alarm.memberalram.domain.MemberAlarm;
+import com.poorlex.poorlex.alarm.memberalram.domain.MemberAlarmRepository;
+import com.poorlex.poorlex.alarm.memberalram.domain.MemberAlarmType;
 import com.poorlex.poorlex.friend.domain.Friend;
 import com.poorlex.poorlex.friend.domain.FriendRepository;
 import com.poorlex.poorlex.friend.service.dto.request.FriendCreateRequest;
@@ -21,7 +23,6 @@ import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
 import com.poorlex.poorlex.token.JwtTokenProvider;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 
@@ -31,13 +32,13 @@ class FriendControllerTest extends IntegrationTest implements ReplaceUnderScoreT
     private MemberRepository memberRepository;
 
     @Autowired
+    private MemberAlarmRepository memberAlarmRepository;
+
+    @Autowired
     private JwtTokenProvider jwtTokenProvider;
 
     @Autowired
     private FriendRepository friendRepository;
-
-    @MockBean
-    private MemberAlarmEventHandler memberAlarmEventHandler;
 
     @Test
     void 친구요청을_생성한다() throws Exception {
@@ -64,6 +65,7 @@ class FriendControllerTest extends IntegrationTest implements ReplaceUnderScoreT
         final Member acceptMember = createMember("oauthId1", "nickname");
         final Member inviteMember = createMember("oauthId2", "nickname");
         final String accessToken = jwtTokenProvider.createAccessToken(acceptMember.getId());
+        createFriendRequest(inviteMember, acceptMember);
         final FriendCreateRequest request = new FriendCreateRequest(inviteMember.getId());
 
         //when
@@ -83,6 +85,7 @@ class FriendControllerTest extends IntegrationTest implements ReplaceUnderScoreT
         final Member denyMember = createMember("oauthId1", "nickname");
         final Member inviteMember = createMember("oauthId2", "nickname");
         final String accessToken = jwtTokenProvider.createAccessToken(denyMember.getId());
+        createFriendRequest(inviteMember, denyMember);
         final FriendDenyRequest request = new FriendDenyRequest(inviteMember.getId());
 
         //when
@@ -136,5 +139,13 @@ class FriendControllerTest extends IntegrationTest implements ReplaceUnderScoreT
 
     private void beFriend(final Member member, final Member other) {
         friendRepository.save(Friend.withoutId(member.getId(), other.getId()));
+    }
+
+    private void createFriendRequest(final Member inviteMember, final Member invitedMember) {
+        memberAlarmRepository.save(MemberAlarm.withoutId(
+            invitedMember.getId(),
+            inviteMember.getId(),
+            MemberAlarmType.FRIEND_INVITATION_NOT_ACCEPTED
+        ));
     }
 }

@@ -3,6 +3,8 @@ package com.poorlex.poorlex.friend.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.doNothing;
 
 import com.poorlex.poorlex.alarm.memberalram.service.MemberAlarmEventHandler;
 import com.poorlex.poorlex.friend.domain.Friend;
@@ -17,20 +19,14 @@ import com.poorlex.poorlex.member.domain.Member;
 import com.poorlex.poorlex.member.domain.MemberNickname;
 import com.poorlex.poorlex.member.domain.MemberRepository;
 import com.poorlex.poorlex.member.domain.Oauth2RegistrationId;
-import com.poorlex.poorlex.support.IntegrationTest;
 import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
+import com.poorlex.poorlex.support.SpringEventTest;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.event.ApplicationEvents;
-import org.springframework.test.context.event.RecordApplicationEvents;
 
-@RecordApplicationEvents
-class FriendServiceTest extends IntegrationTest implements ReplaceUnderScoreTest {
-
-    @Autowired
-    private ApplicationEvents events;
+class FriendServiceTest extends SpringEventTest implements ReplaceUnderScoreTest {
 
     @Autowired
     private FriendRepository friendRepository;
@@ -47,6 +43,7 @@ class FriendServiceTest extends IntegrationTest implements ReplaceUnderScoreTest
     @Test
     void 친구를_생성한다() {
         //given
+        doNothing().when(memberAlarmEventHandler).friendInvitationAccepted(any());
         final Long memberId = 1L;
         final FriendCreateRequest request = new FriendCreateRequest(2L);
 
@@ -66,6 +63,7 @@ class FriendServiceTest extends IntegrationTest implements ReplaceUnderScoreTest
     @Test
     void 친구를_생성한다_이미_친구일_때() {
         //given
+        doNothing().when(memberAlarmEventHandler).friendInvitationAccepted(any());
         final Long memberId = 1L;
         final FriendCreateRequest request = new FriendCreateRequest(2L);
         friendRepository.save(Friend.withoutId(memberId, request.getFriendMemberId()));

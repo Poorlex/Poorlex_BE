@@ -106,6 +106,7 @@ class ExpenditureServiceTest extends IntegrationTest implements ReplaceUnderScor
     }
 
     @Test
+    @Transactional
     void 멤버의_기간중의_지출의_총합을_구한다_지출이_있을_때() {
         //given
         final Member member = createMember("oauthId");
@@ -151,6 +152,7 @@ class ExpenditureServiceTest extends IntegrationTest implements ReplaceUnderScor
     }
 
     @Test
+    @Transactional
     void 해당_ID를_가진_지출을_조회한다() {
         //given
         final Member member = createMember("oauthId");
@@ -177,6 +179,7 @@ class ExpenditureServiceTest extends IntegrationTest implements ReplaceUnderScor
     }
 
     @Test
+    @Transactional
     void 멤버의_지출목록을_조회한다() {
         //given
         final Member member = createMember("oauthId");
@@ -206,6 +209,7 @@ class ExpenditureServiceTest extends IntegrationTest implements ReplaceUnderScor
     }
 
     @Test
+    @Transactional
     void 멤버의_배틀_지출목록을_조회한다() {
         //given
         final Battle battle = createBattle();
@@ -237,6 +241,7 @@ class ExpenditureServiceTest extends IntegrationTest implements ReplaceUnderScor
     }
 
     @Test
+    @Transactional
     void 멤버가_포함된_배틀의_요일별_지출목록을_조회한다_지출이_있을_때() {
         //given
         final Battle battle = createBattle();
