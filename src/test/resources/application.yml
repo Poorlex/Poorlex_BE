@@ -45,3 +45,10 @@ schedules:
     cron: "* * */5 * * *"
   battle-end:
     cron: "* * */5 * * *"
+
+aws:
+  s3:
+    accesskey: accesskey
+    secretKey: secretKey
+    bucket: bucket
+    expenditure-directory: directory
