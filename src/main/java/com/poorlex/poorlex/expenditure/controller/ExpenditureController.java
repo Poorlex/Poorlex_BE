@@ -4,7 +4,6 @@ import com.poorlex.poorlex.config.auth.argumentresolver.MemberInfo;
 import com.poorlex.poorlex.config.auth.argumentresolver.MemberOnly;
 import com.poorlex.poorlex.expenditure.service.ExpenditureService;
 import com.poorlex.poorlex.expenditure.service.dto.request.ExpenditureCreateRequest;
-import com.poorlex.poorlex.expenditure.service.dto.request.ExpenditureUpdateRequest;
 import com.poorlex.poorlex.expenditure.service.dto.request.MemberWeeklyTotalExpenditureRequest;
 import com.poorlex.poorlex.expenditure.service.dto.response.BattleExpenditureResponse;
 import com.poorlex.poorlex.expenditure.service.dto.response.ExpenditureResponse;
@@ -14,7 +13,6 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -93,12 +91,12 @@ public class ExpenditureController {
         return ResponseEntity.ok(response);
     }
 
-    @PatchMapping("/expenditures/{expenditureId}")
-    public ResponseEntity<ExpenditureResponse> updateExpenditure(@MemberOnly final MemberInfo memberInfo,
-                                                                 @PathVariable(name = "expenditureId") final Long expenditureId,
-                                                                 @RequestBody final ExpenditureUpdateRequest request) {
-        expenditureService.updateExpenditure(memberInfo.getMemberId(), expenditureId, request);
-
-        return ResponseEntity.ok().build();
-    }
+//    @PatchMapping("/expenditures/{expenditureId}")
+//    public ResponseEntity<ExpenditureResponse> updateExpenditure(@MemberOnly final MemberInfo memberInfo,
+//                                                                 @RequestPart(name = "file") final List<MultipartFile> images,
+//                                                                 @RequestPart(value = "expenditureCreateRequest") final ExpenditureUpdateRequest request) {
+//        expenditureService.updateExpenditure(memberInfo.getMemberId(), expenditureId, request);
+//
+//        return ResponseEntity.ok().build();
+//    }
 }

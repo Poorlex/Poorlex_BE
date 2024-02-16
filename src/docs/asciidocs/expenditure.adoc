@@ -2,15 +2,15 @@
 
 === 지출 등록
 
-operation::expenditure-create[snippets='http-request']
-operation::expenditure-create[snippets='request-fields']
+operation::expenditure-create[snippets='curl-request']
+operation::expenditure-create[snippets='request-parts']
 operation::expenditure-create[snippets='http-response']
 
-=== 지출 수정
-
-operation::expenditure-update[snippets='http-request']
-operation::expenditure-update[snippets='request-fields']
-operation::expenditure-update[snippets='http-response']
+// === 지출 수정
+//
+// operation::expenditure-update[snippets='http-request']
+// operation::expenditure-update[snippets='request-fields']
+// operation::expenditure-update[snippets='http-response']
 
 === 지출 상세 조회
 
