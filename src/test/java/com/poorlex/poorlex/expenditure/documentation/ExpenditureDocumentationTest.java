@@ -56,12 +56,11 @@ class ExpenditureDocumentationTest extends MockMvcTest {
         //given
         mockingTokenInterceptor();
         mockingMemberArgumentResolver();
-        given(expenditureService.createExpenditure(any(), any())).willReturn(1L);
+        given(expenditureService.createExpenditure(any(), any(), any())).willReturn(1L);
 
         final ExpenditureCreateRequest request = new ExpenditureCreateRequest(
             1000,
             "지출 설명",
-            List.of("지출 이미지 링크"),
             LocalDateTime.now().truncatedTo(ChronoUnit.MICROS)
         );
 
@@ -97,10 +96,6 @@ class ExpenditureDocumentationTest extends MockMvcTest {
                     requestParts(
                         partWithName("file").description("지출 이미지 파일 리스트"),
                         partWithName("expenditureCreateRequest").description("지출 이미지 생성 요청 값 목록")
-//                        fieldWithPath("amount").type(JsonFieldType.NUMBER).description("지출 금액"),
-//                        fieldWithPath("description").type(JsonFieldType.STRING).description("지출 설명"),
-//                        fieldWithPath("imageUrls").type(JsonFieldType.ARRAY).description("지출 이미지 목록 (최대 2개)"),
-//                        fieldWithPath("dateTime").type(JsonFieldType.STRING).description("지출 시간 ")
                     )
                 ));
     }

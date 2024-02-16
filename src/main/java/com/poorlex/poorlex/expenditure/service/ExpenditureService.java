@@ -51,15 +51,6 @@ public class ExpenditureService {
     }
 
     @Transactional
-    public Long createExpenditure(final Long memberId, final ExpenditureCreateRequest request) {
-        final Expenditure expenditure = expenditureRepository.save(
-            ExpenditureMapper.createRequestToExpenditure(memberId, request)
-        );
-        raiseEvent(expenditure.getAmount(), memberId);
-        return expenditure.getId();
-    }
-
-    @Transactional
     public Long createExpenditure(final Long memberId,
                                   final List<MultipartFile> images,
                                   final ExpenditureCreateRequest request) {
