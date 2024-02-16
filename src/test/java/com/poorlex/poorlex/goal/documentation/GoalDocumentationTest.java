@@ -24,7 +24,7 @@ import com.poorlex.poorlex.goal.service.dto.request.MemberGoalRequest;
 import com.poorlex.poorlex.goal.service.dto.response.GoalIdResponse;
 import com.poorlex.poorlex.goal.service.dto.response.GoalResponse;
 import com.poorlex.poorlex.goal.service.dto.response.GoalTypeResponse;
-import com.poorlex.poorlex.support.RestDocsDocumentationTest;
+import com.poorlex.poorlex.support.MockMvcTest;
 import com.poorlex.poorlex.util.ApiDocumentUtils;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
@@ -41,7 +41,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 @WebMvcTest(GoalController.class)
-class GoalDocumentationTest extends RestDocsDocumentationTest {
+class GoalDocumentationTest extends MockMvcTest {
 
     @Autowired
     private MockMvc mockMvc;

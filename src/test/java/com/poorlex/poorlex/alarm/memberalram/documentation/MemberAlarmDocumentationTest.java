@@ -15,7 +15,7 @@ import com.poorlex.poorlex.alarm.memberalram.controller.MemberAlarmController;
 import com.poorlex.poorlex.alarm.memberalram.service.MemberAlarmService;
 import com.poorlex.poorlex.alarm.memberalram.service.dto.request.MemberAlarmRequest;
 import com.poorlex.poorlex.alarm.memberalram.service.dto.response.MemberAlarmResponse;
-import com.poorlex.poorlex.support.RestDocsDocumentationTest;
+import com.poorlex.poorlex.support.MockMvcTest;
 import com.poorlex.poorlex.util.ApiDocumentUtils;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -30,7 +30,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 @WebMvcTest(MemberAlarmController.class)
-class MemberAlarmDocumentationTest extends RestDocsDocumentationTest {
+class MemberAlarmDocumentationTest extends MockMvcTest {
 
     @Autowired
     private MockMvc mockMvc;

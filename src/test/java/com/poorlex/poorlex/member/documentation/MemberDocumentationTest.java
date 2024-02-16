@@ -10,7 +10,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import com.poorlex.poorlex.member.controller.MemberController;
 import com.poorlex.poorlex.member.service.MemberService;
 import com.poorlex.poorlex.member.service.dto.request.MemberProfileUpdateRequest;
-import com.poorlex.poorlex.support.RestDocsDocumentationTest;
+import com.poorlex.poorlex.support.MockMvcTest;
 import com.poorlex.poorlex.util.ApiDocumentUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +23,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 @WebMvcTest(MemberController.class)
-class MemberDocumentationTest extends RestDocsDocumentationTest {
+class MemberDocumentationTest extends MockMvcTest {
 
     @Autowired
     private MockMvc mockMvc;

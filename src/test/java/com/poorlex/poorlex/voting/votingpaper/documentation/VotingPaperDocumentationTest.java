@@ -9,8 +9,8 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.poorlex.poorlex.support.MockMvcTest;
 import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
-import com.poorlex.poorlex.support.RestDocsDocumentationTest;
 import com.poorlex.poorlex.util.ApiDocumentUtils;
 import com.poorlex.poorlex.voting.votingpaper.controller.VotingPaperController;
 import com.poorlex.poorlex.voting.votingpaper.service.VotingPaperService;
@@ -26,7 +26,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 @WebMvcTest(VotingPaperController.class)
-class VotingPaperDocumentationTest extends RestDocsDocumentationTest implements ReplaceUnderScoreTest {
+class VotingPaperDocumentationTest extends MockMvcTest implements ReplaceUnderScoreTest {
 
     @Autowired
     private MockMvc mockMvc;

@@ -13,7 +13,7 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
-import com.poorlex.poorlex.support.RestDocsDocumentationTest;
+import com.poorlex.poorlex.support.MockMvcTest;
 import com.poorlex.poorlex.util.ApiDocumentUtils;
 import com.poorlex.poorlex.weeklybudget.controller.WeeklyBudgetController;
 import com.poorlex.poorlex.weeklybudget.service.WeeklyBudgetService;
@@ -36,7 +36,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 @WebMvcTest(WeeklyBudgetController.class)
-class WeeklyBudgetDocumentationTest extends RestDocsDocumentationTest {
+class WeeklyBudgetDocumentationTest extends MockMvcTest {
 
     @Autowired
     private MockMvc mockMvc;

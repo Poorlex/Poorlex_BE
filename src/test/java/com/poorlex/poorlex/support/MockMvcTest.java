@@ -23,7 +23,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
     @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = SecurityConfig.class)
 })
 @AutoConfigureRestDocs
-public abstract class RestDocsDocumentationTest implements MockUserSecurityTest {
+public abstract class MockMvcTest implements MockUserSecurityTest {
 
     @Autowired
     protected ObjectMapper objectMapper;

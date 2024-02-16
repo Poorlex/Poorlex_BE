@@ -20,7 +20,7 @@ import com.poorlex.poorlex.point.service.MemberPointService;
 import com.poorlex.poorlex.point.service.dto.request.PointCreateRequest;
 import com.poorlex.poorlex.point.service.dto.response.MemberLevelBarResponse;
 import com.poorlex.poorlex.point.service.dto.response.MemberPointResponse;
-import com.poorlex.poorlex.support.RestDocsDocumentationTest;
+import com.poorlex.poorlex.support.MockMvcTest;
 import com.poorlex.poorlex.util.ApiDocumentUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +33,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 @WebMvcTest(MemberPointController.class)
-class MemberPointDocumentationTest extends RestDocsDocumentationTest {
+class MemberPointDocumentationTest extends MockMvcTest {
 
     @Autowired
     private MockMvc mockMvc;

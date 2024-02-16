@@ -18,8 +18,8 @@ import com.poorlex.poorlex.friend.service.dto.request.FriendCreateRequest;
 import com.poorlex.poorlex.friend.service.dto.request.FriendDenyRequest;
 import com.poorlex.poorlex.friend.service.dto.request.FriendInviteRequest;
 import com.poorlex.poorlex.friend.service.dto.response.FriendResponse;
+import com.poorlex.poorlex.support.MockMvcTest;
 import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
-import com.poorlex.poorlex.support.RestDocsDocumentationTest;
 import com.poorlex.poorlex.util.ApiDocumentUtils;
 import java.util.List;
 import org.junit.jupiter.api.Test;
@@ -33,7 +33,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 @WebMvcTest(FriendController.class)
-class FriendDocumentationTest extends RestDocsDocumentationTest implements ReplaceUnderScoreTest {
+class FriendDocumentationTest extends MockMvcTest implements ReplaceUnderScoreTest {
 
     @Autowired
     private MockMvc mockMvc;

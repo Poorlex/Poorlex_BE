@@ -15,7 +15,7 @@ import com.poorlex.poorlex.alarm.battlealarm.service.dto.request.BattleAlarmRequ
 import com.poorlex.poorlex.alarm.battlealarm.service.dto.response.BattleAlarmResponse;
 import com.poorlex.poorlex.alarm.battlealarm.service.dto.response.UncheckedBattleAlarmCountResponse;
 import com.poorlex.poorlex.battlealarmreaction.service.dto.response.AlarmReactionResponse;
-import com.poorlex.poorlex.support.RestDocsDocumentationTest;
+import com.poorlex.poorlex.support.MockMvcTest;
 import com.poorlex.poorlex.util.ApiDocumentUtils;
 import com.poorlex.poorlex.voting.vote.service.dto.response.VoteResponse;
 import com.poorlex.poorlex.voting.votingpaper.service.dto.response.VotingPaperResponse;
@@ -33,7 +33,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 @WebMvcTest(BattleAlarmController.class)
-class BattleAlarmDocumentationTest extends RestDocsDocumentationTest {
+class BattleAlarmDocumentationTest extends MockMvcTest {
 
     @Autowired
     private MockMvc mockMvc;
