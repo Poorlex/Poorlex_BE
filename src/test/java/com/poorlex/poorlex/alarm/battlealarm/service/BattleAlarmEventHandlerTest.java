@@ -1,6 +1,8 @@
 package com.poorlex.poorlex.alarm.battlealarm.service;
 
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
 
 import com.poorlex.poorlex.alarm.battlealarm.domain.BattleAlarm;
 import com.poorlex.poorlex.alarm.battlealarm.domain.BattleAlarmRepository;
@@ -16,6 +18,7 @@ import com.poorlex.poorlex.battlenotification.service.BattleNotificationService;
 import com.poorlex.poorlex.battlenotification.service.dto.request.BattleNotificationCreateRequest;
 import com.poorlex.poorlex.battlenotification.service.dto.request.BattleNotificationUpdateRequest;
 import com.poorlex.poorlex.battlenotification.service.event.BattleNotificationChangedEvent;
+import com.poorlex.poorlex.config.aws.AWSS3Service;
 import com.poorlex.poorlex.expenditure.service.ExpenditureService;
 import com.poorlex.poorlex.expenditure.service.dto.request.ExpenditureCreateRequest;
 import com.poorlex.poorlex.expenditure.service.event.ExpenditureCreatedEvent;
@@ -41,11 +44,16 @@ import com.poorlex.poorlex.voting.vote.service.event.VoteCreatedEvent;
 import com.poorlex.poorlex.voting.votingpaper.service.VotingPaperService;
 import com.poorlex.poorlex.voting.votingpaper.service.dto.request.VotingPaperCreateRequest;
 import com.poorlex.poorlex.voting.votingpaper.service.event.VotingPaperCreatedEvent;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 
 class BattleAlarmEventHandlerTest extends SpringEventTest implements ReplaceUnderScoreTest {
 
@@ -81,6 +89,9 @@ class BattleAlarmEventHandlerTest extends SpringEventTest implements ReplaceUnde
 
     @Autowired
     private VotingPaperService votingPaperService;
+
+    @MockBean
+    private AWSS3Service awss3Service;
 
     @Test
     void 공지가_생성되면_공지_변경_이벤트를_처리한다() {
@@ -176,8 +187,9 @@ class BattleAlarmEventHandlerTest extends SpringEventTest implements ReplaceUnde
     }
 
     @Test
-    void 지출이_등록되면_지출_생성_이벤트를_처리한다() {
+    void 지출이_등록되면_지출_생성_이벤트를_처리한다() throws IOException {
         //given
+        given(awss3Service.uploadMultipartFile(any(), any())).willReturn("imageUrl");
         final Member member = createMember("oauthId");
         final Battle battle = createBattle(BattleStatus.PROGRESS);
         joinAsManager(battle, member);
@@ -185,12 +197,19 @@ class BattleAlarmEventHandlerTest extends SpringEventTest implements ReplaceUnde
         final ExpenditureCreateRequest request = new ExpenditureCreateRequest(
             1000,
             "description",
-            List.of("imageUrl"),
             battle.getDuration().getStart()
         );
 
+        final MockMultipartFile file = new MockMultipartFile(
+            "file",
+            "cat-8415620_640",
+            MediaType.MULTIPART_FORM_DATA_VALUE,
+            new FileInputStream(
+                "src/test/resources/testImage/cat-8415620_640.jpg")
+        );
+
         //when
-        expenditureService.createExpenditure(member.getId(), request);
+        expenditureService.createExpenditure(member.getId(), List.of(file), request);
 
         //then
         final List<BattleAlarm> expenditureCreatedBattleAlarms = battleAlarmRepository.findByType(
@@ -215,8 +234,9 @@ class BattleAlarmEventHandlerTest extends SpringEventTest implements ReplaceUnde
     }
 
     @Test
-    void 금액이_0인_지출이_등록되면_무지출_이벤트를_처리한다() {
+    void 금액이_0인_지출이_등록되면_무지출_이벤트를_처리한다() throws IOException {
         //given
+        given(awss3Service.uploadMultipartFile(any(), any())).willReturn("imageUrl");
         final Member member = createMember("oauthId");
         final Battle battle = createBattle(BattleStatus.PROGRESS);
         joinAsManager(battle, member);
@@ -224,12 +244,20 @@ class BattleAlarmEventHandlerTest extends SpringEventTest implements ReplaceUnde
         final ExpenditureCreateRequest request = new ExpenditureCreateRequest(
             0,
             "description",
-            List.of("imageUrl"),
             battle.getDuration().getStart()
         );
 
         //when
-        expenditureService.createExpenditure(member.getId(), request);
+        final MockMultipartFile file = new MockMultipartFile(
+            "file",
+            "cat-8415620_640",
+            MediaType.MULTIPART_FORM_DATA_VALUE,
+            new FileInputStream(
+                "src/test/resources/testImage/cat-8415620_640.jpg")
+        );
+
+        //when
+        expenditureService.createExpenditure(member.getId(), List.of(file), request);
 
         //then
         final List<BattleAlarm> zeroExpenditureAlarms =
@@ -252,8 +280,9 @@ class BattleAlarmEventHandlerTest extends SpringEventTest implements ReplaceUnde
     }
 
     @Test
-    void 지출_생성_이벤트를_처리할_때_배틀의_예산보다_주간_지출이_클_경우_지출_초과_알림을_생성한다() {
+    void 지출_생성_이벤트를_처리할_때_배틀의_예산보다_주간_지출이_클_경우_지출_초과_알림을_생성한다() throws IOException {
         //given
+        given(awss3Service.uploadMultipartFile(any(), any())).willReturn("imageUrl");
         final Member member = createMember("oauthId");
         final Battle battle = createBattle(BattleStatus.PROGRESS);
         joinAsManager(battle, member);
@@ -261,12 +290,19 @@ class BattleAlarmEventHandlerTest extends SpringEventTest implements ReplaceUnde
         final ExpenditureCreateRequest request = new ExpenditureCreateRequest(
             11000,
             "description",
-            List.of("imageUrl"),
             battle.getDuration().getStart()
         );
 
+        final MockMultipartFile file = new MockMultipartFile(
+            "file",
+            "cat-8415620_640",
+            MediaType.MULTIPART_FORM_DATA_VALUE,
+            new FileInputStream(
+                "src/test/resources/testImage/cat-8415620_640.jpg")
+        );
+
         //when
-        expenditureService.createExpenditure(member.getId(), request);
+        expenditureService.createExpenditure(member.getId(), List.of(file), request);
 
         //then
         final List<BattleAlarm> expenditureCreatedBattleAlarms = battleAlarmRepository.findByType(

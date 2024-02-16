@@ -18,7 +18,7 @@ import com.poorlex.poorlex.battle.service.dto.response.FindingBattleResponse;
 import com.poorlex.poorlex.battle.service.dto.response.MemberCompleteBattleResponse;
 import com.poorlex.poorlex.battle.service.dto.response.MemberProgressBattleResponse;
 import com.poorlex.poorlex.battle.service.dto.response.ParticipantRankingResponse;
-import com.poorlex.poorlex.support.RestDocsDocumentationTest;
+import com.poorlex.poorlex.support.MockMvcTest;
 import com.poorlex.poorlex.util.ApiDocumentUtils;
 import java.time.LocalDate;
 import java.util.List;
@@ -35,7 +35,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 @WebMvcTest(BattleController.class)
-class BattleDocumentationTest extends RestDocsDocumentationTest {
+class BattleDocumentationTest extends MockMvcTest {
 
     @Autowired
     protected MockMvc mockMvc;

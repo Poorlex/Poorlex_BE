@@ -19,7 +19,7 @@ import com.poorlex.poorlex.battlenotification.service.BattleNotificationService;
 import com.poorlex.poorlex.battlenotification.service.dto.request.BattleNotificationCreateRequest;
 import com.poorlex.poorlex.battlenotification.service.dto.request.BattleNotificationUpdateRequest;
 import com.poorlex.poorlex.battlenotification.service.dto.response.BattleNotificationResponse;
-import com.poorlex.poorlex.support.RestDocsDocumentationTest;
+import com.poorlex.poorlex.support.MockMvcTest;
 import com.poorlex.poorlex.util.ApiDocumentUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +32,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 @WebMvcTest(BattleNotificationController.class)
-class BattleNotificationDocumentationTest extends RestDocsDocumentationTest {
+class BattleNotificationDocumentationTest extends MockMvcTest {
 
     @Autowired
     private MockMvc mockMvc;

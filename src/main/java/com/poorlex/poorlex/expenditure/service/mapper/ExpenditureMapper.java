@@ -8,6 +8,7 @@ import com.poorlex.poorlex.expenditure.domain.ExpenditureDescription;
 import com.poorlex.poorlex.expenditure.service.dto.request.ExpenditureCreateRequest;
 import com.poorlex.poorlex.expenditure.service.dto.request.ExpenditureUpdateRequest;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ExpenditureMapper {
@@ -19,19 +20,10 @@ public class ExpenditureMapper {
     public static Expenditure createRequestToExpenditure(final Long memberId, final ExpenditureCreateRequest request) {
         final ExpenditureAmount amount = new ExpenditureAmount(request.getAmount());
         final ExpenditureDescription description = new ExpenditureDescription(request.getDescription());
-        final ExpenditureCertificationImageUrls imageUrls = createImageUrls(request);
         final LocalDateTime dateTime = request.getDateTime();
-
+        final ExpenditureCertificationImageUrls imageUrls = new ExpenditureCertificationImageUrls(
+            new ArrayList<>());
         return Expenditure.withoutId(amount, memberId, dateTime, description, imageUrls);
-    }
-
-    private static ExpenditureCertificationImageUrls createImageUrls(final ExpenditureCreateRequest request) {
-        final List<ExpenditureCertificationImageUrl> imageUrlList = request.getImageUrls()
-            .stream()
-            .map(ExpenditureCertificationImageUrl::withoutIdAndExpenditure)
-            .toList();
-
-        return new ExpenditureCertificationImageUrls(imageUrlList);
     }
 
     public static Expenditure createRequestToExpenditure(final Long memberId, final ExpenditureUpdateRequest request) {

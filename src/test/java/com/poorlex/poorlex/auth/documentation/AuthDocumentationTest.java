@@ -12,7 +12,7 @@ import com.poorlex.poorlex.auth.controller.AuthController;
 import com.poorlex.poorlex.auth.service.AuthService;
 import com.poorlex.poorlex.auth.service.dto.request.LoginRequest;
 import com.poorlex.poorlex.auth.service.dto.response.LoginTokenResponse;
-import com.poorlex.poorlex.support.RestDocsDocumentationTest;
+import com.poorlex.poorlex.support.MockMvcTest;
 import com.poorlex.poorlex.support.security.DocumentTestMockMvcConfigure;
 import com.poorlex.poorlex.util.ApiDocumentUtils;
 import org.junit.jupiter.api.Test;
@@ -27,7 +27,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 @DocumentTestMockMvcConfigure
 @WebMvcTest(AuthController.class)
-class AuthDocumentationTest extends RestDocsDocumentationTest {
+class AuthDocumentationTest extends MockMvcTest {
 
     @Autowired
     private MockMvc mockMvc;

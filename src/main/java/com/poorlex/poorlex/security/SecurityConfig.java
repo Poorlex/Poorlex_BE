@@ -14,7 +14,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -43,15 +42,26 @@ public class SecurityConfig {
 
     private void configureBaseAuthorization(final HttpSecurity http) throws Exception {
         http
-            .csrf(AbstractHttpConfigurer::disable)
+            .csrf(csrf -> {
+                    try {
+                        csrf.disable()
+                            .headers(headers -> headers
+                                .frameOptions(frameOptions -> frameOptions.disable()));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        throw new RuntimeException(e);
+                    }
+                }
+            )
             .httpBasic(AbstractHttpConfigurer::disable)
             .formLogin(AbstractHttpConfigurer::disable)
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+            .sessionManagement(AbstractHttpConfigurer::disable);
     }
 
     private void configureAuthorizeRequests(final HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(oauth2 -> oauth2
             .requestMatchers("/oauth2/login/**").permitAll()
+            .requestMatchers("/h2-console/**").permitAll()
             .requestMatchers("/battles").permitAll()
             .requestMatchers(new RegexRequestMatcher("/battles/\\d+", HttpMethod.GET.name())).permitAll()
             .requestMatchers("/login/success").permitAll()

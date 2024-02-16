@@ -13,7 +13,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.poorlex.poorlex.battlealarmreaction.controller.AlarmReactionController;
 import com.poorlex.poorlex.battlealarmreaction.service.AlarmReactionService;
 import com.poorlex.poorlex.battlealarmreaction.service.dto.request.AlarmReactionCreateRequest;
-import com.poorlex.poorlex.support.RestDocsDocumentationTest;
+import com.poorlex.poorlex.support.MockMvcTest;
 import com.poorlex.poorlex.util.ApiDocumentUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +26,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 @WebMvcTest(AlarmReactionController.class)
-class BattleAlarmReactionDocumentationTest extends RestDocsDocumentationTest {
+class BattleAlarmReactionDocumentationTest extends MockMvcTest {
 
     @Autowired
     private MockMvc mockMvc;

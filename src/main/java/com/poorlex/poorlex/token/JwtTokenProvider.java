@@ -43,7 +43,7 @@ public class JwtTokenProvider {
                 .parseClaimsJws(token)
                 .getBody();
         } catch (JwtException e) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException(e);
         }
     }
 

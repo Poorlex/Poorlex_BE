@@ -106,7 +106,7 @@ class BattleServiceTest extends UsingDataJpaTest implements ReplaceUnderScoreTes
                 battleAlarmViewHistoryRepository
             ),
             new MemberPointService(memberPointRepository, memberRepository),
-            new ExpenditureService(battleRepository, expenditureRepository),
+            new ExpenditureService("directory", battleRepository, expenditureRepository, null),
             new MemberService(memberRepository)
         );
     }

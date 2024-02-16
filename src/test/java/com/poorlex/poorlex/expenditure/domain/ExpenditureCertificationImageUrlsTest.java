@@ -17,7 +17,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 class ExpenditureCertificationImageUrlsTest implements ReplaceUnderScoreTest {
 
     @ParameterizedTest(name = "지출 이미지URL가 {0}개 인 경우")
-    @ValueSource(ints = {0, 3})
+    @ValueSource(ints = {3})
     void 지출_이미지URL의_갯수가_1개이상_2개이하가_아닐경우_예외를_던진다(final int size) {
         //given
         final List<ExpenditureCertificationImageUrl> imageUrlList = IntStream.range(0, size)
