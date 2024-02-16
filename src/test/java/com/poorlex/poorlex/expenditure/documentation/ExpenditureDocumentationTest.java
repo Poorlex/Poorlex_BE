@@ -7,10 +7,12 @@ import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.docu
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.restdocs.request.RequestDocumentation.partWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.requestParts;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.poorlex.poorlex.expenditure.controller.ExpenditureController;
@@ -21,8 +23,9 @@ import com.poorlex.poorlex.expenditure.service.dto.request.MemberWeeklyTotalExpe
 import com.poorlex.poorlex.expenditure.service.dto.response.BattleExpenditureResponse;
 import com.poorlex.poorlex.expenditure.service.dto.response.ExpenditureResponse;
 import com.poorlex.poorlex.expenditure.service.dto.response.MemberWeeklyTotalExpenditureResponse;
-import com.poorlex.poorlex.support.RestDocsDocumentationTest;
+import com.poorlex.poorlex.support.MockMvcTest;
 import com.poorlex.poorlex.util.ApiDocumentUtils;
+import java.io.FileInputStream;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -32,13 +35,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 @WebMvcTest(ExpenditureController.class)
-class ExpenditureDocumentationTest extends RestDocsDocumentationTest {
+class ExpenditureDocumentationTest extends MockMvcTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -49,6 +54,10 @@ class ExpenditureDocumentationTest extends RestDocsDocumentationTest {
     @Test
     void create() throws Exception {
         //given
+        mockingTokenInterceptor();
+        mockingMemberArgumentResolver();
+        given(expenditureService.createExpenditure(any(), any())).willReturn(1L);
+
         final ExpenditureCreateRequest request = new ExpenditureCreateRequest(
             1000,
             "지출 설명",
@@ -56,16 +65,26 @@ class ExpenditureDocumentationTest extends RestDocsDocumentationTest {
             LocalDateTime.now().truncatedTo(ChronoUnit.MICROS)
         );
 
-        mockingTokenInterceptor();
-        mockingMemberArgumentResolver();
-        given(expenditureService.createExpenditure(any(), any())).willReturn(1L);
+        final MockMultipartFile image = new MockMultipartFile(
+            "file",
+            "cat-8415620_640",
+            MediaType.MULTIPART_FORM_DATA_VALUE,
+            new FileInputStream(
+                "src/test/resources/testImage/cat-8415620_640.jpg")
+        );
+        final MockMultipartFile formRequest = new MockMultipartFile(
+            "expenditureCreateRequest",
+            "",
+            MediaType.APPLICATION_JSON_VALUE,
+            objectMapper.writeValueAsString(request).getBytes()
+        );
 
         //when
         final ResultActions result = mockMvc.perform(
-            post("/expenditures")
+            multipart(HttpMethod.POST, "/expenditures")
+                .file(image)
+                .file(formRequest)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer {accessToken}")
-                .content(objectMapper.writeValueAsString(request))
-                .contentType(MediaType.APPLICATION_JSON)
                 .with(csrf())
         );
 
@@ -75,11 +94,13 @@ class ExpenditureDocumentationTest extends RestDocsDocumentationTest {
                 document("expenditure-create",
                     ApiDocumentUtils.getDocumentRequest(),
                     ApiDocumentUtils.getDocumentResponse(),
-                    requestFields(
-                        fieldWithPath("amount").type(JsonFieldType.NUMBER).description("지출 금액"),
-                        fieldWithPath("description").type(JsonFieldType.STRING).description("지출 설명"),
-                        fieldWithPath("imageUrls").type(JsonFieldType.ARRAY).description("지출 이미지 목록 (최대 2개)"),
-                        fieldWithPath("dateTime").type(JsonFieldType.STRING).description("지출 시간 ")
+                    requestParts(
+                        partWithName("file").description("지출 이미지 파일 리스트"),
+                        partWithName("expenditureCreateRequest").description("지출 이미지 생성 요청 값 목록")
+//                        fieldWithPath("amount").type(JsonFieldType.NUMBER).description("지출 금액"),
+//                        fieldWithPath("description").type(JsonFieldType.STRING).description("지출 설명"),
+//                        fieldWithPath("imageUrls").type(JsonFieldType.ARRAY).description("지출 이미지 목록 (최대 2개)"),
+//                        fieldWithPath("dateTime").type(JsonFieldType.STRING).description("지출 시간 ")
                     )
                 ));
     }
