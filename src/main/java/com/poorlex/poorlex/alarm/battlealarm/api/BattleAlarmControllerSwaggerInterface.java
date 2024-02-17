@@ -1,6 +1,7 @@
 package com.poorlex.poorlex.alarm.battlealarm.api;
 
 import com.poorlex.poorlex.alarm.battlealarm.service.dto.request.BattleAlarmRequest;
+import com.poorlex.poorlex.alarm.battlealarm.service.dto.response.AbstractBattleAlarmResponse;
 import com.poorlex.poorlex.alarm.battlealarm.service.dto.response.BattleAlarmResponse;
 import com.poorlex.poorlex.alarm.battlealarm.service.dto.response.UncheckedBattleAlarmCountResponse;
 import com.poorlex.poorlex.config.auth.argumentresolver.MemberInfo;
@@ -25,9 +26,10 @@ public interface BattleAlarmControllerSwaggerInterface {
     @ApiResponse(responseCode = "배틀 알림", content = @Content(schema = @Schema(implementation = BattleAlarmResponse.class)))
     @ApiResponse(responseCode = "투표 알림", content = @Content(schema = @Schema(implementation = VoteResponse.class)))
     @ApiResponse(responseCode = "투표 표 알림", content = @Content(schema = @Schema(implementation = VotingPaperResponse.class)))
-    ResponseEntity<List<Object>> findBattleAlarms(@Parameter(hidden = true) final MemberInfo memberInfo,
-                                                  @Parameter(description = "배틀 Id") final Long battleId,
-                                                  @Parameter(description = "배틀 알림 조회 시간") final BattleAlarmRequest request);
+    ResponseEntity<List<AbstractBattleAlarmResponse>> findBattleAlarms(
+        @Parameter(hidden = true) final MemberInfo memberInfo,
+        @Parameter(description = "배틀 Id") final Long battleId,
+        @Parameter(description = "배틀 알림 조회 시간") final BattleAlarmRequest request);
 
     @Operation(summary = "미확인 배틀 알림 수 조회", description = "액세스 토큰 필요")
     @GetMapping("/battles/{battleId}/alarms/unchecked")

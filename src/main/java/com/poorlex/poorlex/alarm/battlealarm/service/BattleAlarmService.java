@@ -32,15 +32,15 @@ public class BattleAlarmService {
     private final AlarmReactionService alarmReactionService;
     private final BattleAlarmViewHistoryRepository battleAlarmViewHistoryRepository;
 
-    public List<Object> findBattleAlarms(final Long battleId,
-                                         final Long memberId,
-                                         final BattleAlarmRequest request) {
-        final List<Object> responses = new ArrayList<>();
+    public List<AbstractBattleAlarmResponse> findBattleAlarms(final Long battleId,
+                                                              final Long memberId,
+                                                              final BattleAlarmRequest request) {
+        final List<AbstractBattleAlarmResponse> responses = new ArrayList<>();
         responses.addAll(BattleAlarmResponse.mapToList(battleAlarmRepository.findAllByBattleId(battleId)));
         responses.addAll(voteService.findBattleVotes(battleId));
         responses.addAll(votingPaperService.findBattleVotingPapers(battleId));
         responses.addAll(alarmReactionService.findBattleAlarmReactions(battleId));
-        responses.sort(Comparator.comparing(o -> ((AbstractBattleAlarmResponse) o).getCreatedAt()));
+        responses.sort(Comparator.comparing(AbstractBattleAlarmResponse::getCreatedAt));
         Events.raise(new BattleAlarmViewedEvent(battleId, memberId, request.getDateTime()));
         return responses;
     }

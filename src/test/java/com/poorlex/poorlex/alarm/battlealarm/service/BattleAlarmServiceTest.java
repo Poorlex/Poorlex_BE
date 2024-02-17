@@ -94,7 +94,8 @@ class BattleAlarmServiceTest extends UsingDataJpaTest implements ReplaceUnderSco
         final BattleAlarmRequest request = new BattleAlarmRequest(LocalDateTime.now().truncatedTo(ChronoUnit.MICROS));
 
         //when
-        final List<Object> battleAlarms = battleAlarmService.findBattleAlarms(battleId, memberId, request);
+        final List<AbstractBattleAlarmResponse> battleAlarms = battleAlarmService.findBattleAlarms(battleId, memberId,
+            request);
 
         //then
         assertThat(battleAlarms).isEmpty();
@@ -114,10 +115,11 @@ class BattleAlarmServiceTest extends UsingDataJpaTest implements ReplaceUnderSco
         final Vote vote2 = createVote(battleId, member.getId());
 
         //when
-        final List<Object> battleAlarms = battleAlarmService.findBattleAlarms(battleId, member.getId(), request);
+        final List<AbstractBattleAlarmResponse> battleAlarms = battleAlarmService.findBattleAlarms(battleId,
+            member.getId(), request);
 
         //then
-        final List<Object> expectedResponse = new ArrayList<>(List.of(
+        final List<AbstractBattleAlarmResponse> expectedResponse = new ArrayList<>(List.of(
             BattleAlarmResponse.from(battleAlarm1),
             BattleAlarmResponse.from(battleAlarm2),
             BattleAlarmResponse.from(battleAlarm3),
@@ -133,7 +135,7 @@ class BattleAlarmServiceTest extends UsingDataJpaTest implements ReplaceUnderSco
                 vote2.getName(), vote2.getStatus().name(), vote2.getAmount(), 0, 0, vote2.getStart()
             )
         ));
-        expectedResponse.sort(Comparator.comparing(o1 -> ((AbstractBattleAlarmResponse) o1).getCreatedAt()));
+        expectedResponse.sort(Comparator.comparing(AbstractBattleAlarmResponse::getCreatedAt));
 
         assertThat(battleAlarms).usingRecursiveComparison().isEqualTo(expectedResponse);
     }
