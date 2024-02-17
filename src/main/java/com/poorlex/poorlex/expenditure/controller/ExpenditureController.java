@@ -2,6 +2,7 @@ package com.poorlex.poorlex.expenditure.controller;
 
 import com.poorlex.poorlex.config.auth.argumentresolver.MemberInfo;
 import com.poorlex.poorlex.config.auth.argumentresolver.MemberOnly;
+import com.poorlex.poorlex.expenditure.api.ExpenditureControllerSwaggerInterface;
 import com.poorlex.poorlex.expenditure.service.ExpenditureService;
 import com.poorlex.poorlex.expenditure.service.dto.request.ExpenditureCreateRequest;
 import com.poorlex.poorlex.expenditure.service.dto.request.MemberWeeklyTotalExpenditureRequest;
@@ -11,6 +12,7 @@ import com.poorlex.poorlex.expenditure.service.dto.response.MemberWeeklyTotalExp
 import java.net.URI;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,14 +25,14 @@ import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
-public class ExpenditureController {
+public class ExpenditureController implements ExpenditureControllerSwaggerInterface {
 
     private static final String CONTROLLER_MAPPED_URL = "/expenditures";
     private final ExpenditureService expenditureService;
 
-    @PostMapping("/expenditures")
+    @PostMapping(path = "/expenditures", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Void> createExpenditure(@MemberOnly final MemberInfo memberInfo,
-                                                  @RequestPart(name = "file") final List<MultipartFile> images,
+                                                  @RequestPart(name = "images") final List<MultipartFile> images,
                                                   @RequestPart(value = "expenditureCreateRequest") final ExpenditureCreateRequest request) {
         final Long expenditureID = expenditureService.createExpenditure(memberInfo.getMemberId(), images, request);
         final String locationHeader = CONTROLLER_MAPPED_URL + "/" + expenditureID;

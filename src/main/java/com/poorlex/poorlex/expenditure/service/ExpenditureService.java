@@ -141,7 +141,7 @@ public class ExpenditureService {
     public List<BattleExpenditureResponse> findBattleExpendituresInDayOfWeek(final Long battleId,
                                                                              final Long memberId,
                                                                              final String dayOfWeek) {
-        final DayOfWeek targetDayOfWeek = DayOfWeek.valueOf(dayOfWeek);
+        final DayOfWeek targetDayOfWeek = DayOfWeek.valueOf(dayOfWeek.toUpperCase());
         final List<Expenditure> battleExpenditures = expenditureRepository.findBattleExpenditureByBattleId(battleId);
 
         return battleExpenditures.stream()
