@@ -1,5 +1,6 @@
 package com.poorlex.poorlex.alarm.battlealarm.controller;
 
+import com.poorlex.poorlex.alarm.battlealarm.api.BattleAlarmControllerSwaggerInterface;
 import com.poorlex.poorlex.alarm.battlealarm.service.BattleAlarmService;
 import com.poorlex.poorlex.alarm.battlealarm.service.dto.request.BattleAlarmRequest;
 import com.poorlex.poorlex.alarm.battlealarm.service.dto.response.UncheckedBattleAlarmCountResponse;
@@ -15,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-public class BattleAlarmController {
+public class BattleAlarmController implements BattleAlarmControllerSwaggerInterface {
 
     private final BattleAlarmService battleAlarmService;
 
