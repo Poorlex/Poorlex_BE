@@ -11,11 +11,13 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Map;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.util.UriComponentsBuilder;
 
+@Slf4j
 public class KaKaoTokenOauth2AuthenticationSuccessHandler extends AbstractTokenOauth2AuthenticationSuccessHandler {
 
     private static final String REGISTRATION_ID = "KAKAO";
@@ -37,6 +39,7 @@ public class KaKaoTokenOauth2AuthenticationSuccessHandler extends AbstractTokenO
         final Member member = findOrCreateMember(authentication);
         final String accessToken = createToken(member.getId());
         final String uri = createURI(accessToken).toString();
+        log.info("token redirect url : {}", uri);
 
         getRedirectStrategy().sendRedirect(request, response, uri);
     }
@@ -73,7 +76,7 @@ public class KaKaoTokenOauth2AuthenticationSuccessHandler extends AbstractTokenO
 
         return UriComponentsBuilder
             .newInstance()
-            .scheme("http")
+            .scheme("https")
             .host(serverUrl)
             .path("/login/success")
             .queryParams(queryParams)
