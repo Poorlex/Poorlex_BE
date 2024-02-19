@@ -52,3 +52,6 @@ aws:
     secretKey: secretKey
     bucket: bucket
     expenditure-directory: directory
+
+url:
+  server: test
