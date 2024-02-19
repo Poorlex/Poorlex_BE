@@ -14,11 +14,14 @@ public abstract class AbstractTokenOauth2AuthenticationSuccessHandler extends
 
     protected final MemberRepository memberRepository;
     protected final JwtTokenProvider jwtTokenProvider;
+    protected final String serverUrl;
 
     protected AbstractTokenOauth2AuthenticationSuccessHandler(final MemberRepository memberRepository,
-                                                              final JwtTokenProvider jwtTokenProvider) {
+                                                              final JwtTokenProvider jwtTokenProvider,
+                                                              final String serverUrl) {
         this.memberRepository = memberRepository;
         this.jwtTokenProvider = jwtTokenProvider;
+        this.serverUrl = serverUrl;
     }
 
     @Override

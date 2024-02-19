@@ -14,9 +14,6 @@ spring:
     oauth2:
       client:
         registration:
-          google:
-            client-id: id
-            client-secret: secret
           kakao:
             client-name: kakao
             client-id: id
@@ -40,3 +37,6 @@ aws:
     secretKey: secretKey
     bucket: bucket
     expenditure-directory: directory
+
+url:
+  server: localhost
