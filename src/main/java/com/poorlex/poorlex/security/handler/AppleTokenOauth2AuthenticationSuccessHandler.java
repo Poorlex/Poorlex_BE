@@ -25,8 +25,9 @@ public class AppleTokenOauth2AuthenticationSuccessHandler extends AbstractTokenO
     private static final String CLIENT_ID_KEY = "id";
 
     public AppleTokenOauth2AuthenticationSuccessHandler(final MemberRepository memberRepository,
-                                                        final JwtTokenProvider jwtTokenProvider) {
-        super(memberRepository, jwtTokenProvider);
+                                                        final JwtTokenProvider jwtTokenProvider,
+                                                        final String serverUrl) {
+        super(memberRepository, jwtTokenProvider, serverUrl);
     }
 
     @Override
@@ -67,7 +68,7 @@ public class AppleTokenOauth2AuthenticationSuccessHandler extends AbstractTokenO
 
     @Override
     public boolean supports(final String registrationId) {
-        return REGISTRATION_ID.equals(registrationId.toUpperCase());
+        return REGISTRATION_ID.equalsIgnoreCase(registrationId);
     }
 
     private URI createURI(final String accessToken) {

@@ -18,7 +18,7 @@ public class TokenOauth2AuthenticationSuccessHandlerFacade extends AbstractToken
 
     public TokenOauth2AuthenticationSuccessHandlerFacade(final MemberRepository memberRepository,
                                                          final JwtTokenProvider jwtTokenProvider) {
-        super(memberRepository, jwtTokenProvider);
+        super(memberRepository, jwtTokenProvider, null);
     }
 
     @Override

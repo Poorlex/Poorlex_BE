@@ -25,8 +25,9 @@ public class KaKaoTokenOauth2AuthenticationSuccessHandler extends AbstractTokenO
     private static final String CLIENT_ID_KEY = "id";
 
     public KaKaoTokenOauth2AuthenticationSuccessHandler(final MemberRepository memberRepository,
-                                                        final JwtTokenProvider jwtTokenProvider) {
-        super(memberRepository, jwtTokenProvider);
+                                                        final JwtTokenProvider jwtTokenProvider,
+                                                        final String serverUrl) {
+        super(memberRepository, jwtTokenProvider, serverUrl);
     }
 
     @Override
@@ -73,8 +74,7 @@ public class KaKaoTokenOauth2AuthenticationSuccessHandler extends AbstractTokenO
         return UriComponentsBuilder
             .newInstance()
             .scheme("http")
-            .host("localhost")
-            .port(8080)
+            .host(serverUrl)
             .path("/login/success")
             .queryParams(queryParams)
             .build()
