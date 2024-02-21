@@ -164,7 +164,7 @@ create table if not exists weekly_budget
     primary key (id)
 ) engine = InnoDB;
 
-create table battle_success_history
+create table if not exists battle_success_history
 (
     id                bigint not null auto_increment,
     member_id         bigint,
