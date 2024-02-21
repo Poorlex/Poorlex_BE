@@ -10,6 +10,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.Table;
+import java.util.Objects;
 import java.util.Optional;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -80,6 +81,9 @@ public class Member {
     }
 
     public Optional<String> getDescription() {
-        return Optional.ofNullable(description.getValue());
+        if (Objects.isNull(description)) {
+            return Optional.empty();
+        }
+        return Optional.of(description.getValue());
     }
 }

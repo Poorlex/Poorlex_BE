@@ -191,7 +191,6 @@ class MemberServiceTest extends IntegrationTest implements ReplaceUnderScoreTest
     private Member createMember(final String oauthId, final String nickname) {
         final Member member = Member.withoutId(Oauth2RegistrationId.APPLE, oauthId,
             new MemberNickname(nickname));
-        member.changeDescription(new MemberDescription("description"));
         return memberRepository.save(member);
     }
 
