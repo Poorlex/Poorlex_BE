@@ -1,11 +1,20 @@
 package com.poorlex.poorlex.member.service;
 
+import com.poorlex.poorlex.battle.service.dto.response.BattleSuccessCountResponse;
+import com.poorlex.poorlex.battlesuccess.service.BattleSuccessService;
+import com.poorlex.poorlex.expenditure.service.ExpenditureService;
+import com.poorlex.poorlex.expenditure.service.dto.response.MyPageExpenditureResponse;
+import com.poorlex.poorlex.friend.service.FriendService;
+import com.poorlex.poorlex.friend.service.dto.response.FriendResponse;
 import com.poorlex.poorlex.member.domain.Member;
 import com.poorlex.poorlex.member.domain.MemberDescription;
 import com.poorlex.poorlex.member.domain.MemberIdAndNicknameDto;
 import com.poorlex.poorlex.member.domain.MemberNickname;
 import com.poorlex.poorlex.member.domain.MemberRepository;
 import com.poorlex.poorlex.member.service.dto.request.MemberProfileUpdateRequest;
+import com.poorlex.poorlex.member.service.dto.response.MyPageResponse;
+import com.poorlex.poorlex.point.service.MemberPointService;
+import com.poorlex.poorlex.point.service.dto.response.MyPageLevelInfoResponse;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -20,6 +29,10 @@ import org.springframework.transaction.annotation.Transactional;
 public class MemberService {
 
     private final MemberRepository memberRepository;
+    private final MemberPointService memberPointService;
+    private final FriendService friendService;
+    private final BattleSuccessService battleSuccessService;
+    private final ExpenditureService expenditureService;
 
     public Map<Long, String> getMembersNickname(final List<Long> memberIds) {
         return memberRepository.getMemberNicknamesByMemberIds(memberIds)
@@ -40,5 +53,27 @@ public class MemberService {
         if (Objects.nonNull(newDescription)) {
             member.changeDescription(new MemberDescription(request.getDescription()));
         }
+    }
+
+    public MyPageResponse getMyPageInfo(final Long memberId) {
+        final Member member = memberRepository.findById(memberId)
+            .orElseThrow(() -> new IllegalArgumentException("해당 Id 의 멤버가 존재하지 않습니다."));
+        final MyPageLevelInfoResponse memberLevelInfo = memberPointService.findMemberLevelInfo(memberId);
+        final BattleSuccessCountResponse battleSuccessCounts =
+            battleSuccessService.findMemberBattleSuccessCounts(memberId);
+        final List<FriendResponse> friends = friendService.findMemberFriends(memberId);
+        final List<MyPageExpenditureResponse> expenditures = expenditureService.findMemberExpenditures(memberId)
+            .stream()
+            .map(MyPageExpenditureResponse::from)
+            .toList();
+
+        return new MyPageResponse(
+            member.getNickname(),
+            member.getDescription().orElse(null),
+            memberLevelInfo,
+            battleSuccessCounts,
+            friends,
+            expenditures
+        );
     }
 }
