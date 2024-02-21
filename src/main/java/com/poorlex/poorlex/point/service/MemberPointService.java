@@ -8,6 +8,7 @@ import com.poorlex.poorlex.point.domain.MemberPointRepository;
 import com.poorlex.poorlex.point.domain.Point;
 import com.poorlex.poorlex.point.service.dto.response.MemberLevelBarResponse;
 import com.poorlex.poorlex.point.service.dto.response.MemberPointResponse;
+import com.poorlex.poorlex.point.service.dto.response.MyPageLevelInfoResponse;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -53,6 +54,13 @@ public class MemberPointService {
         final int memberRecentPoint = getMemberRecentPoint(memberId);
 
         return new MemberLevelBarResponse(memberLevel.getLevelRange(), currentPoint, memberRecentPoint);
+    }
+
+    public MyPageLevelInfoResponse findMemberLevelInfo(final Long memberId) {
+        final Integer totalMemberPoint = memberPointRepository.findSumByMemberId(memberId);
+        final MemberLevel memberLevel = getMemberLevel(totalMemberPoint);
+        final Integer getPointForNextLevel = memberLevel.getGetPointForNextLevel(totalMemberPoint);
+        return new MyPageLevelInfoResponse(memberLevel.getNumber(), totalMemberPoint, getPointForNextLevel);
     }
 
     private MemberLevel getMemberLevel(final int point) {
