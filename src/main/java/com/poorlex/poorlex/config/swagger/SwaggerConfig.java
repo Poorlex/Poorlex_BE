@@ -16,7 +16,7 @@ public class SwaggerConfig {
     @Bean
     public OpenAPI openAPI() {
         final Server server = new Server()
-            .url("http://poorlex.com")
+            .url("https://poorlex.com")
             .description("for real API call");
 
         final Server local = new Server()
