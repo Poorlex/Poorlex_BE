@@ -3,9 +3,6 @@ package com.poorlex.poorlex.battle.service;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
-import com.poorlex.poorlex.alarm.battlealarm.domain.BattleAlarmRepository;
-import com.poorlex.poorlex.alarm.battlealarm.domain.BattleAlarmViewHistoryRepository;
-import com.poorlex.poorlex.alarm.battlealarm.service.BattleAlarmService;
 import com.poorlex.poorlex.battle.domain.Battle;
 import com.poorlex.poorlex.battle.domain.BattleBudget;
 import com.poorlex.poorlex.battle.domain.BattleDuration;
@@ -17,31 +14,20 @@ import com.poorlex.poorlex.battle.fixture.BattleFixture;
 import com.poorlex.poorlex.battle.service.dto.request.BattleCreateRequest;
 import com.poorlex.poorlex.battle.service.dto.response.MemberCompleteBattleResponse;
 import com.poorlex.poorlex.battle.service.dto.response.MemberProgressBattleResponse;
-import com.poorlex.poorlex.battlealarmreaction.domain.AlarmReactionRepository;
-import com.poorlex.poorlex.battlealarmreaction.service.AlarmReactionService;
 import com.poorlex.poorlex.expenditure.domain.ExpenditureRepository;
 import com.poorlex.poorlex.expenditure.fixture.ExpenditureFixture;
-import com.poorlex.poorlex.expenditure.service.ExpenditureService;
 import com.poorlex.poorlex.member.domain.Member;
 import com.poorlex.poorlex.member.domain.MemberNickname;
 import com.poorlex.poorlex.member.domain.MemberRepository;
 import com.poorlex.poorlex.member.domain.Oauth2RegistrationId;
-import com.poorlex.poorlex.member.service.MemberService;
 import com.poorlex.poorlex.participate.domain.BattleParticipant;
 import com.poorlex.poorlex.participate.domain.BattleParticipantRepository;
-import com.poorlex.poorlex.point.domain.MemberPointRepository;
-import com.poorlex.poorlex.point.service.MemberPointService;
+import com.poorlex.poorlex.support.IntegrationTest;
 import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
-import com.poorlex.poorlex.support.db.UsingDataJpaTest;
-import com.poorlex.poorlex.voting.vote.domain.VoteRepository;
-import com.poorlex.poorlex.voting.vote.service.VoteService;
-import com.poorlex.poorlex.voting.votingpaper.domain.VotingPaperRepository;
-import com.poorlex.poorlex.voting.votingpaper.service.VotingPaperService;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -49,7 +35,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @DisplayName("배틀 서비스 테스트")
-class BattleServiceTest extends UsingDataJpaTest implements ReplaceUnderScoreTest {
+class BattleServiceTest extends IntegrationTest implements ReplaceUnderScoreTest {
 
     private static final LocalDateTime BATTLE_START_DATE = LocalDateTime.of(
         LocalDate.of(2023, 12, 25),
@@ -61,28 +47,11 @@ class BattleServiceTest extends UsingDataJpaTest implements ReplaceUnderScoreTes
     );
     private static final BattleDuration BATTLE_DURATION = new BattleDuration(BATTLE_START_DATE, BATTLE_END_TIME);
 
+    @Autowired
     private BattleService battleService;
 
     @Autowired
     private BattleRepository battleRepository;
-
-    @Autowired
-    private VoteRepository voteRepository;
-
-    @Autowired
-    private VotingPaperRepository votingPaperRepository;
-
-    @Autowired
-    private MemberPointRepository memberPointRepository;
-
-    @Autowired
-    private BattleAlarmRepository battleAlarmRepository;
-
-    @Autowired
-    private AlarmReactionRepository alarmReactionRepository;
-
-    @Autowired
-    private BattleAlarmViewHistoryRepository battleAlarmViewHistoryRepository;
 
     @Autowired
     private MemberRepository memberRepository;
@@ -92,24 +61,6 @@ class BattleServiceTest extends UsingDataJpaTest implements ReplaceUnderScoreTes
 
     @Autowired
     private ExpenditureRepository expenditureRepository;
-
-    @BeforeEach
-    void setUp() {
-        battleService = new BattleService(
-            battleRepository,
-            battleParticipantRepository,
-            new BattleAlarmService(
-                battleAlarmRepository,
-                new VoteService(voteRepository, battleParticipantRepository),
-                new VotingPaperService(voteRepository, votingPaperRepository, battleParticipantRepository),
-                new AlarmReactionService(alarmReactionRepository, battleAlarmRepository),
-                battleAlarmViewHistoryRepository
-            ),
-            new MemberPointService(memberPointRepository, memberRepository),
-            new ExpenditureService("directory", battleRepository, expenditureRepository, null),
-            new MemberService(memberRepository)
-        );
-    }
 
     @Test
     void 배틀을_생성한다() {

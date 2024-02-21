@@ -5,9 +5,11 @@ jwt:
 
 schedules:
   battle-start:
-    cron: "0 * * * * MON-FRI" # 매 분 0초 마다
+    cron: "0 * * * * *" # 매 분 0초 마다
+  save-battle-success-history:
+    cron: "15 * * * * *" # 매 분 15초 마다
   battle-end:
-    cron: "30 * * * * MON-FRI" # 매 분 30 초마다
+    cron: "30 * * * * *" # 매 분 30 초마다
 
 spring:
   security:
@@ -40,3 +42,7 @@ aws:
 
 url:
   server: localhost
+
+validation:
+  start-time: false
+  end-time: false

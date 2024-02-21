@@ -36,6 +36,9 @@ public class BattleAlarmViewHistory {
     }
 
     public void updateLastViewTime(final LocalDateTime viewTime) {
+        if (lastViewTime.isAfter(viewTime)) {
+            return;
+        }
         this.lastViewTime = viewTime;
     }
 

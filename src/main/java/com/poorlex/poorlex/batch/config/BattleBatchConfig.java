@@ -7,7 +7,6 @@ import jakarta.persistence.EntityManagerFactory;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -21,16 +20,16 @@ import org.springframework.batch.item.database.JpaItemWriter;
 import org.springframework.batch.item.database.JpaPagingItemReader;
 import org.springframework.batch.item.database.builder.JpaItemWriterBuilder;
 import org.springframework.batch.item.database.builder.JpaPagingItemReaderBuilder;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
 
 @Slf4j
 @Configuration
-@RequiredArgsConstructor
 public class BattleBatchConfig {
 
-    private static final String JOB_NAME = "BATTLE_";
+    private static final String JOB_NAME = "BATTLE_STATUS_CHANGE";
     private static final String BEAN_PREFIX = JOB_NAME + "_";
     private static final int CHUNK_SIZE = 100;
 
@@ -38,6 +37,22 @@ public class BattleBatchConfig {
     private final PlatformTransactionManager platformTransactionManager;
     private final EntityManagerFactory entityManagerFactory;
     private final BattleJobParameter battleJobParameter;
+    private final boolean activateStartTimeValidation;
+    private final boolean activateEndTimeValidation;
+
+    public BattleBatchConfig(final JobRepository jobRepository,
+                             final PlatformTransactionManager platformTransactionManager,
+                             final EntityManagerFactory entityManagerFactory,
+                             final BattleJobParameter battleJobParameter,
+                             @Value("${validation.start-time}") final boolean activateStartTimeValidation,
+                             @Value("${validation.start-time}") final boolean activateEndTimeValidation) {
+        this.jobRepository = jobRepository;
+        this.platformTransactionManager = platformTransactionManager;
+        this.entityManagerFactory = entityManagerFactory;
+        this.battleJobParameter = battleJobParameter;
+        this.activateStartTimeValidation = activateStartTimeValidation;
+        this.activateEndTimeValidation = activateEndTimeValidation;
+    }
 
     @Bean
     @JobScope
@@ -89,10 +104,18 @@ public class BattleBatchConfig {
             log.info("changeStatus = {}", changeStatus);
             log.info("requestDateTime = {}", requestDateTime);
             if (changeStatus == BattleStatus.PROGRESS) {
-                battle.start(requestDateTime);
+                if (activateStartTimeValidation) {
+                    battle.start(requestDateTime);
+                } else {
+                    battle.startWithoutValidate();
+                }
             }
             if (changeStatus == BattleStatus.COMPLETE) {
-                battle.end(requestDateTime);
+                if (activateEndTimeValidation) {
+                    battle.end(requestDateTime);
+                } else {
+                    battle.endWithoutValidate();
+                }
             }
             return battle;
         };

@@ -24,12 +24,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping(value = "/battles")
 @RequiredArgsConstructor
-public class BattleController {
+public class BattleController implements BattleControllerSwaggerInterface {
 
     private final BattleService battleService;
 
     @PostMapping
-    public ResponseEntity<Long> createBattle(@MemberOnly final MemberInfo memberInfo,
+    public ResponseEntity<Void> createBattle(@MemberOnly final MemberInfo memberInfo,
                                              @RequestBody final BattleCreateRequest request) {
         final Long createdBattleId = battleService.create(memberInfo.getMemberId(), request);
         return ResponseEntity.created(URI.create("/battles/" + createdBattleId)).build();

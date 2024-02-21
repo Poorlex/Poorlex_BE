@@ -294,7 +294,7 @@ class BattleAlarmEventHandlerTest extends SpringEventTest implements ReplaceUnde
         );
 
         final MockMultipartFile file = new MockMultipartFile(
-            "file",
+            "images",
             "cat-8415620_640",
             MediaType.MULTIPART_FORM_DATA_VALUE,
             new FileInputStream(
