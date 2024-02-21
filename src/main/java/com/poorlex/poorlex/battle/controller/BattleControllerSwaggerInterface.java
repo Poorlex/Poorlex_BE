@@ -23,13 +23,13 @@ public interface BattleControllerSwaggerInterface {
     @PostMapping
     @ApiResponse(responseCode = "201")
     ResponseEntity<Void> createBattle(@Parameter(hidden = true) final MemberInfo memberInfo,
-                                      @Parameter(description = "생성 배틀 정보") final BattleCreateRequest request);
+                                      @Parameter(description = "생성 배틀 정보", required = true) final BattleCreateRequest request);
 
     @Operation(summary = "배틀 상세 조회")
     @GetMapping("/{battleId}")
     @ApiResponse(responseCode = "200")
     ResponseEntity<BattleResponse> getBattleInfo(@Parameter(description = "배틀 Id") final Long battleId,
-                                                 @Parameter(description = "조회 날짜") final BattleFindRequest request);
+                                                 @Parameter(description = "조회 날짜", required = true) final BattleFindRequest request);
 
     @Operation(summary = "모든 배틀 조회 ( 모집중, 모집 완료 )")
     @GetMapping

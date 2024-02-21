@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping
 @RequiredArgsConstructor
-public class MemberController {
+public class MemberController implements MemberControllerSwaggerInterface {
 
     private final MemberService memberService;
 
