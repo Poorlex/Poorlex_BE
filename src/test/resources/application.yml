@@ -25,6 +25,9 @@ spring:
             scope:
               - profile
               - email
+  batch:
+    job:
+      enabled: false
 
 logging:
   level:
@@ -43,6 +46,8 @@ jwt:
 schedules:
   battle-start:
     cron: "* * */5 * * *"
+  save-battle-success-history:
+    cron: "* * */5 * * *"
   battle-end:
     cron: "* * */5 * * *"
 
@@ -55,3 +60,7 @@ aws:
 
 url:
   server: test
+
+validation:
+  start-time: false
+  end-time: false
