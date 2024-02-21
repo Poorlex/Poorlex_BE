@@ -15,7 +15,7 @@ public class MyPageResponse {
     private final String nickname;
     private final String description;
     private final MyPageLevelInfoResponse levelInfo;
-    private final BattleSuccessCountResponse battleSuccessCounts;
+    private final BattleSuccessCountResponse battleSuccessInfo;
     private final int friendTotalCount;
     private final List<FriendResponse> friends;
     private final int expenditureTotalCount;
@@ -24,13 +24,13 @@ public class MyPageResponse {
     public MyPageResponse(final String nickname,
                           final String description,
                           final MyPageLevelInfoResponse levelInfo,
-                          final BattleSuccessCountResponse battleSuccessCounts,
+                          final BattleSuccessCountResponse battleSuccessInfo,
                           final List<FriendResponse> friends,
                           final List<MyPageExpenditureResponse> expenditures) {
         this.nickname = nickname;
         this.description = description;
         this.levelInfo = levelInfo;
-        this.battleSuccessCounts = battleSuccessCounts;
+        this.battleSuccessInfo = battleSuccessInfo;
         this.friendTotalCount = friends.size();
         this.friends = friends;
         this.expenditureTotalCount = expenditures.size();
