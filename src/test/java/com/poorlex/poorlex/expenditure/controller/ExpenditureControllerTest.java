@@ -79,7 +79,7 @@ class ExpenditureControllerTest extends IntegrationTest implements ReplaceUnderS
         final String accessToken = testMemberTokenGenerator.createTokenWithNewMember("oauthId");
 
         final MockMultipartFile image = new MockMultipartFile(
-            "file",
+            "images",
             "cat-8415620_640",
             MediaType.MULTIPART_FORM_DATA_VALUE,
             new FileInputStream(

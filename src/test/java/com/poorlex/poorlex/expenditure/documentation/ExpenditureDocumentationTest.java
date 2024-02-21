@@ -62,7 +62,7 @@ class ExpenditureDocumentationTest extends MockMvcTest {
         );
 
         final MockMultipartFile image = new MockMultipartFile(
-            "file",
+            "images",
             "cat-8415620_640",
             MediaType.MULTIPART_FORM_DATA_VALUE,
             new FileInputStream(
@@ -91,7 +91,7 @@ class ExpenditureDocumentationTest extends MockMvcTest {
                     ApiDocumentUtils.getDocumentRequest(),
                     ApiDocumentUtils.getDocumentResponse(),
                     requestParts(
-                        partWithName("file").description("지출 이미지 파일 리스트"),
+                        partWithName("images").description("지출 이미지 파일 리스트"),
                         partWithName("expenditureCreateRequest").description("지출 이미지 생성 요청 값 목록")
                     )
                 ));
