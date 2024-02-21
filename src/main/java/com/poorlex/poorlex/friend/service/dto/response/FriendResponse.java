@@ -14,13 +14,4 @@ public class FriendResponse {
         this.nickname = nickname;
         this.weeklyExpenditure = weeklyExpenditure;
     }
-
-    @Override
-    public String toString() {
-        return "FriendResponse{" +
-            "level=" + level +
-            ", nickname='" + nickname + '\'' +
-            ", weeklyExpenditure=" + weeklyExpenditure +
-            '}';
-    }
 }
