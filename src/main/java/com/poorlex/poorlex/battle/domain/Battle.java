@@ -37,6 +37,8 @@ public class Battle {
     @Enumerated(value = EnumType.STRING)
     private BattleStatus status;
 
+    private boolean isBattleSuccessCounted = false;
+
     public Battle(final Long id,
                   @NonNull final BattleName name,
                   @NonNull final BattleIntroduction introduction,
@@ -65,12 +67,26 @@ public class Battle {
         return new Battle(null, name, introduction, imageUrl, budget, maxParticipantSize, duration, status);
     }
 
-    public void start(final LocalDateTime dateTime) {
-        //스케쥴링으로 실행해야 함
-        if (!isTimeAbleToStart(dateTime) || !isStatusAbleToStart()) {
-            throw new IllegalArgumentException();
-        }
+    public void startWithoutValidate() {
         changeStatus(BattleStatus.PROGRESS);
+    }
+
+    public void start(final LocalDateTime dateTime) {
+        validateStartable(dateTime);
+        changeStatus(BattleStatus.PROGRESS);
+    }
+
+    private void validateStartable(final LocalDateTime startTime) {
+        if (!isTimeAbleToStart(startTime) || !isStatusAbleToStart()) {
+            throw new IllegalArgumentException(
+                String.format("배틀을 시작할 수 없습니다. ( 요청 : %s ( %d:%d ), 현재 배틀 상태 : %s)",
+                    startTime.getDayOfWeek().name(),
+                    startTime.getHour(),
+                    startTime.getMinute(),
+                    status.name()
+                )
+            );
+        }
     }
 
     private boolean isTimeAbleToStart(final LocalDateTime dateTime) {
@@ -86,12 +102,26 @@ public class Battle {
         this.status = status;
     }
 
-    public void end(final LocalDateTime dateTime) {
-        //스케쥴링으로 시작해야함
-        if (!isTimeAbleToEnd(dateTime) || !isStatusAbleToEnd()) {
-            throw new IllegalArgumentException();
-        }
+    public void endWithoutValidate() {
         changeStatus(BattleStatus.COMPLETE);
+    }
+
+    public void end(final LocalDateTime dateTime) {
+        validateEndable(dateTime);
+        changeStatus(BattleStatus.COMPLETE);
+    }
+
+    private void validateEndable(final LocalDateTime endTime) {
+        if (!isTimeAbleToEnd(endTime) || !isStatusAbleToEnd()) {
+            throw new IllegalArgumentException(
+                String.format("배틀을 종료할 수 없습니다. ( 요청 : %s ( %d:%d ), 현재 배틀 상태 : %s)",
+                    endTime.getDayOfWeek().name(),
+                    endTime.getHour(),
+                    endTime.getMinute(),
+                    status.name()
+                )
+            );
+        }
     }
 
     private boolean isTimeAbleToEnd(final LocalDateTime dateTime) {
@@ -127,12 +157,20 @@ public class Battle {
         return !maxParticipantSize.hasGreaterValue(targetSize);
     }
 
+    public void successHistorySaved() {
+        this.isBattleSuccessCounted = true;
+    }
+
     public long getDDay(final LocalDate current) {
         return ChronoUnit.DAYS.between(current, LocalDate.from(duration.getEnd()));
     }
 
     public long getPastDay(final LocalDate current) {
         return ChronoUnit.DAYS.between(LocalDate.from(duration.getEnd()), current);
+    }
+
+    public Long getBudgetLeft(final Long expenditure) {
+        return budget.getValue() - expenditure;
     }
 
     public int getBudgetLeft(final int expenditure) {

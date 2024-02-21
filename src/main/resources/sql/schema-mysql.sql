@@ -11,15 +11,16 @@ create table if not exists alarm_reaction
 
 create table if not exists battle
 (
-    id           bigint       not null auto_increment,
-    name         varchar(255) not null,
-    budget       integer      not null,
-    max_size     integer      not null,
-    introduction varchar(255) not null,
-    image_url    text         not null,
-    start_time   datetime(6)  not null,
-    end_time     datetime(6)  not null,
-    status       enum ('COMPLETE','PROGRESS','RECRUITING','RECRUITING_FINISHED'),
+    id                        bigint       not null auto_increment,
+    name                      varchar(255) not null,
+    budget                    integer      not null,
+    max_size                  integer      not null,
+    introduction              varchar(255) not null,
+    image_url                 text         not null,
+    start_time                datetime(6)  not null,
+    end_time                  datetime(6)  not null,
+    status                    enum ('COMPLETE','PROGRESS','RECRUITING','RECRUITING_FINISHED'),
+    is_battle_success_counted boolean,
     primary key (id)
 ) engine = InnoDB;
 
@@ -163,4 +164,11 @@ create table if not exists weekly_budget
     primary key (id)
 ) engine = InnoDB;
 
-
+create table battle_success_history
+(
+    id                bigint not null auto_increment,
+    member_id         bigint,
+    battle_id         bigint,
+    battle_difficulty enum ('EASY', 'NORMAL', 'HARD'),
+    primary key (id)
+) engine = InnoDB;
