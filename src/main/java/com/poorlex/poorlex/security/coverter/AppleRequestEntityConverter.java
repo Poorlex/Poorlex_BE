@@ -14,25 +14,27 @@ import org.springframework.core.convert.converter.Converter;
 import org.springframework.http.RequestEntity;
 import org.springframework.security.oauth2.client.endpoint.OAuth2AuthorizationCodeGrantRequest;
 import org.springframework.security.oauth2.client.endpoint.OAuth2AuthorizationCodeGrantRequestEntityConverter;
+import org.springframework.stereotype.Component;
 import org.springframework.util.MultiValueMap;
 
+@Component
 @Slf4j
 public class AppleRequestEntityConverter implements Converter<OAuth2AuthorizationCodeGrantRequest, RequestEntity<?>> {
 
     @Value("${apple.audience}")
-    private String APPLE_AUDIENCE;
+    private String appleAudience;
 
     @Value("${apple.private-key}")
-    private String APPLE_KEY;
+    private String privateKey;
 
     @Value("${apple.client-id}")
-    private String APPLE_CLIENT_ID;
+    private String clientId;
 
     @Value("${apple.team-id}")
-    private String APPLE_TEAM_ID;
+    private String teamId;
 
     @Value("${apple.key-id}")
-    private String APPLE_KEY_ID;
+    private String keyId;
     private final OAuth2AuthorizationCodeGrantRequestEntityConverter defaultConverter = new OAuth2AuthorizationCodeGrantRequestEntityConverter();
 
     @Override
@@ -58,23 +60,23 @@ public class AppleRequestEntityConverter implements Converter<OAuth2Authorizatio
 
         return Jwts.builder()
             .setHeaderParams(appleJwtHeader())
-            .setIssuer(APPLE_TEAM_ID)
+            .setIssuer(teamId)
             .setIssuedAt(new Date(System.currentTimeMillis())) // 발행 시간 - UNIX 시간
             .setExpiration(expirationDate) // 만료 시간
-            .setAudience(APPLE_AUDIENCE)
-            .setSubject(APPLE_CLIENT_ID)
+            .setAudience(appleAudience)
+            .setSubject(clientId)
             .signWith(getPrivateKey())
             .compact();
     }
 
     private Map<String, Object> appleJwtHeader() {
         final Map<String, Object> jwtHeader = new HashMap<>();
-        jwtHeader.put("kid", APPLE_KEY_ID);
+        jwtHeader.put("kid", keyId);
         jwtHeader.put("alg", "ES256");
         return jwtHeader;
     }
 
     public Key getPrivateKey() {
-        return Keys.hmacShaKeyFor(APPLE_KEY.getBytes());
+        return Keys.hmacShaKeyFor(privateKey.getBytes());
     }
 }

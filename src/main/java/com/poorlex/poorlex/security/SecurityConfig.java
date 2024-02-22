@@ -34,13 +34,16 @@ public class SecurityConfig {
 
     private final MemberRepository memberRepository;
     private final JwtTokenProvider jwtTokenProvider;
+    private final AppleRequestEntityConverter appleRequestEntityConverter;
     private final String serverUrl;
 
     public SecurityConfig(final MemberRepository memberRepository,
                           final JwtTokenProvider jwtTokenProvider,
+                          final AppleRequestEntityConverter appleRequestEntityConverter,
                           @Value("${url.server}") final String serverUrl) {
         this.memberRepository = memberRepository;
         this.jwtTokenProvider = jwtTokenProvider;
+        this.appleRequestEntityConverter = appleRequestEntityConverter;
         this.serverUrl = serverUrl;
     }
 
@@ -142,7 +145,7 @@ public class SecurityConfig {
     @Bean
     public OAuth2AccessTokenResponseClient<OAuth2AuthorizationCodeGrantRequest> accessTokenResponseClient() {
         DefaultAuthorizationCodeTokenResponseClient accessTokenResponseClient = new DefaultAuthorizationCodeTokenResponseClient();
-        accessTokenResponseClient.setRequestEntityConverter(new AppleRequestEntityConverter());
+        accessTokenResponseClient.setRequestEntityConverter(appleRequestEntityConverter);
 
         return accessTokenResponseClient;
     }
