@@ -7,7 +7,9 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.convert.converter.Converter;
@@ -42,6 +44,9 @@ public class AppleRequestEntityConverter implements Converter<OAuth2Authorizatio
         final RequestEntity<?> entity = defaultConverter.convert(req);
         final String registrationId = req.getClientRegistration().getRegistrationId();
         final MultiValueMap<String, Object> params = (MultiValueMap<String, Object>) entity.getBody();
+        for (Entry<String, List<Object>> stringListEntry : params.entrySet()) {
+            log.info("request entity paramter \"{}\" : {}", stringListEntry.getKey(), stringListEntry.getValue());
+        }
         log.info("registrationId : {}", registrationId);
         log.info("client secret : {}", createClientSecret());
         if (registrationId.equalsIgnoreCase("apple")) {
