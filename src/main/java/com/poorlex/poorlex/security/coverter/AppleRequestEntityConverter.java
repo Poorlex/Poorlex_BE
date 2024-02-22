@@ -44,13 +44,12 @@ public class AppleRequestEntityConverter implements Converter<OAuth2Authorizatio
         final RequestEntity<?> entity = defaultConverter.convert(req);
         final String registrationId = req.getClientRegistration().getRegistrationId();
         final MultiValueMap<String, Object> params = (MultiValueMap<String, Object>) entity.getBody();
-        for (Entry<String, List<Object>> stringListEntry : params.entrySet()) {
-            log.info("request entity paramter \"{}\" : {}", stringListEntry.getKey(), stringListEntry.getValue());
-        }
         log.info("registrationId : {}", registrationId);
-        log.info("client secret : {}", createClientSecret());
         if (registrationId.equalsIgnoreCase("apple")) {
             params.set("client_secret", createClientSecret());
+        }
+        for (Entry<String, List<Object>> stringListEntry : params.entrySet()) {
+            log.info("request entity paramter \"{}\" : {}", stringListEntry.getKey(), stringListEntry.getValue());
         }
         return new RequestEntity<>(params, entity.getHeaders(), entity.getMethod(), entity.getUrl());
     }

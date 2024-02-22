@@ -10,11 +10,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URI;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.util.UriComponentsBuilder;
 
+@Slf4j
 public class AppleTokenOauth2AuthenticationSuccessHandler extends AbstractTokenOauth2AuthenticationSuccessHandler {
 
     private static final String REGISTRATION_ID = "APPLE";
@@ -31,6 +33,7 @@ public class AppleTokenOauth2AuthenticationSuccessHandler extends AbstractTokenO
     public void onAuthenticationSuccess(final HttpServletRequest request,
                                         final HttpServletResponse response,
                                         final Authentication authentication) throws IOException {
+        log.info("success handler called: {}", authentication);
         final Member member = findOrCreateMember(authentication);
         final String accessToken = createToken(member.getId());
         final String uri = createURI(accessToken).toString();
