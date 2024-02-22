@@ -1,7 +1,7 @@
 package com.poorlex.poorlex.security.coverter;
 
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.SignatureAlgorithm;
 import java.security.Key;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import javax.crypto.spec.SecretKeySpec;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.convert.converter.Converter;
@@ -81,6 +82,6 @@ public class AppleRequestEntityConverter implements Converter<OAuth2Authorizatio
     }
 
     public Key getPrivateKey() {
-        return Keys.hmacShaKeyFor(privateKey.getBytes());
+        return new SecretKeySpec(privateKey.getBytes(), SignatureAlgorithm.HS256.getJcaName());
     }
 }
