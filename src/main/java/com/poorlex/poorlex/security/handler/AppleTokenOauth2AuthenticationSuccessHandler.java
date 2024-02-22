@@ -10,7 +10,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URI;
-import java.util.Map;
 import org.springframework.security.core.Authentication;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -19,10 +18,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 public class AppleTokenOauth2AuthenticationSuccessHandler extends AbstractTokenOauth2AuthenticationSuccessHandler {
 
     private static final String REGISTRATION_ID = "APPLE";
-    private static final String ACCOUNT_KEY = "kakao_account";
-    private static final String PROFILE_KEY = "profile";
-    private static final String NICKNAME_KEY = "nickname";
-    private static final String CLIENT_ID_KEY = "id";
+    private static final String NICKNAME_KEY = "email";
+    private static final String CLIENT_ID_KEY = "sub";
 
     public AppleTokenOauth2AuthenticationSuccessHandler(final MemberRepository memberRepository,
                                                         final JwtTokenProvider jwtTokenProvider,
@@ -50,12 +47,10 @@ public class AppleTokenOauth2AuthenticationSuccessHandler extends AbstractTokenO
                 Member.withoutId(registrationId, oauthId, new MemberNickname(getNickname(userProfile)))));
     }
 
-    private String getNickname(final UserProfile principal) {
+    private String getNickname(final UserProfile userProfile) {
         final StringBuilder stringBuilder = new StringBuilder();
 
-        final String nickname = principal.<Map<String, Map<String, String>>>getAttribute(ACCOUNT_KEY)
-            .get(PROFILE_KEY)
-            .get(NICKNAME_KEY);
+        final String nickname = userProfile.getAttribute(NICKNAME_KEY);
 
         if (nickname.length() < NICKNAME_MINIMUM_LENGTH) {
             return stringBuilder.append(SHORT_NICKNAME_PREFIX).append(nickname).toString();
@@ -66,23 +61,22 @@ public class AppleTokenOauth2AuthenticationSuccessHandler extends AbstractTokenO
         return nickname;
     }
 
-    @Override
-    public boolean supports(final String registrationId) {
-        return REGISTRATION_ID.equalsIgnoreCase(registrationId);
-    }
-
     private URI createURI(final String accessToken) {
         MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<>();
         queryParams.add("access_token", accessToken);
 
         return UriComponentsBuilder
             .newInstance()
-            .scheme("http")
-            .host("localhost")
-            .port(8080)
+            .scheme("https")
+            .host(serverUrl)
             .path("/login/success")
             .queryParams(queryParams)
             .build()
             .toUri();
+    }
+
+    @Override
+    public boolean supports(final String registrationId) {
+        return REGISTRATION_ID.equalsIgnoreCase(registrationId);
     }
 }
