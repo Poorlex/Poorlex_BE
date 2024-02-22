@@ -32,6 +32,12 @@ spring:
             token-uri: https://kauth.kakao.com/oauth/token
             user-info-uri: https://kapi.kakao.com/v2/user/me
             user-name-attribute: kakao_account
+apple:
+  client-id: client_id
+  key-id: key_id
+  team-id: team_id
+  audience: https://appleid.apple.com
+  private-key: p8 file
 
 aws:
   s3:

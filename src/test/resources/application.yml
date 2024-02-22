@@ -51,6 +51,13 @@ schedules:
   battle-end:
     cron: "* * */5 * * *"
 
+apple:
+  client-id: client_id
+  key-id: key_id
+  team-id: team_id
+  audience: https://appleid.apple.com
+  private-key: p8 file
+  
 aws:
   s3:
     accesskey: accesskey
