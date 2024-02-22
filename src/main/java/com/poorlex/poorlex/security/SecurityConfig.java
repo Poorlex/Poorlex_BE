@@ -1,7 +1,9 @@
 package com.poorlex.poorlex.security;
 
 import com.poorlex.poorlex.member.domain.MemberRepository;
+import com.poorlex.poorlex.security.coverter.AppleRequestEntityConverter;
 import com.poorlex.poorlex.security.filter.JwtFilter;
+import com.poorlex.poorlex.security.handler.AppleTokenOauth2AuthenticationSuccessHandler;
 import com.poorlex.poorlex.security.handler.KaKaoTokenOauth2AuthenticationSuccessHandler;
 import com.poorlex.poorlex.security.handler.Oauth2AuthenticationSuccessHandler;
 import com.poorlex.poorlex.security.handler.TokenOauth2AuthenticationSuccessHandlerFacade;
@@ -14,6 +16,9 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer.FrameOptionsConfig;
+import org.springframework.security.oauth2.client.endpoint.DefaultAuthorizationCodeTokenResponseClient;
+import org.springframework.security.oauth2.client.endpoint.OAuth2AccessTokenResponseClient;
+import org.springframework.security.oauth2.client.endpoint.OAuth2AuthorizationCodeGrantRequest;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -98,6 +103,7 @@ public class SecurityConfig {
 
     private void configureOauth2Login(final HttpSecurity http) throws Exception {
         http.oauth2Login(oauth2Login -> oauth2Login
+            .tokenEndpoint(tokenEndpoint -> tokenEndpoint.accessTokenResponseClient(accessTokenResponseClient()))
             .userInfoEndpoint(userInfo -> userInfo.userService(oAuth2UserService()))
             .successHandler(oAuth2AuthenticationSuccessHandler())
         );
@@ -111,7 +117,7 @@ public class SecurityConfig {
 
     @Bean
     public OAuth2UserService<OAuth2UserRequest, OAuth2User> oAuth2UserService() {
-        return new CustomOauth2UserService();
+        return new CustomOauth2UserService(jwtTokenProvider);
     }
 
     @Bean
@@ -121,7 +127,8 @@ public class SecurityConfig {
 
         facade.addHandlers(
             new KaKaoTokenOauth2AuthenticationSuccessHandler(memberRepository, jwtTokenProvider, serverUrl));
-//        facade.addHandlers(new AppleTokenOauth2AuthenticationSuccessHandler(memberRepository, jwtTokenProvider));
+        facade.addHandlers(
+            new AppleTokenOauth2AuthenticationSuccessHandler(memberRepository, jwtTokenProvider, serverUrl));
 
         return facade;
     }
@@ -130,5 +137,13 @@ public class SecurityConfig {
         http.logout(logoutConfigure -> logoutConfigure
             .logoutUrl("/logout")
             .clearAuthentication(true));
+    }
+
+    @Bean
+    public OAuth2AccessTokenResponseClient<OAuth2AuthorizationCodeGrantRequest> accessTokenResponseClient() {
+        DefaultAuthorizationCodeTokenResponseClient accessTokenResponseClient = new DefaultAuthorizationCodeTokenResponseClient();
+        accessTokenResponseClient.setRequestEntityConverter(new AppleRequestEntityConverter());
+
+        return accessTokenResponseClient;
     }
 }
