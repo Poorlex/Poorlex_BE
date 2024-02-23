@@ -53,13 +53,14 @@ public class AppleTokenOauth2AuthenticationSuccessHandler extends AbstractTokenO
     private String getNickname(final UserProfile userProfile) {
         final StringBuilder stringBuilder = new StringBuilder();
 
-        final String nickname = userProfile.getAttribute(NICKNAME_KEY);
+        final String email = userProfile.getAttribute(NICKNAME_KEY);
+        final String nickname = email.split("@")[0];
 
         if (nickname.length() < NICKNAME_MINIMUM_LENGTH) {
             return stringBuilder.append(SHORT_NICKNAME_PREFIX).append(nickname).toString();
         }
         if (nickname.length() > NICKNAME_MAXIMUM_LENGTH) {
-            return stringBuilder.append(nickname, 0, NICKNAME_MAXIMUM_LENGTH).toString();
+            return stringBuilder.append(nickname, 0, NICKNAME_MAXIMUM_LENGTH - 1).toString();
         }
         return nickname;
     }
