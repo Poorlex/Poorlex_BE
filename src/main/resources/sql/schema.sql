@@ -200,22 +200,25 @@ create table battle_success_history
     primary key (id)
 );
 
-insert into member
-values (1L, 'KAKAO', 'oauth_id', '소개', 'split');
-
-insert into battle
-values (1L, '배틀1', '배틀 소개', 'imageUrl', 20000, 10, '2024-02-18T09:00', '2024-02-25T20:00',
-        'RECRUITING', false);
-
-insert into battle
-values (2L, '배틀2', '배틀 소개', 'imageUrl', 10000, 10, '2024-02-18T09:00', '2024-02-25T20:00',
-        'RECRUITING', false);
-
-insert into battle_participant
-values (1L, 1L, 1L, 'MANAGER');
-
-insert into battle_participant
-values (2L, 2L, 1L, 'MANAGER');
-
-insert into expenditure
-values (1L, '지출 소개', 11000, '2024-02-18T10:00', 1L);
+insert into member (oauth2registration_id, oauth_id, description, nickname)
+values ('KAKAO', 'oauth_id', '소개', 'split');
+--
+-- insert into battle
+-- values (1L, '배틀1', '배틀 소개', 'imageUrl', 20000, 10, '2024-02-18T09:00', '2024-02-25T20:00',
+--         'RECRUITING', false);
+--
+-- insert into battle
+-- values (2L, '배틀2', '배틀 소개', 'imageUrl', 10000, 10, '2024-02-18T09:00', '2024-02-25T20:00',
+--         'RECRUITING', false);
+--
+-- insert into battle_participant
+-- values (1L, 1L, 1L, 'MANAGER');
+--
+-- insert into battle_participant
+-- values (2L, 2L, 1L, 'MANAGER');
+--
+-- insert into expenditure
+-- values (1L, '지출 소개', 11000, '2024-02-18T10:00', 1L);
+--
+-- insert into member(oauth2registration_id, oauth_id, description, nickname)
+-- values ('KAKAO', 'oauth_id', '소개', '박상현');
