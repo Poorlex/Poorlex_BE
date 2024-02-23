@@ -67,7 +67,7 @@ public class AppleTokenOauth2AuthenticationSuccessHandler extends AbstractTokenO
 
     private URI createURI(final String accessToken) {
         MultiValueMap<String, String> queryParams = new LinkedMultiValueMap<>();
-        queryParams.add("access_token", accessToken);
+        queryParams.add("accessToken", accessToken);
 
         return UriComponentsBuilder
             .newInstance()
