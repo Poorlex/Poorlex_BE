@@ -1,10 +1,13 @@
 package com.poorlex.poorlex.token;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import java.security.Key;
+import java.util.Base64;
 import java.util.Date;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -49,5 +52,22 @@ public class JwtTokenProvider {
 
     public <T> T getPayload(final String token, final String claimName, final Class<T> type) {
         return getPayload(token).get(claimName, type);
+    }
+
+    public <T> T decodePayload(String token, Class<T> targetClass) {
+
+        String[] tokenParts = token.split("\\.");
+        String payloadJWT = tokenParts[1];
+        Base64.Decoder decoder = Base64.getUrlDecoder();
+        String payload = new String(decoder.decode(payloadJWT));
+        ObjectMapper objectMapper = new ObjectMapper()
+            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+        try {
+            return objectMapper.readValue(payload, targetClass);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new IllegalArgumentException("Error decoding token payload", e);
+        }
     }
 }
