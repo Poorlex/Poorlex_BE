@@ -19,9 +19,6 @@ import org.springframework.security.config.annotation.web.configurers.HeadersCon
 import org.springframework.security.oauth2.client.endpoint.DefaultAuthorizationCodeTokenResponseClient;
 import org.springframework.security.oauth2.client.endpoint.OAuth2AccessTokenResponseClient;
 import org.springframework.security.oauth2.client.endpoint.OAuth2AuthorizationCodeGrantRequest;
-import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
-import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
@@ -35,15 +32,18 @@ public class SecurityConfig {
     private final MemberRepository memberRepository;
     private final JwtTokenProvider jwtTokenProvider;
     private final AppleRequestEntityConverter appleRequestEntityConverter;
+    private final CustomOauth2UserService oAuth2UserService;
     private final String serverUrl;
 
     public SecurityConfig(final MemberRepository memberRepository,
                           final JwtTokenProvider jwtTokenProvider,
                           final AppleRequestEntityConverter appleRequestEntityConverter,
+                          final CustomOauth2UserService oAuth2UserService,
                           @Value("${url.server}") final String serverUrl) {
         this.memberRepository = memberRepository;
         this.jwtTokenProvider = jwtTokenProvider;
         this.appleRequestEntityConverter = appleRequestEntityConverter;
+        this.oAuth2UserService = oAuth2UserService;
         this.serverUrl = serverUrl;
     }
 
@@ -107,7 +107,7 @@ public class SecurityConfig {
     private void configureOauth2Login(final HttpSecurity http) throws Exception {
         http.oauth2Login(oauth2Login -> oauth2Login
             .tokenEndpoint(tokenEndpoint -> tokenEndpoint.accessTokenResponseClient(accessTokenResponseClient()))
-            .userInfoEndpoint(userInfo -> userInfo.userService(oAuth2UserService()))
+            .userInfoEndpoint(userInfo -> userInfo.userService(oAuth2UserService))
             .successHandler(oAuth2AuthenticationSuccessHandler())
         );
     }
@@ -116,11 +116,6 @@ public class SecurityConfig {
         http.addFilterBefore(
             new JwtFilter(memberRepository, jwtTokenProvider), UsernamePasswordAuthenticationFilter.class
         );
-    }
-
-    @Bean
-    public OAuth2UserService<OAuth2UserRequest, OAuth2User> oAuth2UserService() {
-        return new CustomOauth2UserService(jwtTokenProvider);
     }
 
     @Bean
