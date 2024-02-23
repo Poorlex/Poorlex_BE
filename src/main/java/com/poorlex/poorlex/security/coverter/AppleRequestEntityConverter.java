@@ -2,15 +2,19 @@ package com.poorlex.poorlex.security.coverter;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import java.security.Key;
+import java.security.KeyFactory;
+import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.PKCS8EncodedKeySpec;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import javax.crypto.spec.SecretKeySpec;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.convert.converter.Converter;
@@ -70,18 +74,25 @@ public class AppleRequestEntityConverter implements Converter<OAuth2Authorizatio
             .setExpiration(expirationDate) // 만료 시간
             .setAudience(appleAudience)
             .setSubject(clientId)
-            .signWith(getPrivateKey())
+            .signWith(getPrivateKey(), SignatureAlgorithm.ES256)
             .compact();
     }
 
     private Map<String, Object> appleJwtHeader() {
         final Map<String, Object> jwtHeader = new HashMap<>();
-        jwtHeader.put("kid", keyId);
         jwtHeader.put("alg", "ES256");
+        jwtHeader.put("kid", keyId);
         return jwtHeader;
     }
 
-    public Key getPrivateKey() {
-        return new SecretKeySpec(privateKey.getBytes(), SignatureAlgorithm.HS256.getJcaName());
+    private PrivateKey getPrivateKey() {
+        try {
+            PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(Base64.getDecoder().decode(privateKey));
+            KeyFactory keyFactory = KeyFactory.getInstance("EC");
+            return keyFactory.generatePrivate(keySpec);
+        } catch (NoSuchAlgorithmException | InvalidKeySpecException exception) {
+            exception.printStackTrace();
+            throw new IllegalArgumentException("Apple secretkey 생성에 실패하여습니다.");
+        }
     }
 }
