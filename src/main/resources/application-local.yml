@@ -2,19 +2,49 @@ spring:
   config:
     activate:
       on-profile: local
-    import: classpath:application-local-info.yml
+    import: classpath:secure/application-dev-info.yml
 
   datasource:
     driver-class-name: org.h2.Driver
     url: jdbc:h2:mem:poorlex
 
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:sql/schema.sql
+
+  batch:
+    job:
+      enabled: false
+    jdbc:
+      initialize-schema: always
+
   h2:
     console:
       enabled: true
-      
+
 logging:
   level:
     root: INFO
     org.hibernate.orm.jdbc.bind: trace
     org.springframework.web: INFO
     org.springframework.security: DEBUG
+
+springdoc:
+  swagger-ui:
+    disable-swagger-default-url: true
+    url: /api-docs
+  api-docs:
+    path: /api-docs
+  default-produces-media-type: application/json
+
+server:
+  shutdown: graceful

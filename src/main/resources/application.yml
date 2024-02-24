@@ -4,36 +4,3 @@ spring:
 
   config:
     import: classpath:secure/application.yml
-
-  jpa:
-    hibernate:
-      ddl-auto: validate
-    properties:
-      hibernate:
-        show_sql: true
-        format_sql: true
-
-  sql:
-    init:
-      schema-locations: classpath:sql/schema.sql
-
-  batch:
-    job:
-      enabled: false
-    jdbc:
-      initialize-schema: always
-
-logging:
-  level:
-    org.hibernate.orm.jdbc.bind: trace
-
-springdoc:
-  swagger-ui:
-    disable-swagger-default-url: true
-    url: /api-docs
-  api-docs:
-    path: /api-docs
-  default-produces-media-type: application/json
-
-server:
-  shutdown: graceful
