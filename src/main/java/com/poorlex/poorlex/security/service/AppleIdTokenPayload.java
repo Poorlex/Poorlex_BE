@@ -6,7 +6,7 @@ public class AppleIdTokenPayload {
 
     private String email;
 
-    public String getSubject() {
+    public String getSub() {
         return sub;
     }
 

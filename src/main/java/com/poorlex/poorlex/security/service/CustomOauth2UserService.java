@@ -44,7 +44,7 @@ public class CustomOauth2UserService implements OAuth2UserService<OAuth2UserRequ
             .get("id_token")
             .toString();
         final Map<String, Object> idTokenPayloads = decodeIdTokenPayload(idToken);
-        
+
         return new UserProfile(
             registrationId,
             Collections.singleton(new SimpleGrantedAuthority(USER_ROLE)),
@@ -56,7 +56,7 @@ public class CustomOauth2UserService implements OAuth2UserService<OAuth2UserRequ
         final AppleIdTokenPayload appleIdTokenPayload =
             jwtTokenProvider.decodePayload(idToken, AppleIdTokenPayload.class);
         final Map<String, Object> idTokenClaims = new HashMap<>();
-        idTokenClaims.put("sub", appleIdTokenPayload.getSubject());
+        idTokenClaims.put("sub", appleIdTokenPayload.getSub());
         idTokenClaims.put("email", appleIdTokenPayload.getEmail());
         return idTokenClaims;
     }
