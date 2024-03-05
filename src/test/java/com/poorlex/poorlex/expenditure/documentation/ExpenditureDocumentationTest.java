@@ -265,7 +265,7 @@ class ExpenditureDocumentationTest extends MockMvcTest {
 
         result.andExpect(status().isOk())
             .andDo(
-                document("expenditure-find-battle-member",
+                document("expenditure-find-battle-user",
                     ApiDocumentUtils.getDocumentRequest(),
                     ApiDocumentUtils.getDocumentResponse(),
                     responseFields(
@@ -312,7 +312,7 @@ class ExpenditureDocumentationTest extends MockMvcTest {
 
         result.andExpect(status().isOk())
             .andDo(
-                document("expenditure-find-member",
+                document("expenditure-find-user",
                     ApiDocumentUtils.getDocumentRequest(),
                     ApiDocumentUtils.getDocumentResponse(),
                     responseFields(

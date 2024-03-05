@@ -315,12 +315,12 @@ class ExpenditureServiceTest extends IntegrationTest implements ReplaceUnderScor
 //    @Test
 //    void 지출을_수정한다() {
 //        //given
-//        final Member member = createMember("oauthId");
-//        final Expenditure expenditure = createExpenditure(1000, member.getId(), LocalDateTime.now());
+//        final Member user = createMember("oauthId");
+//        final Expenditure expenditure = createExpenditure(1000, user.getId(), LocalDateTime.now());
 //        final ExpenditureUpdateRequest request = new ExpenditureUpdateRequest(2000, "updated", List.of("newImageUrl"));
 //
 //        //when
-//        expenditureService.updateExpenditure(member.getId(), expenditure.getId(), request);
+//        expenditureService.updateExpenditure(user.getId(), expenditure.getId(), request);
 //
 //        //then
 //        final Expenditure updateExpenditure = expenditureRepository.findById(expenditure.getId())
@@ -329,7 +329,7 @@ class ExpenditureServiceTest extends IntegrationTest implements ReplaceUnderScor
 //            .map(ExpenditureCertificationImageUrl::getValue).toList();
 //
 //        assertThat(updateExpenditure.getId()).isEqualTo(expenditure.getId());
-//        assertThat(updateExpenditure.getMemberId()).isEqualTo(member.getId());
+//        assertThat(updateExpenditure.getMemberId()).isEqualTo(user.getId());
 //        assertThat(updateExpenditure.getAmount()).isEqualTo(request.getAmount());
 //        assertThat(updateExpenditure.getDescription()).isEqualTo(request.getDescription());
 //        assertThat(updateExpenditureImageUrls).isEqualTo(request.getImageUrls());

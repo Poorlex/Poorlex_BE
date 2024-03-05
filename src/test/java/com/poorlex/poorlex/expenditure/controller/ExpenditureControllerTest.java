@@ -108,10 +108,10 @@ class ExpenditureControllerTest extends IntegrationTest implements ReplaceUnderS
 //    @Test
 //    void 지출을_수정한다() throws Exception {
 //        //given
-//        final Member member = createMember("oauthId");
-//        final Expenditure expenditure = createExpenditure(1000, member.getId(), LocalDateTime.now());
+//        final Member user = createMember("oauthId");
+//        final Expenditure expenditure = createExpenditure(1000, user.getId(), LocalDateTime.now());
 //
-//        final String accessToken = testMemberTokenGenerator.createAccessToken(member);
+//        final String accessToken = testMemberTokenGenerator.createAccessToken(user);
 //        final ExpenditureUpdateRequest request = new ExpenditureUpdateRequest(2000, "updated", List.of("newImageUrl"));
 //
 //        //when

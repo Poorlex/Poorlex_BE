@@ -62,7 +62,7 @@ class MemberPointDocumentationTest extends MockMvcTest {
         //then
         result.andExpect(status().isCreated())
             .andDo(
-                document("member-point-create",
+                document("user-point-create",
                     ApiDocumentUtils.getDocumentRequest(),
                     ApiDocumentUtils.getDocumentResponse(),
                     requestFields(
@@ -88,7 +88,7 @@ class MemberPointDocumentationTest extends MockMvcTest {
         //then
         result.andExpect(status().isOk())
             .andDo(
-                document("member-total-point-find",
+                document("user-total-point-find",
                     ApiDocumentUtils.getDocumentRequest(),
                     ApiDocumentUtils.getDocumentResponse(),
                     responseFields(
@@ -115,7 +115,7 @@ class MemberPointDocumentationTest extends MockMvcTest {
         //then
         result.andExpect(status().isOk())
             .andDo(
-                document("member-level-bar",
+                document("user-level-bar",
                     ApiDocumentUtils.getDocumentRequest(),
                     ApiDocumentUtils.getDocumentResponse(),
                     responseFields(

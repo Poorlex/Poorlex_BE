@@ -57,9 +57,10 @@ apple:
   team-id: team_id
   audience: https://appleid.apple.com
   private-key: p8 file
-  
+
 aws:
   s3:
+    region: ap-northeast-2
     accesskey: accesskey
     secretKey: secretKey
     bucket: bucket

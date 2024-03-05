@@ -1,0 +1,46 @@
+package com.poorlex.refactoring.battle.invitation.controller;
+
+import com.poorlex.refactoring.battle.invitation.service.BattleInviteCommandService;
+import com.poorlex.refactoring.battle.invitation.service.dto.request.BattleInviteAcceptRequest;
+import com.poorlex.refactoring.battle.invitation.service.dto.request.BattleInviteDenyRequest;
+import com.poorlex.refactoring.battle.invitation.service.dto.request.BattleInviteRequest;
+import com.poorlex.poorlex.config.auth.argumentresolver.MemberInfo;
+import com.poorlex.poorlex.config.auth.argumentresolver.MemberOnly;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping
+@RequiredArgsConstructor
+public class BattleInviteCommandController {
+
+    private final BattleInviteCommandService battleInviteCommandService;
+
+    @PostMapping("/battles/{battleId}/invite")
+    public ResponseEntity<Void> invite(@PathVariable(name = "battleId") final Long battleId,
+                                       @MemberOnly final MemberInfo memberInfo,
+                                       @RequestBody final BattleInviteRequest request) {
+        battleInviteCommandService.invite(battleId, memberInfo.getMemberId(), request);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @PostMapping("/battle-invite/accept")
+    public ResponseEntity<Void> inviteAccept(@MemberOnly final MemberInfo memberInfo,
+                                             @RequestBody final BattleInviteAcceptRequest request) {
+        battleInviteCommandService.inviteAccept(memberInfo.getMemberId(), request);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/battle-invite/deny")
+    public ResponseEntity<Void> inviteAccept(@MemberOnly final MemberInfo memberInfo,
+                                             @RequestBody final BattleInviteDenyRequest request) {
+        battleInviteCommandService.inviteDeny(memberInfo.getMemberId(), request);
+        return ResponseEntity.ok().build();
+    }
+}

@@ -62,7 +62,7 @@ class MemberAlarmDocumentationTest extends MockMvcTest {
         //then
         result.andExpect(status().isOk())
             .andDo(
-                document("member-alarm-find",
+                document("user-alarm-find",
                     ApiDocumentUtils.getDocumentRequest(),
                     ApiDocumentUtils.getDocumentResponse(),
                     requestFields(

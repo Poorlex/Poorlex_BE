@@ -49,7 +49,7 @@ class MemberDocumentationTest extends MockMvcTest {
         );
 
         result.andDo(
-            document("member-profile-update",
+            document("user-profile-update",
                 ApiDocumentUtils.getDocumentRequest(),
                 ApiDocumentUtils.getDocumentResponse(),
                 requestFields(

@@ -220,5 +220,5 @@ values ('KAKAO', 'oauth_id', '소개', 'split');
 -- insert into expenditure
 -- values (1L, '지출 소개', 11000, '2024-02-18T10:00', 1L);
 --
--- insert into member(oauth2registration_id, oauth_id, description, nickname)
+-- insert into user(oauth2registration_id, oauth_id, description, nickname)
 -- values ('KAKAO', 'oauth_id', '소개', '박상현');

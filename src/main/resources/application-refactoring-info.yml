@@ -1,0 +1,59 @@
+jwt:
+  token:
+    secret-key: localtestscretkeylocaltestscretkeylocaltestscretkey
+    access-expire-length: 604800000 # 7 일
+
+schedules:
+  battle-start:
+    cron: "0 * * * * *" # 매 분 0초 마다
+  save-battle-success-history:
+    cron: "15 * * * * *" # 매 분 15초 마다
+  battle-end:
+    cron: "30 * * * * *" # 매 분 30 초마다
+
+spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          kakao:
+            client-name: kakao
+            client-id: id
+            client-secret: secret
+            scope:
+              - profile_nickname
+              - account_email
+            authorization-grant-type: authorization_code
+            redirect-uri: "http://localhost:8080/login/oauth2/code/{registrationId}"
+            client-authentication-method: client_secret_post
+        provider:
+          kakao:
+            authorization-uri: https://kauth.kakao.com/oauth/authorize
+            token-uri: https://kauth.kakao.com/oauth/token
+            user-info-uri: https://kapi.kakao.com/v2/user/me
+            user-name-attribute: kakao_account
+apple:
+  client-id: client_id
+  key-id: key_id
+  team-id: team_id
+  audience: https://appleid.apple.com
+  private-key: p8 file
+
+aws:
+  s3:
+    region: ap-northeast-2
+    accesskey: accesskey
+    secretKey: secretKey
+    bucket: bucket
+    expenditure-directory: directory
+
+url:
+  login-redirect: 'localhost:8080'
+  server: localhost
+
+validation:
+  start-time: false
+  end-time: false
+
+battle:
+  max-battle-count: 3
