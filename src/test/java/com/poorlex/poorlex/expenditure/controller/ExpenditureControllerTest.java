@@ -1,14 +1,5 @@
 package com.poorlex.poorlex.expenditure.controller;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 import com.poorlex.poorlex.battle.domain.Battle;
 import com.poorlex.poorlex.battle.domain.BattleRepository;
 import com.poorlex.poorlex.battle.domain.BattleStatus;
@@ -19,6 +10,7 @@ import com.poorlex.poorlex.expenditure.domain.ExpenditureRepository;
 import com.poorlex.poorlex.expenditure.domain.WeeklyExpenditureDuration;
 import com.poorlex.poorlex.expenditure.fixture.ExpenditureFixture;
 import com.poorlex.poorlex.expenditure.fixture.ExpenditureRequestFixture;
+import com.poorlex.poorlex.expenditure.service.dto.request.ExpenditureCreateRequest;
 import com.poorlex.poorlex.expenditure.service.dto.request.MemberWeeklyTotalExpenditureRequest;
 import com.poorlex.poorlex.member.domain.Member;
 import com.poorlex.poorlex.member.domain.MemberNickname;
@@ -30,10 +22,6 @@ import com.poorlex.poorlex.support.IntegrationTest;
 import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
 import com.poorlex.poorlex.support.TestMemberTokenGenerator;
 import com.poorlex.poorlex.token.JwtTokenProvider;
-import java.io.FileInputStream;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -43,6 +31,18 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
+
+import java.io.FileInputStream;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @DisplayName("지출 인수 테스트")
 class ExpenditureControllerTest extends IntegrationTest implements ReplaceUnderScoreTest {
@@ -103,6 +103,236 @@ class ExpenditureControllerTest extends IntegrationTest implements ReplaceUnderS
             .andDo(print())
             .andExpect(status().isCreated())
             .andExpect(header().exists(HttpHeaders.LOCATION));
+    }
+
+    @Test
+    void ERROR_지출생성시_금액이_0보다_작으면_400_상태코드로_응답한다() throws Exception {
+        //given
+        given(awss3Service.uploadMultipartFile(any(), any())).willReturn("s3-image-url");
+        final String accessToken = testMemberTokenGenerator.createTokenWithNewMember("oauthId");
+
+        final MockMultipartFile image = new MockMultipartFile(
+            "images",
+            "cat-8415620_640",
+            MediaType.MULTIPART_FORM_DATA_VALUE,
+            new FileInputStream(
+                "src/test/resources/testImage/cat-8415620_640.jpg")
+        );
+        final MockMultipartFile formRequest = new MockMultipartFile(
+            "expenditureCreateRequest",
+            "",
+            MediaType.APPLICATION_JSON_VALUE,
+            objectMapper.writeValueAsString(
+                new ExpenditureCreateRequest(
+                    -1,
+                    "description",
+                    LocalDateTime.now().truncatedTo(ChronoUnit.MICROS)
+                )
+            ).getBytes()
+        );
+
+        //when
+        //then
+        mockMvc.perform(
+                multipart(HttpMethod.POST, "/expenditures")
+                    .file(image)
+                    .file(formRequest)
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+            )
+            .andDo(print())
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.message").exists());
+    }
+
+    @Test
+    void ERROR_지출생성시_금액이_9999999보다_크면_400_상태코드로_응답한다() throws Exception {
+        //given
+        given(awss3Service.uploadMultipartFile(any(), any())).willReturn("s3-image-url");
+        final String accessToken = testMemberTokenGenerator.createTokenWithNewMember("oauthId");
+
+        final MockMultipartFile image = new MockMultipartFile(
+            "images",
+            "cat-8415620_640",
+            MediaType.MULTIPART_FORM_DATA_VALUE,
+            new FileInputStream(
+                "src/test/resources/testImage/cat-8415620_640.jpg")
+        );
+        final MockMultipartFile formRequest = new MockMultipartFile(
+            "expenditureCreateRequest",
+            "",
+            MediaType.APPLICATION_JSON_VALUE,
+            objectMapper.writeValueAsString(
+                new ExpenditureCreateRequest(
+                    10_000_000L,
+                    "description",
+                    LocalDateTime.now().truncatedTo(ChronoUnit.MICROS)
+                )
+            ).getBytes()
+        );
+
+        //when
+        //then
+        mockMvc.perform(
+                multipart(HttpMethod.POST, "/expenditures")
+                    .file(image)
+                    .file(formRequest)
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+            )
+            .andDo(print())
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.message").exists());
+    }
+
+    @Test
+    void ERROR_지출생성시_설명이_비어있는_경우_400_상태코드로_응답한다() throws Exception {
+        //given
+        given(awss3Service.uploadMultipartFile(any(), any())).willReturn("s3-image-url");
+        final String accessToken = testMemberTokenGenerator.createTokenWithNewMember("oauthId");
+
+        final MockMultipartFile image = new MockMultipartFile(
+            "images",
+            "cat-8415620_640",
+            MediaType.MULTIPART_FORM_DATA_VALUE,
+            new FileInputStream(
+                "src/test/resources/testImage/cat-8415620_640.jpg")
+        );
+        final MockMultipartFile formRequest = new MockMultipartFile(
+            "expenditureCreateRequest",
+            "",
+            MediaType.APPLICATION_JSON_VALUE,
+            objectMapper.writeValueAsString(
+                new ExpenditureCreateRequest(
+                    1000L,
+                    "    ",
+                    LocalDateTime.now().truncatedTo(ChronoUnit.MICROS)
+                )
+            ).getBytes()
+        );
+
+        //when
+        //then
+        mockMvc.perform(
+                multipart(HttpMethod.POST, "/expenditures")
+                    .file(image)
+                    .file(formRequest)
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+            )
+            .andDo(print())
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.message").exists());
+    }
+
+    @Test
+    void ERROR_지출생성시_설명이_30자를_넘는_경우_400_상태코드로_응답한다() throws Exception {
+        //given
+        given(awss3Service.uploadMultipartFile(any(), any())).willReturn("s3-image-url");
+        final String accessToken = testMemberTokenGenerator.createTokenWithNewMember("oauthId");
+
+        final MockMultipartFile image = new MockMultipartFile(
+            "images",
+            "cat-8415620_640",
+            MediaType.MULTIPART_FORM_DATA_VALUE,
+            new FileInputStream(
+                "src/test/resources/testImage/cat-8415620_640.jpg")
+        );
+        final MockMultipartFile formRequest = new MockMultipartFile(
+            "expenditureCreateRequest",
+            "",
+            MediaType.APPLICATION_JSON_VALUE,
+            objectMapper.writeValueAsString(
+                new ExpenditureCreateRequest(
+                    1000L,
+                    "a".repeat(31),
+                    LocalDateTime.now().truncatedTo(ChronoUnit.MICROS)
+                )
+            ).getBytes()
+        );
+
+        //when
+        //then
+        mockMvc.perform(
+                multipart(HttpMethod.POST, "/expenditures")
+                    .file(image)
+                    .file(formRequest)
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+            )
+            .andDo(print())
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.message").exists());
+    }
+
+    @Test
+    void ERROR_지출생성시_이미지가_없는_경우_400_상태코드로_응답한다() throws Exception {
+        //given
+        given(awss3Service.uploadMultipartFile(any(), any())).willReturn("s3-image-url");
+        final String accessToken = testMemberTokenGenerator.createTokenWithNewMember("oauthId");
+
+
+        final MockMultipartFile formRequest = new MockMultipartFile(
+            "expenditureCreateRequest",
+            "",
+            MediaType.APPLICATION_JSON_VALUE,
+            objectMapper.writeValueAsString(
+                new ExpenditureCreateRequest(
+                    1000L,
+                    "description",
+                    LocalDateTime.now().truncatedTo(ChronoUnit.MICROS)
+                )
+            ).getBytes()
+        );
+
+        //when
+        //then
+        mockMvc.perform(
+                multipart(HttpMethod.POST, "/expenditures")
+                    .file(formRequest)
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+            )
+            .andDo(print())
+            .andExpect(status().isInternalServerError())
+            .andExpect(jsonPath("$.message").exists());
+    }
+
+    @Test
+    void ERROR_지출생성시_이미지가_2개보다_많을_경우_400_상태코드로_응답한다() throws Exception {
+        //given
+        given(awss3Service.uploadMultipartFile(any(), any())).willReturn("s3-image-url");
+        final String accessToken = testMemberTokenGenerator.createTokenWithNewMember("oauthId");
+
+        final MockMultipartFile image = new MockMultipartFile(
+            "images",
+            "cat-8415620_640",
+            MediaType.MULTIPART_FORM_DATA_VALUE,
+            new FileInputStream(
+                "src/test/resources/testImage/cat-8415620_640.jpg")
+        );
+
+        final MockMultipartFile formRequest = new MockMultipartFile(
+            "expenditureCreateRequest",
+            "",
+            MediaType.APPLICATION_JSON_VALUE,
+            objectMapper.writeValueAsString(
+                new ExpenditureCreateRequest(
+                    1000L,
+                    "description",
+                    LocalDateTime.now().truncatedTo(ChronoUnit.MICROS)
+                )
+            ).getBytes()
+        );
+
+        //when
+        //then
+        mockMvc.perform(
+                multipart(HttpMethod.POST, "/expenditures")
+                    .file(image)
+                    .file(image)
+                    .file(image)
+                    .file(formRequest)
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+            )
+            .andDo(print())
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.message").exists());
     }
 
 //    @Test
