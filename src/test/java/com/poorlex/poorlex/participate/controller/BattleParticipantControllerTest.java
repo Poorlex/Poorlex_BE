@@ -1,14 +1,9 @@
 package com.poorlex.poorlex.participate.controller;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import com.poorlex.poorlex.battle.fixture.BattleCreateRequestFixture;
-import com.poorlex.poorlex.battle.service.BattleService;
+import com.poorlex.poorlex.battle.domain.Battle;
+import com.poorlex.poorlex.battle.domain.BattleRepository;
+import com.poorlex.poorlex.battle.domain.BattleStatus;
+import com.poorlex.poorlex.battle.fixture.BattleFixture;
 import com.poorlex.poorlex.member.domain.Member;
 import com.poorlex.poorlex.member.domain.MemberNickname;
 import com.poorlex.poorlex.member.domain.MemberRepository;
@@ -18,12 +13,21 @@ import com.poorlex.poorlex.participate.domain.BattleParticipantRepository;
 import com.poorlex.poorlex.support.IntegrationTest;
 import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
 import com.poorlex.poorlex.token.JwtTokenProvider;
-import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.test.web.servlet.MockMvc;
+
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @DisplayName("배틀 참가 인수 테스트")
 class BattleParticipantControllerTest extends IntegrationTest implements ReplaceUnderScoreTest {
@@ -38,7 +42,7 @@ class BattleParticipantControllerTest extends IntegrationTest implements Replace
     private MemberRepository memberRepository;
 
     @Autowired
-    private BattleService battleService;
+    private BattleRepository battleRepository;
 
     @Autowired
     private BattleParticipantRepository battleParticipantRepository;
@@ -47,13 +51,13 @@ class BattleParticipantControllerTest extends IntegrationTest implements Replace
     void 배틀참가자를_추가한다() throws Exception {
         //given
         final Member member = createMember("oauthId");
-        final Long battleId = createBattle(member.getId());
+        final Battle battle = createBattle();
         final String accessToken = jwtTokenProvider.createAccessToken(member.getId());
 
         //when
         //then
         mockMvc.perform(
-                post("/battles/{battleId}/participants", battleId)
+                post("/battles/{battleId}/participants", battle.getId())
                     .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
             )
             .andDo(print())
@@ -62,28 +66,87 @@ class BattleParticipantControllerTest extends IntegrationTest implements Replace
     }
 
     @Test
+    void ERROR_배틀참가자가_이미_3개의_배틀에_참가중인경우_400_상태코드로_응답한다() throws Exception {
+        //given
+        final Member member = createMember("oauthId");
+        join(createBattle().getId(), member);
+        join(createBattle().getId(), member);
+        join(createBattle().getId(), member);
+
+        final Battle battle = createBattle();
+        final String accessToken = jwtTokenProvider.createAccessToken(member.getId());
+
+        //when
+        //then
+        mockMvc.perform(
+                post("/battles/{battleId}/participants", battle.getId())
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+            )
+            .andDo(print())
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.message").exists());
+    }
+
+    @ParameterizedTest
+    @CsvSource(value = {"RECRUITING_FINISHED", "PROGRESS", "COMPLETE"})
+    void ERROR_배틀참가자가_참가하려는_빼틀이_모집중이_아닌_경우_400_상태코드로_응답한다(final BattleStatus battleStatus) throws Exception {
+        //given
+        final Member member = createMember("oauthId");
+        final Battle battle = createBattleWithStatus(battleStatus);
+        final String accessToken = jwtTokenProvider.createAccessToken(member.getId());
+
+        //when
+        //then
+        mockMvc.perform(
+                post("/battles/{battleId}/participants", battle.getId())
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+            )
+            .andDo(print())
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.message").exists());
+    }
+
+    @Test
     void 배틀참가자를_제거한다() throws Exception {
         //given
         final Member member1 = createMember("oauthId1");
         final Member member2 = createMember("oauthId2");
-        final Long battleId = createBattle(member1.getId());
-        join(battleId, member2);
+        final Battle battle = createBattle();
+        join(battle.getId(), member2);
         final String accessToken = jwtTokenProvider.createAccessToken(member2.getId());
 
         //when
         //then
         mockMvc.perform(
-                delete("/battles/{battleId}/participants", battleId)
+                delete("/battles/{battleId}/participants", battle.getId())
                     .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
             )
             .andDo(print())
             .andExpect(status().isNoContent());
 
         final Optional<BattleParticipant> removedBattleParticipant = battleParticipantRepository.findByBattleIdAndMemberId(
-            battleId,
+            battle.getId(),
             member2.getId()
         );
         assertThat(removedBattleParticipant).isEmpty();
+    }
+
+    @Test
+    void ERROR_배틀참가자가_탈퇴하려는_빼틀이_종료된_아닌_경우_400_상태코드로_응답한다() throws Exception {
+        //given
+        final Member member = createMember("oauthId");
+        final Battle battle = createBattleWithStatus(BattleStatus.COMPLETE);
+        final String accessToken = jwtTokenProvider.createAccessToken(member.getId());
+
+        //when
+        //then
+        mockMvc.perform(
+                delete("/battles/{battleId}/participants", battle.getId())
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+            )
+            .andDo(print())
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.message").exists());
     }
 
     private Member createMember(final String oauthId) {
@@ -91,8 +154,16 @@ class BattleParticipantControllerTest extends IntegrationTest implements Replace
         return memberRepository.save(member);
     }
 
-    private Long createBattle(final Long memberId) {
-        return battleService.create(memberId, BattleCreateRequestFixture.simple());
+    private Battle createBattle() {
+        return battleRepository.save(BattleFixture.simple());
+    }
+
+    private Battle createBattleWithStatus(final BattleStatus battleStatus) {
+        return battleRepository.save(
+            BattleFixture.initialBattleBuilder()
+                .status(battleStatus)
+                .build()
+        );
     }
 
     private void join(final Long battleId, final Member member) {
