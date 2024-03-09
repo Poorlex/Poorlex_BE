@@ -12,14 +12,14 @@ public class WeeklyBudgetResponse {
     private static final boolean BUDGET_EXIST = true;
 
     private final boolean exist;
-    private final int amount;
-    private final long dDay;
+    private final Long amount;
+    private final Long dDay;
 
-    public static WeeklyBudgetResponse exist(final WeeklyBudget weeklyBudget, final long dDay) {
+    public static WeeklyBudgetResponse exist(final WeeklyBudget weeklyBudget, final Long dDay) {
         return new WeeklyBudgetResponse(BUDGET_EXIST, weeklyBudget.getAmount(), dDay);
     }
 
     public static WeeklyBudgetResponse empty() {
-        return new WeeklyBudgetResponse(BUDGET_NOT_EXIST, 0, 0);
+        return new WeeklyBudgetResponse(BUDGET_NOT_EXIST, 0L, 0L);
     }
 }

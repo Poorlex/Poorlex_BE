@@ -8,11 +8,12 @@ import com.poorlex.poorlex.weeklybudget.domain.WeeklyBudgetDuration;
 import com.poorlex.poorlex.weeklybudget.domain.WeeklyBudgetRepository;
 import com.poorlex.poorlex.weeklybudget.service.dto.response.WeeklyBudgetLeftResponse;
 import com.poorlex.poorlex.weeklybudget.service.dto.response.WeeklyBudgetResponse;
-import java.time.LocalDateTime;
-import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Service
 @Transactional(readOnly = true)
@@ -23,7 +24,7 @@ public class WeeklyBudgetService {
     private final ExpenditureRepository expenditureRepository;
     private final MemberRepository memberRepository;
 
-    public void createBudget(final Long memberId, final int budget) {
+    public void createBudget(final Long memberId, final Long budget) {
         validateMemberId(memberId);
         final WeeklyBudgetAmount amount = new WeeklyBudgetAmount(budget);
         final WeeklyBudgetDuration duration = WeeklyBudgetDuration.current();

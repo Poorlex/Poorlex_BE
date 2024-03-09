@@ -1,8 +1,5 @@
 package com.poorlex.poorlex.weeklybudget.service;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.SoftAssertions.assertSoftly;
-
 import com.poorlex.poorlex.expenditure.domain.Expenditure;
 import com.poorlex.poorlex.expenditure.domain.ExpenditureRepository;
 import com.poorlex.poorlex.expenditure.fixture.ExpenditureFixture;
@@ -18,12 +15,16 @@ import com.poorlex.poorlex.weeklybudget.domain.WeeklyBudgetDuration;
 import com.poorlex.poorlex.weeklybudget.domain.WeeklyBudgetRepository;
 import com.poorlex.poorlex.weeklybudget.service.dto.response.WeeklyBudgetLeftResponse;
 import com.poorlex.poorlex.weeklybudget.service.dto.response.WeeklyBudgetResponse;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
-import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 class WeeklyBudgetServiceTest extends UsingDataJpaTest implements ReplaceUnderScoreTest {
 
@@ -51,7 +52,7 @@ class WeeklyBudgetServiceTest extends UsingDataJpaTest implements ReplaceUnderSc
             Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname")));
 
         //when
-        weeklyBudgetService.createBudget(member.getId(), 10000);
+        weeklyBudgetService.createBudget(member.getId(), 10000L);
 
         //then
         final List<WeeklyBudget> weeklyBudgets = weeklyBudgetRepository.findAll();
@@ -73,7 +74,7 @@ class WeeklyBudgetServiceTest extends UsingDataJpaTest implements ReplaceUnderSc
         //given
         final Member member = memberRepository.save(
             Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname")));
-        final WeeklyBudget weaklyBudget = createWeaklyBudget(member.getId(), 10000);
+        final WeeklyBudget weaklyBudget = createWeaklyBudget(member.getId(), 10000L);
 
         //when
         final WeeklyBudgetResponse weeklyBudgetResponse = weeklyBudgetService.findCurrentBudgetByMemberIdAndDate(
@@ -108,7 +109,7 @@ class WeeklyBudgetServiceTest extends UsingDataJpaTest implements ReplaceUnderSc
         //given
         final Member member = memberRepository.save(
             Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname")));
-        final WeeklyBudget weaklyBudget = createWeaklyBudget(member.getId(), 10000);
+        final WeeklyBudget weaklyBudget = createWeaklyBudget(member.getId(), 10000L);
         final Expenditure expenditure = createExpenditure(1000, member.getId(), weaklyBudget.getDuration().getStart());
 
         //when
@@ -141,7 +142,7 @@ class WeeklyBudgetServiceTest extends UsingDataJpaTest implements ReplaceUnderSc
         assertThat(budgetLeft.getAmount()).isZero();
     }
 
-    private WeeklyBudget createWeaklyBudget(final Long memberId, final int amount) {
+    private WeeklyBudget createWeaklyBudget(final Long memberId, final Long amount) {
         final WeeklyBudget weeklyBudget = WeeklyBudget.withoutId(
             new WeeklyBudgetAmount(amount),
             WeeklyBudgetDuration.current(),
