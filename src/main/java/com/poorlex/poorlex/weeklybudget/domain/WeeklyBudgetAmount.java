@@ -21,7 +21,9 @@ public class WeeklyBudgetAmount {
 
     private void validate(final int value) {
         if (MINIMUM_PRICE > value || value > MAXIMUM_PRICE) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException(
+                String.format("주간 예산은 %d원 이상 %d원 이하여야 합니다. ( 입력 금액 : %d )", MINIMUM_PRICE, MAXIMUM_PRICE, value)
+            );
         }
     }
 
