@@ -20,7 +20,7 @@ public class ApiExceptionHandler {
     public ResponseEntity<ExceptionResponse> handle(final Exception exception) {
         exception.printStackTrace();
         final ExceptionResponse exceptionResponse = new ExceptionResponse(exception);
-        log.warn("Handled IllegalArgumentException : {}", exceptionResponse);
+        log.warn("Handled Exception : {}", exception.getClass());
         return ResponseEntity.internalServerError().body(exceptionResponse);
     }
 }
