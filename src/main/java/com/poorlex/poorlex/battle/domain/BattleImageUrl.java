@@ -20,7 +20,7 @@ public class BattleImageUrl {
 
     private void validate(final String value) {
         if (!StringUtils.hasText(value)) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("배틀 이미지 URL 이 비어있습니다.");
         }
     }
 

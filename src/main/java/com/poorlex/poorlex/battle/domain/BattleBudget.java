@@ -27,13 +27,17 @@ public class BattleBudget {
 
     private void validateRange(final int value) {
         if (value < MINIMUM_BUDGET || MAXIMUM_BUDGET < value) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException(
+                    String.format("예산은 %d 이상 %d 이하여야 합니다. ( 입력값 : %d )", MINIMUM_BUDGET, MAXIMUM_BUDGET, value)
+            );
         }
     }
 
     private void validateUnit(final int value) {
         if (value % UNIT != 0) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException(
+                    String.format("예산은 %d 단위여야 합니다. ( 입력값 : %d )", UNIT, value)
+            );
         }
     }
 
@@ -47,6 +51,6 @@ public class BattleBudget {
 
     public BattleDifficulty getDifficulty() {
         return BattleDifficulty.findByBattleBudget(this)
-            .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(IllegalArgumentException::new);
     }
 }
