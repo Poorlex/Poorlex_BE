@@ -11,6 +11,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Map;
+import java.util.Objects;
+import java.util.UUID;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.util.LinkedMultiValueMap;
@@ -57,9 +60,17 @@ public class KaKaoTokenOauth2AuthenticationSuccessHandler extends AbstractTokenO
     private String getNickname(final UserProfile principal) {
         final StringBuilder stringBuilder = new StringBuilder();
 
+        log.info("user info : {}", principal.<Map<String, Map<String, String>>>getAttribute(ACCOUNT_KEY));
+
         final String nickname = principal.<Map<String, Map<String, String>>>getAttribute(ACCOUNT_KEY)
             .get(PROFILE_KEY)
             .get(NICKNAME_KEY);
+
+        if(Objects.isNull(nickname)){
+            stringBuilder.append(SHORT_NICKNAME_PREFIX).append(UUID.randomUUID())
+                    .setLength(NICKNAME_MAXIMUM_LENGTH);
+            return stringBuilder.toString();
+        }
 
         if (nickname.length() < NICKNAME_MINIMUM_LENGTH) {
             return stringBuilder.append(SHORT_NICKNAME_PREFIX).append(nickname).toString();
