@@ -21,7 +21,9 @@ public class ExpenditureAmount {
 
     private void validate(final long value) {
         if (MINIMUM_PRICE > value || value > MAXIMUM_PRICE) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException(
+                    String.format("지출 금액은 %d원 이상 %d원 이하입니다. ( 입력 지출 금액 : %d )", MINIMUM_PRICE, MAXIMUM_PRICE, value)
+            );
         }
     }
 

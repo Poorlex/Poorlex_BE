@@ -1,19 +1,11 @@
 package com.poorlex.poorlex.expenditure.domain;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.ConstraintMode;
-import jakarta.persistence.Entity;
-import jakarta.persistence.ForeignKey;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
-import java.util.Objects;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.springframework.util.StringUtils;
+
+import java.util.Objects;
 
 @Entity
 @Table(name = "expenditure_image")
@@ -46,13 +38,13 @@ public class ExpenditureCertificationImageUrl {
 
     private void validate(final String value) {
         if (!StringUtils.hasText(value)) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("지출 이미지 URL 이 비어있습니다.");
         }
     }
 
     protected void belongTo(final Expenditure expenditure) {
         if (Objects.nonNull(this.expenditure)) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("지출 이미지가 추가될 지출이 존재하지 않습니다.");
         }
         this.expenditure = expenditure;
     }
