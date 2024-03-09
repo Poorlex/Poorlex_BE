@@ -62,10 +62,15 @@ public class ExpenditureService {
         if (Collections.isEmpty(images)) {
             throw new IllegalArgumentException("지출 이미지는 최소 1개가 필요합니다.");
         }
+        if (images.size() > ExpenditureCertificationImageUrls.MAX_IMAGE_COUNT) {
+            throw new IllegalArgumentException(
+                String.format("지출 이미지는 최대 %d개 입니다. ( 입력 이미지 갯수 : %d )", ExpenditureCertificationImageUrls.MAX_IMAGE_COUNT, images.size())
+            );
+        }
         images.stream()
-                .map(image -> awss3Service.uploadMultipartFile(image, bucketDirectory))
-                .map(imageUrl -> ExpenditureCertificationImageUrl.withoutId(imageUrl, expenditure))
-                .forEach(expenditure::addImageUrl);
+            .map(image -> awss3Service.uploadMultipartFile(image, bucketDirectory))
+            .map(imageUrl -> ExpenditureCertificationImageUrl.withoutId(imageUrl, expenditure))
+            .forEach(expenditure::addImageUrl);
     }
 
     private void raiseEvent(final long expenditureAmount, final Long memberId) {
@@ -80,9 +85,9 @@ public class ExpenditureService {
                                                                                  final MemberWeeklyTotalExpenditureRequest request) {
         final WeeklyExpenditureDuration duration = WeeklyExpenditureDuration.from(request.getDateTime());
         final int sumExpenditure = expenditureRepository.findSumExpenditureByMemberIdAndBetween(
-                memberId,
-                duration.getStart(),
-                duration.getEnd()
+            memberId,
+            duration.getStart(),
+            duration.getEnd()
         );
 
         return new MemberWeeklyTotalExpenditureResponse(sumExpenditure);
@@ -92,10 +97,10 @@ public class ExpenditureService {
                                                                                        final LocalDateTime start,
                                                                                        final LocalDateTime end) {
         final List<TotalExpenditureAndMemberIdDto> totalExpenditureAndMemberIdSortedByExpenditure =
-                expenditureRepository.findTotalExpendituresBetweenAndMemberIdIn(memberIds, start, end)
-                        .stream()
-                        .sorted(Comparator.comparingLong(TotalExpenditureAndMemberIdDto::getTotalExpenditure))
-                        .toList();
+            expenditureRepository.findTotalExpendituresBetweenAndMemberIdIn(memberIds, start, end)
+                .stream()
+                .sorted(Comparator.comparingLong(TotalExpenditureAndMemberIdDto::getTotalExpenditure))
+                .toList();
 
         final Map<Long, RankAndTotalExpenditureDto> participantIdsAndRank = new HashMap<>();
 
@@ -123,16 +128,16 @@ public class ExpenditureService {
 
     public ExpenditureResponse findExpenditureById(final Long expenditureId) {
         return expenditureRepository.findById(expenditureId)
-                .map(ExpenditureResponse::from)
-                .orElseThrow(() -> new IllegalArgumentException("해당 Id 의 지출이 존재하지 않습니다."));
+            .map(ExpenditureResponse::from)
+            .orElseThrow(() -> new IllegalArgumentException("해당 Id 의 지출이 존재하지 않습니다."));
     }
 
     public List<ExpenditureResponse> findMemberExpenditures(final Long memberId) {
         final List<Expenditure> memberExpenditures = expenditureRepository.findAllByMemberId(memberId);
 
         return memberExpenditures.stream()
-                .map(ExpenditureResponse::from)
-                .toList();
+            .map(ExpenditureResponse::from)
+            .toList();
     }
 
     public List<BattleExpenditureResponse> findBattleExpendituresInDayOfWeek(final Long battleId,
@@ -142,24 +147,24 @@ public class ExpenditureService {
         final List<Expenditure> battleExpenditures = expenditureRepository.findBattleExpenditureByBattleId(battleId);
 
         return battleExpenditures.stream()
-                .filter(expenditure -> expenditure.getDateTime().getDayOfWeek() == targetDayOfWeek)
-                .map(expenditure -> BattleExpenditureResponse.from(expenditure, expenditure.hasSameMemberId(memberId)))
-                .toList();
+            .filter(expenditure -> expenditure.getDateTime().getDayOfWeek() == targetDayOfWeek)
+            .map(expenditure -> BattleExpenditureResponse.from(expenditure, expenditure.hasSameMemberId(memberId)))
+            .toList();
     }
 
     public List<BattleExpenditureResponse> findMemberBattleExpenditures(final Long battleId, final Long memberId) {
         final Battle battle = battleRepository.findById(battleId)
-                .orElseThrow(() -> new IllegalArgumentException("Id에 해당하는 배틀이 없습니다."));
+            .orElseThrow(() -> new IllegalArgumentException("Id에 해당하는 배틀이 없습니다."));
 
         final List<Expenditure> expenditures = expenditureRepository.findExpendituresByMemberIdAndDateTimeBetween(
-                memberId,
-                battle.getDuration().getStart(),
-                battle.getDuration().getEnd()
+            memberId,
+            battle.getDuration().getStart(),
+            battle.getDuration().getEnd()
         );
 
         return expenditures.stream()
-                .map(expenditure -> BattleExpenditureResponse.from(expenditure, true))
-                .toList();
+            .map(expenditure -> BattleExpenditureResponse.from(expenditure, true))
+            .toList();
     }
 
     @Transactional
@@ -167,11 +172,11 @@ public class ExpenditureService {
                                   final Long expenditureId,
                                   final ExpenditureUpdateRequest request) {
         final Expenditure expenditure = expenditureRepository.findById(expenditureId)
-                .orElseThrow(() -> new IllegalArgumentException("Id에 해당하는 지출이 없습니다."));
+            .orElseThrow(() -> new IllegalArgumentException("Id에 해당하는 지출이 없습니다."));
 
         validateExpenditureOwnership(memberId, expenditure);
         expenditure.pasteAmountAndDescriptionAndImageUrls(
-                ExpenditureMapper.createRequestToExpenditure(memberId, request)
+            ExpenditureMapper.createRequestToExpenditure(memberId, request)
         );
     }
 
