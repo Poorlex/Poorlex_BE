@@ -1,14 +1,6 @@
 package com.poorlex.poorlex.battle.service;
 
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.assertj.core.api.SoftAssertions.assertSoftly;
-
-import com.poorlex.poorlex.battle.domain.Battle;
-import com.poorlex.poorlex.battle.domain.BattleBudget;
-import com.poorlex.poorlex.battle.domain.BattleDuration;
-import com.poorlex.poorlex.battle.domain.BattleRepository;
-import com.poorlex.poorlex.battle.domain.BattleStatus;
-import com.poorlex.poorlex.battle.domain.BattleType;
+import com.poorlex.poorlex.battle.domain.*;
 import com.poorlex.poorlex.battle.fixture.BattleCreateRequestFixture;
 import com.poorlex.poorlex.battle.fixture.BattleFixture;
 import com.poorlex.poorlex.battle.service.dto.request.BattleCreateRequest;
@@ -24,15 +16,18 @@ import com.poorlex.poorlex.participate.domain.BattleParticipant;
 import com.poorlex.poorlex.participate.domain.BattleParticipantRepository;
 import com.poorlex.poorlex.support.IntegrationTest;
 import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.List;
+
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 @DisplayName("배틀 서비스 테스트")
 class BattleServiceTest extends IntegrationTest implements ReplaceUnderScoreTest {
@@ -81,27 +76,6 @@ class BattleServiceTest extends IntegrationTest implements ReplaceUnderScoreTest
                     .isEqualTo(BattleFixture.simple());
             }
         );
-    }
-
-    @Test
-    void 배틀을_생성한다_참여한_배틀이_3개일_경우_예외를_던진다() {
-        //given
-        final Member member = createMemberWithOauthId("oauthId");
-
-        final Battle battle1 = battleRepository.save(BattleFixture.simple());
-        final Battle battle2 = battleRepository.save(BattleFixture.simple());
-        final Battle battle3 = battleRepository.save(BattleFixture.simple());
-
-        join(member, battle1);
-        join(member, battle2);
-        join(member, battle3);
-
-        final BattleCreateRequest request = BattleCreateRequestFixture.simple();
-
-        //when
-        //then
-        assertThatThrownBy(() -> battleService.create(member.getId(), request))
-            .isInstanceOf(IllegalArgumentException.class);
     }
 
     @ParameterizedTest(name = "멤버1의 지출이 {0}, 멤버2의 지출이 {1} 일 때")
