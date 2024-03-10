@@ -34,7 +34,7 @@ class FriendServiceTest extends IntegrationTest implements ReplaceUnderScoreTest
     @Autowired
     private FriendService friendService;
 
-    @MockBean
+    @MockBean(name = "memberAlarmEventHandler")
     private MemberAlarmEventHandler memberAlarmEventHandler;
 
     @Test
