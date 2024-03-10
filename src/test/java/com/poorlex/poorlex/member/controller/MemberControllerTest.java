@@ -1,10 +1,5 @@
 package com.poorlex.poorlex.member.controller;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 import com.poorlex.poorlex.member.domain.Member;
 import com.poorlex.poorlex.member.domain.MemberNickname;
 import com.poorlex.poorlex.member.domain.MemberRepository;
@@ -18,6 +13,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.transaction.annotation.Transactional;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class MemberControllerTest extends IntegrationTest implements ReplaceUnderScoreTest {
 
@@ -52,5 +53,165 @@ class MemberControllerTest extends IntegrationTest implements ReplaceUnderScoreT
         assertThat(updatedMember.getDescription()).isPresent()
             .get()
             .isEqualTo(request.getDescription());
+    }
+
+    @Test
+    void ERROR_멤버_닉네임수정시_비어있을경우_400_상태코드로_응답한다() throws Exception {
+        //given
+        final Member member = memberRepository.save(
+            Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname")));
+        final MemberProfileUpdateRequest request = new MemberProfileUpdateRequest("    ", "newDescription");
+        final String accessToken = jwtTokenProvider.createAccessToken(member.getId());
+
+        //when
+        //then
+        mockMvc.perform(
+                patch("/member/profile")
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                    .content(objectMapper.writeValueAsString(request))
+                    .contentType(MediaType.APPLICATION_JSON)
+            ).andDo(print())
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.message").exists());
+    }
+
+    @Test
+    void ERROR_멤버_닉네임수정시_2자_미만이면_400_상태코드로_응답한다() throws Exception {
+        //given
+        final Member member = memberRepository.save(
+            Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname")));
+        final MemberProfileUpdateRequest request = new MemberProfileUpdateRequest("a", "newDescription");
+        final String accessToken = jwtTokenProvider.createAccessToken(member.getId());
+
+        //when
+        //then
+        mockMvc.perform(
+                patch("/member/profile")
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                    .content(objectMapper.writeValueAsString(request))
+                    .contentType(MediaType.APPLICATION_JSON)
+            ).andDo(print())
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.message").exists());
+    }
+
+    @Test
+    void ERROR_멤버_닉네임수정시_15자를_초과하면_400_상태코드로_응답한다() throws Exception {
+        //given
+        final Member member = memberRepository.save(
+            Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname")));
+        final MemberProfileUpdateRequest request = new MemberProfileUpdateRequest("a".repeat(16), "newDescription");
+        final String accessToken = jwtTokenProvider.createAccessToken(member.getId());
+
+        //when
+        //then
+        mockMvc.perform(
+                patch("/member/profile")
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                    .content(objectMapper.writeValueAsString(request))
+                    .contentType(MediaType.APPLICATION_JSON)
+            ).andDo(print())
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.message").exists());
+    }
+
+    @Test
+    void ERROR_멤버_닉네임수정시_허용되지_않은_특수기호를_사용하면_400_상태코드로_응답한다() throws Exception {
+        //given
+        final Member member = memberRepository.save(
+            Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname")));
+        final MemberProfileUpdateRequest request = new MemberProfileUpdateRequest("!@#$%^&*()", "newDescription");
+        final String accessToken = jwtTokenProvider.createAccessToken(member.getId());
+
+        //when
+        //then
+        mockMvc.perform(
+                patch("/member/profile")
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                    .content(objectMapper.writeValueAsString(request))
+                    .contentType(MediaType.APPLICATION_JSON)
+            ).andDo(print())
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.message").exists());
+    }
+
+    @Test
+    void ERROR_멤버_닉네임수정시_허용되지_않은_문자를_사용하면_400_상태코드로_응답한다() throws Exception {
+        //given
+        final Member member = memberRepository.save(
+            Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname")));
+        final MemberProfileUpdateRequest request = new MemberProfileUpdateRequest("hello😃", "newDescription");
+        final String accessToken = jwtTokenProvider.createAccessToken(member.getId());
+
+        //when
+        //then
+        mockMvc.perform(
+                patch("/member/profile")
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                    .content(objectMapper.writeValueAsString(request))
+                    .contentType(MediaType.APPLICATION_JSON)
+            ).andDo(print())
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.message").exists());
+    }
+
+    @Test
+    void ERROR_멤버_닉네임수정시_소개가_비어있으면_400_상태코드로_응답한다() throws Exception {
+        //given
+        final Member member = memberRepository.save(
+            Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname")));
+        final MemberProfileUpdateRequest request = new MemberProfileUpdateRequest("nickname", "      ");
+        final String accessToken = jwtTokenProvider.createAccessToken(member.getId());
+
+        //when
+        //then
+        mockMvc.perform(
+                patch("/member/profile")
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                    .content(objectMapper.writeValueAsString(request))
+                    .contentType(MediaType.APPLICATION_JSON)
+            ).andDo(print())
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.message").exists());
+    }
+
+    @Test
+    void ERROR_멤버_닉네임수정시_소개가_2자미만이면_400_상태코드로_응답한다() throws Exception {
+        //given
+        final Member member = memberRepository.save(
+            Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname")));
+        final MemberProfileUpdateRequest request = new MemberProfileUpdateRequest("nickname", "a");
+        final String accessToken = jwtTokenProvider.createAccessToken(member.getId());
+
+        //when
+        //then
+        mockMvc.perform(
+                patch("/member/profile")
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                    .content(objectMapper.writeValueAsString(request))
+                    .contentType(MediaType.APPLICATION_JSON)
+            ).andDo(print())
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.message").exists());
+    }
+
+    @Test
+    void ERROR_멤버_닉네임수정시_소개가_300자를_초과하면_400_상태코드로_응답한다() throws Exception {
+        //given
+        final Member member = memberRepository.save(
+            Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname")));
+        final MemberProfileUpdateRequest request = new MemberProfileUpdateRequest("nickname", "a".repeat(301));
+        final String accessToken = jwtTokenProvider.createAccessToken(member.getId());
+
+        //when
+        //then
+        mockMvc.perform(
+                patch("/member/profile")
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                    .content(objectMapper.writeValueAsString(request))
+                    .contentType(MediaType.APPLICATION_JSON)
+            ).andDo(print())
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.message").exists());
     }
 }

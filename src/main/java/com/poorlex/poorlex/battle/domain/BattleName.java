@@ -22,14 +22,16 @@ public class BattleName {
 
     private void validate(final String value) {
         if (!StringUtils.hasText(value)) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("배틀 명이 비어있습니다.");
         }
         validateLength(value.length());
     }
 
     private void validateLength(final int length) {
         if (MINIMUM_NAME_LENGTH > length || length > MAXIMUM_NAME_LENGTH) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException(
+                    String.format("배틀명은 %d자 이상 %d자 이하여야 합니다. ( 입력한 길이 : %d )", MINIMUM_NAME_LENGTH, MAXIMUM_NAME_LENGTH, length)
+            );
         }
     }
 

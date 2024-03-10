@@ -1,18 +1,5 @@
 package com.poorlex.poorlex.weeklybudget.documentation;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.doNothing;
-import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
-import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-
 import com.poorlex.poorlex.support.MockMvcTest;
 import com.poorlex.poorlex.util.ApiDocumentUtils;
 import com.poorlex.poorlex.weeklybudget.controller.WeeklyBudgetController;
@@ -22,8 +9,6 @@ import com.poorlex.poorlex.weeklybudget.service.dto.request.WeeklyBudgetLeftRequ
 import com.poorlex.poorlex.weeklybudget.service.dto.request.WeeklyBudgetRequest;
 import com.poorlex.poorlex.weeklybudget.service.dto.response.WeeklyBudgetLeftResponse;
 import com.poorlex.poorlex.weeklybudget.service.dto.response.WeeklyBudgetResponse;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -34,6 +19,19 @@ import org.springframework.restdocs.payload.JsonFieldType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doNothing;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 @WebMvcTest(WeeklyBudgetController.class)
 class WeeklyBudgetDocumentationTest extends MockMvcTest {
@@ -47,11 +45,11 @@ class WeeklyBudgetDocumentationTest extends MockMvcTest {
     @Test
     void create() throws Exception {
         //given
-        final WeeklyBudgetCreateRequest request = new WeeklyBudgetCreateRequest(10000);
+        final WeeklyBudgetCreateRequest request = new WeeklyBudgetCreateRequest(10000L);
 
         mockingTokenInterceptor();
         mockingMemberArgumentResolver();
-        doNothing().when(weeklyBudgetService).createBudget(anyLong(), anyInt());
+        doNothing().when(weeklyBudgetService).createBudget(anyLong(), anyLong());
 
         //when
         final ResultActions result = mockMvc.perform(
@@ -82,7 +80,7 @@ class WeeklyBudgetDocumentationTest extends MockMvcTest {
         mockingTokenInterceptor();
         mockingMemberArgumentResolver();
         given(weeklyBudgetService.findCurrentBudgetByMemberIdAndDate(any(), any())).willReturn(
-            new WeeklyBudgetResponse(true, 10000, 5)
+            new WeeklyBudgetResponse(true, 10000L, 5L)
         );
 
         //when
@@ -120,7 +118,7 @@ class WeeklyBudgetDocumentationTest extends MockMvcTest {
         mockingTokenInterceptor();
         mockingMemberArgumentResolver();
         given(weeklyBudgetService.findCurrentBudgetLeftByMemberIdAndDate(any(), any())).willReturn(
-            new WeeklyBudgetLeftResponse(true, 10000)
+            new WeeklyBudgetLeftResponse(true, 10000L)
         );
 
         //when

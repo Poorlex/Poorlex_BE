@@ -22,14 +22,16 @@ public class BattleIntroduction {
 
     private void validate(final String value) {
         if (!StringUtils.hasText(value)) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("배틀 소개 내용이 없습니다.");
         }
         validateLength(value.length());
     }
 
     private void validateLength(final int length) {
         if (MINIMUM_NAME_LENGTH > length || length > MAXIMUM_NAME_LENGTH) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException(
+                    String.format("배틀 소개는 %d자 이상 %d자 이하여야 합니다. ( 입력값 : %d )", MINIMUM_NAME_LENGTH, MAXIMUM_NAME_LENGTH, length)
+            );
         }
     }
 

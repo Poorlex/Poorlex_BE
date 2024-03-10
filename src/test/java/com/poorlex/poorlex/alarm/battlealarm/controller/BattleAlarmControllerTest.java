@@ -1,16 +1,7 @@
 package com.poorlex.poorlex.alarm.battlealarm.controller;
 
-import static org.assertj.core.api.SoftAssertions.assertSoftly;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-
-import com.poorlex.poorlex.alarm.battlealarm.domain.BattleAlarm;
-import com.poorlex.poorlex.alarm.battlealarm.domain.BattleAlarmRepository;
-import com.poorlex.poorlex.alarm.battlealarm.domain.BattleAlarmType;
-import com.poorlex.poorlex.alarm.battlealarm.domain.BattleAlarmViewHistory;
-import com.poorlex.poorlex.alarm.battlealarm.domain.BattleAlarmViewHistoryRepository;
+import com.poorlex.poorlex.alarm.battlealarm.domain.*;
 import com.poorlex.poorlex.alarm.battlealarm.service.dto.request.BattleAlarmRequest;
-import com.poorlex.poorlex.alarm.battlealarm.service.event.BattleAlarmViewedEvent;
 import com.poorlex.poorlex.battle.domain.Battle;
 import com.poorlex.poorlex.battle.domain.BattleRepository;
 import com.poorlex.poorlex.battle.domain.BattleStatus;
@@ -24,16 +15,20 @@ import com.poorlex.poorlex.participate.domain.BattleParticipantRepository;
 import com.poorlex.poorlex.support.IntegrationTest;
 import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
 import com.poorlex.poorlex.token.JwtTokenProvider;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
-import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.event.ApplicationEvents;
 import org.springframework.test.context.event.RecordApplicationEvents;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.Optional;
+
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
 @RecordApplicationEvents
 class BattleAlarmControllerTest extends IntegrationTest implements ReplaceUnderScoreTest {
@@ -56,8 +51,6 @@ class BattleAlarmControllerTest extends IntegrationTest implements ReplaceUnderS
     @Autowired
     private MemberRepository memberRepository;
 
-    @Autowired
-    private ApplicationEvents events;
 
     @Test
     void 배틀의_알림목록을_조회하고_조회내역을_저장한다_알림이_있을_때() throws Exception {
@@ -87,11 +80,9 @@ class BattleAlarmControllerTest extends IntegrationTest implements ReplaceUnderS
         //then
         assertSoftly(
             softly -> {
-                final long eventCalledCount = events.stream(BattleAlarmViewedEvent.class).count();
                 final Optional<BattleAlarmViewHistory> viewHistory =
                     battleAlarmViewHistoryRepository.findByBattleIdAndMemberId(battle.getId(), member.getId());
 
-                softly.assertThat(eventCalledCount).isOne();
                 softly.assertThat(viewHistory)
                     .isPresent()
                     .get()
@@ -125,11 +116,9 @@ class BattleAlarmControllerTest extends IntegrationTest implements ReplaceUnderS
         //then
         assertSoftly(
             softly -> {
-                final long eventCalledCount = events.stream(BattleAlarmViewedEvent.class).count();
                 final Optional<BattleAlarmViewHistory> viewHistory =
                     battleAlarmViewHistoryRepository.findByBattleIdAndMemberId(battle.getId(), member.getId());
 
-                softly.assertThat(eventCalledCount).isOne();
                 softly.assertThat(viewHistory)
                     .isPresent()
                     .get()

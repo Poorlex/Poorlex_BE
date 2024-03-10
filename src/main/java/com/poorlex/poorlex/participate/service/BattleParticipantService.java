@@ -37,7 +37,7 @@ public class BattleParticipantService {
 
     private void validateMemberExist(final Long memberId) {
         if (!memberRepository.existsById(memberId)) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("해당 ID의 회원이 존재하지 않습니다.");
         }
     }
 
@@ -54,10 +54,9 @@ public class BattleParticipantService {
     private void validateBattle(final Long battleId) {
         final Battle battle = battleRepository.findById(battleId)
             .orElseThrow(IllegalArgumentException::new);
-        final int battleParticipantSize = battleParticipantRepository.countBattleParticipantByBattleId(battleId);
 
-        if (!battle.isRecruiting() || battle.hasLessOrEqualMaxParticipantSizeThen(battleParticipantSize)) {
-            throw new IllegalArgumentException();
+        if (!battle.isRecruiting()) {
+            throw new IllegalArgumentException("참가하려는 배틀이 모집중이 아닙니다.");
         }
     }
 
@@ -66,7 +65,7 @@ public class BattleParticipantService {
         final BattleParticipant battleParticipant = battleParticipantRepository.findByBattleIdAndMemberId(
             battleId,
             memberId
-        ).orElseThrow(IllegalArgumentException::new);
+        ).orElseThrow(() -> new IllegalArgumentException("해당 ID의 배틀 참가자가 존재하지 않습니다."));
         validateBattleCanWithdraw(battleId);
         validateParticipantNotManager(battleParticipant);
         battleParticipantRepository.delete(battleParticipant);
@@ -76,7 +75,7 @@ public class BattleParticipantService {
         final Battle battle = battleRepository.findById(battleId)
             .orElseThrow(IllegalArgumentException::new);
         if (battle.hasSameStatus(BattleStatus.COMPLETE)) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("탈퇴하려는 배틀이 이미 완료된 배틀입니다.");
         }
     }
 

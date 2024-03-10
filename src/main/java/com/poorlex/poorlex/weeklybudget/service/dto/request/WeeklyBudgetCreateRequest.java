@@ -8,9 +8,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class WeeklyBudgetCreateRequest {
 
-    private int budget;
+    private Long budget;
 
-    public WeeklyBudgetCreateRequest(final int budget) {
+    public WeeklyBudgetCreateRequest(final Long budget) {
         this.budget = budget;
+    }
+
+    public Long getBudget() {
+        return budget;
     }
 }

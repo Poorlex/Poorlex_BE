@@ -1,11 +1,5 @@
 package com.poorlex.poorlex.weeklybudget.controller;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 import com.poorlex.poorlex.expenditure.domain.Expenditure;
 import com.poorlex.poorlex.expenditure.domain.ExpenditureRepository;
 import com.poorlex.poorlex.expenditure.fixture.ExpenditureFixture;
@@ -24,13 +18,20 @@ import com.poorlex.poorlex.weeklybudget.domain.WeeklyBudgetRepository;
 import com.poorlex.poorlex.weeklybudget.service.dto.request.WeeklyBudgetCreateRequest;
 import com.poorlex.poorlex.weeklybudget.service.dto.request.WeeklyBudgetLeftRequest;
 import com.poorlex.poorlex.weeklybudget.service.dto.request.WeeklyBudgetRequest;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class WeeklyBudgetControllerTest extends IntegrationTest implements ReplaceUnderScoreTest {
 
@@ -56,7 +57,7 @@ class WeeklyBudgetControllerTest extends IntegrationTest implements ReplaceUnder
     @Test
     void 주간_예산을_생성한다() throws Exception {
         //given
-        final WeeklyBudgetCreateRequest request = new WeeklyBudgetCreateRequest(10000);
+        final WeeklyBudgetCreateRequest request = new WeeklyBudgetCreateRequest(10000L);
         final String accessToken = memberTokenGenerator.createTokenWithNewMember("oauthId");
 
         //when
@@ -72,10 +73,48 @@ class WeeklyBudgetControllerTest extends IntegrationTest implements ReplaceUnder
     }
 
     @Test
+    void ERROR_주간_예산생성시_금액이_0보다_작으면_400_상태코드로_응답한다() throws Exception {
+        //given
+        final WeeklyBudgetCreateRequest request = new WeeklyBudgetCreateRequest(-1L);
+        final String accessToken = memberTokenGenerator.createTokenWithNewMember("oauthId");
+
+        //when
+        //then
+        mockMvc.perform(
+                post("/weekly-budgets")
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                    .content(objectMapper.writeValueAsString(request))
+                    .contentType(MediaType.APPLICATION_JSON)
+            )
+            .andDo(print())
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.message").exists());
+    }
+
+    @Test
+    void ERROR_주간_예산생성시_금액이_9999999보다_크면_400_상태코드로_응답한다() throws Exception {
+        //given
+        final WeeklyBudgetCreateRequest request = new WeeklyBudgetCreateRequest(10_000_000L);
+        final String accessToken = memberTokenGenerator.createTokenWithNewMember("oauthId");
+
+        //when
+        //then
+        mockMvc.perform(
+                post("/weekly-budgets")
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                    .content(objectMapper.writeValueAsString(request))
+                    .contentType(MediaType.APPLICATION_JSON)
+            )
+            .andDo(print())
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.message").exists());
+    }
+
+    @Test
     void 주간_예산을_조회한다_존재할_때() throws Exception {
         //given
         final Member member = createMember("oauthId");
-        final WeeklyBudget weaklyBudget = createWeaklyBudget(member.getId(), 10000);
+        final WeeklyBudget weaklyBudget = createWeaklyBudget(member.getId(), 10000L);
         final String accessToken = memberTokenGenerator.createAccessToken(member);
         final WeeklyBudgetRequest request = new WeeklyBudgetRequest(weaklyBudget.getDuration().getStart());
 
@@ -120,7 +159,7 @@ class WeeklyBudgetControllerTest extends IntegrationTest implements ReplaceUnder
     void 남은_주간_예산을_조회한다() throws Exception {
         //given
         final Member member = createMember("oauthId");
-        final WeeklyBudget weaklyBudget = createWeaklyBudget(member.getId(), 10000);
+        final WeeklyBudget weaklyBudget = createWeaklyBudget(member.getId(), 10000L);
         final Expenditure expenditure = createExpenditure(1000, member.getId(), weaklyBudget.getDuration().getStart());
 
         final String accessToken = memberTokenGenerator.createAccessToken(member);
@@ -169,7 +208,7 @@ class WeeklyBudgetControllerTest extends IntegrationTest implements ReplaceUnder
             Member.withoutId(Oauth2RegistrationId.APPLE, oauthId, new MemberNickname("nickname")));
     }
 
-    private WeeklyBudget createWeaklyBudget(final Long memberId, final int amount) {
+    private WeeklyBudget createWeaklyBudget(final Long memberId, final Long amount) {
         final WeeklyBudget weeklyBudget = WeeklyBudget.withoutId(
             new WeeklyBudgetAmount(amount),
             WeeklyBudgetDuration.current(),

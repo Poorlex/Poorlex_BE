@@ -23,14 +23,16 @@ public class MemberDescription {
 
     private void validate(final String value) {
         if (!StringUtils.hasText(value)) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("회원 소개는 비어있거나 공백만으로 이루어질 수 없습니다.");
         }
         validateLength(value.length());
     }
 
     private void validateLength(final int length) {
         if (MINIMUM_DESCRIPTION_LENGTH > length || length > MAXIMUM_DESCRIPTION_LENGTH) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException(
+                String.format("회원 소개는 %d자 이상 %d자 이하여야 합니다. ( 입력 길이 : %d )", MINIMUM_DESCRIPTION_LENGTH, MAXIMUM_DESCRIPTION_LENGTH, length)
+            );
         }
     }
 

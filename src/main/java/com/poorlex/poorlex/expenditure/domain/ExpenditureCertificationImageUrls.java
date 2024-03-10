@@ -3,16 +3,17 @@ package com.poorlex.poorlex.expenditure.domain;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.OneToMany;
-import java.util.ArrayList;
-import java.util.List;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Embeddable
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ExpenditureCertificationImageUrls {
 
-    private static final int MAX_IMAGE_COUNT = 2;
+    public static final int MAX_IMAGE_COUNT = 2;
 
     @OneToMany(
         mappedBy = "expenditure",
@@ -23,14 +24,18 @@ public class ExpenditureCertificationImageUrls {
 
     public ExpenditureCertificationImageUrls(final List<ExpenditureCertificationImageUrl> imageUrls) {
         if (imageUrls.size() > MAX_IMAGE_COUNT) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException(
+                String.format("지출 이미지는 최대 %d개 입니다. ( 입력 이미지 갯수 : %d )", MAX_IMAGE_COUNT, imageUrls.size())
+            );
         }
         this.imageUrls = imageUrls;
     }
 
     public void addImageUrl(final ExpenditureCertificationImageUrl imageUrl) {
         if (imageUrls.size() >= MAX_IMAGE_COUNT) {
-            throw new IllegalArgumentException("이미지의 갯수는 최대 2개입니다.");
+            throw new IllegalArgumentException(
+                String.format("지출 이미지는 최대 %d개 입니다 더 이상 추가할 수 없습니다. ( 현재 이미지 갯수 : %d )", MAX_IMAGE_COUNT, imageUrls.size())
+            );
         }
         imageUrls.add(imageUrl);
     }

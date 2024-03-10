@@ -25,7 +25,9 @@ public class BattleParticipantSize {
 
     private void validateRange(final int value) {
         if (value < MINIMUM_SIZE || value > MAXIMUM_SIZE) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException(
+                    String.format("배틀 인원의 %d 이상 %d 이하여야 합니다. ( 입력값 : %d )", MINIMUM_SIZE, MAXIMUM_SIZE, value)
+            );
         }
     }
 
@@ -35,7 +37,7 @@ public class BattleParticipantSize {
 
     public BattleType getBattleSizeType() {
         return BattleType.findByParticipantSize(this)
-            .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(IllegalArgumentException::new);
     }
 
     public int getValue() {

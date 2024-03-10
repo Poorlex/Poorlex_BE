@@ -4,11 +4,7 @@ import com.poorlex.poorlex.battle.domain.Battle;
 import com.poorlex.poorlex.battle.domain.BattleRepository;
 import com.poorlex.poorlex.config.aws.AWSS3Service;
 import com.poorlex.poorlex.config.event.Events;
-import com.poorlex.poorlex.expenditure.domain.Expenditure;
-import com.poorlex.poorlex.expenditure.domain.ExpenditureCertificationImageUrl;
-import com.poorlex.poorlex.expenditure.domain.ExpenditureRepository;
-import com.poorlex.poorlex.expenditure.domain.TotalExpenditureAndMemberIdDto;
-import com.poorlex.poorlex.expenditure.domain.WeeklyExpenditureDuration;
+import com.poorlex.poorlex.expenditure.domain.*;
 import com.poorlex.poorlex.expenditure.service.dto.RankAndTotalExpenditureDto;
 import com.poorlex.poorlex.expenditure.service.dto.request.ExpenditureCreateRequest;
 import com.poorlex.poorlex.expenditure.service.dto.request.ExpenditureUpdateRequest;
@@ -20,16 +16,17 @@ import com.poorlex.poorlex.expenditure.service.event.ExpenditureCreatedEvent;
 import com.poorlex.poorlex.expenditure.service.event.ZeroExpenditureCreatedEvent;
 import com.poorlex.poorlex.expenditure.service.mapper.ExpenditureMapper;
 import io.jsonwebtoken.lang.Collections;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @Transactional(readOnly = true)
@@ -63,7 +60,12 @@ public class ExpenditureService {
 
     private void saveAndAddImages(final Expenditure expenditure, final List<MultipartFile> images) {
         if (Collections.isEmpty(images)) {
-            throw new IllegalArgumentException("이미지는 반드시 필요합니다.");
+            throw new IllegalArgumentException("지출 이미지는 최소 1개가 필요합니다.");
+        }
+        if (images.size() > ExpenditureCertificationImageUrls.MAX_IMAGE_COUNT) {
+            throw new IllegalArgumentException(
+                String.format("지출 이미지는 최대 %d개 입니다. ( 입력 이미지 갯수 : %d )", ExpenditureCertificationImageUrls.MAX_IMAGE_COUNT, images.size())
+            );
         }
         images.stream()
             .map(image -> awss3Service.uploadMultipartFile(image, bucketDirectory))
