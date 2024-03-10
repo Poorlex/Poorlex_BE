@@ -1,12 +1,6 @@
 package com.poorlex.poorlex.alarm.battlealarm.service;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-import com.poorlex.poorlex.alarm.battlealarm.domain.BattleAlarm;
-import com.poorlex.poorlex.alarm.battlealarm.domain.BattleAlarmRepository;
-import com.poorlex.poorlex.alarm.battlealarm.domain.BattleAlarmType;
-import com.poorlex.poorlex.alarm.battlealarm.domain.BattleAlarmViewHistory;
-import com.poorlex.poorlex.alarm.battlealarm.domain.BattleAlarmViewHistoryRepository;
+import com.poorlex.poorlex.alarm.battlealarm.domain.*;
 import com.poorlex.poorlex.alarm.battlealarm.service.dto.request.BattleAlarmRequest;
 import com.poorlex.poorlex.alarm.battlealarm.service.dto.response.AbstractBattleAlarmResponse;
 import com.poorlex.poorlex.alarm.battlealarm.service.dto.response.BattleAlarmResponse;
@@ -28,25 +22,22 @@ import com.poorlex.poorlex.participate.domain.BattleParticipant;
 import com.poorlex.poorlex.participate.domain.BattleParticipantRepository;
 import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
 import com.poorlex.poorlex.support.db.UsingDataJpaTest;
-import com.poorlex.poorlex.voting.vote.domain.Vote;
-import com.poorlex.poorlex.voting.vote.domain.VoteAmount;
-import com.poorlex.poorlex.voting.vote.domain.VoteDuration;
-import com.poorlex.poorlex.voting.vote.domain.VoteDurationType;
-import com.poorlex.poorlex.voting.vote.domain.VoteName;
-import com.poorlex.poorlex.voting.vote.domain.VoteRepository;
-import com.poorlex.poorlex.voting.vote.domain.VoteStatus;
+import com.poorlex.poorlex.voting.vote.domain.*;
 import com.poorlex.poorlex.voting.vote.service.VoteService;
 import com.poorlex.poorlex.voting.vote.service.dto.response.VoteResponse;
 import com.poorlex.poorlex.voting.votingpaper.domain.VotingPaperRepository;
 import com.poorlex.poorlex.voting.votingpaper.service.VotingPaperService;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 class BattleAlarmServiceTest extends UsingDataJpaTest implements ReplaceUnderScoreTest {
 
@@ -125,12 +116,12 @@ class BattleAlarmServiceTest extends UsingDataJpaTest implements ReplaceUnderSco
             BattleAlarmResponse.from(battleAlarm3),
             AlarmReactionResponse.from(alarmReaction),
             new VoteResponse(
-                1L,
+                vote1.getId(),
                 member.getNickname(),
                 vote1.getName(), vote1.getStatus().name(), vote1.getAmount(), 0, 0, vote1.getStart()
             ),
             new VoteResponse(
-                2L,
+                vote2.getId(),
                 member.getNickname(),
                 vote2.getName(), vote2.getStatus().name(), vote2.getAmount(), 0, 0, vote2.getStart()
             )
