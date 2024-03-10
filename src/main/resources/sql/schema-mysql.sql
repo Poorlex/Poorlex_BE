@@ -158,7 +158,7 @@ create table if not exists weekly_budget
 (
     id         bigint not null auto_increment,
     member_id  bigint,
-    amount     integer,
+    amount     bigint,
     start_date datetime(6),
     end_date   datetime(6),
     primary key (id)
