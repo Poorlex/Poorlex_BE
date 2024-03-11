@@ -1,8 +1,9 @@
 package com.poorlex.poorlex.participate.domain;
 
+import org.springframework.data.jpa.repository.JpaRepository;
+
 import java.util.List;
 import java.util.Optional;
-import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface BattleParticipantRepository extends JpaRepository<BattleParticipant, Long> {
 
@@ -17,4 +18,6 @@ public interface BattleParticipantRepository extends JpaRepository<BattlePartici
     boolean existsByBattleIdAndMemberId(final Long battleId, final Long memberId);
 
     List<BattleParticipant> findAllByBattleId(final Long battleId);
+
+    List<BattleParticipant> findAllByMemberId(final Long memberId);
 }
