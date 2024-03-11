@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 
@@ -24,4 +25,9 @@ public interface MemberControllerSwaggerInterface {
     @GetMapping
     @ApiResponse(responseCode = "200")
     ResponseEntity<MyPageResponse> showMyPageInfo(@Parameter(hidden = true) final MemberInfo memberInfo);
+
+    @Operation(summary = "회원 탈퇴", description = "액세스 토큰 필요")
+    @DeleteMapping
+    @ApiResponse(responseCode = "200")
+    ResponseEntity<Void> deleteMember(@Parameter(hidden = true) final MemberInfo memberInfo);
 }
