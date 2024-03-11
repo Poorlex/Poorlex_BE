@@ -1,19 +1,14 @@
 package com.poorlex.poorlex.battle.domain;
 
-import jakarta.persistence.Embedded;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Objects;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -139,6 +134,10 @@ public class Battle {
 
     public boolean isRecruiting() {
         return hasSameStatus(BattleStatus.RECRUITING);
+    }
+
+    public boolean isRecruitingFinished() {
+        return hasSameStatus(BattleStatus.RECRUITING_FINISHED);
     }
 
     public void recruit() {
