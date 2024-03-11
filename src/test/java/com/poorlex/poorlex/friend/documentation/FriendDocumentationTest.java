@@ -1,17 +1,5 @@
 package com.poorlex.poorlex.friend.documentation;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.doNothing;
-import static org.mockito.BDDMockito.given;
-import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
-import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 import com.poorlex.poorlex.friend.controller.FriendController;
 import com.poorlex.poorlex.friend.service.FriendService;
 import com.poorlex.poorlex.friend.service.dto.request.FriendCreateRequest;
@@ -23,14 +11,25 @@ import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
 import com.poorlex.poorlex.util.ApiDocumentUtils;
 import java.util.List;
 import org.junit.jupiter.api.Test;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.doNothing;
+import static org.mockito.BDDMockito.given;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import org.springframework.restdocs.payload.JsonFieldType;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
+import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(FriendController.class)
 class FriendDocumentationTest extends MockMvcTest implements ReplaceUnderScoreTest {
@@ -136,7 +135,7 @@ class FriendDocumentationTest extends MockMvcTest implements ReplaceUnderScoreTe
         //given
         mockingTokenInterceptor();
         mockingMemberArgumentResolver();
-        given(friendService.findMemberFriends(any()))
+        given(friendService.findMemberFriendsWithCurrentDateTime(any()))
             .willReturn(List.of(
                 new FriendResponse(1, "친구1 닉네임", 1000),
                 new FriendResponse(3, "친구2 닉네임", 0),

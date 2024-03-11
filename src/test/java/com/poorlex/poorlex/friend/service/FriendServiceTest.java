@@ -83,7 +83,7 @@ class FriendServiceTest extends IntegrationTest implements ReplaceUnderScoreTest
         beFriend(friend3, member);
 
         //when
-        final List<FriendResponse> responses = friendService.findMemberFriends(member.getId());
+        final List<FriendResponse> responses = friendService.findMemberFriendsWithCurrentDateTime(member.getId());
 
         //then
         final List<FriendResponse> expected = List.of(

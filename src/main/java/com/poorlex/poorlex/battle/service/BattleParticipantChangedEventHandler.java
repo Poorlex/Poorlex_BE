@@ -4,12 +4,15 @@ import com.poorlex.poorlex.battle.domain.Battle;
 import com.poorlex.poorlex.battle.domain.BattleRepository;
 import com.poorlex.poorlex.participate.domain.BattleParticipantRepository;
 import com.poorlex.poorlex.participate.service.event.BattleParticipantAddedEvent;
+import com.poorlex.poorlex.participate.service.event.BattlesWithdrewEvent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
+
+import java.util.List;
 
 @Service
 @Transactional(propagation = Propagation.REQUIRED)
@@ -29,5 +32,14 @@ public class BattleParticipantChangedEventHandler {
         if (battle.hasSameMaxParticipantSize(currentParticipantsSize)) {
             battle.finishRecruiting();
         }
+    }
+
+    @TransactionalEventListener(value = BattlesWithdrewEvent.class, phase = TransactionPhase.BEFORE_COMMIT)
+    public void added(final BattlesWithdrewEvent event) {
+        final List<Battle> withdrewBattles = battleRepository.findBattlesByIdIn(event.getBattleIds());
+
+        withdrewBattles.stream()
+            .filter(Battle::isRecruitingFinished)
+            .forEach(Battle::recruit);
     }
 }

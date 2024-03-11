@@ -2,6 +2,7 @@ package com.poorlex.poorlex.member.service;
 
 import com.poorlex.poorlex.battle.service.dto.response.BattleSuccessCountResponse;
 import com.poorlex.poorlex.battlesuccess.service.BattleSuccessService;
+import com.poorlex.poorlex.config.event.Events;
 import com.poorlex.poorlex.expenditure.service.ExpenditureService;
 import com.poorlex.poorlex.expenditure.service.dto.response.MyPageExpenditureResponse;
 import com.poorlex.poorlex.friend.service.FriendService;
@@ -13,8 +14,10 @@ import com.poorlex.poorlex.member.domain.MemberNickname;
 import com.poorlex.poorlex.member.domain.MemberRepository;
 import com.poorlex.poorlex.member.service.dto.request.MemberProfileUpdateRequest;
 import com.poorlex.poorlex.member.service.dto.response.MyPageResponse;
+import com.poorlex.poorlex.member.service.event.MemberDeletedEvent;
 import com.poorlex.poorlex.point.service.MemberPointService;
 import com.poorlex.poorlex.point.service.dto.response.MyPageLevelInfoResponse;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -55,13 +58,17 @@ public class MemberService {
         }
     }
 
-    public MyPageResponse getMyPageInfo(final Long memberId) {
+    public MyPageResponse getMyPageInfoFromCurrentDatetime(final Long memberId) {
+        return getMyPageInfo(memberId, LocalDateTime.now());
+    }
+
+    public MyPageResponse getMyPageInfo(final Long memberId, final LocalDateTime dateTime) {
         final Member member = memberRepository.findById(memberId)
             .orElseThrow(() -> new IllegalArgumentException("해당 Id 의 멤버가 존재하지 않습니다."));
         final MyPageLevelInfoResponse memberLevelInfo = memberPointService.findMemberLevelInfo(memberId);
         final BattleSuccessCountResponse battleSuccessCounts =
             battleSuccessService.findMemberBattleSuccessCounts(memberId);
-        final List<FriendResponse> friends = friendService.findMemberFriends(memberId);
+        final List<FriendResponse> friends = friendService.findMemberFriends(memberId, dateTime);
         final List<MyPageExpenditureResponse> expenditures = expenditureService.findMemberExpenditures(memberId)
             .stream()
             .map(MyPageExpenditureResponse::from)
@@ -75,5 +82,14 @@ public class MemberService {
             friends,
             expenditures
         );
+    }
+
+    @Transactional
+    public void deleteMember(final Long memberId) {
+        final Member member = memberRepository.findById(memberId)
+            .orElseThrow(() -> new IllegalArgumentException("ID 에 해당하는 멤버가 존재하지 않습니다."));
+        memberRepository.delete(member);
+
+        Events.raise(new MemberDeletedEvent(memberId));
     }
 }

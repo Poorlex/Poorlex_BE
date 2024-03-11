@@ -6,16 +6,15 @@ import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.PutObjectResult;
-import com.amazonaws.services.s3.model.S3Object;
-import com.amazonaws.services.s3.model.S3ObjectInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import com.amazonaws.services.s3.AmazonS3URI;
+import com.amazonaws.services.s3.model.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 @Component
 @Slf4j
@@ -75,5 +74,10 @@ public class AwsUtil {
     public S3ObjectInputStream downloadS3File(final String fileName) {
         final S3Object s3Object = awsS3Client().getObject(bucket, fileName);
         return s3Object.getObjectContent();
+    }
+
+    public void deleteS3File(final String uri) {
+        final AmazonS3URI amazonS3URI = new AmazonS3URI(uri);
+        awsS3Client().deleteObject(new DeleteObjectRequest(amazonS3URI.getBucket(), amazonS3URI.getKey()));
     }
 }

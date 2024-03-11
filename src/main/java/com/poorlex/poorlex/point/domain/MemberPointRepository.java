@@ -1,10 +1,11 @@
 package com.poorlex.poorlex.point.domain;
 
-import java.util.List;
-import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+
+import java.util.List;
+import java.util.Optional;
 
 public interface MemberPointRepository extends JpaRepository<MemberPoint, Long> {
 
@@ -19,4 +20,6 @@ public interface MemberPointRepository extends JpaRepository<MemberPoint, Long> 
         + "where m.id in :memberIds "
         + "group by m.id")
     List<MemberIdAndTotalPointDto> findTotalPointsByMemberIdIn(final List<Long> memberIds);
+
+    List<MemberPoint> findMemberPointsByMemberId(final Long memberId);
 }

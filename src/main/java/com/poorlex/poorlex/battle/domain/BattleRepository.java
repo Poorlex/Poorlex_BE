@@ -1,10 +1,11 @@
 package com.poorlex.poorlex.battle.domain;
 
-import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 @Repository
 public interface BattleRepository extends JpaRepository<Battle, Long> {
@@ -96,4 +97,6 @@ public interface BattleRepository extends JpaRepository<Battle, Long> {
 
     @Query("select b.name.value from Battle b where b.id = :id")
     String findBattleNameById(final Long id);
+
+    List<Battle> findBattlesByIdIn(final List<Long> ids);
 }
