@@ -1,8 +1,5 @@
 package com.poorlex.poorlex.member.service;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.SoftAssertions.assertSoftly;
-
 import com.poorlex.poorlex.battle.domain.Battle;
 import com.poorlex.poorlex.battle.domain.BattleBudget;
 import com.poorlex.poorlex.battle.domain.BattleRepository;
@@ -17,21 +14,21 @@ import com.poorlex.poorlex.expenditure.service.dto.response.ExpenditureResponse;
 import com.poorlex.poorlex.expenditure.service.dto.response.MyPageExpenditureResponse;
 import com.poorlex.poorlex.friend.domain.Friend;
 import com.poorlex.poorlex.friend.domain.FriendRepository;
-import com.poorlex.poorlex.member.domain.Member;
-import com.poorlex.poorlex.member.domain.MemberDescription;
-import com.poorlex.poorlex.member.domain.MemberNickname;
-import com.poorlex.poorlex.member.domain.MemberRepository;
-import com.poorlex.poorlex.member.domain.Oauth2RegistrationId;
+import com.poorlex.poorlex.member.domain.*;
 import com.poorlex.poorlex.member.service.dto.request.MemberProfileUpdateRequest;
 import com.poorlex.poorlex.member.service.dto.response.MyPageResponse;
 import com.poorlex.poorlex.participate.domain.BattleParticipant;
 import com.poorlex.poorlex.participate.domain.BattleParticipantRepository;
 import com.poorlex.poorlex.support.IntegrationTest;
 import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
-import java.time.LocalDateTime;
-import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 class MemberServiceTest extends IntegrationTest implements ReplaceUnderScoreTest {
 
@@ -145,17 +142,19 @@ class MemberServiceTest extends IntegrationTest implements ReplaceUnderScoreTest
         final Battle battle = createBattle(40000);
         join(member, battle);
 
-        final Expenditure myExpenditure1 = createExpenditure(10000, member.getId(), LocalDateTime.now());
-        final Expenditure myExpenditure2 = createExpenditure(20000, member.getId(), LocalDateTime.now());
+        final LocalDateTime battleStartTime = battle.getDuration().getStart();
+
+        final Expenditure myExpenditure1 = createExpenditure(10000, member.getId(), battleStartTime);
+        final Expenditure myExpenditure2 = createExpenditure(20000, member.getId(), battleStartTime);
         successBattle(member, battle);
 
         final Member friend = createMember("oauthId2", "friend");
-        createExpenditure(10000, friend.getId(), LocalDateTime.now());
+        createExpenditure(10000, friend.getId(), battleStartTime);
 
         beFriend(member, friend);
 
         //when
-        final MyPageResponse myPageInfo = memberService.getMyPageInfo(member.getId());
+        final MyPageResponse myPageInfo = memberService.getMyPageInfo(member.getId(), battleStartTime);
 
         //then
         assertSoftly(

@@ -75,9 +75,13 @@ public class FriendService {
         }
     }
 
-    public List<FriendResponse> findMemberFriends(final Long memberId) {
+    public List<FriendResponse> findMemberFriendsWithCurrentDateTime(final Long memberId) {
+        return findMemberFriends(memberId, LocalDateTime.now());
+    }
+
+    public List<FriendResponse> findMemberFriends(final Long memberId, final LocalDateTime dateTime) {
         final List<Long> friendMemberIds = friendRepository.findMembersFriendMemberId(memberId);
-        final LocalDateTime currentDateTime = LocalDateTime.now().truncatedTo(ChronoUnit.MICROS);
+        final LocalDateTime currentDateTime = dateTime.truncatedTo(ChronoUnit.MICROS);
 
         return friendMemberIds.stream()
             .map(friendMemberId -> generateResponse(friendMemberId, currentDateTime))

@@ -1,21 +1,13 @@
 package com.poorlex.poorlex.friend.controller;
 
-import com.poorlex.poorlex.config.auth.argumentresolver.MemberInfo;
-import com.poorlex.poorlex.config.auth.argumentresolver.MemberOnly;
-import com.poorlex.poorlex.friend.service.FriendService;
-import com.poorlex.poorlex.friend.service.dto.request.FriendCreateRequest;
-import com.poorlex.poorlex.friend.service.dto.request.FriendDenyRequest;
-import com.poorlex.poorlex.friend.service.dto.request.FriendInviteRequest;
-import com.poorlex.poorlex.friend.service.dto.response.FriendResponse;
-import java.util.List;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.poorlex.poorlex.config.auth.argumentresolver.*;
+import com.poorlex.poorlex.friend.service.*;
+import com.poorlex.poorlex.friend.service.dto.request.*;
+import com.poorlex.poorlex.friend.service.dto.response.*;
+import java.util.*;
+import lombok.*;
+import org.springframework.http.*;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/friends")
@@ -47,7 +39,7 @@ public class FriendController {
 
     @GetMapping
     public ResponseEntity<List<FriendResponse>> findMemberFriends(@MemberOnly final MemberInfo memberInfo) {
-        final List<FriendResponse> responses = friendService.findMemberFriends(memberInfo.getMemberId());
+        final List<FriendResponse> responses = friendService.findMemberFriendsWithCurrentDateTime(memberInfo.getMemberId());
         return ResponseEntity.ok(responses);
     }
 }

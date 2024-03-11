@@ -25,7 +25,7 @@ public class MemberController implements MemberControllerSwaggerInterface {
 
     @GetMapping("/my-page")
     public ResponseEntity<MyPageResponse> showMyPageInfo(@MemberOnly final MemberInfo memberInfo) {
-        final MyPageResponse response = memberService.getMyPageInfo(memberInfo.getMemberId());
+        final MyPageResponse response = memberService.getMyPageInfoFromCurrentDatetime(memberInfo.getMemberId());
         return ResponseEntity.ok(response);
     }
 
