@@ -1,11 +1,12 @@
 package com.poorlex.poorlex.config.aws;
 
 import com.amazonaws.services.s3.model.S3ObjectInputStream;
-import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @Service
 @Slf4j
@@ -27,5 +28,9 @@ public class AWSS3Service {
             e.printStackTrace();
             throw new RuntimeException();
         }
+    }
+
+    public void deleteFile(final String fileUri) {
+        awsUtil.deleteS3File(fileUri);
     }
 }
