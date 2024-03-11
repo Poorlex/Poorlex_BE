@@ -2,26 +2,25 @@ package com.poorlex.poorlex.member.service;
 
 import com.poorlex.poorlex.battle.service.dto.response.BattleSuccessCountResponse;
 import com.poorlex.poorlex.battlesuccess.service.BattleSuccessService;
+import com.poorlex.poorlex.config.event.Events;
 import com.poorlex.poorlex.expenditure.service.ExpenditureService;
 import com.poorlex.poorlex.expenditure.service.dto.response.MyPageExpenditureResponse;
 import com.poorlex.poorlex.friend.service.FriendService;
 import com.poorlex.poorlex.friend.service.dto.response.FriendResponse;
-import com.poorlex.poorlex.member.domain.Member;
-import com.poorlex.poorlex.member.domain.MemberDescription;
-import com.poorlex.poorlex.member.domain.MemberIdAndNicknameDto;
-import com.poorlex.poorlex.member.domain.MemberNickname;
-import com.poorlex.poorlex.member.domain.MemberRepository;
+import com.poorlex.poorlex.member.domain.*;
 import com.poorlex.poorlex.member.service.dto.request.MemberProfileUpdateRequest;
 import com.poorlex.poorlex.member.service.dto.response.MyPageResponse;
+import com.poorlex.poorlex.member.service.event.MemberDeletedEvent;
 import com.poorlex.poorlex.point.service.MemberPointService;
 import com.poorlex.poorlex.point.service.dto.response.MyPageLevelInfoResponse;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional(readOnly = true)
@@ -75,5 +74,14 @@ public class MemberService {
             friends,
             expenditures
         );
+    }
+
+    @Transactional
+    public void deleteMember(final Long memberId) {
+        final Member member = memberRepository.findById(memberId)
+            .orElseThrow(() -> new IllegalArgumentException("ID 에 해당하는 멤버가 존재하지 않습니다."));
+        memberRepository.delete(member);
+        
+        Events.raise(new MemberDeletedEvent(memberId));
     }
 }
