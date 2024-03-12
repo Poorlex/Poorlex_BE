@@ -1,4 +1,4 @@
-# PoorLex 도메인
+# PoorLex 도메인 정리
 
 # 배틀
 
