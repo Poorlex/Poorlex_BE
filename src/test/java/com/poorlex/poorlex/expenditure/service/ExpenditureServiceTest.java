@@ -1,10 +1,5 @@
 package com.poorlex.poorlex.expenditure.service;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.SoftAssertions.assertSoftly;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
-
 import com.poorlex.poorlex.battle.domain.Battle;
 import com.poorlex.poorlex.battle.domain.BattleRepository;
 import com.poorlex.poorlex.battle.domain.BattleStatus;
@@ -17,7 +12,6 @@ import com.poorlex.poorlex.expenditure.domain.WeeklyExpenditureDuration;
 import com.poorlex.poorlex.expenditure.fixture.ExpenditureFixture;
 import com.poorlex.poorlex.expenditure.fixture.ExpenditureRequestFixture;
 import com.poorlex.poorlex.expenditure.service.dto.request.ExpenditureCreateRequest;
-import com.poorlex.poorlex.expenditure.service.dto.request.MemberWeeklyTotalExpenditureRequest;
 import com.poorlex.poorlex.expenditure.service.dto.response.BattleExpenditureResponse;
 import com.poorlex.poorlex.expenditure.service.dto.response.ExpenditureResponse;
 import com.poorlex.poorlex.expenditure.service.dto.response.MemberWeeklyTotalExpenditureResponse;
@@ -29,15 +23,20 @@ import com.poorlex.poorlex.participate.domain.BattleParticipant;
 import com.poorlex.poorlex.participate.domain.BattleParticipantRepository;
 import com.poorlex.poorlex.support.IntegrationTest;
 import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
+import com.poorlex.poorlex.weeklybudget.domain.WeeklyBudgetDuration;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
@@ -99,7 +98,7 @@ class ExpenditureServiceTest extends IntegrationTest implements ReplaceUnderScor
                 softly.assertThat(expenditure.getMemberId()).isEqualTo(member.getId());
                 softly.assertThat(expenditure.getAmount()).isEqualTo(request.getAmount());
                 softly.assertThat(expenditure.getDescription()).isEqualTo(request.getDescription());
-                softly.assertThat(expenditure.getDateTime()).isNotNull();
+                softly.assertThat(expenditure.getDate()).isNotNull();
                 softly.assertThat(expenditure.getImageUrls().getUrls()).hasSize(1);
             }
         );
@@ -110,20 +109,15 @@ class ExpenditureServiceTest extends IntegrationTest implements ReplaceUnderScor
     void 멤버의_기간중의_지출의_총합을_구한다_지출이_있을_때() {
         //given
         final Member member = createMember("oauthId");
-        final LocalDateTime date = LocalDateTime.now().truncatedTo(ChronoUnit.MICROS);
-        final WeeklyExpenditureDuration weeklyExpenditureDuration = WeeklyExpenditureDuration.from(date);
+        final LocalDateTime dateTime = LocalDateTime.now().truncatedTo(ChronoUnit.MICROS);
+        final WeeklyExpenditureDuration weeklyExpenditureDuration = WeeklyExpenditureDuration.from(dateTime);
 
         createExpenditure(1000, member.getId(), weeklyExpenditureDuration.getStart());
         createExpenditure(2000, member.getId(), weeklyExpenditureDuration.getStart());
 
-        final MemberWeeklyTotalExpenditureRequest request =
-            new MemberWeeklyTotalExpenditureRequest(LocalDateTime.from(date));
-
         //when
-        final MemberWeeklyTotalExpenditureResponse response = expenditureService.findMemberWeeklyTotalExpenditure(
-            member.getId(),
-            request
-        );
+        final MemberWeeklyTotalExpenditureResponse response =
+            expenditureService.findMemberWeeklyTotalExpenditure(member.getId(), dateTime);
 
         //then
         assertThat(response.getAmount()).isEqualTo(3000);
@@ -132,20 +126,15 @@ class ExpenditureServiceTest extends IntegrationTest implements ReplaceUnderScor
     @Test
     void 멤버의_기간중의_지출의_총합을_구한다_지출이_없을_때() {
         //given
+        final WeeklyBudgetDuration weeklyBudgetDuration = WeeklyBudgetDuration.current();
         final Member member = createMember("oauthId");
-        final LocalDateTime date = LocalDateTime.now().truncatedTo(ChronoUnit.MICROS);
 
-        createExpenditure(1000, member.getId(), date);
-        createExpenditure(2000, member.getId(), date);
-
-        final MemberWeeklyTotalExpenditureRequest request =
-            new MemberWeeklyTotalExpenditureRequest(LocalDateTime.from(date).plusDays(7));
+        createExpenditure(1000, member.getId(), weeklyBudgetDuration.getStart().minusDays(1));
+        createExpenditure(2000, member.getId(), weeklyBudgetDuration.getStart().minusDays(1));
 
         //when
-        final MemberWeeklyTotalExpenditureResponse response = expenditureService.findMemberWeeklyTotalExpenditure(
-            member.getId(),
-            request
-        );
+        final MemberWeeklyTotalExpenditureResponse response =
+            expenditureService.findMemberWeeklyTotalExpenditure(member.getId(), weeklyBudgetDuration.getStart());
 
         //then
         assertThat(response.getAmount()).isZero();
@@ -170,7 +159,7 @@ class ExpenditureServiceTest extends IntegrationTest implements ReplaceUnderScor
         assertSoftly(
             softly -> {
                 softly.assertThat(response.getId()).isEqualTo(expenditure.getId());
-                softly.assertThat(response.getDate()).isEqualTo(LocalDate.from(expenditure.getDateTime()));
+                softly.assertThat(response.getDate()).isEqualTo(LocalDate.from(expenditure.getDate()));
                 softly.assertThat(response.getAmount()).isEqualTo(expenditure.getAmount());
                 softly.assertThat(response.getDescription()).isEqualTo(expenditure.getDescription());
                 softly.assertThat(response.getImageUrls()).containsExactlyElementsOf(expectedImageUrls);
@@ -200,7 +189,7 @@ class ExpenditureServiceTest extends IntegrationTest implements ReplaceUnderScor
 
                 final ExpenditureResponse response = responses.get(0);
                 softly.assertThat(response.getId()).isEqualTo(expenditure.getId());
-                softly.assertThat(response.getDate()).isEqualTo(LocalDate.from(expenditure.getDateTime()));
+                softly.assertThat(response.getDate()).isEqualTo(LocalDate.from(expenditure.getDate()));
                 softly.assertThat(response.getAmount()).isEqualTo(expenditure.getAmount());
                 softly.assertThat(response.getDescription()).isEqualTo(expenditure.getDescription());
                 softly.assertThat(response.getImageUrls()).containsExactlyElementsOf(expectedImageUrls);
@@ -260,7 +249,7 @@ class ExpenditureServiceTest extends IntegrationTest implements ReplaceUnderScor
         final List<BattleExpenditureResponse> responses = expenditureService.findBattleExpendituresInDayOfWeek(
             battle.getId(),
             member.getId(),
-            memberExpenditure.getDateTime().getDayOfWeek().name()
+            memberExpenditure.getDate().getDayOfWeek().name()
         );
 
         //then
@@ -305,7 +294,7 @@ class ExpenditureServiceTest extends IntegrationTest implements ReplaceUnderScor
         final List<BattleExpenditureResponse> responses = expenditureService.findBattleExpendituresInDayOfWeek(
             battle.getId(),
             member.getId(),
-            memberExpenditure.getDateTime().getDayOfWeek().plus(1).name()
+            memberExpenditure.getDate().getDayOfWeek().plus(1).name()
         );
 
         //then

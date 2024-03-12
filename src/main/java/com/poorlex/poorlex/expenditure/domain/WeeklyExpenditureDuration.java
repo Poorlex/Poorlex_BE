@@ -28,7 +28,7 @@ public class WeeklyExpenditureDuration {
     public static WeeklyExpenditureDuration from(final LocalDateTime dateTime) {
         final LocalDate date = LocalDate.from(dateTime);
         final LocalDateTime start = LocalDateTime.of(
-            LocalDate.from(date).minusDays(getDaysAfterMonday(date)),
+            date.minusDays(getDaysAfterMonday(date)),
             START_TIME
         );
         final LocalDateTime end = LocalDateTime.of(

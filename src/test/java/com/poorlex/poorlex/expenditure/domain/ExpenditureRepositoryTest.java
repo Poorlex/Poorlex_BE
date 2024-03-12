@@ -1,12 +1,10 @@
 package com.poorlex.poorlex.expenditure.domain;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import com.poorlex.poorlex.expenditure.fixture.ExpenditureFixture;
 import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
 import com.poorlex.poorlex.support.db.UsingDataJpaTest;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
+import java.time.LocalDate;
+import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -19,7 +17,7 @@ class ExpenditureRepositoryTest extends UsingDataJpaTest implements ReplaceUnder
     void 멤버의_기간내의_지출의_총합을_구한다() {
         //given
         final Long memberId = 1L;
-        final LocalDateTime date = LocalDateTime.now().truncatedTo(ChronoUnit.MICROS);
+        final LocalDate date = LocalDate.now();
 
         expenditureRepository.save(ExpenditureFixture.simpleWith(1000, memberId, date));
         expenditureRepository.save(ExpenditureFixture.simpleWith(2000, memberId, date));
@@ -27,8 +25,8 @@ class ExpenditureRepositoryTest extends UsingDataJpaTest implements ReplaceUnder
         //when
         final int sumExpenditure = expenditureRepository.findSumExpenditureByMemberIdAndBetween(
             memberId,
-            date,
-            date.plusMinutes(1)
+            date.minusDays(1),
+            date
         );
 
         //then

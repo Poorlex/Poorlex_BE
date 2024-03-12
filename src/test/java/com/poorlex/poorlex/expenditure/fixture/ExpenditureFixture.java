@@ -5,6 +5,7 @@ import com.poorlex.poorlex.expenditure.domain.ExpenditureAmount;
 import com.poorlex.poorlex.expenditure.domain.ExpenditureCertificationImageUrl;
 import com.poorlex.poorlex.expenditure.domain.ExpenditureCertificationImageUrls;
 import com.poorlex.poorlex.expenditure.domain.ExpenditureDescription;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -14,7 +15,11 @@ public class ExpenditureFixture {
 
     }
 
-    public static Expenditure simpleWith(final int amount, final Long memberId, final LocalDateTime date) {
+    public static Expenditure simpleWith(final int amount, final Long memberId, final LocalDateTime dateTime) {
+        return simpleWith(amount, memberId, LocalDate.from(dateTime));
+    }
+
+    public static Expenditure simpleWith(final int amount, final Long memberId, final LocalDate date) {
         final ExpenditureAmount expenditureAmount = new ExpenditureAmount(amount);
         final ExpenditureDescription description = new ExpenditureDescription("description");
         final List<ExpenditureCertificationImageUrl> imageUrlList = List.of(

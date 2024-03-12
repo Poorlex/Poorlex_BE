@@ -8,12 +8,12 @@ import com.poorlex.poorlex.weeklybudget.domain.WeeklyBudgetDuration;
 import com.poorlex.poorlex.weeklybudget.domain.WeeklyBudgetRepository;
 import com.poorlex.poorlex.weeklybudget.service.dto.response.WeeklyBudgetLeftResponse;
 import com.poorlex.poorlex.weeklybudget.service.dto.response.WeeklyBudgetResponse;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
-import java.util.Objects;
 
 @Service
 @Transactional(readOnly = true)
@@ -62,8 +62,8 @@ public class WeeklyBudgetService {
     }
 
     public int getSumExpenditureByMemberIdInDuration(final Long memberId, final WeeklyBudgetDuration duration) {
-        final LocalDateTime start = duration.getStart();
-        final LocalDateTime end = duration.getEnd();
+        final LocalDate start = LocalDate.from(duration.getStart());
+        final LocalDate end = LocalDate.from(duration.getEnd());
         return expenditureRepository.findSumExpenditureByMemberIdAndBetween(memberId, start, end);
     }
 }

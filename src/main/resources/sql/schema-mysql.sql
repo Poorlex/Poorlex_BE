@@ -67,7 +67,7 @@ create table if not exists expenditure
     amount      bigint      not null,
     member_id   bigint      not null,
     description varchar(255),
-    date_time   datetime(6) not null,
+    date  date not null,
     primary key (id)
 ) engine = InnoDB;
 

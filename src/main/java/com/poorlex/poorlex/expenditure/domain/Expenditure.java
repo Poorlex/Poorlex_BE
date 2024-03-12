@@ -6,7 +6,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -23,7 +23,7 @@ public class Expenditure {
     @Embedded
     private ExpenditureAmount amount;
     @Column(nullable = false)
-    private LocalDateTime dateTime;
+    private LocalDate date;
     @Embedded
     private ExpenditureDescription description;
     @Embedded
@@ -32,23 +32,23 @@ public class Expenditure {
     protected Expenditure(final Long id,
                           @NonNull final Long memberId,
                           @NonNull final ExpenditureAmount amount,
-                          @NonNull final LocalDateTime dateTime,
+                          @NonNull final LocalDate date,
                           @NonNull final ExpenditureDescription description,
                           @NonNull final ExpenditureCertificationImageUrls imageUrls) {
         this.id = id;
         this.memberId = memberId;
         this.amount = amount;
-        this.dateTime = dateTime;
+        this.date = date;
         this.description = description;
         this.imageUrls = imageUrls;
     }
 
     public static Expenditure withoutId(final ExpenditureAmount amount,
                                         final Long memberId,
-                                        final LocalDateTime dateTime,
+                                        final LocalDate date,
                                         final ExpenditureDescription description,
                                         final ExpenditureCertificationImageUrls imageUrls) {
-        final Expenditure instance = new Expenditure(null, memberId, amount, dateTime, description, imageUrls);
+        final Expenditure instance = new Expenditure(null, memberId, amount, date, description, imageUrls);
         imageUrls.belongTo(instance);
         return instance;
     }
@@ -79,8 +79,8 @@ public class Expenditure {
         return amount.getValue();
     }
 
-    public LocalDateTime getDateTime() {
-        return dateTime;
+    public LocalDate getDate() {
+        return date;
     }
 
     public String getDescription() {

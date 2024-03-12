@@ -1,8 +1,7 @@
 package com.poorlex.poorlex.expenditure.fixture;
 
 import com.poorlex.poorlex.expenditure.service.dto.request.ExpenditureCreateRequest;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
+import java.time.LocalDate;
 
 public class ExpenditureRequestFixture {
 
@@ -13,7 +12,7 @@ public class ExpenditureRequestFixture {
         return new ExpenditureCreateRequest(
             1000L,
             "description",
-            LocalDateTime.now().truncatedTo(ChronoUnit.MICROS)
+            LocalDate.now()
         );
     }
 }
