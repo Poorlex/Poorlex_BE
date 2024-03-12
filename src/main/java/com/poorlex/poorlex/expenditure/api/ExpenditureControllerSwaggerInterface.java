@@ -1,7 +1,6 @@
 package com.poorlex.poorlex.expenditure.api;
 
 import com.poorlex.poorlex.config.auth.argumentresolver.MemberInfo;
-import com.poorlex.poorlex.expenditure.service.dto.request.ExpenditureCreateRequest;
 import com.poorlex.poorlex.expenditure.service.dto.request.MemberWeeklyTotalExpenditureRequest;
 import com.poorlex.poorlex.expenditure.service.dto.response.BattleExpenditureResponse;
 import com.poorlex.poorlex.expenditure.service.dto.response.ExpenditureResponse;
@@ -11,6 +10,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.time.LocalDate;
 import java.util.List;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +28,9 @@ public interface ExpenditureControllerSwaggerInterface {
     ResponseEntity<Void> createExpenditure(
         @Parameter(hidden = true) MemberInfo memberInfo,
         @Parameter(description = "지출 이미지 (1개 ~ 2개)") List<MultipartFile> images,
-        @Parameter(in = ParameterIn.QUERY, description = "지출 금액, 지출 설명, 지출 날짜") ExpenditureCreateRequest request
+        @Parameter(in = ParameterIn.QUERY, description = "지출 금액") final Long amount,
+        @Parameter(in = ParameterIn.QUERY, description = "지출 설명") final String description,
+        @Parameter(in = ParameterIn.QUERY, description = "지출 날짜(yyyy-mm-dd)") final LocalDate date
     );
 
     @Operation(summary = "지출 상세 조회")
