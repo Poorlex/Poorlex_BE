@@ -9,8 +9,6 @@ import com.poorlex.poorlex.expenditure.domain.Expenditure;
 import com.poorlex.poorlex.expenditure.domain.ExpenditureRepository;
 import com.poorlex.poorlex.expenditure.domain.WeeklyExpenditureDuration;
 import com.poorlex.poorlex.expenditure.fixture.ExpenditureFixture;
-import com.poorlex.poorlex.expenditure.fixture.ExpenditureRequestFixture;
-import com.poorlex.poorlex.expenditure.service.dto.request.ExpenditureCreateRequest;
 import com.poorlex.poorlex.expenditure.service.dto.request.MemberWeeklyTotalExpenditureRequest;
 import com.poorlex.poorlex.member.domain.Member;
 import com.poorlex.poorlex.member.domain.MemberNickname;
@@ -22,27 +20,26 @@ import com.poorlex.poorlex.support.IntegrationTest;
 import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
 import com.poorlex.poorlex.support.TestMemberTokenGenerator;
 import com.poorlex.poorlex.token.JwtTokenProvider;
+import java.io.FileInputStream;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
-
-import java.io.FileInputStream;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @DisplayName("지출 인수 테스트")
 class ExpenditureControllerTest extends IntegrationTest implements ReplaceUnderScoreTest {
@@ -85,19 +82,15 @@ class ExpenditureControllerTest extends IntegrationTest implements ReplaceUnderS
             new FileInputStream(
                 "src/test/resources/testImage/cat-8415620_640.jpg")
         );
-        final MockMultipartFile formRequest = new MockMultipartFile(
-            "expenditureCreateRequest",
-            "",
-            MediaType.APPLICATION_JSON_VALUE,
-            objectMapper.writeValueAsString(ExpenditureRequestFixture.getSimpleCreateRequest()).getBytes()
-        );
 
         //when
         //then
         mockMvc.perform(
                 multipart(HttpMethod.POST, "/expenditures")
                     .file(image)
-                    .file(formRequest)
+                    .queryParam("amount", "1000")
+                    .queryParam("description", "소개")
+                    .queryParam("date", LocalDate.now().toString())
                     .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
             )
             .andDo(print())
@@ -118,25 +111,15 @@ class ExpenditureControllerTest extends IntegrationTest implements ReplaceUnderS
             new FileInputStream(
                 "src/test/resources/testImage/cat-8415620_640.jpg")
         );
-        final MockMultipartFile formRequest = new MockMultipartFile(
-            "expenditureCreateRequest",
-            "",
-            MediaType.APPLICATION_JSON_VALUE,
-            objectMapper.writeValueAsString(
-                new ExpenditureCreateRequest(
-                    -1,
-                    "description",
-                    LocalDateTime.now().truncatedTo(ChronoUnit.MICROS)
-                )
-            ).getBytes()
-        );
 
         //when
         //then
         mockMvc.perform(
                 multipart(HttpMethod.POST, "/expenditures")
                     .file(image)
-                    .file(formRequest)
+                    .queryParam("amount", "-1")
+                    .queryParam("description", "소개")
+                    .queryParam("date", LocalDate.now().toString())
                     .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
             )
             .andDo(print())
@@ -157,25 +140,15 @@ class ExpenditureControllerTest extends IntegrationTest implements ReplaceUnderS
             new FileInputStream(
                 "src/test/resources/testImage/cat-8415620_640.jpg")
         );
-        final MockMultipartFile formRequest = new MockMultipartFile(
-            "expenditureCreateRequest",
-            "",
-            MediaType.APPLICATION_JSON_VALUE,
-            objectMapper.writeValueAsString(
-                new ExpenditureCreateRequest(
-                    10_000_000L,
-                    "description",
-                    LocalDateTime.now().truncatedTo(ChronoUnit.MICROS)
-                )
-            ).getBytes()
-        );
 
         //when
         //then
         mockMvc.perform(
                 multipart(HttpMethod.POST, "/expenditures")
                     .file(image)
-                    .file(formRequest)
+                    .queryParam("amount", "10000000")
+                    .queryParam("description", "소개")
+                    .queryParam("date", LocalDate.now().toString())
                     .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
             )
             .andDo(print())
@@ -196,25 +169,15 @@ class ExpenditureControllerTest extends IntegrationTest implements ReplaceUnderS
             new FileInputStream(
                 "src/test/resources/testImage/cat-8415620_640.jpg")
         );
-        final MockMultipartFile formRequest = new MockMultipartFile(
-            "expenditureCreateRequest",
-            "",
-            MediaType.APPLICATION_JSON_VALUE,
-            objectMapper.writeValueAsString(
-                new ExpenditureCreateRequest(
-                    1000L,
-                    "    ",
-                    LocalDateTime.now().truncatedTo(ChronoUnit.MICROS)
-                )
-            ).getBytes()
-        );
 
         //when
         //then
         mockMvc.perform(
                 multipart(HttpMethod.POST, "/expenditures")
                     .file(image)
-                    .file(formRequest)
+                    .queryParam("amount", "1000")
+                    .queryParam("description", "  ")
+                    .queryParam("date", LocalDate.now().toString())
                     .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
             )
             .andDo(print())
@@ -235,25 +198,15 @@ class ExpenditureControllerTest extends IntegrationTest implements ReplaceUnderS
             new FileInputStream(
                 "src/test/resources/testImage/cat-8415620_640.jpg")
         );
-        final MockMultipartFile formRequest = new MockMultipartFile(
-            "expenditureCreateRequest",
-            "",
-            MediaType.APPLICATION_JSON_VALUE,
-            objectMapper.writeValueAsString(
-                new ExpenditureCreateRequest(
-                    1000L,
-                    "a".repeat(31),
-                    LocalDateTime.now().truncatedTo(ChronoUnit.MICROS)
-                )
-            ).getBytes()
-        );
 
         //when
         //then
         mockMvc.perform(
                 multipart(HttpMethod.POST, "/expenditures")
                     .file(image)
-                    .file(formRequest)
+                    .queryParam("amount", "1000")
+                    .queryParam("description", "a".repeat(31))
+                    .queryParam("date", LocalDate.now().toString())
                     .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
             )
             .andDo(print())
@@ -268,24 +221,13 @@ class ExpenditureControllerTest extends IntegrationTest implements ReplaceUnderS
         final String accessToken = testMemberTokenGenerator.createTokenWithNewMember("oauthId");
 
 
-        final MockMultipartFile formRequest = new MockMultipartFile(
-            "expenditureCreateRequest",
-            "",
-            MediaType.APPLICATION_JSON_VALUE,
-            objectMapper.writeValueAsString(
-                new ExpenditureCreateRequest(
-                    1000L,
-                    "description",
-                    LocalDateTime.now().truncatedTo(ChronoUnit.MICROS)
-                )
-            ).getBytes()
-        );
-
         //when
         //then
         mockMvc.perform(
                 multipart(HttpMethod.POST, "/expenditures")
-                    .file(formRequest)
+                    .queryParam("amount", "1000")
+                    .queryParam("description", "소개")
+                    .queryParam("date", LocalDate.now().toString())
                     .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
             )
             .andDo(print())
@@ -307,19 +249,6 @@ class ExpenditureControllerTest extends IntegrationTest implements ReplaceUnderS
                 "src/test/resources/testImage/cat-8415620_640.jpg")
         );
 
-        final MockMultipartFile formRequest = new MockMultipartFile(
-            "expenditureCreateRequest",
-            "",
-            MediaType.APPLICATION_JSON_VALUE,
-            objectMapper.writeValueAsString(
-                new ExpenditureCreateRequest(
-                    1000L,
-                    "description",
-                    LocalDateTime.now().truncatedTo(ChronoUnit.MICROS)
-                )
-            ).getBytes()
-        );
-
         //when
         //then
         mockMvc.perform(
@@ -327,7 +256,9 @@ class ExpenditureControllerTest extends IntegrationTest implements ReplaceUnderS
                     .file(image)
                     .file(image)
                     .file(image)
-                    .file(formRequest)
+                    .queryParam("amount", "1000")
+                    .queryParam("description", "소개")
+                    .queryParam("date", LocalDate.now().toString())
                     .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
             )
             .andDo(print())
@@ -360,7 +291,7 @@ class ExpenditureControllerTest extends IntegrationTest implements ReplaceUnderS
     void 멤버의_기간중의_지출의_총합을_구한다_지출이_있을_때() throws Exception {
         //given
         final Member member = createMember("oauthId");
-        final LocalDateTime dateTime = LocalDateTime.now().truncatedTo(ChronoUnit.MICROS);
+        final LocalDateTime dateTime = LocalDateTime.now();
         final WeeklyExpenditureDuration weeklyExpenditureDuration = WeeklyExpenditureDuration.from(dateTime);
 
         createExpenditure(1000, member.getId(), weeklyExpenditureDuration.getStart());
@@ -386,7 +317,7 @@ class ExpenditureControllerTest extends IntegrationTest implements ReplaceUnderS
     void 멤버의_기간중의_지출의_총합을_구한다_지출이_없을_때() throws Exception {
         //given
         final Member member = createMember("oauthId");
-        final LocalDateTime dateTime = LocalDateTime.now().truncatedTo(ChronoUnit.MICROS);
+        final LocalDateTime dateTime = LocalDateTime.now();
 
         createExpenditure(1000, member.getId(), dateTime);
         createExpenditure(2000, member.getId(), dateTime);
@@ -398,7 +329,7 @@ class ExpenditureControllerTest extends IntegrationTest implements ReplaceUnderS
         //when
         //then
         mockMvc.perform(
-                get("/expenditures/weekly")
+                get("/expenditures/weekly?withDate=true")
                     .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
                     .content(objectMapper.writeValueAsString(request))
                     .contentType(MediaType.APPLICATION_JSON)
@@ -420,7 +351,7 @@ class ExpenditureControllerTest extends IntegrationTest implements ReplaceUnderS
             .andDo(print())
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.id").value(expenditure.getId()))
-            .andExpect(jsonPath("$.date").value(LocalDate.from(expenditure.getDateTime()).toString()))
+            .andExpect(jsonPath("$.date").value(LocalDate.from(expenditure.getDate()).toString()))
             .andExpect(jsonPath("$.amount").value(1000))
             .andExpect(jsonPath("$.description").value(expenditure.getDescription()))
             .andExpect(jsonPath("$.imageUrls.length()").value(expenditure.getImageUrls().getUrls().size()));
@@ -443,7 +374,7 @@ class ExpenditureControllerTest extends IntegrationTest implements ReplaceUnderS
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.length()").value(1))
             .andExpect(jsonPath("$[0].id").value(expenditure.getId()))
-            .andExpect(jsonPath("$[0].date").value(LocalDate.from(expenditure.getDateTime()).toString()))
+            .andExpect(jsonPath("$[0].date").value(LocalDate.from(expenditure.getDate()).toString()))
             .andExpect(jsonPath("$[0].amount").value(1000))
             .andExpect(jsonPath("$[0].description").value(expenditure.getDescription()))
             .andExpect(jsonPath("$[0].imageUrls.length()").value(expenditure.getImageUrls().getUrls().size()));
@@ -530,7 +461,7 @@ class ExpenditureControllerTest extends IntegrationTest implements ReplaceUnderS
             Member.withoutId(Oauth2RegistrationId.APPLE, oauthId, new MemberNickname("nickname")));
     }
 
-    private Expenditure createExpenditure(final int amount, final Long memberId, final LocalDateTime date) {
-        return expenditureRepository.save(ExpenditureFixture.simpleWith(amount, memberId, date));
+    private Expenditure createExpenditure(final int amount, final Long memberId, final LocalDateTime dateTime) {
+        return expenditureRepository.save(ExpenditureFixture.simpleWith(amount, memberId, dateTime));
     }
 }

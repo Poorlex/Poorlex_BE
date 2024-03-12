@@ -4,11 +4,15 @@ import com.poorlex.poorlex.battle.domain.Battle;
 import com.poorlex.poorlex.battle.domain.BattleRepository;
 import com.poorlex.poorlex.config.aws.AWSS3Service;
 import com.poorlex.poorlex.config.event.Events;
-import com.poorlex.poorlex.expenditure.domain.*;
+import com.poorlex.poorlex.expenditure.domain.Expenditure;
+import com.poorlex.poorlex.expenditure.domain.ExpenditureCertificationImageUrl;
+import com.poorlex.poorlex.expenditure.domain.ExpenditureCertificationImageUrls;
+import com.poorlex.poorlex.expenditure.domain.ExpenditureRepository;
+import com.poorlex.poorlex.expenditure.domain.TotalExpenditureAndMemberIdDto;
+import com.poorlex.poorlex.expenditure.domain.WeeklyExpenditureDuration;
 import com.poorlex.poorlex.expenditure.service.dto.RankAndTotalExpenditureDto;
 import com.poorlex.poorlex.expenditure.service.dto.request.ExpenditureCreateRequest;
 import com.poorlex.poorlex.expenditure.service.dto.request.ExpenditureUpdateRequest;
-import com.poorlex.poorlex.expenditure.service.dto.request.MemberWeeklyTotalExpenditureRequest;
 import com.poorlex.poorlex.expenditure.service.dto.response.BattleExpenditureResponse;
 import com.poorlex.poorlex.expenditure.service.dto.response.ExpenditureResponse;
 import com.poorlex.poorlex.expenditure.service.dto.response.MemberWeeklyTotalExpenditureResponse;
@@ -16,17 +20,17 @@ import com.poorlex.poorlex.expenditure.service.event.ExpenditureCreatedEvent;
 import com.poorlex.poorlex.expenditure.service.event.ZeroExpenditureCreatedEvent;
 import com.poorlex.poorlex.expenditure.service.mapper.ExpenditureMapper;
 import io.jsonwebtoken.lang.Collections;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
-
 import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @Transactional(readOnly = true)
@@ -81,13 +85,17 @@ public class ExpenditureService {
         Events.raise(new ExpenditureCreatedEvent(memberId));
     }
 
+    public MemberWeeklyTotalExpenditureResponse findMemberCurrentWeeklyTotalExpenditure(final Long memberId) {
+        return findMemberWeeklyTotalExpenditure(memberId, LocalDateTime.now());
+    }
+
     public MemberWeeklyTotalExpenditureResponse findMemberWeeklyTotalExpenditure(final Long memberId,
-                                                                                 final MemberWeeklyTotalExpenditureRequest request) {
-        final WeeklyExpenditureDuration duration = WeeklyExpenditureDuration.from(request.getDateTime());
+                                                                                 final LocalDateTime dateTime) {
+        final WeeklyExpenditureDuration duration = WeeklyExpenditureDuration.from(dateTime);
         final int sumExpenditure = expenditureRepository.findSumExpenditureByMemberIdAndBetween(
             memberId,
-            duration.getStart(),
-            duration.getEnd()
+            LocalDate.from(duration.getStart()),
+            LocalDate.from(duration.getEnd())
         );
 
         return new MemberWeeklyTotalExpenditureResponse(sumExpenditure);
@@ -96,8 +104,11 @@ public class ExpenditureService {
     public Map<Long, RankAndTotalExpenditureDto> getMembersTotalExpenditureRankBetween(final List<Long> memberIds,
                                                                                        final LocalDateTime start,
                                                                                        final LocalDateTime end) {
+        final LocalDate startDate = LocalDate.from(start);
+        final LocalDate endDate = LocalDate.from(end);
+
         final List<TotalExpenditureAndMemberIdDto> totalExpenditureAndMemberIdSortedByExpenditure =
-            expenditureRepository.findTotalExpendituresBetweenAndMemberIdIn(memberIds, start, end)
+            expenditureRepository.findTotalExpendituresBetweenAndMemberIdIn(memberIds, startDate, endDate)
                 .stream()
                 .sorted(Comparator.comparingLong(TotalExpenditureAndMemberIdDto::getTotalExpenditure))
                 .toList();
@@ -147,7 +158,7 @@ public class ExpenditureService {
         final List<Expenditure> battleExpenditures = expenditureRepository.findBattleExpenditureByBattleId(battleId);
 
         return battleExpenditures.stream()
-            .filter(expenditure -> expenditure.getDateTime().getDayOfWeek() == targetDayOfWeek)
+            .filter(expenditure -> expenditure.getDate().getDayOfWeek() == targetDayOfWeek)
             .map(expenditure -> BattleExpenditureResponse.from(expenditure, expenditure.hasSameMemberId(memberId)))
             .toList();
     }
@@ -156,10 +167,10 @@ public class ExpenditureService {
         final Battle battle = battleRepository.findById(battleId)
             .orElseThrow(() -> new IllegalArgumentException("Id에 해당하는 배틀이 없습니다."));
 
-        final List<Expenditure> expenditures = expenditureRepository.findExpendituresByMemberIdAndDateTimeBetween(
+        final List<Expenditure> expenditures = expenditureRepository.findExpendituresByMemberIdAndDateBetween(
             memberId,
-            battle.getDuration().getStart(),
-            battle.getDuration().getEnd()
+            LocalDate.from(battle.getDuration().getStart()),
+            LocalDate.from(battle.getDuration().getEnd())
         );
 
         return expenditures.stream()

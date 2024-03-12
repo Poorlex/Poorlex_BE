@@ -1,11 +1,10 @@
 package com.poorlex.poorlex.battle.domain;
 
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-
-import java.util.List;
 
 @Repository
 public interface BattleRepository extends JpaRepository<Battle, Long> {
@@ -65,7 +64,8 @@ public interface BattleRepository extends JpaRepository<Battle, Long> {
     @Query(
         "select b as battle, sum(coalesce(e.amount.value, 0)) as expenditure from Battle b "
             + "left join BattleParticipant p on p.battleId = b.id "
-            + "left join Expenditure e on e.memberId = p.memberId and e.dateTime between b.duration.start and b.duration.end "
+            + "left join Expenditure e on e.memberId = p.memberId "
+            + "and e.date between cast(b.duration.start as LocalDate) and cast(b.duration.end as LocalDate) "
             + "where b.status = :status "
             + "and p.memberId = :memberId "
             + "group by b.id"

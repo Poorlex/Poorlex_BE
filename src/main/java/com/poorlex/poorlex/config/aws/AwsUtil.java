@@ -7,20 +7,23 @@ import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.AmazonS3URI;
-import com.amazonaws.services.s3.model.*;
+import com.amazonaws.services.s3.model.DeleteObjectRequest;
+import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.S3Object;
+import com.amazonaws.services.s3.model.S3ObjectInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.io.IOException;
-import java.io.InputStream;
 
 @Component
 @Slf4j
 public class AwsUtil {
 
     private static final Regions SEOUL_REGION = Regions.AP_NORTHEAST_2;
+    public static final String DIRECTORY_DELIMITER = "/";
 
     private final String accessKey;
 
@@ -49,18 +52,19 @@ public class AwsUtil {
 
     public String uploadS3File(final MultipartFile file, final String directory) {
         final AmazonS3 amazonS3 = awsS3Client();
-        final String fileName = file.getOriginalFilename();
+        final String fileName = directory + DIRECTORY_DELIMITER + file.getOriginalFilename();
 
-        PutObjectResult result;
         try (final InputStream inputStream = file.getInputStream()) {
-            result = amazonS3.putObject(bucket, directory + "/" + fileName, inputStream,
-                createFileObjectMetadata(file));
+            amazonS3.putObject(bucket, fileName, inputStream, createFileObjectMetadata(file));
         } catch (IOException e) {
             e.printStackTrace();
             throw new RuntimeException(e);
         }
-        log.info("upload resut : {}", result);
-        return amazonS3.getUrl(bucket, fileName).toString();
+        
+        return amazonS3.getObject(bucket, fileName).getObjectContent()
+            .getHttpRequest()
+            .getURI()
+            .toString();
     }
 
     private ObjectMetadata createFileObjectMetadata(final MultipartFile file) {

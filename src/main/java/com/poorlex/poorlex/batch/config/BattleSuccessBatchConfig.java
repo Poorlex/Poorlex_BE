@@ -66,7 +66,8 @@ public class BattleSuccessBatchConfig {
             "select new %s(bp, b, coalesce(sum(e.amount.value), 0)) "
                 + "from Battle b "
                 + "left join BattleParticipant bp on b.id = bp.battleId "
-                + "left join Expenditure e on e.memberId = bp.memberId and e.dateTime between b.duration.start and b.duration.end "
+                + "left join Expenditure e on e.memberId = bp.memberId and "
+                + "e.date between cast(b.duration.start as LocalDate) and cast(b.duration.end as LocalDate) "
                 + "where b.status = 'PROGRESS' and b.isBattleSuccessCounted = false "
                 + "group by b.id"
             , BattleParticipantWithBattleSumExpenditure.class.getName());

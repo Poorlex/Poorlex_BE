@@ -1,21 +1,7 @@
 package com.poorlex.poorlex.expenditure.documentation;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
-import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
-import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
-import static org.springframework.restdocs.request.RequestDocumentation.partWithName;
-import static org.springframework.restdocs.request.RequestDocumentation.requestParts;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 import com.poorlex.poorlex.expenditure.controller.ExpenditureController;
 import com.poorlex.poorlex.expenditure.service.ExpenditureService;
-import com.poorlex.poorlex.expenditure.service.dto.request.ExpenditureCreateRequest;
 import com.poorlex.poorlex.expenditure.service.dto.request.MemberWeeklyTotalExpenditureRequest;
 import com.poorlex.poorlex.expenditure.service.dto.response.BattleExpenditureResponse;
 import com.poorlex.poorlex.expenditure.service.dto.response.ExpenditureResponse;
@@ -25,19 +11,31 @@ import com.poorlex.poorlex.util.ApiDocumentUtils;
 import java.io.FileInputStream;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 import org.junit.jupiter.api.Test;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
 import org.springframework.restdocs.payload.JsonFieldType;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
+import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.partWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.queryParameters;
+import static org.springframework.restdocs.request.RequestDocumentation.requestParts;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(ExpenditureController.class)
 class ExpenditureDocumentationTest extends MockMvcTest {
@@ -55,12 +53,6 @@ class ExpenditureDocumentationTest extends MockMvcTest {
         mockingMemberArgumentResolver();
         given(expenditureService.createExpenditure(any(), any(), any())).willReturn(1L);
 
-        final ExpenditureCreateRequest request = new ExpenditureCreateRequest(
-            1000,
-            "지출 설명",
-            LocalDateTime.now().truncatedTo(ChronoUnit.MICROS)
-        );
-
         final MockMultipartFile image = new MockMultipartFile(
             "images",
             "cat-8415620_640",
@@ -68,18 +60,14 @@ class ExpenditureDocumentationTest extends MockMvcTest {
             new FileInputStream(
                 "src/test/resources/testImage/cat-8415620_640.jpg")
         );
-        final MockMultipartFile formRequest = new MockMultipartFile(
-            "expenditureCreateRequest",
-            "",
-            MediaType.APPLICATION_JSON_VALUE,
-            objectMapper.writeValueAsString(request).getBytes()
-        );
 
         //when
         final ResultActions result = mockMvc.perform(
-            multipart(HttpMethod.POST, "/expenditures")
+            RestDocumentationRequestBuilders.multipart("/expenditures")
                 .file(image)
-                .file(formRequest)
+                .queryParam("amount", "1000")
+                .queryParam("description", "소개")
+                .queryParam("date", LocalDate.now().toString())
                 .header(HttpHeaders.AUTHORIZATION, "Bearer {accessToken}")
                 .with(csrf())
         );
@@ -90,9 +78,13 @@ class ExpenditureDocumentationTest extends MockMvcTest {
                 document("expenditure-create",
                     ApiDocumentUtils.getDocumentRequest(),
                     ApiDocumentUtils.getDocumentResponse(),
+                    queryParameters(
+                        parameterWithName("amount").description("금액"),
+                        parameterWithName("description").description("설명"),
+                        parameterWithName("date").description("지출 날짜")
+                    ),
                     requestParts(
-                        partWithName("images").description("지출 이미지 파일 리스트"),
-                        partWithName("expenditureCreateRequest").description("지출 이미지 생성 요청 값 목록")
+                        partWithName("images").description("지출 이미지 파일 리스트")
                     )
                 ));
     }
@@ -133,21 +125,51 @@ class ExpenditureDocumentationTest extends MockMvcTest {
 //    }
 
     @Test
+    void find_weekly_expenditure_with_date() throws Exception {
+        //given
+        mockingTokenInterceptor();
+        mockingMemberArgumentResolver();
+
+        final MemberWeeklyTotalExpenditureRequest request = new MemberWeeklyTotalExpenditureRequest(LocalDateTime.now());
+        given(expenditureService.findMemberWeeklyTotalExpenditure(any(), any()))
+            .willReturn(new MemberWeeklyTotalExpenditureResponse(1000));
+
+        //when
+        final ResultActions result = mockMvc.perform(
+            get("/expenditures/weekly?withDate=true")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer {accessToken}")
+                .content(objectMapper.writeValueAsString(request))
+                .contentType(MediaType.APPLICATION_JSON)
+        );
+
+        //then
+        result.andExpect(status().isOk())
+            .andDo(
+                document("expenditure-weekly-total-with-date",
+                    ApiDocumentUtils.getDocumentRequest(),
+                    ApiDocumentUtils.getDocumentResponse(),
+                    requestFields(
+                        fieldWithPath("dateTime").type(JsonFieldType.STRING).description("조회 시간 ")
+                    ),
+                    responseFields(
+                        fieldWithPath("amount").type(JsonFieldType.NUMBER).description("주간 총 지출 금액")
+                    )
+                ));
+    }
+
+    @Test
     void find_weekly_expenditure() throws Exception {
         //given
         mockingTokenInterceptor();
         mockingMemberArgumentResolver();
 
-        final MemberWeeklyTotalExpenditureRequest request = new MemberWeeklyTotalExpenditureRequest(
-            LocalDateTime.now().truncatedTo(ChronoUnit.MICROS));
-        given(expenditureService.findMemberWeeklyTotalExpenditure(any(), any()))
+        given(expenditureService.findMemberCurrentWeeklyTotalExpenditure(any()))
             .willReturn(new MemberWeeklyTotalExpenditureResponse(1000));
 
         //when
         final ResultActions result = mockMvc.perform(
             get("/expenditures/weekly")
                 .header(HttpHeaders.AUTHORIZATION, "Bearer {accessToken}")
-                .content(objectMapper.writeValueAsString(request))
                 .contentType(MediaType.APPLICATION_JSON)
         );
 
@@ -157,9 +179,6 @@ class ExpenditureDocumentationTest extends MockMvcTest {
                 document("expenditure-weekly-total",
                     ApiDocumentUtils.getDocumentRequest(),
                     ApiDocumentUtils.getDocumentResponse(),
-                    requestFields(
-                        fieldWithPath("dateTime").type(JsonFieldType.STRING).description("조회 시간 ")
-                    ),
                     responseFields(
                         fieldWithPath("amount").type(JsonFieldType.NUMBER).description("주간 총 지출 금액")
                     )

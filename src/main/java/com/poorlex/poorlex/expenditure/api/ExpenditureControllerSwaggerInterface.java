@@ -1,22 +1,22 @@
 package com.poorlex.poorlex.expenditure.api;
 
 import com.poorlex.poorlex.config.auth.argumentresolver.MemberInfo;
-import com.poorlex.poorlex.expenditure.service.dto.request.ExpenditureCreateRequest;
 import com.poorlex.poorlex.expenditure.service.dto.request.MemberWeeklyTotalExpenditureRequest;
 import com.poorlex.poorlex.expenditure.service.dto.response.BattleExpenditureResponse;
 import com.poorlex.poorlex.expenditure.service.dto.response.ExpenditureResponse;
 import com.poorlex.poorlex.expenditure.service.dto.response.MemberWeeklyTotalExpenditureResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Encoding;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.time.LocalDate;
 import java.util.List;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.multipart.MultipartFile;
 
 @Tag(name = "지출 관련 API")
@@ -28,10 +28,9 @@ public interface ExpenditureControllerSwaggerInterface {
     ResponseEntity<Void> createExpenditure(
         @Parameter(hidden = true) MemberInfo memberInfo,
         @Parameter(description = "지출 이미지 (1개 ~ 2개)") List<MultipartFile> images,
-        @Parameter(
-            description = "등록할 지출 정보",
-            content = @Content(encoding = @Encoding(name = "request", contentType = MediaType.APPLICATION_JSON_VALUE))
-        ) ExpenditureCreateRequest request
+        @Parameter(in = ParameterIn.QUERY, description = "지출 금액") final Long amount,
+        @Parameter(in = ParameterIn.QUERY, description = "지출 설명") final String description,
+        @Parameter(in = ParameterIn.QUERY, description = "지출 날짜(yyyy-mm-dd)") final LocalDate date
     );
 
     @Operation(summary = "지출 상세 조회")
@@ -63,10 +62,18 @@ public interface ExpenditureControllerSwaggerInterface {
         @Parameter(description = "배틀 Id") final Long battleId
     );
 
-    @Operation(summary = "회원 주간 총 지출 조회", description = "액세스 토큰 필요")
-    @GetMapping("/expenditures/weekly")
+    @Operation(summary = "회원 주간 총 지출 조회 ( 조회 날짜 포함 )", description = "액세스 토큰 필요")
+    @GetMapping(value = "/expenditures/weekly", params = "withDate=true")
     @ApiResponse(responseCode = "200")
     ResponseEntity<MemberWeeklyTotalExpenditureResponse> findMemberWeeklyTotalExpenditures(
         @Parameter(hidden = true) final MemberInfo memberInfo,
-        @Parameter(description = "조회 기준 날짜") final MemberWeeklyTotalExpenditureRequest request);
+        @RequestBody final MemberWeeklyTotalExpenditureRequest request
+    );
+
+    @Operation(summary = "회원 주간 총 지출 조회 ( 현재 날짜 기준 )", description = "액세스 토큰 필요")
+    @GetMapping("/expenditures/weekly")
+    @ApiResponse(responseCode = "200")
+    ResponseEntity<MemberWeeklyTotalExpenditureResponse> findMemberWeeklyTotalExpenditures(
+        @Parameter(hidden = true) final MemberInfo memberInfo
+    );
 }

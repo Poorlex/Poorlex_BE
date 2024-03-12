@@ -10,6 +10,7 @@ import com.poorlex.poorlex.expenditure.service.dto.response.BattleExpenditureRes
 import com.poorlex.poorlex.expenditure.service.dto.response.ExpenditureResponse;
 import com.poorlex.poorlex.expenditure.service.dto.response.MemberWeeklyTotalExpenditureResponse;
 import java.net.URI;
+import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
@@ -33,7 +34,10 @@ public class ExpenditureController implements ExpenditureControllerSwaggerInterf
     @PostMapping(path = "/expenditures", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Void> createExpenditure(@MemberOnly final MemberInfo memberInfo,
                                                   @RequestPart(name = "images") final List<MultipartFile> images,
-                                                  @RequestPart(value = "expenditureCreateRequest") final ExpenditureCreateRequest request) {
+                                                  @RequestParam(value = "amount") final Long amount,
+                                                  @RequestParam(value = "description") final String description,
+                                                  @RequestParam(value = "date") final LocalDate date) {
+        final ExpenditureCreateRequest request = new ExpenditureCreateRequest(amount, description, date);
         final Long expenditureID = expenditureService.createExpenditure(memberInfo.getMemberId(), images, request);
         final String locationHeader = CONTROLLER_MAPPED_URL + "/" + expenditureID;
 
@@ -81,16 +85,24 @@ public class ExpenditureController implements ExpenditureControllerSwaggerInterf
         return ResponseEntity.ok(responses);
     }
 
-    @GetMapping("/expenditures/weekly")
+    @GetMapping(value = "/expenditures/weekly", params = "withDate=true")
     public ResponseEntity<MemberWeeklyTotalExpenditureResponse> findMemberWeeklyTotalExpenditures(
         @MemberOnly final MemberInfo memberInfo,
         @RequestBody final MemberWeeklyTotalExpenditureRequest request) {
         final MemberWeeklyTotalExpenditureResponse response = expenditureService.findMemberWeeklyTotalExpenditure(
             memberInfo.getMemberId(),
-            request
+            request.getDateTime()
         );
 
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/expenditures/weekly")
+    public ResponseEntity<MemberWeeklyTotalExpenditureResponse> findMemberWeeklyTotalExpenditures(
+        @MemberOnly final MemberInfo memberInfo
+    ) {
+        return ResponseEntity.ok()
+            .body(expenditureService.findMemberCurrentWeeklyTotalExpenditure(memberInfo.getMemberId()));
     }
 
 //    @PatchMapping("/expenditures/{expenditureId}")

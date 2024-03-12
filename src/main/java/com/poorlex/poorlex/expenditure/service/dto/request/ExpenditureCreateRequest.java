@@ -1,6 +1,6 @@
 package com.poorlex.poorlex.expenditure.service.dto.request;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import lombok.Getter;
 
 @Getter
@@ -8,11 +8,11 @@ public class ExpenditureCreateRequest {
 
     private final long amount;
     private final String description;
-    private final LocalDateTime dateTime;
+    private final LocalDate date;
 
-    public ExpenditureCreateRequest(final long amount, final String description, final LocalDateTime dateTime) {
+    public ExpenditureCreateRequest(final long amount, final String description, final LocalDate date) {
         this.amount = amount;
         this.description = description;
-        this.dateTime = dateTime;
+        this.date = date;
     }
 }

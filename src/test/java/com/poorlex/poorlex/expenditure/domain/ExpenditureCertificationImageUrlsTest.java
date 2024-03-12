@@ -1,13 +1,11 @@
 package com.poorlex.poorlex.expenditure.domain;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-
 import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.IntStream;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -51,7 +49,7 @@ class ExpenditureCertificationImageUrlsTest implements ReplaceUnderScoreTest {
     private Expenditure simpleWithoutId(final ExpenditureCertificationImageUrls imageUrls) {
         final long memberId = 1L;
         final ExpenditureAmount amount = new ExpenditureAmount(0L);
-        final LocalDateTime date = LocalDateTime.now().truncatedTo(ChronoUnit.MICROS);
+        final LocalDate date = LocalDate.now();
         final ExpenditureDescription description = new ExpenditureDescription("description");
 
         return new Expenditure(null, memberId, amount, date, description, imageUrls);
