@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -33,7 +34,7 @@ public class ExpenditureController implements ExpenditureControllerSwaggerInterf
     @PostMapping(path = "/expenditures", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Void> createExpenditure(@MemberOnly final MemberInfo memberInfo,
                                                   @RequestPart(name = "images") final List<MultipartFile> images,
-                                                  @RequestPart(value = "expenditureCreateRequest") final ExpenditureCreateRequest request) {
+                                                  @ModelAttribute(value = "expenditure") final ExpenditureCreateRequest request) {
         final Long expenditureID = expenditureService.createExpenditure(memberInfo.getMemberId(), images, request);
         final String locationHeader = CONTROLLER_MAPPED_URL + "/" + expenditureID;
 
@@ -81,16 +82,24 @@ public class ExpenditureController implements ExpenditureControllerSwaggerInterf
         return ResponseEntity.ok(responses);
     }
 
-    @GetMapping("/expenditures/weekly")
+    @GetMapping(value = "/expenditures/weekly", params = "withDate=true")
     public ResponseEntity<MemberWeeklyTotalExpenditureResponse> findMemberWeeklyTotalExpenditures(
         @MemberOnly final MemberInfo memberInfo,
         @RequestBody final MemberWeeklyTotalExpenditureRequest request) {
         final MemberWeeklyTotalExpenditureResponse response = expenditureService.findMemberWeeklyTotalExpenditure(
             memberInfo.getMemberId(),
-            request
+            request.getDateTime()
         );
 
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/expenditures/weekly")
+    public ResponseEntity<MemberWeeklyTotalExpenditureResponse> findMemberWeeklyTotalExpenditures(
+        @MemberOnly final MemberInfo memberInfo
+    ) {
+        return ResponseEntity.ok()
+            .body(expenditureService.findMemberCurrentWeeklyTotalExpenditure(memberInfo.getMemberId()));
     }
 
 //    @PatchMapping("/expenditures/{expenditureId}")
