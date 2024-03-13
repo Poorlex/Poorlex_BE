@@ -63,13 +63,13 @@ create table if not exists battle_participant
 
 create table if not exists expenditure
 (
-    id          bigint      not null auto_increment,
-    member_id   bigint      not null,
-    amount      bigint      not null,
-    description varchar(255),
-    main_image_url text not null,
-    sub_image_url text not null,
-    date  date not null,
+    id             bigint not null auto_increment,
+    member_id      bigint not null,
+    amount         bigint not null,
+    description    varchar(255),
+    main_image_url text   not null,
+    sub_image_url  text,
+    date           date   not null,
     primary key (id)
 ) engine = InnoDB;
 
