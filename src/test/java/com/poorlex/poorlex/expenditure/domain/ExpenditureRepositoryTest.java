@@ -19,14 +19,14 @@ class ExpenditureRepositoryTest extends UsingDataJpaTest implements ReplaceUnder
         final Long memberId = 1L;
         final LocalDate date = LocalDate.now();
 
-        expenditureRepository.save(ExpenditureFixture.simpleWith(1000, memberId, date));
-        expenditureRepository.save(ExpenditureFixture.simpleWith(2000, memberId, date));
+        expenditureRepository.save(ExpenditureFixture.simpleWithMainImage(1000, memberId, date));
+        expenditureRepository.save(ExpenditureFixture.simpleWithMainImage(2000, memberId, date));
 
         //when
         final int sumExpenditure = expenditureRepository.findSumExpenditureByMemberIdAndBetween(
-            memberId,
-            date.minusDays(1),
-            date
+                memberId,
+                date.minusDays(1),
+                date
         );
 
         //then

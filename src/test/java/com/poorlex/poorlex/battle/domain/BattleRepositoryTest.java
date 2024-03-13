@@ -1,7 +1,5 @@
 package com.poorlex.poorlex.battle.domain;
 
-import static org.assertj.core.api.SoftAssertions.assertSoftly;
-
 import com.poorlex.poorlex.battle.fixture.BattleFixture;
 import com.poorlex.poorlex.expenditure.domain.Expenditure;
 import com.poorlex.poorlex.expenditure.domain.ExpenditureRepository;
@@ -18,18 +16,19 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 class BattleRepositoryTest extends UsingDataJpaTest implements ReplaceUnderScoreTest {
 
     private static final LocalDateTime BATTLE_START_TIME = LocalDateTime.of(
-        LocalDate.of(2023, 12, 25),
-        LocalTime.of(9, 0)
+            LocalDate.of(2023, 12, 25),
+            LocalTime.of(9, 0)
     );
     private static final LocalDateTime BATTLE_END_TIME = LocalDateTime.of(
-        LocalDate.of(2023, 12, 31),
-        LocalTime.of(22, 0)
+            LocalDate.of(2023, 12, 31),
+            LocalTime.of(22, 0)
     );
     private static final BattleDuration BATTLE_DURATION = new BattleDuration(BATTLE_START_TIME, BATTLE_END_TIME);
 
@@ -55,25 +54,26 @@ class BattleRepositoryTest extends UsingDataJpaTest implements ReplaceUnderScore
         join(progressBattle1, member);
         join(progressBattle2, member);
 
-        expend(1000, member, BATTLE_START_TIME);
-        expend(2000, member, BATTLE_START_TIME);
+        expend(1000, member, LocalDate.from(BATTLE_START_TIME));
+        expend(2000, member, LocalDate.from(BATTLE_START_TIME));
 
         //when
         final List<BattleWithMemberExpenditure> progressBattleInfos =
-            battleRepository.findMemberBattlesByMemberIdAndStatusWithExpenditure(member.getId(), BattleStatus.PROGRESS);
+                battleRepository.findMemberBattlesByMemberIdAndStatusWithExpenditure(member.getId(),
+                                                                                     BattleStatus.PROGRESS);
 
         //then
         assertSoftly(
-            softly -> {
-                softly.assertThat(progressBattleInfos).hasSize(2);
+                softly -> {
+                    softly.assertThat(progressBattleInfos).hasSize(2);
 
-                final BattleWithMemberExpenditure battleInfo1 = progressBattleInfos.get(0);
-                softly.assertThat(battleInfo1.getBattle()).isEqualTo(progressBattle1);
-                softly.assertThat(battleInfo1.getExpenditure()).isEqualTo(3000);
+                    final BattleWithMemberExpenditure battleInfo1 = progressBattleInfos.get(0);
+                    softly.assertThat(battleInfo1.getBattle()).isEqualTo(progressBattle1);
+                    softly.assertThat(battleInfo1.getExpenditure()).isEqualTo(3000);
 
-                final BattleWithMemberExpenditure battleInfo2 = progressBattleInfos.get(1);
-                softly.assertThat(battleInfo2.getExpenditure()).isEqualTo(3000);
-            }
+                    final BattleWithMemberExpenditure battleInfo2 = progressBattleInfos.get(1);
+                    softly.assertThat(battleInfo2.getExpenditure()).isEqualTo(3000);
+                }
         );
     }
 
@@ -89,20 +89,21 @@ class BattleRepositoryTest extends UsingDataJpaTest implements ReplaceUnderScore
 
         //when
         final List<BattleWithMemberExpenditure> progressBattleInfos =
-            battleRepository.findMemberBattlesByMemberIdAndStatusWithExpenditure(member.getId(), BattleStatus.PROGRESS);
+                battleRepository.findMemberBattlesByMemberIdAndStatusWithExpenditure(member.getId(),
+                                                                                     BattleStatus.PROGRESS);
 
         //then
         assertSoftly(
-            softly -> {
-                softly.assertThat(progressBattleInfos).hasSize(2);
+                softly -> {
+                    softly.assertThat(progressBattleInfos).hasSize(2);
 
-                final BattleWithMemberExpenditure battleInfo1 = progressBattleInfos.get(0);
-                softly.assertThat(battleInfo1.getBattle()).isEqualTo(progressBattle1);
-                softly.assertThat(battleInfo1.getExpenditure()).isEqualTo(0);
+                    final BattleWithMemberExpenditure battleInfo1 = progressBattleInfos.get(0);
+                    softly.assertThat(battleInfo1.getBattle()).isEqualTo(progressBattle1);
+                    softly.assertThat(battleInfo1.getExpenditure()).isEqualTo(0);
 
-                final BattleWithMemberExpenditure battleInfo2 = progressBattleInfos.get(1);
-                softly.assertThat(battleInfo2.getExpenditure()).isEqualTo(0);
-            }
+                    final BattleWithMemberExpenditure battleInfo2 = progressBattleInfos.get(1);
+                    softly.assertThat(battleInfo2.getExpenditure()).isEqualTo(0);
+                }
         );
     }
 
@@ -116,22 +117,23 @@ class BattleRepositoryTest extends UsingDataJpaTest implements ReplaceUnderScore
         join(progressBattle, member);
         join(recruitingBattle, member);
 
-        expend(1000, member, BATTLE_START_TIME);
-        expend(2000, member, BATTLE_START_TIME);
+        expend(1000, member, LocalDate.from(BATTLE_START_TIME));
+        expend(2000, member, LocalDate.from(BATTLE_START_TIME));
 
         //when
         final List<BattleWithMemberExpenditure> progressBattleInfos =
-            battleRepository.findMemberBattlesByMemberIdAndStatusWithExpenditure(member.getId(), BattleStatus.PROGRESS);
+                battleRepository.findMemberBattlesByMemberIdAndStatusWithExpenditure(member.getId(),
+                                                                                     BattleStatus.PROGRESS);
 
         //then
         assertSoftly(
-            softly -> {
-                softly.assertThat(progressBattleInfos).hasSize(1);
+                softly -> {
+                    softly.assertThat(progressBattleInfos).hasSize(1);
 
-                final BattleWithMemberExpenditure battleInfo = progressBattleInfos.get(0);
-                softly.assertThat(battleInfo.getBattle()).isEqualTo(progressBattle);
-                softly.assertThat(battleInfo.getExpenditure()).isEqualTo(3000);
-            }
+                    final BattleWithMemberExpenditure battleInfo = progressBattleInfos.get(0);
+                    softly.assertThat(battleInfo.getBattle()).isEqualTo(progressBattle);
+                    softly.assertThat(battleInfo.getExpenditure()).isEqualTo(3000);
+                }
         );
     }
 
@@ -145,26 +147,27 @@ class BattleRepositoryTest extends UsingDataJpaTest implements ReplaceUnderScore
         join(completeBattle1, member);
         join(completeBattle2, member);
 
-        expend(1000, member, BATTLE_START_TIME);
-        expend(2000, member, BATTLE_START_TIME);
+        expend(1000, member, LocalDate.from(BATTLE_START_TIME));
+        expend(2000, member, LocalDate.from(BATTLE_START_TIME));
 
         //when
         final List<BattleWithMemberExpenditure> completeBattleInfos =
-            battleRepository.findMemberBattlesByMemberIdAndStatusWithExpenditure(member.getId(), BattleStatus.COMPLETE);
+                battleRepository.findMemberBattlesByMemberIdAndStatusWithExpenditure(member.getId(),
+                                                                                     BattleStatus.COMPLETE);
 
         //then
         assertSoftly(
-            softly -> {
-                softly.assertThat(completeBattleInfos).hasSize(2);
+                softly -> {
+                    softly.assertThat(completeBattleInfos).hasSize(2);
 
-                final BattleWithMemberExpenditure battleInfo1 = completeBattleInfos.get(0);
-                softly.assertThat(battleInfo1.getBattle()).isEqualTo(completeBattle1);
-                softly.assertThat(battleInfo1.getExpenditure()).isEqualTo(3000);
+                    final BattleWithMemberExpenditure battleInfo1 = completeBattleInfos.get(0);
+                    softly.assertThat(battleInfo1.getBattle()).isEqualTo(completeBattle1);
+                    softly.assertThat(battleInfo1.getExpenditure()).isEqualTo(3000);
 
-                final BattleWithMemberExpenditure battleInfo2 = completeBattleInfos.get(1);
-                softly.assertThat(battleInfo2.getBattle()).isEqualTo(completeBattle2);
-                softly.assertThat(battleInfo2.getExpenditure()).isEqualTo(3000);
-            }
+                    final BattleWithMemberExpenditure battleInfo2 = completeBattleInfos.get(1);
+                    softly.assertThat(battleInfo2.getBattle()).isEqualTo(completeBattle2);
+                    softly.assertThat(battleInfo2.getExpenditure()).isEqualTo(3000);
+                }
         );
     }
 
@@ -178,22 +181,23 @@ class BattleRepositoryTest extends UsingDataJpaTest implements ReplaceUnderScore
         join(completeBattle, member);
         join(progressBattle, member);
 
-        expend(1000, member, BATTLE_START_TIME);
-        expend(2000, member, BATTLE_START_TIME);
+        expend(1000, member, LocalDate.from(BATTLE_START_TIME));
+        expend(2000, member, LocalDate.from(BATTLE_START_TIME));
 
         //when
         final List<BattleWithMemberExpenditure> completeBattleInfos =
-            battleRepository.findMemberBattlesByMemberIdAndStatusWithExpenditure(member.getId(), BattleStatus.COMPLETE);
+                battleRepository.findMemberBattlesByMemberIdAndStatusWithExpenditure(member.getId(),
+                                                                                     BattleStatus.COMPLETE);
 
         //then
         assertSoftly(
-            softly -> {
-                softly.assertThat(completeBattleInfos).hasSize(1);
+                softly -> {
+                    softly.assertThat(completeBattleInfos).hasSize(1);
 
-                final BattleWithMemberExpenditure battleInfo = completeBattleInfos.get(0);
-                softly.assertThat(battleInfo.getBattle()).isEqualTo(completeBattle);
-                softly.assertThat(battleInfo.getExpenditure()).isEqualTo(3000);
-            }
+                    final BattleWithMemberExpenditure battleInfo = completeBattleInfos.get(0);
+                    softly.assertThat(battleInfo.getBattle()).isEqualTo(completeBattle);
+                    softly.assertThat(battleInfo.getExpenditure()).isEqualTo(3000);
+                }
         );
     }
 
@@ -206,39 +210,39 @@ class BattleRepositoryTest extends UsingDataJpaTest implements ReplaceUnderScore
 
         final BattleParticipant battleParticipantMember1 = join(battle, member1);
         final BattleParticipant battleParticipantMember2 = join(battle, member2);
-        expend(1000, member1, BATTLE_START_TIME);
-        expend(2000, member1, BATTLE_START_TIME);
-        expend(4000, member2, BATTLE_START_TIME);
+        expend(1000, member1, LocalDate.from(BATTLE_START_TIME));
+        expend(2000, member1, LocalDate.from(BATTLE_START_TIME));
+        expend(4000, member2, LocalDate.from(BATTLE_START_TIME));
 
         //when
         final List<BattleParticipantWithExpenditure> battleParticipantsWithExpenditure =
-            battleRepository.findBattleParticipantsWithExpenditureByBattleId(battle.getId());
+                battleRepository.findBattleParticipantsWithExpenditureByBattleId(battle.getId());
 
         //then
         assertSoftly(
-            softly -> {
-                softly.assertThat(battleParticipantsWithExpenditure).hasSize(2);
+                softly -> {
+                    softly.assertThat(battleParticipantsWithExpenditure).hasSize(2);
 
-                final BattleParticipantWithExpenditure participantWithExpenditure1 =
-                    battleParticipantsWithExpenditure.get(0);
-                softly.assertThat(participantWithExpenditure1.getBattleParticipant())
-                    .isEqualTo(battleParticipantMember1);
-                softly.assertThat(participantWithExpenditure1.getExpenditure()).isEqualTo(3000);
+                    final BattleParticipantWithExpenditure participantWithExpenditure1 =
+                            battleParticipantsWithExpenditure.get(0);
+                    softly.assertThat(participantWithExpenditure1.getBattleParticipant())
+                            .isEqualTo(battleParticipantMember1);
+                    softly.assertThat(participantWithExpenditure1.getExpenditure()).isEqualTo(3000);
 
-                final BattleParticipantWithExpenditure participantWithExpenditure2 =
-                    battleParticipantsWithExpenditure.get(1);
-                softly.assertThat(participantWithExpenditure2.getBattleParticipant())
-                    .isEqualTo(battleParticipantMember2);
-                softly.assertThat(participantWithExpenditure2.getExpenditure()).isEqualTo(4000);
-            }
+                    final BattleParticipantWithExpenditure participantWithExpenditure2 =
+                            battleParticipantsWithExpenditure.get(1);
+                    softly.assertThat(participantWithExpenditure2.getBattleParticipant())
+                            .isEqualTo(battleParticipantMember2);
+                    softly.assertThat(participantWithExpenditure2.getExpenditure()).isEqualTo(4000);
+                }
         );
     }
 
     private Battle createBattle(final BattleStatus status, final BattleDuration duration) {
         final Battle battle = BattleFixture.initialBattleBuilder()
-            .status(status)
-            .duration(duration)
-            .build();
+                .status(status)
+                .duration(duration)
+                .build();
         return battleRepository.save(battle);
     }
 
@@ -252,8 +256,8 @@ class BattleRepositoryTest extends UsingDataJpaTest implements ReplaceUnderScore
         return battleParticipantRepository.save(battleParticipant);
     }
 
-    private Expenditure expend(final int amount, final Member member, final LocalDateTime date) {
-        final Expenditure expenditure = ExpenditureFixture.simpleWith(amount, member.getId(), date);
+    private Expenditure expend(final int amount, final Member member, final LocalDate date) {
+        final Expenditure expenditure = ExpenditureFixture.simpleWithMainImage(amount, member.getId(), date);
         return expenditureRepository.save(expenditure);
     }
 }

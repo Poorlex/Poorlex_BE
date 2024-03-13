@@ -324,6 +324,47 @@ class ExpenditureCommandServiceTest extends UsingDataJpaTest implements ReplaceU
     }
 
     @Test
+    void 지출을_수정한다_서브_이미지가_메인_이미지_URL로_수정되는_경우() {
+        //given
+        final Member member = memberRepository.save(
+                Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname")));
+        final Expenditure expenditure = createExpenditureWithMainImageAndSubImage(1000,
+                                                                                  member.getId(),
+                                                                                  LocalDate.now());
+        final String prevSubImageUrl = expenditure.getSubImageUrl().get();
+        final String prevMainImageUrl = expenditure.getMainImageUrl();
+        final ExpenditureUpdateRequest request = new ExpenditureUpdateRequest(2000L, "업데이트된 소개");
+
+        //when
+        expenditureCommandService.updateExpenditure(expenditure.getId(),
+                                                    member.getId(),
+                                                    Optional.empty(),
+                                                    Optional.of(expenditure.getSubImageUrl().get()),
+                                                    Optional.empty(),
+                                                    Optional.of(expenditure.getMainImageUrl()),
+                                                    request);
+
+        entityManager.flush();
+        entityManager.clear();
+
+        //then
+        final Expenditure updatedExpenditure = expenditureRepository.findById(expenditure.getId())
+                .orElseThrow(IllegalArgumentException::new);
+
+        assertSoftly(
+                softly -> {
+                    softly.assertThat(updatedExpenditure.getAmount()).isEqualTo(request.getAmount());
+                    softly.assertThat(updatedExpenditure.getDescription()).isEqualTo(request.getDescription());
+                    softly.assertThat(updatedExpenditure.getMainImageUrl()).isEqualTo(prevSubImageUrl);
+                    softly.assertThat(updatedExpenditure.getSubImageUrl())
+                            .isPresent()
+                            .get()
+                            .isEqualTo(prevMainImageUrl);
+                }
+        );
+    }
+
+    @Test
     void 지출을_수정한다_서브_이미지가_삭제된_경우() {
         //given
         final Member member = memberRepository.save(
