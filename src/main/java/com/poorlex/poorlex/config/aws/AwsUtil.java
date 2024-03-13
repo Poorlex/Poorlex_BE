@@ -13,6 +13,7 @@ import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -45,14 +46,14 @@ public class AwsUtil {
 
     private AmazonS3 awsS3Client() {
         return AmazonS3ClientBuilder.standard()
-            .withCredentials(new AWSStaticCredentialsProvider(awsCredentials()))
-            .withRegion(SEOUL_REGION)
-            .build();
+                .withCredentials(new AWSStaticCredentialsProvider(awsCredentials()))
+                .withRegion(SEOUL_REGION)
+                .build();
     }
 
     public String uploadS3File(final MultipartFile file, final String directory) {
         final AmazonS3 amazonS3 = awsS3Client();
-        final String fileName = directory + DIRECTORY_DELIMITER + file.getOriginalFilename();
+        final String fileName = directory + DIRECTORY_DELIMITER + UUID.randomUUID();
 
         try (final InputStream inputStream = file.getInputStream()) {
             amazonS3.putObject(bucket, fileName, inputStream, createFileObjectMetadata(file));
@@ -60,11 +61,11 @@ public class AwsUtil {
             e.printStackTrace();
             throw new RuntimeException(e);
         }
-        
+
         return amazonS3.getObject(bucket, fileName).getObjectContent()
-            .getHttpRequest()
-            .getURI()
-            .toString();
+                .getHttpRequest()
+                .getURI()
+                .toString();
     }
 
     private ObjectMetadata createFileObjectMetadata(final MultipartFile file) {
