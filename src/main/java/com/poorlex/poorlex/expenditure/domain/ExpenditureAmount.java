@@ -11,7 +11,7 @@ public class ExpenditureAmount {
 
     private static final long MINIMUM_PRICE = 0L;
     private static final long MAXIMUM_PRICE = 9_999_999L;
-    @Column(name = "amount", updatable = false, nullable = false)
+    @Column(name = "amount", nullable = false)
     private long value;
 
     public ExpenditureAmount(final long value) {

@@ -1,8 +1,6 @@
 package com.poorlex.poorlex.expenditure.service.dto.response;
 
 import com.poorlex.poorlex.expenditure.domain.Expenditure;
-import com.poorlex.poorlex.expenditure.domain.ExpenditureCertificationImageUrl;
-import java.util.List;
 import lombok.Getter;
 
 @Getter
@@ -24,13 +22,11 @@ public class BattleExpenditureResponse {
     }
 
     public static BattleExpenditureResponse from(final Expenditure expenditure, final boolean own) {
-        final List<ExpenditureCertificationImageUrl> imageUrls = expenditure.getImageUrls().getUrls();
-
         return new BattleExpenditureResponse(
-            expenditure.getId(),
-            imageUrls.get(0).getValue(),
-            imageUrls.size(),
-            own
+                expenditure.getId(),
+                expenditure.getMainImageUrl(),
+                expenditure.getImageCounts(),
+                own
         );
     }
 }

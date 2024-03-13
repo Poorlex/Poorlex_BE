@@ -1,7 +1,7 @@
 package com.poorlex.poorlex.friend.service;
 
 import com.poorlex.poorlex.config.event.Events;
-import com.poorlex.poorlex.expenditure.service.ExpenditureService;
+import com.poorlex.poorlex.expenditure.service.ExpenditureQueryService;
 import com.poorlex.poorlex.expenditure.service.dto.response.MemberWeeklyTotalExpenditureResponse;
 import com.poorlex.poorlex.friend.domain.Friend;
 import com.poorlex.poorlex.friend.domain.FriendRepository;
@@ -29,15 +29,15 @@ public class FriendService {
 
     private final FriendRepository friendRepository;
     private final MemberRepository memberRepository;
-    private final ExpenditureService expenditureService;
+    private final ExpenditureQueryService expenditureQueryService;
     private final MemberPointRepository memberPointRepository;
 
     @Transactional
     public void inviteFriend(final Long memberId, final FriendInviteRequest request) {
         final FriendInvitedEvent friendInvitedEvent = FriendInvitedEvent.builder()
-            .inviteMemberId(memberId)
-            .invitedMemberId(request.getInviteMemberId())
-            .build();
+                .inviteMemberId(memberId)
+                .invitedMemberId(request.getInviteMemberId())
+                .build();
 
         Events.raise(friendInvitedEvent);
     }
@@ -45,9 +45,9 @@ public class FriendService {
     @Transactional
     public void inviteDeny(final Long memberId, final FriendDenyRequest request) {
         final FriendDeniedEvent friendDeniedEvent = FriendDeniedEvent.builder()
-            .inviteMemberId(request.getInviteMemberId())
-            .denyMemberId(memberId)
-            .build();
+                .inviteMemberId(request.getInviteMemberId())
+                .denyMemberId(memberId)
+                .build();
 
         Events.raise(friendDeniedEvent);
     }
@@ -59,10 +59,10 @@ public class FriendService {
         friendRepository.save(Friend.withoutId(memberId, friendMemberId));
 
         Events.raise(
-            FriendAcceptedEvent.builder()
-                .inviteMemberId(friendMemberId)
-                .acceptMemberId(memberId)
-                .build()
+                FriendAcceptedEvent.builder()
+                        .inviteMemberId(friendMemberId)
+                        .acceptMemberId(memberId)
+                        .build()
         );
     }
 
@@ -82,21 +82,21 @@ public class FriendService {
         final List<Long> friendMemberIds = friendRepository.findMembersFriendMemberId(memberId);
 
         return friendMemberIds.stream()
-            .map(friendMemberId -> generateResponse(friendMemberId, dateTime))
-            .toList();
+                .map(friendMemberId -> generateResponse(friendMemberId, dateTime))
+                .toList();
     }
 
     private FriendResponse generateResponse(final Long friendMemberId, final LocalDateTime dateTime) {
         return new FriendResponse(
-            getFriendLevel(friendMemberId),
-            getFriendNickname(friendMemberId),
-            getFriendWeeklyTotalExpenditure(friendMemberId, dateTime)
+                getFriendLevel(friendMemberId),
+                getFriendNickname(friendMemberId),
+                getFriendWeeklyTotalExpenditure(friendMemberId, dateTime)
         );
     }
 
     private int getFriendWeeklyTotalExpenditure(final Long friendMemberId, final LocalDateTime dateTime) {
         final MemberWeeklyTotalExpenditureResponse weeklyTotalExpenditure =
-            expenditureService.findMemberWeeklyTotalExpenditure(friendMemberId, dateTime);
+                expenditureQueryService.findMemberWeeklyTotalExpenditure(friendMemberId, dateTime);
 
         return weeklyTotalExpenditure.getAmount();
     }
@@ -109,7 +109,7 @@ public class FriendService {
         final int totalPoint = memberPointRepository.findSumByMemberId(friendMemberId);
 
         return MemberLevel.findByPoint(new Point(totalPoint))
-            .orElseThrow(IllegalArgumentException::new)
-            .getNumber();
+                .orElseThrow(IllegalArgumentException::new)
+                .getNumber();
     }
 }
