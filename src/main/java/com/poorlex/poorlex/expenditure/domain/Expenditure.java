@@ -7,9 +7,10 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import java.time.LocalDate;
+import java.util.Objects;
+import java.util.Optional;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -26,45 +27,70 @@ public class Expenditure {
     private LocalDate date;
     @Embedded
     private ExpenditureDescription description;
-    @Embedded
-    private ExpenditureCertificationImageUrls imageUrls;
+    @Column(nullable = false)
+    private String mainImageUrl;
+    private String subImageUrl;
 
-    protected Expenditure(final Long id,
-                          @NonNull final Long memberId,
-                          @NonNull final ExpenditureAmount amount,
-                          @NonNull final LocalDate date,
-                          @NonNull final ExpenditureDescription description,
-                          @NonNull final ExpenditureCertificationImageUrls imageUrls) {
+    Expenditure(final Long id,
+                final Long memberId,
+                final ExpenditureAmount amount,
+                final LocalDate date,
+                final ExpenditureDescription description,
+                final String mainImageUrl,
+                final String subImageUrl) {
         this.id = id;
         this.memberId = memberId;
         this.amount = amount;
         this.date = date;
         this.description = description;
-        this.imageUrls = imageUrls;
+        this.mainImageUrl = mainImageUrl;
+        this.subImageUrl = subImageUrl;
     }
 
     public static Expenditure withoutId(final ExpenditureAmount amount,
                                         final Long memberId,
                                         final LocalDate date,
                                         final ExpenditureDescription description,
-                                        final ExpenditureCertificationImageUrls imageUrls) {
-        final Expenditure instance = new Expenditure(null, memberId, amount, date, description, imageUrls);
-        imageUrls.belongTo(instance);
-        return instance;
+                                        final String mainImageUrl,
+                                        final String subImageUrl) {
+        return new Expenditure(null, memberId, amount, date, description, mainImageUrl, subImageUrl);
     }
 
-    public void addImageUrl(final ExpenditureCertificationImageUrl imageUrl) {
-        imageUrls.addImageUrl(imageUrl);
+    public void updateMainImage(final String mainImageUrl) {
+        if (Objects.isNull(mainImageUrl)) {
+            throw new IllegalArgumentException("메인 이미지가 반드시 존재해야 합니다.");
+        }
+        this.mainImageUrl = mainImageUrl;
     }
 
-    public boolean hasSameMemberId(final Long memberId) {
+    public void updateSubImage(final String subImageUrl) {
+        this.subImageUrl = subImageUrl;
+    }
+
+    public void removeSubImage() {
+        this.subImageUrl = null;
+    }
+
+    public void updateAmount(final ExpenditureAmount amount) {
+        this.amount = amount;
+    }
+
+    public void updateDescription(final ExpenditureDescription description) {
+        this.description = description;
+    }
+
+    public boolean owned(final Long memberId) {
         return this.memberId.equals(memberId);
     }
 
-    public void pasteAmountAndDescriptionAndImageUrls(final Expenditure other) {
-        this.amount = other.amount;
-        this.description = other.description;
-        this.imageUrls = other.imageUrls;
+    public int getImageCounts() {
+        final int countInCaseSubImageExist = 2;
+        final int countInCaseSubImageEmpty = 1;
+
+        if (Objects.isNull(subImageUrl)) {
+            return countInCaseSubImageEmpty;
+        }
+        return countInCaseSubImageExist;
     }
 
     public Long getId() {
@@ -87,7 +113,11 @@ public class Expenditure {
         return description.getValue();
     }
 
-    public ExpenditureCertificationImageUrls getImageUrls() {
-        return imageUrls;
+    public String getMainImageUrl() {
+        return mainImageUrl;
+    }
+
+    public Optional<String> getSubImageUrl() {
+        return Optional.ofNullable(subImageUrl);
     }
 }

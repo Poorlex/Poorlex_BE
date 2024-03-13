@@ -27,6 +27,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -70,32 +71,70 @@ class ExpenditureControllerTest extends IntegrationTest implements ReplaceUnderS
     }
 
     @Test
-    void 지출을_생성한다() throws Exception {
+    void 지출을_생성한다_이미지가_1개_일떄() throws Exception {
         //given
         given(awss3Service.uploadMultipartFile(any(), any())).willReturn("s3-image-url");
         final String accessToken = testMemberTokenGenerator.createTokenWithNewMember("oauthId");
 
-        final MockMultipartFile image = new MockMultipartFile(
-            "images",
-            "cat-8415620_640",
-            MediaType.MULTIPART_FORM_DATA_VALUE,
-            new FileInputStream(
-                "src/test/resources/testImage/cat-8415620_640.jpg")
+        final MockMultipartFile mainImage = new MockMultipartFile(
+                "mainImage",
+                "cat-8415620_640",
+                MediaType.MULTIPART_FORM_DATA_VALUE,
+                new FileInputStream(
+                        "src/test/resources/testImage/cat-8415620_640.jpg")
         );
 
         //when
         //then
         mockMvc.perform(
-                multipart(HttpMethod.POST, "/expenditures")
-                    .file(image)
-                    .queryParam("amount", "1000")
-                    .queryParam("description", "소개")
-                    .queryParam("date", LocalDate.now().toString())
-                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
-            )
-            .andDo(print())
-            .andExpect(status().isCreated())
-            .andExpect(header().exists(HttpHeaders.LOCATION));
+                        multipart(HttpMethod.POST, "/expenditures")
+                                .file(mainImage)
+                                .queryParam("amount", "1000")
+                                .queryParam("description", "소개")
+                                .queryParam("date", LocalDate.now().toString())
+                                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                )
+                .andDo(print())
+                .andExpect(status().isCreated())
+                .andExpect(header().exists(HttpHeaders.LOCATION));
+    }
+
+    @Test
+    void 지출을_생성한다_이미지가_2개일_땨() throws Exception {
+        //given
+        given(awss3Service.uploadMultipartFile(any(), any())).willReturn("s3-image-url");
+        final String accessToken = testMemberTokenGenerator.createTokenWithNewMember("oauthId");
+
+        final MockMultipartFile mainImage = new MockMultipartFile(
+                "mainImage",
+                "cat-8415620_640",
+                MediaType.MULTIPART_FORM_DATA_VALUE,
+                new FileInputStream(
+                        "src/test/resources/testImage/cat-8415620_640.jpg")
+        );
+
+        final MockMultipartFile subImage = new MockMultipartFile(
+                "subImage",
+                "cat-8415620_640",
+                MediaType.MULTIPART_FORM_DATA_VALUE,
+                new FileInputStream(
+                        "src/test/resources/testImage/cat-8415620_640.jpg")
+        );
+
+        //when
+        //then
+        mockMvc.perform(
+                        multipart(HttpMethod.POST, "/expenditures")
+                                .file(mainImage)
+                                .file(subImage)
+                                .queryParam("amount", "1000")
+                                .queryParam("description", "소개")
+                                .queryParam("date", LocalDate.now().toString())
+                                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                )
+                .andDo(print())
+                .andExpect(status().isCreated())
+                .andExpect(header().exists(HttpHeaders.LOCATION));
     }
 
     @Test
@@ -105,26 +144,26 @@ class ExpenditureControllerTest extends IntegrationTest implements ReplaceUnderS
         final String accessToken = testMemberTokenGenerator.createTokenWithNewMember("oauthId");
 
         final MockMultipartFile image = new MockMultipartFile(
-            "images",
-            "cat-8415620_640",
-            MediaType.MULTIPART_FORM_DATA_VALUE,
-            new FileInputStream(
-                "src/test/resources/testImage/cat-8415620_640.jpg")
+                "mainImage",
+                "cat-8415620_640",
+                MediaType.MULTIPART_FORM_DATA_VALUE,
+                new FileInputStream(
+                        "src/test/resources/testImage/cat-8415620_640.jpg")
         );
 
         //when
         //then
         mockMvc.perform(
-                multipart(HttpMethod.POST, "/expenditures")
-                    .file(image)
-                    .queryParam("amount", "-1")
-                    .queryParam("description", "소개")
-                    .queryParam("date", LocalDate.now().toString())
-                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
-            )
-            .andDo(print())
-            .andExpect(status().isBadRequest())
-            .andExpect(jsonPath("$.message").exists());
+                        multipart(HttpMethod.POST, "/expenditures")
+                                .file(image)
+                                .queryParam("amount", "-1")
+                                .queryParam("description", "소개")
+                                .queryParam("date", LocalDate.now().toString())
+                                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                )
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").exists());
     }
 
     @Test
@@ -134,26 +173,26 @@ class ExpenditureControllerTest extends IntegrationTest implements ReplaceUnderS
         final String accessToken = testMemberTokenGenerator.createTokenWithNewMember("oauthId");
 
         final MockMultipartFile image = new MockMultipartFile(
-            "images",
-            "cat-8415620_640",
-            MediaType.MULTIPART_FORM_DATA_VALUE,
-            new FileInputStream(
-                "src/test/resources/testImage/cat-8415620_640.jpg")
+                "mainImage",
+                "cat-8415620_640",
+                MediaType.MULTIPART_FORM_DATA_VALUE,
+                new FileInputStream(
+                        "src/test/resources/testImage/cat-8415620_640.jpg")
         );
 
         //when
         //then
         mockMvc.perform(
-                multipart(HttpMethod.POST, "/expenditures")
-                    .file(image)
-                    .queryParam("amount", "10000000")
-                    .queryParam("description", "소개")
-                    .queryParam("date", LocalDate.now().toString())
-                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
-            )
-            .andDo(print())
-            .andExpect(status().isBadRequest())
-            .andExpect(jsonPath("$.message").exists());
+                        multipart(HttpMethod.POST, "/expenditures")
+                                .file(image)
+                                .queryParam("amount", "10000000")
+                                .queryParam("description", "소개")
+                                .queryParam("date", LocalDate.now().toString())
+                                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                )
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").exists());
     }
 
     @Test
@@ -163,26 +202,26 @@ class ExpenditureControllerTest extends IntegrationTest implements ReplaceUnderS
         final String accessToken = testMemberTokenGenerator.createTokenWithNewMember("oauthId");
 
         final MockMultipartFile image = new MockMultipartFile(
-            "images",
-            "cat-8415620_640",
-            MediaType.MULTIPART_FORM_DATA_VALUE,
-            new FileInputStream(
-                "src/test/resources/testImage/cat-8415620_640.jpg")
+                "mainImage",
+                "cat-8415620_640",
+                MediaType.MULTIPART_FORM_DATA_VALUE,
+                new FileInputStream(
+                        "src/test/resources/testImage/cat-8415620_640.jpg")
         );
 
         //when
         //then
         mockMvc.perform(
-                multipart(HttpMethod.POST, "/expenditures")
-                    .file(image)
-                    .queryParam("amount", "1000")
-                    .queryParam("description", "  ")
-                    .queryParam("date", LocalDate.now().toString())
-                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
-            )
-            .andDo(print())
-            .andExpect(status().isBadRequest())
-            .andExpect(jsonPath("$.message").exists());
+                        multipart(HttpMethod.POST, "/expenditures")
+                                .file(image)
+                                .queryParam("amount", "1000")
+                                .queryParam("description", "  ")
+                                .queryParam("date", LocalDate.now().toString())
+                                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                )
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").exists());
     }
 
     @Test
@@ -192,30 +231,59 @@ class ExpenditureControllerTest extends IntegrationTest implements ReplaceUnderS
         final String accessToken = testMemberTokenGenerator.createTokenWithNewMember("oauthId");
 
         final MockMultipartFile image = new MockMultipartFile(
-            "images",
-            "cat-8415620_640",
-            MediaType.MULTIPART_FORM_DATA_VALUE,
-            new FileInputStream(
-                "src/test/resources/testImage/cat-8415620_640.jpg")
+                "mainImage",
+                "cat-8415620_640",
+                MediaType.MULTIPART_FORM_DATA_VALUE,
+                new FileInputStream(
+                        "src/test/resources/testImage/cat-8415620_640.jpg")
         );
 
         //when
         //then
         mockMvc.perform(
-                multipart(HttpMethod.POST, "/expenditures")
-                    .file(image)
-                    .queryParam("amount", "1000")
-                    .queryParam("description", "a".repeat(31))
-                    .queryParam("date", LocalDate.now().toString())
-                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
-            )
-            .andDo(print())
-            .andExpect(status().isBadRequest())
-            .andExpect(jsonPath("$.message").exists());
+                        multipart(HttpMethod.POST, "/expenditures")
+                                .file(image)
+                                .queryParam("amount", "1000")
+                                .queryParam("description", "a".repeat(31))
+                                .queryParam("date", LocalDate.now().toString())
+                                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                )
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").exists());
     }
 
     @Test
-    void ERROR_지출생성시_이미지가_없는_경우_400_상태코드로_응답한다() throws Exception {
+    void ERROR_지출생성시_메인이미지가_없는_경우_500_상태코드로_응답한다() throws Exception {
+        //given
+        given(awss3Service.uploadMultipartFile(any(), any())).willReturn("s3-image-url");
+        final String accessToken = testMemberTokenGenerator.createTokenWithNewMember("oauthId");
+
+        final MockMultipartFile subImage = new MockMultipartFile(
+                "subImage",
+                "cat-8415620_640",
+                MediaType.MULTIPART_FORM_DATA_VALUE,
+                new FileInputStream(
+                        "src/test/resources/testImage/cat-8415620_640.jpg")
+        );
+
+        //when
+        //then
+        mockMvc.perform(
+                        multipart(HttpMethod.POST, "/expenditures")
+                                .file(subImage)
+                                .queryParam("amount", "1000")
+                                .queryParam("description", "소개")
+                                .queryParam("date", LocalDate.now().toString())
+                                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                )
+                .andDo(print())
+                .andExpect(status().isInternalServerError())
+                .andExpect(jsonPath("$.message").exists());
+    }
+
+    @Test
+    void ERROR_지출생성시_이미지가_없는_경우_500_상태코드로_응답한다() throws Exception {
         //given
         given(awss3Service.uploadMultipartFile(any(), any())).willReturn("s3-image-url");
         final String accessToken = testMemberTokenGenerator.createTokenWithNewMember("oauthId");
@@ -224,68 +292,56 @@ class ExpenditureControllerTest extends IntegrationTest implements ReplaceUnderS
         //when
         //then
         mockMvc.perform(
-                multipart(HttpMethod.POST, "/expenditures")
-                    .queryParam("amount", "1000")
-                    .queryParam("description", "소개")
-                    .queryParam("date", LocalDate.now().toString())
-                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
-            )
-            .andDo(print())
-            .andExpect(status().isInternalServerError())
-            .andExpect(jsonPath("$.message").exists());
+                        multipart(HttpMethod.POST, "/expenditures")
+                                .queryParam("amount", "1000")
+                                .queryParam("description", "소개")
+                                .queryParam("date", LocalDate.now().toString())
+                                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                )
+                .andDo(print())
+                .andExpect(status().isInternalServerError())
+                .andExpect(jsonPath("$.message").exists());
     }
 
     @Test
-    void ERROR_지출생성시_이미지가_2개보다_많을_경우_400_상태코드로_응답한다() throws Exception {
+    void 지출을_수정한다() throws Exception {
         //given
-        given(awss3Service.uploadMultipartFile(any(), any())).willReturn("s3-image-url");
-        final String accessToken = testMemberTokenGenerator.createTokenWithNewMember("oauthId");
+        final Member member = createMember("oauthId");
+        final Expenditure expenditure = createExpenditureWithMainImage(1000, member.getId(), LocalDate.now());
+        final String accessToken = testMemberTokenGenerator.createAccessToken(member);
 
-        final MockMultipartFile image = new MockMultipartFile(
-            "images",
-            "cat-8415620_640",
-            MediaType.MULTIPART_FORM_DATA_VALUE,
-            new FileInputStream(
-                "src/test/resources/testImage/cat-8415620_640.jpg")
+        final MockMultipartFile mainImage = new MockMultipartFile(
+                "mainImage",
+                "cat-8415620_640",
+                MediaType.MULTIPART_FORM_DATA_VALUE,
+                new FileInputStream(
+                        "src/test/resources/testImage/cat-8415620_640.jpg")
         );
+
+        final MockMultipartFile subImage = new MockMultipartFile(
+                "subImage",
+                "cat-8415620_640",
+                MediaType.MULTIPART_FORM_DATA_VALUE,
+                new FileInputStream(
+                        "src/test/resources/testImage/cat-8415620_640.jpg")
+        );
+
+        given(awss3Service.uploadMultipartFile(eq(mainImage), any())).willReturn("newMainImage");
+        given(awss3Service.uploadMultipartFile(eq(subImage), any())).willReturn("newSubImage");
 
         //when
         //then
         mockMvc.perform(
-                multipart(HttpMethod.POST, "/expenditures")
-                    .file(image)
-                    .file(image)
-                    .file(image)
-                    .queryParam("amount", "1000")
-                    .queryParam("description", "소개")
-                    .queryParam("date", LocalDate.now().toString())
-                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
-            )
-            .andDo(print())
-            .andExpect(status().isBadRequest())
-            .andExpect(jsonPath("$.message").exists());
+                        multipart(HttpMethod.PUT, "/expenditures/" + expenditure.getId())
+                                .file(mainImage)
+                                .file(subImage)
+                                .queryParam("amount", "2000")
+                                .queryParam("description", "업데이트된 소개")
+                                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                )
+                .andDo(print())
+                .andExpect(status().isOk());
     }
-
-//    @Test
-//    void 지출을_수정한다() throws Exception {
-//        //given
-//        final Member member = createMember("oauthId");
-//        final Expenditure expenditure = createExpenditure(1000, member.getId(), LocalDateTime.now());
-//
-//        final String accessToken = testMemberTokenGenerator.createAccessToken(member);
-//        final ExpenditureUpdateRequest request = new ExpenditureUpdateRequest(2000, "updated", List.of("newImageUrl"));
-//
-//        //when
-//        //then
-//        mockMvc.perform(
-//                patch("/expenditures/{expenditureId}", expenditure.getId())
-//                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
-//                    .content(objectMapper.writeValueAsString(request))
-//                    .contentType(MediaType.APPLICATION_JSON)
-//            )
-//            .andDo(print())
-//            .andExpect(status().isOk());
-//    }
 
     @Test
     void 멤버의_기간중의_지출의_총합을_구한다_지출이_있을_때() throws Exception {
@@ -294,8 +350,8 @@ class ExpenditureControllerTest extends IntegrationTest implements ReplaceUnderS
         final LocalDateTime dateTime = LocalDateTime.now();
         final WeeklyExpenditureDuration weeklyExpenditureDuration = WeeklyExpenditureDuration.from(dateTime);
 
-        createExpenditure(1000, member.getId(), weeklyExpenditureDuration.getStart());
-        createExpenditure(2000, member.getId(), weeklyExpenditureDuration.getStart());
+        createExpenditureWithMainImage(1000, member.getId(), LocalDate.from(weeklyExpenditureDuration.getStart()));
+        createExpenditureWithMainImage(2000, member.getId(), LocalDate.from(weeklyExpenditureDuration.getStart()));
 
         final String accessToken = testMemberTokenGenerator.createAccessToken(member);
         final MemberWeeklyTotalExpenditureRequest request = new MemberWeeklyTotalExpenditureRequest(dateTime);
@@ -303,14 +359,14 @@ class ExpenditureControllerTest extends IntegrationTest implements ReplaceUnderS
         //when
         //then
         mockMvc.perform(
-                get("/expenditures/weekly")
-                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
-                    .content(objectMapper.writeValueAsString(request))
-                    .contentType(MediaType.APPLICATION_JSON)
-            )
-            .andDo(print())
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.amount").value(3000));
+                        get("/expenditures/weekly")
+                                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                                .content(objectMapper.writeValueAsString(request))
+                                .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.amount").value(3000));
     }
 
     @Test
@@ -319,65 +375,67 @@ class ExpenditureControllerTest extends IntegrationTest implements ReplaceUnderS
         final Member member = createMember("oauthId");
         final LocalDateTime dateTime = LocalDateTime.now();
 
-        createExpenditure(1000, member.getId(), dateTime);
-        createExpenditure(2000, member.getId(), dateTime);
+        createExpenditureWithMainImage(1000, member.getId(), LocalDate.from(dateTime));
+        createExpenditureWithMainImage(2000, member.getId(), LocalDate.from(dateTime));
 
         final String accessToken = testMemberTokenGenerator.createAccessToken(member);
         final MemberWeeklyTotalExpenditureRequest request =
-            new MemberWeeklyTotalExpenditureRequest(dateTime.plusDays(7));
+                new MemberWeeklyTotalExpenditureRequest(dateTime.plusDays(7));
 
         //when
         //then
         mockMvc.perform(
-                get("/expenditures/weekly?withDate=true")
-                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
-                    .content(objectMapper.writeValueAsString(request))
-                    .contentType(MediaType.APPLICATION_JSON)
-            )
-            .andDo(print())
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.amount").value(0));
+                        get("/expenditures/weekly?withDate=true")
+                                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                                .content(objectMapper.writeValueAsString(request))
+                                .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.amount").value(0));
     }
 
     @Test
     void Id에_해당하는_지출을_조회한다() throws Exception {
         //given
         final Member member = createMember("oauthId");
-        final Expenditure expenditure = createExpenditure(1000, member.getId(), LocalDateTime.now());
+        final Expenditure expenditure = createExpenditureWithMainImage(1000, member.getId(), LocalDate.now());
 
         //when
         //then
         mockMvc.perform(get("/expenditures/{expenditureId}", expenditure.getId()))
-            .andDo(print())
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.id").value(expenditure.getId()))
-            .andExpect(jsonPath("$.date").value(LocalDate.from(expenditure.getDate()).toString()))
-            .andExpect(jsonPath("$.amount").value(1000))
-            .andExpect(jsonPath("$.description").value(expenditure.getDescription()))
-            .andExpect(jsonPath("$.imageUrls.length()").value(expenditure.getImageUrls().getUrls().size()));
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(expenditure.getId()))
+                .andExpect(jsonPath("$.date").value(LocalDate.from(expenditure.getDate()).toString()))
+                .andExpect(jsonPath("$.amount").value(1000))
+                .andExpect(jsonPath("$.description").value(expenditure.getDescription()))
+                .andExpect(jsonPath("$.mainImageUrl").value(expenditure.getMainImageUrl()))
+                .andExpect(jsonPath("$.subImageUrl").value(expenditure.getSubImageUrl().orElse(null)));
     }
 
     @Test
     void 멤버의_지출목록을_조회한다() throws Exception {
         //given
         final Member member = createMember("oauthId");
-        final Expenditure expenditure = createExpenditure(1000, member.getId(), LocalDateTime.now());
+        final Expenditure expenditure = createExpenditureWithMainImage(1000, member.getId(), LocalDate.now());
         final String accessToken = jwtTokenProvider.createAccessToken(member.getId());
 
         //when
         //then
         mockMvc.perform(
-                get("/expenditures")
-                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
-            )
-            .andDo(print())
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.length()").value(1))
-            .andExpect(jsonPath("$[0].id").value(expenditure.getId()))
-            .andExpect(jsonPath("$[0].date").value(LocalDate.from(expenditure.getDate()).toString()))
-            .andExpect(jsonPath("$[0].amount").value(1000))
-            .andExpect(jsonPath("$[0].description").value(expenditure.getDescription()))
-            .andExpect(jsonPath("$[0].imageUrls.length()").value(expenditure.getImageUrls().getUrls().size()));
+                        get("/expenditures")
+                                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(1))
+                .andExpect(jsonPath("$[0].id").value(expenditure.getId()))
+                .andExpect(jsonPath("$[0].date").value(LocalDate.from(expenditure.getDate()).toString()))
+                .andExpect(jsonPath("$[0].amount").value(1000))
+                .andExpect(jsonPath("$[0].description").value(expenditure.getDescription()))
+                .andExpect(jsonPath("$[0].mainImageUrl").value(expenditure.getMainImageUrl()))
+                .andExpect(jsonPath("$[0].subImageUrl").value(expenditure.getSubImageUrl().orElse(null)));
     }
 
     @Test
@@ -390,30 +448,30 @@ class ExpenditureControllerTest extends IntegrationTest implements ReplaceUnderS
         join(member, battle);
         join(other, battle);
 
-        final LocalDateTime battleStart = battle.getDuration().getStart();
-        final Expenditure memberExpenditure = createExpenditure(1000, member.getId(), battleStart);
-        createExpenditure(1000, member.getId(), battleStart.minusWeeks(1));
-        final Expenditure otherExpenditure = createExpenditure(1000, other.getId(), battleStart);
+        final LocalDate battleStart = LocalDate.from(battle.getDuration().getStart());
+        final Expenditure memberExpenditure = createExpenditureWithMainImage(1000, member.getId(), battleStart);
+        createExpenditureWithMainImage(1000, member.getId(), battleStart.minusWeeks(1));
+        final Expenditure otherExpenditure = createExpenditureWithMainImage(1000, other.getId(), battleStart);
         final String accessToken = jwtTokenProvider.createAccessToken(member.getId());
 
         //when
         //then
         mockMvc.perform(
-                get("/battles/{battleId}/expenditures?dayOfWeek={dayOfWeek}",
-                    battle.getId(),
-                    battleStart.getDayOfWeek().name()
-                ).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
-            ).andDo(print())
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.length()").value(2))
-            .andExpect(jsonPath("$[0].id").value(memberExpenditure.getId()))
-            .andExpect(jsonPath("$[0].imageUrl").value(memberExpenditure.getImageUrls().getUrls().get(0).getValue()))
-            .andExpect(jsonPath("$[0].imageCount").value(memberExpenditure.getImageUrls().getUrls().size()))
-            .andExpect(jsonPath("$[0].own").value(true))
-            .andExpect(jsonPath("$[1].id").value(otherExpenditure.getId()))
-            .andExpect(jsonPath("$[1].imageUrl").value(otherExpenditure.getImageUrls().getUrls().get(0).getValue()))
-            .andExpect(jsonPath("$[1].imageCount").value(otherExpenditure.getImageUrls().getUrls().size()))
-            .andExpect(jsonPath("$[1].own").value(false));
+                        get("/battles/{battleId}/expenditures?dayOfWeek={dayOfWeek}",
+                            battle.getId(),
+                            battleStart.getDayOfWeek().name()
+                        ).header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                ).andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(2))
+                .andExpect(jsonPath("$[0].id").value(memberExpenditure.getId()))
+                .andExpect(jsonPath("$[0].imageUrl").value(memberExpenditure.getMainImageUrl()))
+                .andExpect(jsonPath("$[0].imageCount").value(memberExpenditure.getImageCounts()))
+                .andExpect(jsonPath("$[0].own").value(true))
+                .andExpect(jsonPath("$[1].id").value(otherExpenditure.getId()))
+                .andExpect(jsonPath("$[1].imageUrl").value(otherExpenditure.getMainImageUrl()))
+                .andExpect(jsonPath("$[1].imageCount").value(otherExpenditure.getImageCounts()))
+                .andExpect(jsonPath("$[1].own").value(false));
     }
 
     @Test
@@ -426,25 +484,25 @@ class ExpenditureControllerTest extends IntegrationTest implements ReplaceUnderS
         join(member, battle);
         join(other, battle);
 
-        final LocalDateTime battleStart = battle.getDuration().getStart();
-        createExpenditure(3000, member.getId(), battleStart.minusDays(1));
-        createExpenditure(2000, other.getId(), battleStart);
-        final Expenditure memberExpenditure = createExpenditure(1000, member.getId(), battleStart);
+        final LocalDate battleStart = LocalDate.from(battle.getDuration().getStart());
+        createExpenditureWithMainImage(3000, member.getId(), battleStart.minusDays(1));
+        createExpenditureWithMainImage(2000, other.getId(), battleStart);
+        final Expenditure memberExpenditure = createExpenditureWithMainImage(1000, member.getId(), battleStart);
 
         final String accessToken = jwtTokenProvider.createAccessToken(member.getId());
 
         //when
         //then
         mockMvc.perform(
-                get("/battles/{battleId}/expenditures", battle.getId())
-                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
-            ).andDo(print())
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.length()").value(1))
-            .andExpect(jsonPath("$[0].id").value(memberExpenditure.getId()))
-            .andExpect(jsonPath("$[0].imageUrl").value(memberExpenditure.getImageUrls().getUrls().get(0).getValue()))
-            .andExpect(jsonPath("$[0].imageCount").value(memberExpenditure.getImageUrls().getUrls().size()))
-            .andExpect(jsonPath("$[0].own").value(true));
+                        get("/battles/{battleId}/expenditures", battle.getId())
+                                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                ).andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(1))
+                .andExpect(jsonPath("$[0].id").value(memberExpenditure.getId()))
+                .andExpect(jsonPath("$[0].imageUrl").value(memberExpenditure.getMainImageUrl()))
+                .andExpect(jsonPath("$[0].imageCount").value(memberExpenditure.getImageCounts()))
+                .andExpect(jsonPath("$[0].own").value(true));
     }
 
     private Battle createBattle() {
@@ -458,10 +516,10 @@ class ExpenditureControllerTest extends IntegrationTest implements ReplaceUnderS
 
     private Member createMember(final String oauthId) {
         return memberRepository.save(
-            Member.withoutId(Oauth2RegistrationId.APPLE, oauthId, new MemberNickname("nickname")));
+                Member.withoutId(Oauth2RegistrationId.APPLE, oauthId, new MemberNickname("nickname")));
     }
 
-    private Expenditure createExpenditure(final int amount, final Long memberId, final LocalDateTime dateTime) {
-        return expenditureRepository.save(ExpenditureFixture.simpleWith(amount, memberId, dateTime));
+    private Expenditure createExpenditureWithMainImage(final int amount, final Long memberId, final LocalDate date) {
+        return expenditureRepository.save(ExpenditureFixture.simpleWithMainImage(amount, memberId, date));
     }
 }

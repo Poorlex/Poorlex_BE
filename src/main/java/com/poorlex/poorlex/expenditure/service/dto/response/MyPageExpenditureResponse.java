@@ -23,10 +23,10 @@ public class MyPageExpenditureResponse {
 
     public static MyPageExpenditureResponse from(final ExpenditureResponse expenditureResponse) {
         return new MyPageExpenditureResponse(
-            expenditureResponse.getId(),
-            LocalDate.from(expenditureResponse.getDate()),
-            expenditureResponse.getAmount(),
-            expenditureResponse.getImageUrls().get(0)
+                expenditureResponse.getId(),
+                LocalDate.from(expenditureResponse.getDate()),
+                expenditureResponse.getAmount(),
+                expenditureResponse.getMainImageUrl()
         );
     }
 }

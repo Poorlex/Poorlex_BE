@@ -18,15 +18,14 @@ import com.poorlex.poorlex.weeklybudget.domain.WeeklyBudgetRepository;
 import com.poorlex.poorlex.weeklybudget.service.dto.request.WeeklyBudgetCreateRequest;
 import com.poorlex.poorlex.weeklybudget.service.dto.request.WeeklyBudgetLeftRequest;
 import com.poorlex.poorlex.weeklybudget.service.dto.request.WeeklyBudgetRequest;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
-
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -63,13 +62,13 @@ class WeeklyBudgetControllerTest extends IntegrationTest implements ReplaceUnder
         //when
         //then
         mockMvc.perform(
-                post("/weekly-budgets")
-                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
-                    .content(objectMapper.writeValueAsString(request))
-                    .contentType(MediaType.APPLICATION_JSON)
-            )
-            .andDo(print())
-            .andExpect(status().isCreated());
+                        post("/weekly-budgets")
+                                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                                .content(objectMapper.writeValueAsString(request))
+                                .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andDo(print())
+                .andExpect(status().isCreated());
     }
 
     @Test
@@ -81,14 +80,14 @@ class WeeklyBudgetControllerTest extends IntegrationTest implements ReplaceUnder
         //when
         //then
         mockMvc.perform(
-                post("/weekly-budgets")
-                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
-                    .content(objectMapper.writeValueAsString(request))
-                    .contentType(MediaType.APPLICATION_JSON)
-            )
-            .andDo(print())
-            .andExpect(status().isBadRequest())
-            .andExpect(jsonPath("$.message").exists());
+                        post("/weekly-budgets")
+                                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                                .content(objectMapper.writeValueAsString(request))
+                                .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").exists());
     }
 
     @Test
@@ -100,14 +99,14 @@ class WeeklyBudgetControllerTest extends IntegrationTest implements ReplaceUnder
         //when
         //then
         mockMvc.perform(
-                post("/weekly-budgets")
-                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
-                    .content(objectMapper.writeValueAsString(request))
-                    .contentType(MediaType.APPLICATION_JSON)
-            )
-            .andDo(print())
-            .andExpect(status().isBadRequest())
-            .andExpect(jsonPath("$.message").exists());
+                        post("/weekly-budgets")
+                                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                                .content(objectMapper.writeValueAsString(request))
+                                .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").exists());
     }
 
     @Test
@@ -121,16 +120,16 @@ class WeeklyBudgetControllerTest extends IntegrationTest implements ReplaceUnder
         //when
         //then
         mockMvc.perform(
-                get("/weekly-budgets")
-                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
-                    .content(objectMapper.writeValueAsString(request))
-                    .contentType(MediaType.APPLICATION_JSON)
-            )
-            .andDo(print())
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.exist").value(true))
-            .andExpect(jsonPath("$.amount").value(10000))
-            .andExpect(jsonPath("$.dday").value(6));
+                        get("/weekly-budgets")
+                                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                                .content(objectMapper.writeValueAsString(request))
+                                .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.exist").value(true))
+                .andExpect(jsonPath("$.amount").value(10000))
+                .andExpect(jsonPath("$.dday").value(6));
     }
 
     @Test
@@ -143,16 +142,16 @@ class WeeklyBudgetControllerTest extends IntegrationTest implements ReplaceUnder
         //when
         //then
         mockMvc.perform(
-                get("/weekly-budgets")
-                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
-                    .content(objectMapper.writeValueAsString(request))
-                    .contentType(MediaType.APPLICATION_JSON)
-            )
-            .andDo(print())
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.exist").value(false))
-            .andExpect(jsonPath("$.amount").value(0))
-            .andExpect(jsonPath("$.dday").value(0));
+                        get("/weekly-budgets")
+                                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                                .content(objectMapper.writeValueAsString(request))
+                                .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.exist").value(false))
+                .andExpect(jsonPath("$.amount").value(0))
+                .andExpect(jsonPath("$.dday").value(0));
     }
 
     @Test
@@ -160,7 +159,9 @@ class WeeklyBudgetControllerTest extends IntegrationTest implements ReplaceUnder
         //given
         final Member member = createMember("oauthId");
         final WeeklyBudget weaklyBudget = createWeaklyBudget(member.getId(), 10000L);
-        final Expenditure expenditure = createExpenditure(1000, member.getId(), weaklyBudget.getDuration().getStart());
+        final Expenditure expenditure = expend(1000,
+                                               member.getId(),
+                                               LocalDate.from(weaklyBudget.getDuration().getStart()));
 
         final String accessToken = memberTokenGenerator.createAccessToken(member);
         final WeeklyBudgetLeftRequest request = new WeeklyBudgetLeftRequest(weaklyBudget.getDuration().getStart());
@@ -168,57 +169,57 @@ class WeeklyBudgetControllerTest extends IntegrationTest implements ReplaceUnder
         //when
         //then
         mockMvc.perform(
-                get("/weekly-budgets/left")
-                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
-                    .content(objectMapper.writeValueAsString(request))
-                    .contentType(MediaType.APPLICATION_JSON)
-            )
-            .andDo(print())
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.exist").value(true))
-            .andExpect(jsonPath("$.amount").value(weaklyBudget.getAmount() - expenditure.getAmount()));
+                        get("/weekly-budgets/left")
+                                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                                .content(objectMapper.writeValueAsString(request))
+                                .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.exist").value(true))
+                .andExpect(jsonPath("$.amount").value(weaklyBudget.getAmount() - expenditure.getAmount()));
     }
 
     @Test
     void 남은_주간_예산을_조회한다_등록된_주간_예산이_없을때() throws Exception {
         //given
         final Member member = createMember("oauthId");
-        final LocalDateTime date = LocalDateTime.now().truncatedTo(ChronoUnit.MICROS);
-        createExpenditure(1000, member.getId(), date);
+        final LocalDateTime dateTime = LocalDateTime.now().truncatedTo(ChronoUnit.MICROS);
+        expend(1000, member.getId(), LocalDate.from(dateTime));
 
         final String accessToken = memberTokenGenerator.createAccessToken(member);
-        final WeeklyBudgetLeftRequest request = new WeeklyBudgetLeftRequest(date);
+        final WeeklyBudgetLeftRequest request = new WeeklyBudgetLeftRequest(dateTime);
 
         //when
         //then
         mockMvc.perform(
-                get("/weekly-budgets/left")
-                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
-                    .content(objectMapper.writeValueAsString(request))
-                    .contentType(MediaType.APPLICATION_JSON)
-            )
-            .andDo(print())
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.exist").value(false))
-            .andExpect(jsonPath("$.amount").value(0));
+                        get("/weekly-budgets/left")
+                                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                                .content(objectMapper.writeValueAsString(request))
+                                .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.exist").value(false))
+                .andExpect(jsonPath("$.amount").value(0));
     }
 
     private Member createMember(final String oauthId) {
         return memberRepository.save(
-            Member.withoutId(Oauth2RegistrationId.APPLE, oauthId, new MemberNickname("nickname")));
+                Member.withoutId(Oauth2RegistrationId.APPLE, oauthId, new MemberNickname("nickname")));
     }
 
     private WeeklyBudget createWeaklyBudget(final Long memberId, final Long amount) {
         final WeeklyBudget weeklyBudget = WeeklyBudget.withoutId(
-            new WeeklyBudgetAmount(amount),
-            WeeklyBudgetDuration.current(),
-            memberId
+                new WeeklyBudgetAmount(amount),
+                WeeklyBudgetDuration.current(),
+                memberId
         );
 
         return weeklyBudgetRepository.save(weeklyBudget);
     }
 
-    private Expenditure createExpenditure(final int amount, final Long memberId, final LocalDateTime date) {
-        return expenditureRepository.save(ExpenditureFixture.simpleWith(amount, memberId, date));
+    private Expenditure expend(final int amount, final Long memberId, final LocalDate date) {
+        return expenditureRepository.save(ExpenditureFixture.simpleWithMainImage(amount, memberId, date));
     }
 }

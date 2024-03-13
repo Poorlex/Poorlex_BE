@@ -18,6 +18,7 @@ import com.poorlex.poorlex.support.IntegrationTest;
 import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
 import com.poorlex.poorlex.support.TestMemberTokenGenerator;
 import com.poorlex.poorlex.token.JwtTokenProvider;
+import java.time.LocalDate;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -25,14 +26,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @DisplayName("배틀 인수 테스트")
 class BattleControllerTest extends IntegrationTest implements ReplaceUnderScoreTest {
@@ -111,7 +110,7 @@ class BattleControllerTest extends IntegrationTest implements ReplaceUnderScoreT
 
         join(member, battle);
         startBattle(battle);
-        expend(1000, member, battle.getDuration().getStart());
+        expend(1000, member, LocalDate.from(battle.getDuration().getStart()));
 
         final String accessToken = testMemberTokenGenerator.createAccessToken(member);
 
@@ -144,7 +143,7 @@ class BattleControllerTest extends IntegrationTest implements ReplaceUnderScoreT
 
         join(member, battle);
         startBattle(battle);
-        expend(1000, member, battle.getDuration().getStart());
+        expend(1000, member, LocalDate.from(battle.getDuration().getStart()));
         endBattle(battle);
 
         final String accessToken = testMemberTokenGenerator.createAccessToken(member);
@@ -152,7 +151,7 @@ class BattleControllerTest extends IntegrationTest implements ReplaceUnderScoreT
         //when
         //then
         mockMvc.perform(get("/battles/complete")
-                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -177,7 +176,7 @@ class BattleControllerTest extends IntegrationTest implements ReplaceUnderScoreT
 
         join(member, battle);
         startBattle(battle);
-        expend(1000, member, battle.getDuration().getStart());
+        expend(1000, member, LocalDate.from(battle.getDuration().getStart()));
         endBattle(battle);
 
         final BattleFindRequest request = new BattleFindRequest(LocalDate.now());
@@ -364,22 +363,18 @@ class BattleControllerTest extends IntegrationTest implements ReplaceUnderScoreT
         );
     }
 
-    private Member joinNewNormalPlayerWithOauthId(final String oauthId, final Long battleId) {
+    private void joinNewNormalPlayerWithOauthId(final String oauthId, final Long battleId) {
         final Member member = Member.withoutId(Oauth2RegistrationId.APPLE, oauthId, new MemberNickname("nickname"));
         memberRepository.save(member);
 
         final BattleParticipant battleParticipant = BattleParticipant.normalPlayer(battleId, member.getId());
         battleParticipantRepository.save(battleParticipant);
-
-        return member;
     }
 
-    private Member join(final Member member, final Battle battle) {
+    private void join(final Member member, final Battle battle) {
         memberRepository.save(member);
         final BattleParticipant battleParticipant = BattleParticipant.normalPlayer(battle.getId(), member.getId());
         battleParticipantRepository.save(battleParticipant);
-
-        return member;
     }
 
     private void startBattle(final Battle battle) {
@@ -390,7 +385,7 @@ class BattleControllerTest extends IntegrationTest implements ReplaceUnderScoreT
         battleService.endBattle(battle.getId(), battle.getDuration().getEnd());
     }
 
-    private void expend(final int amount, final Member member, final LocalDateTime date) {
-        expenditureRepository.save(ExpenditureFixture.simpleWith(amount, member.getId(), date));
+    private void expend(final int amount, final Member member, final LocalDate date) {
+        expenditureRepository.save(ExpenditureFixture.simpleWithMainImage(amount, member.getId(), date));
     }
 }
