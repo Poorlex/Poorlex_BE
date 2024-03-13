@@ -3,6 +3,7 @@ package com.poorlex.poorlex.expenditure.service;
 import com.poorlex.poorlex.config.aws.AWSS3Service;
 import com.poorlex.poorlex.expenditure.domain.Expenditure;
 import com.poorlex.poorlex.expenditure.domain.ExpenditureRepository;
+import com.poorlex.poorlex.expenditure.service.event.ExpenditureImageUnusedEvent;
 import com.poorlex.poorlex.member.service.event.MemberDeletedEvent;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -32,5 +33,14 @@ public class ExpenditureEventHandler {
             expenditure.getSubImageUrl()
                     .ifPresent(awss3Service::deleteFile);
         });
+    }
+
+    @TransactionalEventListener(classes = {ExpenditureImageUnusedEvent.class}, phase = TransactionPhase.BEFORE_COMMIT)
+    public void handle(final ExpenditureImageUnusedEvent event) {
+        try {
+            awss3Service.deleteFile(event.getImageUrl());
+        } catch (Exception e) {
+            throw new IllegalArgumentException("이미지 삭제에 실패했습니다.");
+        }
     }
 }
