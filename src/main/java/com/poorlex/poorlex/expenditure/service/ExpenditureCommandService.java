@@ -86,7 +86,7 @@ public class ExpenditureCommandService {
                                   final Optional<String> updateSubImageUrl,
                                   final ExpenditureUpdateRequest request) {
         final Expenditure expenditure = expenditureRepository.findById(expenditureId)
-                .orElseThrow(() -> new IllegalArgumentException("수정하려는 배틀이 존재하지 않습니다."));
+                .orElseThrow(() -> new IllegalArgumentException("수정하려는 지출이 존재하지 않습니다."));
 
         validateUpdateAuthority(memberId, expenditure);
         expenditure.updateAmount(new ExpenditureAmount(request.getAmount()));
