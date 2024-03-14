@@ -1,15 +1,18 @@
 package com.poorlex.poorlex.security.handler;
 
+import com.poorlex.poorlex.config.event.Events;
 import com.poorlex.poorlex.member.domain.Member;
 import com.poorlex.poorlex.member.domain.MemberNickname;
 import com.poorlex.poorlex.member.domain.MemberRepository;
 import com.poorlex.poorlex.member.domain.Oauth2RegistrationId;
+import com.poorlex.poorlex.member.service.event.MemberRegisteredEvent;
 import com.poorlex.poorlex.security.service.UserProfile;
 import com.poorlex.poorlex.token.JwtTokenProvider;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URI;
+import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.util.LinkedMultiValueMap;
@@ -46,15 +49,31 @@ public class AppleTokenOauth2AuthenticationSuccessHandler extends AbstractTokenO
         final String oauthId = userProfile.getAttribute(CLIENT_ID_KEY);
 
         return memberRepository.findByOauth2RegistrationIdAndOauthId(registrationId, oauthId)
-            .orElseGet(() -> memberRepository.save(
-                Member.withoutId(registrationId, oauthId, new MemberNickname(getNickname(userProfile)))));
+                .orElseGet(() -> registerMember(userProfile, registrationId, oauthId));
+    }
+
+    private Member registerMember(final UserProfile userProfile,
+                                  final Oauth2RegistrationId registrationId,
+                                  final String oauthId) {
+        final MemberNickname nickname = new MemberNickname(getNickname(userProfile));
+        final Member newMember = memberRepository.save(Member.withoutId(registrationId, oauthId, nickname));
+
+        Events.raise(new MemberRegisteredEvent(newMember.getId()));
+
+        return newMember;
     }
 
     private String getNickname(final UserProfile userProfile) {
         final StringBuilder stringBuilder = new StringBuilder();
 
         final String email = userProfile.getAttribute(NICKNAME_KEY);
-        final String nickname = email.split("@")[0];
+        String nickname;
+
+        if (Objects.nonNull(email)) {
+            nickname = email.split("@")[0];
+        } else {
+            nickname = SHORT_NICKNAME_PREFIX;
+        }
 
         if (nickname.length() < NICKNAME_MINIMUM_LENGTH) {
             return stringBuilder.append(SHORT_NICKNAME_PREFIX).append(nickname).toString();
@@ -70,13 +89,13 @@ public class AppleTokenOauth2AuthenticationSuccessHandler extends AbstractTokenO
         queryParams.add("accessToken", accessToken);
 
         return UriComponentsBuilder
-            .newInstance()
-            .scheme("https")
-            .host(serverUrl)
-            .path("/login/success")
-            .queryParams(queryParams)
-            .build()
-            .toUri();
+                .newInstance()
+                .scheme("https")
+                .host(serverUrl)
+                .path("/login/success")
+                .queryParams(queryParams)
+                .build()
+                .toUri();
     }
 
     @Override
