@@ -18,6 +18,7 @@ import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -39,7 +40,8 @@ public class ExpenditureController implements ExpenditureControllerSwaggerInterf
     @PostMapping(path = "/expenditures", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Void> createExpenditure(@MemberOnly final MemberInfo memberInfo,
                                                   @RequestPart(name = "mainImage") final MultipartFile mainImage,
-                                                  @RequestPart(name = "subImage", required = false) final MultipartFile subImage,
+                                                  @RequestPart(name = "subImage", required = false)
+                                                  final MultipartFile subImage,
                                                   @RequestParam(value = "amount") final Long amount,
                                                   @RequestParam(value = "description") final String description,
                                                   @RequestParam(value = "date") final LocalDate date) {
@@ -56,10 +58,14 @@ public class ExpenditureController implements ExpenditureControllerSwaggerInterf
     @PutMapping(path = "/expenditures/{expenditureId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Void> updateExpenditure(@MemberOnly final MemberInfo memberInfo,
                                                   @PathVariable(name = "expenditureId") final Long expenditureId,
-                                                  @RequestPart(name = "mainImage", required = false) final MultipartFile mainImage,
-                                                  @RequestPart(name = "mainImageUrl", required = false) final String mainImageUrl,
-                                                  @RequestPart(name = "subImage", required = false) final MultipartFile subImage,
-                                                  @RequestPart(name = "subImageUrl", required = false) final String subImageUrl,
+                                                  @RequestPart(name = "mainImage", required = false)
+                                                  final MultipartFile mainImage,
+                                                  @RequestPart(name = "mainImageUrl", required = false)
+                                                  final String mainImageUrl,
+                                                  @RequestPart(name = "subImage", required = false)
+                                                  final MultipartFile subImage,
+                                                  @RequestPart(name = "subImageUrl", required = false)
+                                                  final String subImageUrl,
                                                   @RequestParam(value = "amount") final Long amount,
                                                   @RequestParam(value = "description") final String description) {
         final ExpenditureUpdateRequest request = new ExpenditureUpdateRequest(amount, description);
@@ -84,7 +90,8 @@ public class ExpenditureController implements ExpenditureControllerSwaggerInterf
 
     @GetMapping("/expenditures")
     public ResponseEntity<List<ExpenditureResponse>> findMemberExpenditures(@MemberOnly final MemberInfo memberInfo) {
-        final List<ExpenditureResponse> responses = expenditureQueryService.findMemberExpenditures(memberInfo.getMemberId());
+        final List<ExpenditureResponse> responses =
+                expenditureQueryService.findMemberExpenditures(memberInfo.getMemberId());
 
         return ResponseEntity.ok(responses);
     }
@@ -134,5 +141,12 @@ public class ExpenditureController implements ExpenditureControllerSwaggerInterf
     ) {
         return ResponseEntity.ok()
                 .body(expenditureQueryService.findMemberCurrentWeeklyTotalExpenditure(memberInfo.getMemberId()));
+    }
+
+    @DeleteMapping("/expenditures/{expenditureId}")
+    public ResponseEntity<Void> deleteExpenditure(@MemberOnly final MemberInfo memberInfo,
+                                                  @PathVariable(name = "expenditureId") final Long expenditureId) {
+        expenditureCommandService.deleteExpenditure(memberInfo.getMemberId(), expenditureId);
+        return ResponseEntity.ok().build();
     }
 }

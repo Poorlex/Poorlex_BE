@@ -117,6 +117,18 @@ create table if not exists member_alarm
     primary key (id)
 ) engine = InnoDB;
 
+create table if not exists alarm_allowance
+(
+    id                  bigint not null auto_increment,
+    member_id           bigint,
+    battle_chat         boolean,
+    battle_invite       boolean,
+    battle_status       boolean,
+    expenditure_request boolean,
+    friend              boolean,
+    primary key (id)
+) engine = InnoDB;
+
 create table if not exists member_point
 (
     id        bigint not null auto_increment,

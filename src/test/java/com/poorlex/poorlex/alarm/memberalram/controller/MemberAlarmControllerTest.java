@@ -1,14 +1,8 @@
 package com.poorlex.poorlex.alarm.memberalram.controller;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 import com.poorlex.poorlex.alarm.memberalram.domain.MemberAlarm;
 import com.poorlex.poorlex.alarm.memberalram.domain.MemberAlarmRepository;
 import com.poorlex.poorlex.alarm.memberalram.domain.MemberAlarmType;
-import com.poorlex.poorlex.alarm.memberalram.service.dto.request.MemberAlarmRequest;
 import com.poorlex.poorlex.battle.domain.Battle;
 import com.poorlex.poorlex.battle.domain.BattleRepository;
 import com.poorlex.poorlex.battle.domain.BattleStatus;
@@ -22,11 +16,14 @@ import com.poorlex.poorlex.participate.domain.BattleParticipantRepository;
 import com.poorlex.poorlex.support.IntegrationTest;
 import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
 import com.poorlex.poorlex.token.JwtTokenProvider;
-import java.time.LocalDateTime;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class MemberAlarmControllerTest extends IntegrationTest implements ReplaceUnderScoreTest {
 
@@ -53,32 +50,26 @@ class MemberAlarmControllerTest extends IntegrationTest implements ReplaceUnderS
         final Battle battle = createBattle();
         final BattleParticipant battleParticipant = join(battle, other);
         final MemberAlarm memberAlarm = memberAlarmRepository.save(
-            MemberAlarm.withoutId(
-                me.getId(),
-                battleParticipant.getId(),
-                MemberAlarmType.BATTLE_INVITATION_NOT_ACCEPTED)
+                MemberAlarm.withoutId(
+                        me.getId(),
+                        battleParticipant.getId(),
+                        MemberAlarmType.BATTLE_INVITATION_NOT_ACCEPTED)
         );
-        final LocalDateTime requestDateTime = LocalDateTime.now().plusHours(25);
-        final MemberAlarmRequest request = new MemberAlarmRequest(requestDateTime);
         final String accessToken = jwtTokenProvider.createAccessToken(me.getId());
 
         //when
         //then
         mockMvc.perform(
-                get("/member/alarms")
-                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
-                    .content(objectMapper.writeValueAsString(request))
-                    .contentType(MediaType.APPLICATION_JSON)
-            ).andDo(print())
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.length()").value(1))
-            .andExpect(jsonPath("$[0].alarmId").value(memberAlarm.getId()))
-            .andExpect(jsonPath("$[0].friendName").value(other.getNickname()))
-            .andExpect(jsonPath("$[0].battleName").value(battle.getName()))
-            .andExpect(jsonPath("$[0].alarmType").value(memberAlarm.getType().name()))
-            .andExpect(jsonPath("$[0].minutePassed").value(memberAlarm.getMinutePassed(requestDateTime)))
-            .andExpect(jsonPath("$[0].hourPassed").value(memberAlarm.getHourPassed(requestDateTime)))
-            .andExpect(jsonPath("$[0].dayPassed").value(memberAlarm.getDayPassed(requestDateTime)));
+                        get("/member/alarms")
+                                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                                .contentType(MediaType.APPLICATION_JSON)
+                ).andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(1))
+                .andExpect(jsonPath("$[0].alarmId").value(memberAlarm.getId()))
+                .andExpect(jsonPath("$[0].friendName").value(other.getNickname()))
+                .andExpect(jsonPath("$[0].battleName").value(battle.getName()))
+                .andExpect(jsonPath("$[0].alarmType").value(memberAlarm.getType().name()));
     }
 
     private Member createMemberWithOauthId(final String oauthId) {

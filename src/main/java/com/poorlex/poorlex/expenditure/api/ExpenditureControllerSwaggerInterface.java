@@ -14,6 +14,7 @@ import java.time.LocalDate;
 import java.util.List;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -132,5 +133,13 @@ public interface ExpenditureControllerSwaggerInterface {
     @ApiResponse(responseCode = "200")
     ResponseEntity<MemberWeeklyTotalExpenditureResponse> findMemberWeeklyTotalExpenditures(
             @Parameter(hidden = true) final MemberInfo memberInfo
+    );
+
+    @Operation(summary = "지출 삭제", description = "액세스 토큰 필요")
+    @DeleteMapping("/expenditures/{expenditureId}")
+    @ApiResponse(responseCode = "200")
+    public ResponseEntity<Void> deleteExpenditure(
+            @Parameter(hidden = true) final MemberInfo memberInfo,
+            @Parameter(in = ParameterIn.PATH, description = "지출 Id", required = true) final Long expenditureId
     );
 }

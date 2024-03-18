@@ -176,4 +176,18 @@ public class ExpenditureCommandService {
         expenditure.removeSubImage();
         subImageUrl.ifPresent(imageUrl -> Events.raise(new ExpenditureImageUnusedEvent(imageUrl)));
     }
+
+    public void deleteExpenditure(final Long memberId, final Long expenditureId) {
+        final Expenditure expenditure = expenditureRepository.findById(expenditureId)
+                .orElseThrow(() -> new IllegalArgumentException("삭제하려는 지출이 존재하지 않습니다."));
+
+        if (!expenditure.owned(memberId)) {
+            throw new IllegalArgumentException("삭제하려는 지출이 본인의 지출이 아닙니다.");
+        }
+
+        awss3Service.deleteFile(expenditure.getMainImageUrl());
+        expenditure.getSubImageUrl().ifPresent(awss3Service::deleteFile);
+
+        expenditureRepository.deleteById(expenditureId);
+    }
 }
