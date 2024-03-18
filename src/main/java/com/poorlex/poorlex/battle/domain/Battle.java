@@ -1,14 +1,19 @@
 package com.poorlex.poorlex.battle.domain;
 
-import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Objects;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -74,12 +79,12 @@ public class Battle {
     private void validateStartable(final LocalDateTime startTime) {
         if (!isTimeAbleToStart(startTime) || !isStatusAbleToStart()) {
             throw new IllegalArgumentException(
-                String.format("배틀을 시작할 수 없습니다. ( 요청 : %s ( %d:%d ), 현재 배틀 상태 : %s)",
-                    startTime.getDayOfWeek().name(),
-                    startTime.getHour(),
-                    startTime.getMinute(),
-                    status.name()
-                )
+                    String.format("배틀을 시작할 수 없습니다. ( 요청 : %s ( %d:%d ), 현재 배틀 상태 : %s)",
+                                  startTime.getDayOfWeek().name(),
+                                  startTime.getHour(),
+                                  startTime.getMinute(),
+                                  status.name()
+                    )
             );
         }
     }
@@ -109,12 +114,12 @@ public class Battle {
     private void validateEndable(final LocalDateTime endTime) {
         if (!isTimeAbleToEnd(endTime) || !isStatusAbleToEnd()) {
             throw new IllegalArgumentException(
-                String.format("배틀을 종료할 수 없습니다. ( 요청 : %s ( %d:%d ), 현재 배틀 상태 : %s)",
-                    endTime.getDayOfWeek().name(),
-                    endTime.getHour(),
-                    endTime.getMinute(),
-                    status.name()
-                )
+                    String.format("배틀을 종료할 수 없습니다. ( 요청 : %s ( %d:%d ), 현재 배틀 상태 : %s)",
+                                  endTime.getDayOfWeek().name(),
+                                  endTime.getHour(),
+                                  endTime.getMinute(),
+                                  status.name()
+                    )
             );
         }
     }
@@ -156,7 +161,7 @@ public class Battle {
         return !maxParticipantSize.hasGreaterValue(targetSize);
     }
 
-    public void successHistorySaved() {
+    public void successPointSaved() {
         this.isBattleSuccessCounted = true;
     }
 
@@ -166,6 +171,10 @@ public class Battle {
 
     public long getPastDay(final LocalDate current) {
         return ChronoUnit.DAYS.between(LocalDate.from(duration.getEnd()), current);
+    }
+
+    public boolean isSuccess(final Long expenditure) {
+        return getBudgetLeft(expenditure) >= 0;
     }
 
     public Long getBudgetLeft(final Long expenditure) {
@@ -214,6 +223,10 @@ public class Battle {
 
     public BattleDifficulty getDifficulty() {
         return budget.getDifficulty();
+    }
+
+    public boolean isBattlePointPaid() {
+        return isBattleSuccessCounted;
     }
 
     @Override

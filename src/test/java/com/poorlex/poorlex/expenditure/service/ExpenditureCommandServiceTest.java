@@ -66,8 +66,8 @@ class ExpenditureCommandServiceTest extends UsingDataJpaTest implements ReplaceU
         final ExpenditureCreateRequest request = ExpenditureRequestFixture.getSimpleCreateRequest();
 
         //when
-        final MockMultipartFile file = new MockMultipartFile(
-                "file",
+        final MockMultipartFile image = new MockMultipartFile(
+                "image",
                 "cat-8415620_640",
                 MediaType.MULTIPART_FORM_DATA_VALUE,
                 new FileInputStream(
@@ -75,7 +75,7 @@ class ExpenditureCommandServiceTest extends UsingDataJpaTest implements ReplaceU
         );
 
         final Long createdExpenditureId = expenditureCommandService.createExpenditure(member.getId(),
-                                                                                      file,
+                                                                                      image,
                                                                                       null,
                                                                                       request);
 

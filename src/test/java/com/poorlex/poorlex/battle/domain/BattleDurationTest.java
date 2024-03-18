@@ -1,13 +1,12 @@
 package com.poorlex.poorlex.battle.domain;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-
 import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.stream.Stream;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -17,12 +16,12 @@ import org.junit.jupiter.params.provider.MethodSource;
 class BattleDurationTest implements ReplaceUnderScoreTest {
 
     private static final LocalDateTime VALID_START_TIME = LocalDateTime.of(
-        LocalDate.of(2023, 12, 25),
-        LocalTime.of(9, 0)
+            LocalDate.of(2023, 12, 25),
+            LocalTime.of(0, 20)
     );
     private static final LocalDateTime VALID_END_TIME = LocalDateTime.of(
-        LocalDate.of(2023, 12, 31),
-        LocalTime.of(22, 0)
+            LocalDate.of(2023, 12, 31),
+            LocalTime.of(23, 59)
     );
 
     @Test
@@ -43,7 +42,7 @@ class BattleDurationTest implements ReplaceUnderScoreTest {
         //when
         //then
         assertThatThrownBy(() -> new BattleDuration(startTime, VALID_END_TIME))
-            .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class);
     }
 
     static Stream<LocalDateTime> getStartTimes() {
@@ -59,7 +58,7 @@ class BattleDurationTest implements ReplaceUnderScoreTest {
         //when
         //then
         assertThatThrownBy(() -> new BattleDuration(VALID_START_TIME, endTime))
-            .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class);
     }
 
     static Stream<LocalDateTime> getEndTimes() {

@@ -5,15 +5,15 @@ import com.poorlex.poorlex.config.event.Events;
 import com.poorlex.poorlex.member.service.event.MemberDeletedEvent;
 import com.poorlex.poorlex.participate.domain.BattleParticipant;
 import com.poorlex.poorlex.participate.domain.BattleParticipantRepository;
+import com.poorlex.poorlex.participate.service.event.BattleParticipantAddedEvent;
 import com.poorlex.poorlex.participate.service.event.BattlesWithdrewEvent;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
-
-import java.util.List;
 
 @Service
 @Transactional(propagation = Propagation.REQUIRED)
@@ -24,8 +24,11 @@ public class BattleParticipantEventHandler {
 
     @TransactionalEventListener(value = BattleCreatedEvent.class, phase = TransactionPhase.BEFORE_COMMIT)
     public void handle(final BattleCreatedEvent event) {
-        final BattleParticipant manager = BattleParticipant.manager(event.getBattleId(), event.getManagerId());
+        final Long battleId = event.getBattleId();
+        final BattleParticipant manager = BattleParticipant.manager(battleId, event.getManagerId());
         battleParticipantRepository.save(manager);
+        
+        Events.raise(new BattleParticipantAddedEvent(battleId));
     }
 
     @TransactionalEventListener(value = MemberDeletedEvent.class, phase = TransactionPhase.BEFORE_COMMIT)
@@ -33,8 +36,8 @@ public class BattleParticipantEventHandler {
         final List<BattleParticipant> participants = battleParticipantRepository.findAllByMemberId(event.getMemberId());
         battleParticipantRepository.deleteAll(participants);
         final List<Long> withdrewBattleIds = participants.stream()
-            .map(BattleParticipant::getBattleId)
-            .toList();
+                .map(BattleParticipant::getBattleId)
+                .toList();
 
         Events.raise(new BattlesWithdrewEvent(withdrewBattleIds));
     }

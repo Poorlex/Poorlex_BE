@@ -9,7 +9,6 @@ public class BattleCreateRequest {
 
     private String name;
     private String introduction;
-    private String imageUrl;
     private int budget;
     private int maxParticipantSize;
 }

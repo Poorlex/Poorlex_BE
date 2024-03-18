@@ -45,6 +45,7 @@ aws:
     secretKey: secretKey
     bucket: bucket
     expenditure-directory: directory
+    battle-directory: directory
 
 url:
   server: localhost

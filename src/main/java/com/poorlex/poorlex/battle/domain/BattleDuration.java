@@ -14,12 +14,12 @@ import lombok.NoArgsConstructor;
 public class BattleDuration {
 
     private static final DayOfWeek START_DAY_OF_WEEK = DayOfWeek.MONDAY;
-    private static final int START_HOUR = 9;
-    private static final int START_MINUTE = 0;
+    private static final int START_HOUR = 0;
+    private static final int START_MINUTE = 20;
     private static final LocalTime START_TIME = LocalTime.of(START_HOUR, START_MINUTE);
     private static final DayOfWeek END_DAY_OF_WEEK = DayOfWeek.SUNDAY;
-    private static final int END_HOUR = 22;
-    private static final int END_MINUTE = 0;
+    private static final int END_HOUR = 23;
+    private static final int END_MINUTE = 59;
     private static final LocalTime END_TIME = LocalTime.of(END_HOUR, END_MINUTE);
     private static final int BATTLE_DAYS = END_DAY_OF_WEEK.getValue() - START_DAY_OF_WEEK.getValue();
 
@@ -38,12 +38,12 @@ public class BattleDuration {
         final LocalDate now = LocalDate.now();
 
         final LocalDateTime start = LocalDateTime.of(
-            LocalDate.from(now).plusDays(getDaysBeforeMonday(now)),
-            START_TIME
+                LocalDate.from(now).plusDays(getDaysBeforeMonday(now)),
+                START_TIME
         );
         final LocalDateTime end = LocalDateTime.of(
-            LocalDate.from(start).plusDays(BATTLE_DAYS),
-            END_TIME
+                LocalDate.from(start).plusDays(BATTLE_DAYS),
+                END_TIME
         );
 
         return new BattleDuration(start, end);

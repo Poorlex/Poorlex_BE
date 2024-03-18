@@ -131,9 +131,10 @@ create table if not exists alarm_allowance
 
 create table if not exists member_point
 (
-    id        bigint not null auto_increment,
-    member_id bigint,
-    point     integer,
+    id         bigint not null auto_increment,
+    member_id  bigint,
+    point      integer,
+    created_at datetime(6),
     primary key (id)
 ) engine = InnoDB;
 

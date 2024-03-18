@@ -6,5 +6,5 @@ public interface BattleParticipantWithExpenditure {
 
     BattleParticipant getBattleParticipant();
 
-    int getExpenditure();
+    Long getExpenditure();
 }

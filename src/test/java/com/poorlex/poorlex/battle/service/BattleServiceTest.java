@@ -6,11 +6,10 @@ import com.poorlex.poorlex.battle.domain.BattleDuration;
 import com.poorlex.poorlex.battle.domain.BattleRepository;
 import com.poorlex.poorlex.battle.domain.BattleStatus;
 import com.poorlex.poorlex.battle.domain.BattleType;
-import com.poorlex.poorlex.battle.fixture.BattleCreateRequestFixture;
 import com.poorlex.poorlex.battle.fixture.BattleFixture;
-import com.poorlex.poorlex.battle.service.dto.request.BattleCreateRequest;
 import com.poorlex.poorlex.battle.service.dto.response.MemberCompleteBattleResponse;
 import com.poorlex.poorlex.battle.service.dto.response.MemberProgressBattleResponse;
+import com.poorlex.poorlex.config.aws.AWSS3Service;
 import com.poorlex.poorlex.expenditure.domain.ExpenditureRepository;
 import com.poorlex.poorlex.expenditure.fixture.ExpenditureFixture;
 import com.poorlex.poorlex.member.domain.Member;
@@ -19,29 +18,40 @@ import com.poorlex.poorlex.member.domain.MemberRepository;
 import com.poorlex.poorlex.member.domain.Oauth2RegistrationId;
 import com.poorlex.poorlex.participate.domain.BattleParticipant;
 import com.poorlex.poorlex.participate.domain.BattleParticipantRepository;
+import com.poorlex.poorlex.participate.service.event.BattleParticipantAddedEvent;
+import com.poorlex.poorlex.participate.service.event.BattlesWithdrewEvent;
 import com.poorlex.poorlex.support.IntegrationTest;
 import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doNothing;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 
 @DisplayName("배틀 서비스 테스트")
 class BattleServiceTest extends IntegrationTest implements ReplaceUnderScoreTest {
 
     private static final LocalDateTime BATTLE_START_DATE = LocalDateTime.of(
             LocalDate.of(2023, 12, 25),
-            LocalTime.of(9, 0)
+            LocalTime.of(0, 20)
     );
     private static final LocalDateTime BATTLE_END_TIME = LocalDateTime.of(
             LocalDate.of(2023, 12, 31),
-            LocalTime.of(22, 0)
+            LocalTime.of(23, 59)
     );
     private static final BattleDuration BATTLE_DURATION = new BattleDuration(BATTLE_START_DATE, BATTLE_END_TIME);
 
@@ -60,14 +70,34 @@ class BattleServiceTest extends IntegrationTest implements ReplaceUnderScoreTest
     @Autowired
     private ExpenditureRepository expenditureRepository;
 
+    @MockBean
+    private AWSS3Service awss3Service;
+
+    @MockBean
+    private BattleParticipantChangedEventHandler battleParticipantChangedEventHandler;
+
+    @BeforeEach
+    void setUp() {
+        given(awss3Service.uploadMultipartFile(any(), any())).willReturn(BattleFixture.simple().getImageUrl());
+        doNothing().when(battleParticipantChangedEventHandler).added(any(BattleParticipantAddedEvent.class));
+        doNothing().when(battleParticipantChangedEventHandler).added(any(BattlesWithdrewEvent.class));
+    }
+
     @Test
-    void 배틀을_생성한다() {
+    void 배틀을_생성한다() throws IOException {
         //given
+        final Battle excpectedBattle = BattleFixture.simple();
         final long createMemberId = 1L;
-        final BattleCreateRequest request = BattleCreateRequestFixture.simple();
+        final MockMultipartFile image = new MockMultipartFile(
+                "image",
+                "cat-8415620_640",
+                MediaType.MULTIPART_FORM_DATA_VALUE,
+                new FileInputStream(
+                        "src/test/resources/testImage/cat-8415620_640.jpg")
+        );
 
         //when
-        battleService.create(createMemberId, request);
+        battleService.create(createMemberId, image, BattleFixture.request());
 
         //then
         final List<Battle> battles = battleRepository.findAll();
@@ -76,7 +106,7 @@ class BattleServiceTest extends IntegrationTest implements ReplaceUnderScoreTest
                     softly.assertThat(battles).hasSize(1);
                     softly.assertThat(battles.get(0)).usingRecursiveComparison()
                             .ignoringFields("id")
-                            .isEqualTo(BattleFixture.simple());
+                            .isEqualTo(excpectedBattle);
                 }
         );
     }
