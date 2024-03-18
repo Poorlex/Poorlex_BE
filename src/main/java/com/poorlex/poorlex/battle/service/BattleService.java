@@ -108,19 +108,19 @@ public class BattleService {
         final List<BattleParticipantWithExpenditure> battleParticipantsWithExpenditure =
                 battleRepository.findBattleParticipantsWithExpenditureByBattleId(battle.getId())
                         .stream()
-                        .sorted(Comparator.comparingInt(BattleParticipantWithExpenditure::getExpenditure))
+                        .sorted(Comparator.comparingLong(BattleParticipantWithExpenditure::getExpenditure))
                         .toList();
 
         int rank = 0;
-        int prevExpenditure = 0;
+        Long prevExpenditure = -1L;
         int duplicateCount = 1;
         for (int idx = 0; idx < battleParticipantsWithExpenditure.size(); idx++) {
             final BattleParticipantWithExpenditure current = battleParticipantsWithExpenditure.get(idx);
-            final int currentExpenditure = current.getExpenditure();
+            final Long currentExpenditure = current.getExpenditure();
 
             if (idx == 0) {
                 rank++;
-            } else if (currentExpenditure == prevExpenditure) {
+            } else if (currentExpenditure.equals(prevExpenditure)) {
                 duplicateCount++;
             } else if (currentExpenditure > prevExpenditure) {
                 rank += duplicateCount;

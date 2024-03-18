@@ -43,41 +43,41 @@ public class BattleSuccessBatchConfig {
     @Bean(JOB_NAME)
     public Job job() {
         return new JobBuilder(JOB_NAME, jobRepository)
-            .start(saveSuccessHistoryStep())
-            .next(battleSuccessHistorySavedCheckedStep())
-            .build();
+                .start(saveSuccessHistoryStep())
+                .next(battleSuccessHistorySavedCheckedStep())
+                .build();
     }
 
     // 성공 기록 저장 Step
     @Bean(BEAN_PREFIX + "step_" + SAVE_SUCCESS_HISTORY)
     public Step saveSuccessHistoryStep() {
         return new StepBuilder(BEAN_PREFIX + "step", jobRepository)
-            .<BattleParticipantWithBattleSumExpenditure, BattleSuccessHistory>chunk(CHUNK_SIZE,
-                platformTransactionManager)
-            .reader(reader())
-            .processor(processor())
-            .writer(writer())
-            .build();
+                .<BattleParticipantWithBattleSumExpenditure, BattleSuccessHistory>chunk(CHUNK_SIZE,
+                                                                                        platformTransactionManager)
+                .reader(reader())
+                .processor(processor())
+                .writer(writer())
+                .build();
     }
 
     @Bean(BEAN_PREFIX + "reader_" + SAVE_SUCCESS_HISTORY)
     public JpaPagingItemReader<BattleParticipantWithBattleSumExpenditure> reader() {
         final String query = String.format(
-            "select new %s(bp, b, coalesce(sum(e.amount.value), 0)) "
-                + "from Battle b "
-                + "left join BattleParticipant bp on b.id = bp.battleId "
-                + "left join Expenditure e on e.memberId = bp.memberId and "
-                + "e.date between cast(b.duration.start as LocalDate) and cast(b.duration.end as LocalDate) "
-                + "where b.status = 'PROGRESS' and b.isBattleSuccessCounted = false "
-                + "group by b.id"
-            , BattleParticipantWithBattleSumExpenditure.class.getName());
+                "select new %s(bp, b, coalesce(sum(e.amount.value), 0)) "
+                        + "from Battle b "
+                        + "left join BattleParticipant bp on b.id = bp.battleId "
+                        + "left join Expenditure e on e.memberId = bp.memberId and "
+                        + "e.date between cast(b.duration.start as LocalDate) and cast(b.duration.end as LocalDate) "
+                        + "where b.status = 'PROGRESS' and b.isBattleSuccessCounted = false "
+                        + "group by b.id"
+                , BattleParticipantWithBattleSumExpenditure.class.getName());
 
         return new JpaPagingItemReaderBuilder<BattleParticipantWithBattleSumExpenditure>()
-            .name(BEAN_PREFIX + "reader")
-            .pageSize(CHUNK_SIZE)
-            .entityManagerFactory(entityManagerFactory)
-            .queryString(query)
-            .build();
+                .name(BEAN_PREFIX + "reader")
+                .pageSize(CHUNK_SIZE)
+                .entityManagerFactory(entityManagerFactory)
+                .queryString(query)
+                .build();
     }
 
     @Bean(BEAN_PREFIX + "processor_" + SAVE_SUCCESS_HISTORY)
@@ -89,9 +89,9 @@ public class BattleSuccessBatchConfig {
             handledBattleIds.add(battle.getId());
             if (battle.getBudgetLeft(sumExpenditure) >= 0) {
                 return BattleSuccessHistory.withoutId(
-                    battleParticipant.getMemberId(),
-                    battleParticipant.getBattleId(),
-                    battle.getDifficulty()
+                        battleParticipant.getMemberId(),
+                        battleParticipant.getBattleId(),
+                        battle.getDifficulty()
                 );
             }
             return null;
@@ -101,8 +101,8 @@ public class BattleSuccessBatchConfig {
     @Bean(BEAN_PREFIX + "writer_" + SAVE_SUCCESS_HISTORY)
     public JpaItemWriter<BattleSuccessHistory> writer() {
         return new JpaItemWriterBuilder<BattleSuccessHistory>()
-            .entityManagerFactory(entityManagerFactory)
-            .build();
+                .entityManagerFactory(entityManagerFactory)
+                .build();
     }
 
     // 성공 기록 저장 여부 변경 Step
@@ -110,11 +110,11 @@ public class BattleSuccessBatchConfig {
     public Step battleSuccessHistorySavedCheckedStep() {
         handledBattleIds.clear();
         return new StepBuilder(BEAN_PREFIX + "step", jobRepository)
-            .<Battle, Battle>chunk(CHUNK_SIZE, platformTransactionManager)
-            .reader(handledBattleReader())
-            .processor(handleBattleProcessor())
-            .writer(handleBattleWriter())
-            .build();
+                .<Battle, Battle>chunk(CHUNK_SIZE, platformTransactionManager)
+                .reader(handledBattleReader())
+                .processor(handleBattleProcessor())
+                .writer(handleBattleWriter())
+                .build();
     }
 
     @Bean(BEAN_PREFIX + "reader_" + BATTLE_SUCCESS_HISTORY_SAVED_CHECK)
@@ -124,18 +124,18 @@ public class BattleSuccessBatchConfig {
         params.put("ids", handledBattleIds);
 
         return new JpaPagingItemReaderBuilder<Battle>()
-            .name(BEAN_PREFIX + "reader")
-            .pageSize(CHUNK_SIZE)
-            .entityManagerFactory(entityManagerFactory)
-            .queryString(query)
-            .parameterValues(params)
-            .build();
+                .name(BEAN_PREFIX + "reader")
+                .pageSize(CHUNK_SIZE)
+                .entityManagerFactory(entityManagerFactory)
+                .queryString(query)
+                .parameterValues(params)
+                .build();
     }
 
     @Bean(BEAN_PREFIX + "processor_" + BATTLE_SUCCESS_HISTORY_SAVED_CHECK)
     public ItemProcessor<Battle, Battle> handleBattleProcessor() {
         return battle -> {
-            battle.successHistorySaved();
+            battle.successPointSaved();
             return battle;
         };
     }
@@ -143,8 +143,8 @@ public class BattleSuccessBatchConfig {
     @Bean(BEAN_PREFIX + "writer_" + BATTLE_SUCCESS_HISTORY_SAVED_CHECK)
     public JpaItemWriter<Battle> handleBattleWriter() {
         return new JpaItemWriterBuilder<Battle>()
-            .entityManagerFactory(entityManagerFactory)
-            .build();
+                .entityManagerFactory(entityManagerFactory)
+                .build();
     }
 }
 
