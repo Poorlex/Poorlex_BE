@@ -2,6 +2,12 @@ package com.poorlex.poorlex.battle.service;
 
 import com.poorlex.poorlex.alarm.battlealarm.service.BattleAlarmService;
 import com.poorlex.poorlex.battle.domain.Battle;
+import com.poorlex.poorlex.battle.domain.BattleBudget;
+import com.poorlex.poorlex.battle.domain.BattleDuration;
+import com.poorlex.poorlex.battle.domain.BattleImageUrl;
+import com.poorlex.poorlex.battle.domain.BattleIntroduction;
+import com.poorlex.poorlex.battle.domain.BattleName;
+import com.poorlex.poorlex.battle.domain.BattleParticipantSize;
 import com.poorlex.poorlex.battle.domain.BattleParticipantWithExpenditure;
 import com.poorlex.poorlex.battle.domain.BattleRepository;
 import com.poorlex.poorlex.battle.domain.BattleStatus;
@@ -15,7 +21,7 @@ import com.poorlex.poorlex.battle.service.dto.response.MemberCompleteBattleRespo
 import com.poorlex.poorlex.battle.service.dto.response.MemberProgressBattleResponse;
 import com.poorlex.poorlex.battle.service.dto.response.ParticipantRankingResponse;
 import com.poorlex.poorlex.battle.service.event.BattleCreatedEvent;
-import com.poorlex.poorlex.battle.service.mapper.BattleMapper;
+import com.poorlex.poorlex.config.aws.AWSS3Service;
 import com.poorlex.poorlex.config.event.Events;
 import com.poorlex.poorlex.expenditure.service.ExpenditureQueryService;
 import com.poorlex.poorlex.expenditure.service.dto.RankAndTotalExpenditureDto;
@@ -30,13 +36,13 @@ import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @Transactional(readOnly = true)
-@RequiredArgsConstructor
 public class BattleService {
 
     private static final int MAX_READIED_BATTLE_COUNT = 3;
@@ -47,13 +53,34 @@ public class BattleService {
     private final MemberPointService memberPointService;
     private final ExpenditureQueryService expenditureQueryService;
     private final MemberService memberService;
+    private final AWSS3Service awss3Service;
+    private final String bucketDirectory;
+
+    public BattleService(final BattleRepository battleRepository,
+                         final BattleParticipantRepository battleParticipantRepository,
+                         final BattleAlarmService battleAlarmService,
+                         final MemberPointService memberPointService,
+                         final ExpenditureQueryService expenditureQueryService,
+                         final MemberService memberService,
+                         final AWSS3Service awss3Service,
+                         @Value("${aws.s3.battle-directory}") final String bucketDirectory) {
+        this.battleRepository = battleRepository;
+        this.battleParticipantRepository = battleParticipantRepository;
+        this.battleAlarmService = battleAlarmService;
+        this.memberPointService = memberPointService;
+        this.expenditureQueryService = expenditureQueryService;
+        this.memberService = memberService;
+        this.awss3Service = awss3Service;
+        this.bucketDirectory = bucketDirectory;
+    }
 
     @Transactional
-    public Long create(final Long memberId, final BattleCreateRequest request) {
+    public Long create(final Long memberId, final MultipartFile image, final BattleCreateRequest request) {
         validateMemberCanCreateBattle(memberId);
-        final Battle battle = BattleMapper.createRequestToBattle(request);
-        battleRepository.save(battle);
+        final Battle battle = battleRepository.save(createBattle(image, request));
+
         Events.raise(new BattleCreatedEvent(battle.getId(), memberId));
+
         return battle.getId();
     }
 
@@ -65,6 +92,21 @@ public class BattleService {
         if (readiedBattleCount >= MAX_READIED_BATTLE_COUNT) {
             throw new IllegalArgumentException("배틀은 최대 3개까지 참여할 수 있습니다.");
         }
+    }
+
+    private Battle createBattle(final MultipartFile image, final BattleCreateRequest request) {
+        final BattleName name = new BattleName(request.getName());
+        final BattleIntroduction introduction = new BattleIntroduction(request.getIntroduction());
+        final BattleBudget budget = new BattleBudget(request.getBudget());
+        final BattleParticipantSize participantSize = new BattleParticipantSize(request.getMaxParticipantSize());
+        final String imageUrl = awss3Service.uploadMultipartFile(image, bucketDirectory);
+        return Battle.withoutBattleId(name,
+                                      introduction,
+                                      new BattleImageUrl(imageUrl),
+                                      budget,
+                                      participantSize,
+                                      BattleDuration.current(),
+                                      BattleStatus.RECRUITING);
     }
 
     public List<FindingBattleResponse> findBattlesToPlay() {
