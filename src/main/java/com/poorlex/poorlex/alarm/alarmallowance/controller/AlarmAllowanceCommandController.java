@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/alarms/allowance")
 @RequiredArgsConstructor
-public class AlarmAllowanceCommandController {
+public class AlarmAllowanceCommandController implements AlarmAllowanceCommandControllerSwaggerInterface {
 
     private final AlarmAllowanceCommandService alarmAllowanceCommandService;
     private final AlarmAllowanceQueryService alarmAllowanceQueryService;
