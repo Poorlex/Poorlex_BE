@@ -9,6 +9,7 @@ import com.poorlex.poorlex.expenditure.domain.Expenditure;
 import com.poorlex.poorlex.expenditure.domain.ExpenditureRepository;
 import com.poorlex.poorlex.expenditure.domain.WeeklyExpenditureDuration;
 import com.poorlex.poorlex.expenditure.fixture.ExpenditureFixture;
+import com.poorlex.poorlex.expenditure.service.ExpenditureEventHandler;
 import com.poorlex.poorlex.expenditure.service.dto.request.MemberWeeklyTotalExpenditureRequest;
 import com.poorlex.poorlex.member.domain.Member;
 import com.poorlex.poorlex.member.domain.MemberNickname;
@@ -63,6 +64,9 @@ class ExpenditureControllerTest extends IntegrationTest implements ReplaceUnderS
     @MockBean
     private AWSS3Service awss3Service;
 
+    @MockBean
+    private ExpenditureEventHandler expenditureEventHandler;
+    
     private TestMemberTokenGenerator testMemberTokenGenerator;
 
     @BeforeEach

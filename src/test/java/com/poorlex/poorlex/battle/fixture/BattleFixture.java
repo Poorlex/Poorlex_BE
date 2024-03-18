@@ -8,6 +8,7 @@ import com.poorlex.poorlex.battle.domain.BattleIntroduction;
 import com.poorlex.poorlex.battle.domain.BattleName;
 import com.poorlex.poorlex.battle.domain.BattleParticipantSize;
 import com.poorlex.poorlex.battle.domain.BattleStatus;
+import com.poorlex.poorlex.battle.service.dto.request.BattleCreateRequest;
 
 public class BattleFixture {
 
@@ -16,6 +17,10 @@ public class BattleFixture {
 
     public static Battle simple() {
         return initialBattleBuilder().build();
+    }
+
+    public static BattleCreateRequest request() {
+        return new BattleCreateRequest("name", "introduction", 10000, 10);
     }
 
     public static Builder initialBattleBuilder() {
