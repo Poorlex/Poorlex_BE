@@ -3,7 +3,7 @@ package com.poorlex.poorlex.alarm.alarmallowance.service;
 import com.poorlex.poorlex.alarm.alarmallowance.domain.AlarmAllowance;
 import com.poorlex.poorlex.alarm.alarmallowance.domain.AlarmAllowanceRepository;
 import com.poorlex.poorlex.alarm.alarmallowance.domain.AlarmAllowanceType;
-import com.poorlex.poorlex.alarm.alarmallowance.service.dto.AlarmAllowanceStatusChangeRequest;
+import com.poorlex.poorlex.alarm.alarmallowance.service.dto.request.AlarmAllowanceStatusChangeRequest;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 @Transactional
 @RequiredArgsConstructor
 public class AlarmAllowanceCommandService {
+
     private final AlarmAllowanceRepository alarmAllowanceRepository;
 
     public void changeAlarmAllowanceStatus(final Long memberId, final AlarmAllowanceStatusChangeRequest request) {

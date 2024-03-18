@@ -3,7 +3,7 @@ package com.poorlex.poorlex.alarm.alarmallowance.service;
 import com.poorlex.poorlex.alarm.alarmallowance.domain.AlarmAllowance;
 import com.poorlex.poorlex.alarm.alarmallowance.domain.AlarmAllowanceRepository;
 import com.poorlex.poorlex.alarm.alarmallowance.domain.AlarmAllowanceType;
-import com.poorlex.poorlex.alarm.alarmallowance.service.dto.AlarmAllowanceStatusChangeRequest;
+import com.poorlex.poorlex.alarm.alarmallowance.service.dto.request.AlarmAllowanceStatusChangeRequest;
 import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
 import com.poorlex.poorlex.support.db.UsingDataJpaTest;
 import jakarta.persistence.EntityManager;
@@ -81,6 +81,7 @@ class AlarmAllowanceCommandServiceTest extends UsingDataJpaTest implements Repla
     }
 
     private static class AlarmAllowanceTestInfo {
+
         final AlarmAllowanceType blockAllowanceType;
         final boolean expectedExpenditureRequestAlarmAllowance;
         final boolean expectedBattleStatusAlarmAllowance;
