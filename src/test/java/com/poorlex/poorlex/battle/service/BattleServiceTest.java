@@ -47,11 +47,11 @@ class BattleServiceTest extends IntegrationTest implements ReplaceUnderScoreTest
 
     private static final LocalDateTime BATTLE_START_DATE = LocalDateTime.of(
             LocalDate.of(2023, 12, 25),
-            LocalTime.of(9, 0)
+            LocalTime.of(0, 20)
     );
     private static final LocalDateTime BATTLE_END_TIME = LocalDateTime.of(
             LocalDate.of(2023, 12, 31),
-            LocalTime.of(22, 0)
+            LocalTime.of(23, 59)
     );
     private static final BattleDuration BATTLE_DURATION = new BattleDuration(BATTLE_START_DATE, BATTLE_END_TIME);
 
