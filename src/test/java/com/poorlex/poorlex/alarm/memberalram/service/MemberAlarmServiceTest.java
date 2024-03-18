@@ -1,11 +1,8 @@
 package com.poorlex.poorlex.alarm.memberalram.service;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import com.poorlex.poorlex.alarm.memberalram.domain.MemberAlarm;
 import com.poorlex.poorlex.alarm.memberalram.domain.MemberAlarmRepository;
 import com.poorlex.poorlex.alarm.memberalram.domain.MemberAlarmType;
-import com.poorlex.poorlex.alarm.memberalram.service.dto.request.MemberAlarmRequest;
 import com.poorlex.poorlex.alarm.memberalram.service.dto.response.MemberAlarmResponse;
 import com.poorlex.poorlex.battle.domain.Battle;
 import com.poorlex.poorlex.battle.domain.BattleRepository;
@@ -21,6 +18,7 @@ import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
 import com.poorlex.poorlex.support.db.UsingDataJpaTest;
 import java.time.LocalDateTime;
 import java.util.List;
+import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,8 +41,8 @@ class MemberAlarmServiceTest extends UsingDataJpaTest implements ReplaceUnderSco
     @BeforeEach
     void setUp() {
         this.memberAlarmService = new MemberAlarmService(
-            memberAlarmRepository,
-            new MemberAlarmResponseConverter(memberRepository, battleRepository, battleParticipantRepository)
+                memberAlarmRepository,
+                new MemberAlarmResponseConverter(memberRepository, battleRepository, battleParticipantRepository)
         );
     }
 
@@ -57,28 +55,30 @@ class MemberAlarmServiceTest extends UsingDataJpaTest implements ReplaceUnderSco
         final BattleParticipant battleParticipant = join(battle, other);
 
         final MemberAlarm battleInvitationAlarm = memberAlarmRepository.save(MemberAlarm.withoutId(
-            me.getId(),
-            battleParticipant.getId(),
-            MemberAlarmType.BATTLE_INVITATION_NOT_ACCEPTED)
+                me.getId(),
+                battleParticipant.getId(),
+                MemberAlarmType.BATTLE_INVITATION_NOT_ACCEPTED)
         );
         final MemberAlarm friendInvitation = memberAlarmRepository.save(MemberAlarm.withoutId(
-            me.getId(),
-            other.getId(),
-            MemberAlarmType.FRIEND_INVITATION_NOT_ACCEPTED)
+                me.getId(),
+                other.getId(),
+                MemberAlarmType.FRIEND_INVITATION_NOT_ACCEPTED)
         );
         final LocalDateTime requestDateTime = LocalDateTime.now().plusMinutes(10);
-        final MemberAlarmRequest request = new MemberAlarmRequest(requestDateTime);
 
         //when
-        final List<MemberAlarmResponse> responses = memberAlarmService.findMemberAlarms(me.getId(), request);
+        final List<MemberAlarmResponse> responses = memberAlarmService.findMemberAlarms(me.getId(), requestDateTime);
 
         //then
         assertThat(responses).hasSize(2)
-            .usingRecursiveFieldByFieldElementComparatorOnFields()
-            .containsExactly(
-                MemberAlarmResponse.from(battleInvitationAlarm, other.getNickname(), battle.getName(), requestDateTime),
-                MemberAlarmResponse.from(friendInvitation, other.getNickname(), null, requestDateTime)
-            );
+                .usingRecursiveFieldByFieldElementComparatorOnFields()
+                .containsExactly(
+                        MemberAlarmResponse.from(battleInvitationAlarm,
+                                                 other.getNickname(),
+                                                 battle.getName(),
+                                                 requestDateTime),
+                        MemberAlarmResponse.from(friendInvitation, other.getNickname(), null, requestDateTime)
+                );
     }
 
     private Member createMemberWithOauthId(final String oauthId) {
@@ -88,7 +88,7 @@ class MemberAlarmServiceTest extends UsingDataJpaTest implements ReplaceUnderSco
 
     private Battle createBattle() {
         return battleRepository.save(BattleFixture.initialBattleBuilder()
-            .status(BattleStatus.RECRUITING).build());
+                                             .status(BattleStatus.RECRUITING).build());
     }
 
     private BattleParticipant join(final Battle battle, final Member member) {
