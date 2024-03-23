@@ -30,7 +30,7 @@ public class TokenConfig implements WebMvcConfigurer {
                 .addPathPatterns("/friends/**")
                 .addPathPatterns("/member/**")
                 .addPathPatterns("/goals/**")
-                .addPathPatterns("/alarm/**")
+                .addPathPatterns("/alarms/**")
                 .excludePathPatterns("/goals/types");
     }
 
