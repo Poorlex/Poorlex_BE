@@ -23,9 +23,10 @@ public class AlarmAllowanceCommandController implements AlarmAllowanceCommandCon
     private final AlarmAllowanceQueryService alarmAllowanceQueryService;
 
     @PatchMapping
-    public ResponseEntity<Void> changeAlarmAllowanceStatus(@MemberOnly final MemberInfo memberInfo,
-                                                           @RequestBody
-                                                           final AlarmAllowanceStatusChangeRequest request) {
+    public ResponseEntity<Void> changeAlarmAllowanceStatus(
+            @MemberOnly final MemberInfo memberInfo,
+            @RequestBody final AlarmAllowanceStatusChangeRequest request
+    ) {
         alarmAllowanceCommandService.changeAlarmAllowanceStatus(memberInfo.getMemberId(), request);
         return ResponseEntity.ok().build();
     }

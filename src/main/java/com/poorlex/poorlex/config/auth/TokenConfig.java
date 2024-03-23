@@ -21,16 +21,17 @@ public class TokenConfig implements WebMvcConfigurer {
     public void addInterceptors(final InterceptorRegistry registry) {
         addExcludePattern(tokenInterceptor);
         registry.addInterceptor(tokenInterceptor)
-            .addPathPatterns("/battles/**")
-            .addPathPatterns("/battle-invite/**")
-            .addPathPatterns("/expenditures/**")
-            .addPathPatterns("/points/**")
-            .addPathPatterns("/weekly-budgets/**")
-            .addPathPatterns("/alarm-reaction/**")
-            .addPathPatterns("/friends/**")
-            .addPathPatterns("/member/**")
-            .addPathPatterns("/goals/**")
-            .excludePathPatterns("/goals/types");
+                .addPathPatterns("/battles/**")
+                .addPathPatterns("/battle-invite/**")
+                .addPathPatterns("/expenditures/**")
+                .addPathPatterns("/points/**")
+                .addPathPatterns("/weekly-budgets/**")
+                .addPathPatterns("/alarm-reaction/**")
+                .addPathPatterns("/friends/**")
+                .addPathPatterns("/member/**")
+                .addPathPatterns("/goals/**")
+                .addPathPatterns("/alarm/**")
+                .excludePathPatterns("/goals/types");
     }
 
     private void addExcludePattern(final TokenInterceptor tokenInterceptor) {
