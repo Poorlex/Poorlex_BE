@@ -53,3 +53,8 @@ url:
 validation:
   start-time: false
   end-time: false
+
+sentry:
+  dsn: sentry-dsn
+
+sentry-token: sentry-token
