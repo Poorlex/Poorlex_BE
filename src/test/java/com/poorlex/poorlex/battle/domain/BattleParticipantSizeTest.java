@@ -1,8 +1,8 @@
 package com.poorlex.poorlex.battle.domain;
 
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-
+import com.poorlex.poorlex.exception.ApiException;
 import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -17,6 +17,6 @@ class BattleParticipantSizeTest implements ReplaceUnderScoreTest {
         //when
         //then
         assertThatThrownBy(() -> new BattleParticipantSize(size))
-            .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(ApiException.class);
     }
 }

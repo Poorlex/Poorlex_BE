@@ -11,7 +11,6 @@ import com.poorlex.poorlex.support.MockMvcTest;
 import com.poorlex.poorlex.util.ApiDocumentUtils;
 import java.io.FileInputStream;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import static org.mockito.ArgumentMatchers.any;
@@ -144,7 +143,7 @@ class ExpenditureDocumentationTest extends MockMvcTest {
         mockingTokenInterceptor();
         mockingMemberArgumentResolver();
 
-        final MemberWeeklyTotalExpenditureRequest request = new MemberWeeklyTotalExpenditureRequest(LocalDateTime.now());
+        final MemberWeeklyTotalExpenditureRequest request = new MemberWeeklyTotalExpenditureRequest(LocalDate.now());
         given(expenditureQueryService.findMemberWeeklyTotalExpenditure(any(), any()))
                 .willReturn(new MemberWeeklyTotalExpenditureResponse(1000));
 
@@ -163,7 +162,7 @@ class ExpenditureDocumentationTest extends MockMvcTest {
                                  ApiDocumentUtils.getDocumentRequest(),
                                  ApiDocumentUtils.getDocumentResponse(),
                                  requestFields(
-                                         fieldWithPath("dateTime").type(JsonFieldType.STRING).description("조회 시간 ")
+                                         fieldWithPath("date").type(JsonFieldType.STRING).description("조회 일자")
                                  ),
                                  responseFields(
                                          fieldWithPath("amount").type(JsonFieldType.NUMBER).description("주간 총 지출 금액")

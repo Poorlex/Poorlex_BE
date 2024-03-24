@@ -1,7 +1,5 @@
 package com.poorlex.poorlex.voting.votingpaper.service;
 
-import static org.assertj.core.api.SoftAssertions.assertSoftly;
-
 import com.poorlex.poorlex.participate.domain.BattleParticipantRepository;
 import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
 import com.poorlex.poorlex.support.db.UsingDataJpaTest;
@@ -18,6 +16,7 @@ import com.poorlex.poorlex.voting.votingpaper.domain.VotingPaperType;
 import com.poorlex.poorlex.voting.votingpaper.service.dto.response.VotingPaperResponse;
 import java.time.LocalDateTime;
 import java.util.List;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,9 +37,9 @@ class VotingPaperServiceTest extends UsingDataJpaTest implements ReplaceUnderSco
     @BeforeEach
     void setUp() {
         this.votingPaperService = new VotingPaperService(
-            voteRepository,
-            votingPaperRepository,
-            battleParticipantRepository
+                voteRepository,
+                votingPaperRepository,
+                battleParticipantRepository
         );
     }
 
@@ -63,22 +62,22 @@ class VotingPaperServiceTest extends UsingDataJpaTest implements ReplaceUnderSco
 
         //then
         assertSoftly(
-            softly -> {
-                softly.assertThat(battleVotingPapers).hasSize(3);
-                softly.assertThat(battleVotingPapers.get(0).getVoteName()).isEqualTo(vote1.getName());
-                softly.assertThat(battleVotingPapers.get(1).getVoteName()).isEqualTo(vote2.getName());
-                softly.assertThat(battleVotingPapers.get(2).getVoteName()).isEqualTo(vote3.getName());
-            }
+                softly -> {
+                    softly.assertThat(battleVotingPapers).hasSize(3);
+                    softly.assertThat(battleVotingPapers.get(0).getVoteName()).isEqualTo(vote1.getName());
+                    softly.assertThat(battleVotingPapers.get(1).getVoteName()).isEqualTo(vote2.getName());
+                    softly.assertThat(battleVotingPapers.get(2).getVoteName()).isEqualTo(vote3.getName());
+                }
         );
     }
 
     private Vote createVote(final Long battleId, final Long memberId, final String voteName) {
         return voteRepository.save(Vote.withoutId(battleId,
-            memberId,
-            new VoteAmount(1000L),
-            new VoteDuration(LocalDateTime.now(), VoteDurationType.SIXTY_MINUTE),
-            new VoteName(voteName),
-            VoteStatus.PROGRESS)
+                                                  memberId,
+                                                  new VoteAmount(1000L),
+                                                  new VoteDuration(LocalDateTime.now(), VoteDurationType.SIXTY_MINUTE),
+                                                  new VoteName(voteName),
+                                                  VoteStatus.PROGRESS)
         );
     }
 }

@@ -23,6 +23,8 @@ import com.poorlex.poorlex.battle.service.dto.response.ParticipantRankingRespons
 import com.poorlex.poorlex.battle.service.event.BattleCreatedEvent;
 import com.poorlex.poorlex.config.aws.AWSS3Service;
 import com.poorlex.poorlex.config.event.Events;
+import com.poorlex.poorlex.exception.ApiException;
+import com.poorlex.poorlex.exception.ExceptionTag;
 import com.poorlex.poorlex.expenditure.service.ExpenditureQueryService;
 import com.poorlex.poorlex.expenditure.service.dto.RankAndTotalExpenditureDto;
 import com.poorlex.poorlex.member.domain.MemberLevel;
@@ -90,7 +92,10 @@ public class BattleService {
                 BattleStatus.getReadiedStatues()
         );
         if (readiedBattleCount >= MAX_READIED_BATTLE_COUNT) {
-            throw new IllegalArgumentException("배틀은 최대 3개까지 참여할 수 있습니다.");
+            final String errorMessage = String.format("배틀은 최대 %d개까지 참여할 수 있습니다. ( 참가 중인 배틀 수 : %d )",
+                                                      MAX_READIED_BATTLE_COUNT,
+                                                      readiedBattleCount);
+            throw new ApiException(ExceptionTag.BATTLE_PARTICIPATE, errorMessage);
         }
     }
 
@@ -174,7 +179,11 @@ public class BattleService {
             }
             prevExpenditure = currentExpenditure;
         }
-        throw new IllegalArgumentException("배틀에 해당하는 멤버가 존재하지 않습니다.");
+
+        final String errorMessage = String.format("배틀 참가자중에 해당 ID의 멤버가 존재하지 않습니다. ( 배틀 명 : '%s' , 멤버 ID : %d )",
+                                                  battle.getName(),
+                                                  targetMemberId);
+        throw new ApiException(ExceptionTag.BATTLE_PARTICIPANT_FIND, errorMessage);
     }
 
     public List<MemberCompleteBattleResponse> findCompleteMemberBattles(final Long memberId, final LocalDate date) {
@@ -200,7 +209,10 @@ public class BattleService {
     @Transactional
     public void startBattle(final Long battleId, final LocalDateTime current) {
         final Battle battle = battleRepository.findById(battleId)
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(() -> {
+                    final String errorMessage = String.format("ID에 해당하는 배틀이 존재하지 않습니다. ( ID : %d )", battleId);
+                    return new ApiException(ExceptionTag.BATTLE_FIND, errorMessage);
+                });
 
         battle.start(current);
     }
@@ -208,14 +220,20 @@ public class BattleService {
     @Transactional
     public void endBattle(final Long battleId, final LocalDateTime current) {
         final Battle battle = battleRepository.findById(battleId)
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(() -> {
+                    final String errorMessage = String.format("ID에 해당하는 배틀이 존재하지 않습니다. ( ID : %d )", battleId);
+                    return new ApiException(ExceptionTag.BATTLE_FIND, errorMessage);
+                });
 
         battle.end(current);
     }
 
     public BattleResponse getBattleInfo(final Long battleId, final BattleFindRequest request) {
         final Battle battle = battleRepository.findById(battleId)
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(() -> {
+                    final String errorMessage = String.format("ID에 해당하는 배틀이 존재하지 않습니다. ( ID : %d )", battleId);
+                    return new ApiException(ExceptionTag.BATTLE_FIND, errorMessage);
+                });
 
         final List<BattleParticipant> participants = battleParticipantRepository.findAllByBattleId(battleId);
         final List<Long> participantMemberIds = participants.stream()
@@ -277,7 +295,10 @@ public class BattleService {
                                                                        final int totalPoint,
                                                                        final RankAndTotalExpenditureDto rankInfo) {
         final int level = MemberLevel.findByPoint(new Point(totalPoint))
-                .orElseThrow(IllegalArgumentException::new)
+                .orElseThrow(() -> {
+                    final String errorMessage = String.format("포인트에 해당하는 레벨이 존재하지 않습니다. ( 포인트 : %d )", totalPoint);
+                    return new ApiException(ExceptionTag.MEMBER_LEVEL, errorMessage);
+                })
                 .getNumber();
 
         return new ParticipantRankingResponse(

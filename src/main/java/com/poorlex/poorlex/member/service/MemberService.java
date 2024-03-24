@@ -19,7 +19,7 @@ import com.poorlex.poorlex.member.service.dto.response.MyPageResponse;
 import com.poorlex.poorlex.member.service.event.MemberDeletedEvent;
 import com.poorlex.poorlex.point.service.MemberPointService;
 import com.poorlex.poorlex.point.service.dto.response.MyPageLevelInfoResponse;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -64,10 +64,10 @@ public class MemberService {
     }
 
     public MyPageResponse getMyPageInfoFromCurrentDatetime(final Long memberId) {
-        return getMyPageInfo(memberId, LocalDateTime.now());
+        return getMyPageInfo(memberId, LocalDate.now());
     }
 
-    public MyPageResponse getMyPageInfo(final Long memberId, final LocalDateTime dateTime) {
+    public MyPageResponse getMyPageInfo(final Long memberId, final LocalDate date) {
         final Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> {
                     final String errorMessage = String.format("Id 에 해당하는 회원이 존재하지 않습니다. ( ID : %d )", memberId);
@@ -76,7 +76,7 @@ public class MemberService {
         final MyPageLevelInfoResponse memberLevelInfo = memberPointService.findMemberLevelInfo(memberId);
         final BattleSuccessCountResponse battleSuccessCounts =
                 battleSuccessService.findMemberBattleSuccessCounts(memberId);
-        final List<FriendResponse> friends = friendService.findMemberFriends(memberId, dateTime);
+        final List<FriendResponse> friends = friendService.findMemberFriends(memberId, date);
         final List<MyPageExpenditureResponse> expenditures = expenditureQueryService.findMemberExpenditures(memberId)
                 .stream()
                 .map(MyPageExpenditureResponse::from)

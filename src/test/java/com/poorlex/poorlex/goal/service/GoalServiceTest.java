@@ -1,9 +1,5 @@
 package com.poorlex.poorlex.goal.service;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.assertj.core.api.SoftAssertions.assertSoftly;
-
 import com.poorlex.poorlex.goal.domain.Goal;
 import com.poorlex.poorlex.goal.domain.GoalAmount;
 import com.poorlex.poorlex.goal.domain.GoalDuration;
@@ -29,6 +25,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,13 +49,13 @@ class GoalServiceTest extends UsingDataJpaTest implements ReplaceUnderScoreTest 
     void 목표를_생성한다() {
         //given
         final Member member = memberRepository.save(
-            Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname")));
+                Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname")));
         final GoalCreateRequest request = new GoalCreateRequest(
-            GoalType.REST_AND_REFRESH.name(),
-            "목표명",
-            10000,
-            LocalDate.now().minusDays(1),
-            LocalDate.now()
+                GoalType.REST_AND_REFRESH.name(),
+                "목표명",
+                10000,
+                LocalDate.now().minusDays(1),
+                LocalDate.now()
         );
 
         //when
@@ -71,14 +70,14 @@ class GoalServiceTest extends UsingDataJpaTest implements ReplaceUnderScoreTest 
     void 목표를_수정한다() {
         //given
         final Member member = memberRepository.save(
-            Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname")));
+                Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname")));
         final Goal goal = saveGoalWithMemberId(member.getId());
         final GoalUpdateRequest request = new GoalUpdateRequest(
-            GoalType.REST_AND_REFRESH.name(),
-            "목표명",
-            10000,
-            LocalDate.now().minusDays(1),
-            LocalDate.now()
+                GoalType.REST_AND_REFRESH.name(),
+                "목표명",
+                10000,
+                LocalDate.now().minusDays(1),
+                LocalDate.now()
         );
 
         //when
@@ -86,15 +85,15 @@ class GoalServiceTest extends UsingDataJpaTest implements ReplaceUnderScoreTest 
 
         //then
         final Goal updatedGoal = goalRepository.findById(goal.getId())
-            .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(IllegalArgumentException::new);
         assertSoftly(
-            softly -> {
-                softly.assertThat(updatedGoal.getAmount()).isEqualTo(request.getAmount());
-                softly.assertThat(updatedGoal.getType().name()).isEqualTo(request.getType());
-                softly.assertThat(updatedGoal.getName()).isEqualTo(request.getName());
-                softly.assertThat(updatedGoal.getStartDate()).isEqualTo(request.getStartDate());
-                softly.assertThat(updatedGoal.getEndDate()).isEqualTo(request.getEndDate());
-            }
+                softly -> {
+                    softly.assertThat(updatedGoal.getAmount()).isEqualTo(request.getAmount());
+                    softly.assertThat(updatedGoal.getType().name()).isEqualTo(request.getType());
+                    softly.assertThat(updatedGoal.getName()).isEqualTo(request.getName());
+                    softly.assertThat(updatedGoal.getStartDate()).isEqualTo(request.getStartDate());
+                    softly.assertThat(updatedGoal.getEndDate()).isEqualTo(request.getEndDate());
+                }
         );
     }
 
@@ -102,7 +101,7 @@ class GoalServiceTest extends UsingDataJpaTest implements ReplaceUnderScoreTest 
     void 목표를_삭제한다() {
         //given
         final Member member = memberRepository.save(
-            Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname")));
+                Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname")));
         final Goal goal = saveGoalWithMemberId(member.getId());
 
         //when
@@ -117,7 +116,7 @@ class GoalServiceTest extends UsingDataJpaTest implements ReplaceUnderScoreTest 
     void 목표를_완료한다() {
         //given
         final Member member = memberRepository.save(
-            Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname")));
+                Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname")));
         final Goal goal = saveGoalWithMemberId(member.getId());
 
         //when
@@ -125,7 +124,7 @@ class GoalServiceTest extends UsingDataJpaTest implements ReplaceUnderScoreTest 
 
         //then
         final Goal updatedGoal = goalRepository.findById(goal.getId())
-            .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(IllegalArgumentException::new);
         assertThat(updatedGoal.getStatus()).isEqualTo(GoalStatus.FINISH);
     }
 
@@ -137,8 +136,8 @@ class GoalServiceTest extends UsingDataJpaTest implements ReplaceUnderScoreTest 
 
         //then
         final List<GoalTypeResponse> expected = Arrays.stream(GoalType.values())
-            .map(goalType -> new GoalTypeResponse(goalType.getName(), goalType.getRecommendNames()))
-            .toList();
+                .map(goalType -> new GoalTypeResponse(goalType.getName(), goalType.getRecommendNames()))
+                .toList();
         assertThat(responses).usingRecursiveComparison().isEqualTo(expected);
     }
 
@@ -147,24 +146,24 @@ class GoalServiceTest extends UsingDataJpaTest implements ReplaceUnderScoreTest 
         //given
         final long notExistMemberId = 1L;
         final GoalCreateRequest request = new GoalCreateRequest(
-            GoalType.REST_AND_REFRESH.name(),
-            "목표명",
-            10000,
-            LocalDate.now().minusDays(1),
-            LocalDate.now()
+                GoalType.REST_AND_REFRESH.name(),
+                "목표명",
+                10000,
+                LocalDate.now().minusDays(1),
+                LocalDate.now()
         );
 
         //when
         //then
         assertThatThrownBy(() -> goalService.createGoal(notExistMemberId, request))
-            .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     void 회원이_진행중인_목표들을_조회한다() {
         //given
         final Member member = memberRepository.save(
-            Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname")));
+                Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname")));
         final LocalDate requestDate = LocalDate.now();
         final Goal goal1 = saveGoalWithMemberId(member.getId(), requestDate, requestDate.plusDays(100));
         final Goal goal2 = saveGoalWithMemberId(member.getId(), requestDate, requestDate.plusYears(2));
@@ -175,23 +174,23 @@ class GoalServiceTest extends UsingDataJpaTest implements ReplaceUnderScoreTest 
 
         //then
         assertSoftly(
-            softly -> {
-                softly.assertThat(progressGoals).hasSize(2);
+                softly -> {
+                    softly.assertThat(progressGoals).hasSize(2);
 
-                final GoalResponse firstGoalResponse = progressGoals.get(0);
-                softly.assertThat(firstGoalResponse.getName()).isEqualTo(goal1.getName());
-                softly.assertThat(firstGoalResponse.getAmount()).isEqualTo(goal1.getAmount());
-                softly.assertThat(firstGoalResponse.getDurationType()).isEqualTo(GoalDurationType.SHORT.name());
-                softly.assertThat(firstGoalResponse.getDayLeft()).isEqualTo(100);
-                softly.assertThat(firstGoalResponse.getMonthLeft()).isEqualTo(goal1.getMonthLeft(requestDate));
+                    final GoalResponse firstGoalResponse = progressGoals.get(0);
+                    softly.assertThat(firstGoalResponse.getName()).isEqualTo(goal1.getName());
+                    softly.assertThat(firstGoalResponse.getAmount()).isEqualTo(goal1.getAmount());
+                    softly.assertThat(firstGoalResponse.getDurationType()).isEqualTo(GoalDurationType.SHORT.name());
+                    softly.assertThat(firstGoalResponse.getDayLeft()).isEqualTo(100);
+                    softly.assertThat(firstGoalResponse.getMonthLeft()).isEqualTo(goal1.getMonthLeft(requestDate));
 
-                final GoalResponse secondGoalResponse = progressGoals.get(1);
-                softly.assertThat(secondGoalResponse.getName()).isEqualTo(goal2.getName());
-                softly.assertThat(secondGoalResponse.getAmount()).isEqualTo(goal2.getAmount());
-                softly.assertThat(secondGoalResponse.getDurationType()).isEqualTo(GoalDurationType.MIDDLE.name());
-                softly.assertThat(secondGoalResponse.getDayLeft()).isEqualTo(goal2.getDayLeft(requestDate));
-                softly.assertThat(secondGoalResponse.getMonthLeft()).isEqualTo(goal2.getMonthLeft(requestDate));
-            }
+                    final GoalResponse secondGoalResponse = progressGoals.get(1);
+                    softly.assertThat(secondGoalResponse.getName()).isEqualTo(goal2.getName());
+                    softly.assertThat(secondGoalResponse.getAmount()).isEqualTo(goal2.getAmount());
+                    softly.assertThat(secondGoalResponse.getDurationType()).isEqualTo(GoalDurationType.MIDDLE.name());
+                    softly.assertThat(secondGoalResponse.getDayLeft()).isEqualTo(goal2.getDayLeft(requestDate));
+                    softly.assertThat(secondGoalResponse.getMonthLeft()).isEqualTo(goal2.getMonthLeft(requestDate));
+                }
         );
     }
 
@@ -199,7 +198,7 @@ class GoalServiceTest extends UsingDataJpaTest implements ReplaceUnderScoreTest 
     void 회원의_완료된_목표들을_조회한다() {
         //given
         final Member member = memberRepository.save(
-            Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname")));
+                Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname")));
         final LocalDate requestDate = LocalDate.now();
         final Goal goal1 = saveGoalWithMemberId(member.getId(), requestDate, requestDate.plusDays(100));
         final Goal goal2 = saveGoalWithMemberId(member.getId(), requestDate, requestDate.plusYears(2));
@@ -211,18 +210,18 @@ class GoalServiceTest extends UsingDataJpaTest implements ReplaceUnderScoreTest 
 
         //then
         assertSoftly(
-            softly -> {
-                softly.assertThat(progressGoals).hasSize(1);
+                softly -> {
+                    softly.assertThat(progressGoals).hasSize(1);
 
-                final GoalResponse firstGoalResponse = progressGoals.get(0);
-                softly.assertThat(firstGoalResponse.getName()).isEqualTo(goal1.getName());
-                softly.assertThat(firstGoalResponse.getAmount()).isEqualTo(goal1.getAmount());
-                softly.assertThat(firstGoalResponse.getDurationType()).isEqualTo(GoalDurationType.SHORT.name());
-                softly.assertThat(firstGoalResponse.getDayLeft()).isEqualTo(0);
-                softly.assertThat(firstGoalResponse.getMonthLeft()).isEqualTo(0);
-                softly.assertThat(firstGoalResponse.getStartDate()).isEqualTo(goal1.getStartDate());
-                softly.assertThat(firstGoalResponse.getEndDate()).isEqualTo(goal1.getEndDate());
-            }
+                    final GoalResponse firstGoalResponse = progressGoals.get(0);
+                    softly.assertThat(firstGoalResponse.getName()).isEqualTo(goal1.getName());
+                    softly.assertThat(firstGoalResponse.getAmount()).isEqualTo(goal1.getAmount());
+                    softly.assertThat(firstGoalResponse.getDurationType()).isEqualTo(GoalDurationType.SHORT.name());
+                    softly.assertThat(firstGoalResponse.getDayLeft()).isEqualTo(0);
+                    softly.assertThat(firstGoalResponse.getMonthLeft()).isEqualTo(0);
+                    softly.assertThat(firstGoalResponse.getStartDate()).isEqualTo(goal1.getStartDate());
+                    softly.assertThat(firstGoalResponse.getEndDate()).isEqualTo(goal1.getEndDate());
+                }
         );
     }
 
@@ -230,7 +229,7 @@ class GoalServiceTest extends UsingDataJpaTest implements ReplaceUnderScoreTest 
     void 회원이_등록한_목표들의_Id를_조회한다() {
         //given
         final Member member = memberRepository.save(
-            Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname")));
+                Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname")));
         final Goal goal1 = saveGoalWithMemberId(member.getId());
         final Goal goal2 = saveGoalWithMemberId(member.getId());
         final Goal goal3 = saveGoalWithMemberId(member.getId());
@@ -240,8 +239,8 @@ class GoalServiceTest extends UsingDataJpaTest implements ReplaceUnderScoreTest 
 
         //then
         final List<GoalIdResponse> goalIds = Stream.of(goal1, goal2, goal3)
-            .map(goal -> new GoalIdResponse(goal.getId()))
-            .toList();
+                .map(goal -> new GoalIdResponse(goal.getId()))
+                .toList();
 
         assertThat(memberGoalIds).usingRecursiveComparison().isEqualTo(goalIds);
     }

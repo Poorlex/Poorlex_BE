@@ -1,5 +1,7 @@
 package com.poorlex.poorlex.weeklybudget.domain;
 
+import com.poorlex.poorlex.exception.ApiException;
+import com.poorlex.poorlex.exception.ExceptionTag;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import lombok.AccessLevel;
@@ -21,9 +23,11 @@ public class WeeklyBudgetAmount {
 
     private void validate(final Long value) {
         if (MINIMUM_PRICE > value || value > MAXIMUM_PRICE) {
-            throw new IllegalArgumentException(
-                String.format("주간 예산은 %d원 이상 %d원 이하여야 합니다. ( 입력 금액 : %d )", MINIMUM_PRICE, MAXIMUM_PRICE, value)
-            );
+            final String errorMessage = String.format("주간 예산은 %d원 이상 %d원 이하여야 합니다. ( 입력 금액 : %d )",
+                                                      MINIMUM_PRICE,
+                                                      MAXIMUM_PRICE,
+                                                      value);
+            throw new ApiException(ExceptionTag.WEEKLY_BUDGET_AMOUNT, errorMessage);
         }
     }
 

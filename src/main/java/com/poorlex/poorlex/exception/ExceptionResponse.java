@@ -5,13 +5,13 @@ public class ExceptionResponse {
     private final String tag;
     private final String message;
 
-    public ExceptionResponse(final ExceptionTag tag, final String message) {
-        this.tag = tag.getValue();
+    public ExceptionResponse(final String tag, final String message) {
+        this.tag = tag;
         this.message = message;
     }
 
     public static ExceptionResponse from(final ApiException apiException) {
-        return new ExceptionResponse(apiException.getTag(), apiException.getMessage());
+        return new ExceptionResponse(apiException.getTag().getValue(), apiException.getMessage());
     }
 
     public static ExceptionResponse from(final Exception exception) {

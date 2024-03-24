@@ -1,9 +1,9 @@
 package com.poorlex.poorlex.expenditure.domain;
 
+import com.poorlex.poorlex.exception.ApiException;
+import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-
-import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -21,7 +21,7 @@ class ExpenditureDescriptionTest implements ReplaceUnderScoreTest {
         //when
         //then
         assertThatThrownBy(() -> new ExpenditureDescription(introduction))
-            .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(ApiException.class);
     }
 
     @Test
@@ -44,7 +44,7 @@ class ExpenditureDescriptionTest implements ReplaceUnderScoreTest {
         //when
         //then
         assertThatThrownBy(() -> new ExpenditureDescription(description))
-            .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(ApiException.class);
     }
 
     @Test

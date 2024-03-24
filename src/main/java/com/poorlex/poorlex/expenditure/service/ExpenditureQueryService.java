@@ -37,12 +37,12 @@ public class ExpenditureQueryService {
 
 
     public MemberWeeklyTotalExpenditureResponse findMemberCurrentWeeklyTotalExpenditure(final Long memberId) {
-        return findMemberWeeklyTotalExpenditure(memberId, LocalDateTime.now());
+        return findMemberWeeklyTotalExpenditure(memberId, LocalDate.now());
     }
 
     public MemberWeeklyTotalExpenditureResponse findMemberWeeklyTotalExpenditure(final Long memberId,
-                                                                                 final LocalDateTime dateTime) {
-        final WeeklyExpenditureDuration duration = WeeklyExpenditureDuration.from(dateTime);
+                                                                                 final LocalDate date) {
+        final WeeklyExpenditureDuration duration = WeeklyExpenditureDuration.from(date);
         final int sumExpenditure = expenditureRepository.findSumExpenditureByMemberIdAndBetween(
                 memberId,
                 LocalDate.from(duration.getStart()),

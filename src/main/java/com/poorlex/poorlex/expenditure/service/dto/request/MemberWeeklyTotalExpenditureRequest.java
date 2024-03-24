@@ -1,6 +1,6 @@
 package com.poorlex.poorlex.expenditure.service.dto.request;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,9 +9,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MemberWeeklyTotalExpenditureRequest {
 
-    private LocalDateTime dateTime;
+    private LocalDate date;
 
-    public MemberWeeklyTotalExpenditureRequest(final LocalDateTime dateTime) {
-        this.dateTime = dateTime;
+    public MemberWeeklyTotalExpenditureRequest(final LocalDate date) {
+        this.date = date;
     }
 }

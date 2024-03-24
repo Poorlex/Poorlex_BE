@@ -1,6 +1,10 @@
 package com.poorlex.poorlex.alarm.battlealarm.service;
 
-import com.poorlex.poorlex.alarm.battlealarm.domain.*;
+import com.poorlex.poorlex.alarm.battlealarm.domain.BattleAlarm;
+import com.poorlex.poorlex.alarm.battlealarm.domain.BattleAlarmRepository;
+import com.poorlex.poorlex.alarm.battlealarm.domain.BattleAlarmType;
+import com.poorlex.poorlex.alarm.battlealarm.domain.BattleAlarmViewHistory;
+import com.poorlex.poorlex.alarm.battlealarm.domain.BattleAlarmViewHistoryRepository;
 import com.poorlex.poorlex.alarm.battlealarm.service.dto.request.BattleAlarmRequest;
 import com.poorlex.poorlex.alarm.battlealarm.service.dto.response.AbstractBattleAlarmResponse;
 import com.poorlex.poorlex.alarm.battlealarm.service.dto.response.BattleAlarmResponse;
@@ -22,22 +26,26 @@ import com.poorlex.poorlex.participate.domain.BattleParticipant;
 import com.poorlex.poorlex.participate.domain.BattleParticipantRepository;
 import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
 import com.poorlex.poorlex.support.db.UsingDataJpaTest;
-import com.poorlex.poorlex.voting.vote.domain.*;
+import com.poorlex.poorlex.voting.vote.domain.Vote;
+import com.poorlex.poorlex.voting.vote.domain.VoteAmount;
+import com.poorlex.poorlex.voting.vote.domain.VoteDuration;
+import com.poorlex.poorlex.voting.vote.domain.VoteDurationType;
+import com.poorlex.poorlex.voting.vote.domain.VoteName;
+import com.poorlex.poorlex.voting.vote.domain.VoteRepository;
+import com.poorlex.poorlex.voting.vote.domain.VoteStatus;
 import com.poorlex.poorlex.voting.vote.service.VoteService;
 import com.poorlex.poorlex.voting.vote.service.dto.response.VoteResponse;
 import com.poorlex.poorlex.voting.votingpaper.domain.VotingPaperRepository;
 import com.poorlex.poorlex.voting.votingpaper.service.VotingPaperService;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-
 import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 class BattleAlarmServiceTest extends UsingDataJpaTest implements ReplaceUnderScoreTest {
 
@@ -70,11 +78,11 @@ class BattleAlarmServiceTest extends UsingDataJpaTest implements ReplaceUnderSco
     @BeforeEach
     void setUp() {
         this.battleAlarmService = new BattleAlarmService(
-            battleAlarmRepository,
-            new VoteService(voteRepository, battleParticipantRepository),
-            new VotingPaperService(voteRepository, votingPaperRepository, battleParticipantRepository),
-            new AlarmReactionService(alarmReactionRepository, battleAlarmRepository),
-            battleAlarmViewHistoryRepository);
+                battleAlarmRepository,
+                new VoteService(voteRepository, battleParticipantRepository),
+                new VotingPaperService(voteRepository, votingPaperRepository, battleParticipantRepository),
+                new AlarmReactionService(alarmReactionRepository, battleAlarmRepository),
+                battleAlarmViewHistoryRepository);
     }
 
     @Test
@@ -86,7 +94,7 @@ class BattleAlarmServiceTest extends UsingDataJpaTest implements ReplaceUnderSco
 
         //when
         final List<AbstractBattleAlarmResponse> battleAlarms = battleAlarmService.findBattleAlarms(battleId, memberId,
-            request);
+                                                                                                   request);
 
         //then
         assertThat(battleAlarms).isEmpty();
@@ -107,24 +115,25 @@ class BattleAlarmServiceTest extends UsingDataJpaTest implements ReplaceUnderSco
 
         //when
         final List<AbstractBattleAlarmResponse> battleAlarms = battleAlarmService.findBattleAlarms(battleId,
-            member.getId(), request);
+                                                                                                   member.getId(),
+                                                                                                   request);
 
         //then
         final List<AbstractBattleAlarmResponse> expectedResponse = new ArrayList<>(List.of(
-            BattleAlarmResponse.from(battleAlarm1),
-            BattleAlarmResponse.from(battleAlarm2),
-            BattleAlarmResponse.from(battleAlarm3),
-            AlarmReactionResponse.from(alarmReaction),
-            new VoteResponse(
-                vote1.getId(),
-                member.getNickname(),
-                vote1.getName(), vote1.getStatus().name(), vote1.getAmount(), 0, 0, vote1.getStart()
-            ),
-            new VoteResponse(
-                vote2.getId(),
-                member.getNickname(),
-                vote2.getName(), vote2.getStatus().name(), vote2.getAmount(), 0, 0, vote2.getStart()
-            )
+                BattleAlarmResponse.from(battleAlarm1),
+                BattleAlarmResponse.from(battleAlarm2),
+                BattleAlarmResponse.from(battleAlarm3),
+                AlarmReactionResponse.from(alarmReaction),
+                new VoteResponse(
+                        vote1.getId(),
+                        member.getNickname(),
+                        vote1.getName(), vote1.getStatus().name(), vote1.getAmount(), 0, 0, vote1.getStart()
+                ),
+                new VoteResponse(
+                        vote2.getId(),
+                        member.getNickname(),
+                        vote2.getName(), vote2.getStatus().name(), vote2.getAmount(), 0, 0, vote2.getStart()
+                )
         ));
         expectedResponse.sort(Comparator.comparing(AbstractBattleAlarmResponse::getCreatedAt));
 
@@ -141,7 +150,7 @@ class BattleAlarmServiceTest extends UsingDataJpaTest implements ReplaceUnderSco
 
         //when
         final UncheckedBattleAlarmCountResponse response =
-            battleAlarmService.getBattleParticipantUncheckedAlarmCount(battle.getId(), member.getId());
+                battleAlarmService.getBattleParticipantUncheckedAlarmCount(battle.getId(), member.getId());
 
         //then
         assertThat(response.getCount()).isOne();
@@ -159,7 +168,7 @@ class BattleAlarmServiceTest extends UsingDataJpaTest implements ReplaceUnderSco
 
         //when
         final UncheckedBattleAlarmCountResponse response =
-            battleAlarmService.getBattleParticipantUncheckedAlarmCount(battle.getId(), member.getId());
+                battleAlarmService.getBattleParticipantUncheckedAlarmCount(battle.getId(), member.getId());
 
         //then
         assertThat(response.getCount()).isOne();
@@ -174,7 +183,7 @@ class BattleAlarmServiceTest extends UsingDataJpaTest implements ReplaceUnderSco
 
         //when
         final UncheckedBattleAlarmCountResponse response =
-            battleAlarmService.getBattleParticipantUncheckedAlarmCount(battle.getId(), member.getId());
+                battleAlarmService.getBattleParticipantUncheckedAlarmCount(battle.getId(), member.getId());
 
         //then
         assertThat(response.getCount()).isZero();
@@ -182,11 +191,11 @@ class BattleAlarmServiceTest extends UsingDataJpaTest implements ReplaceUnderSco
 
     private void viewAlarm(final Battle battle, final Member member) {
         battleAlarmViewHistoryRepository.save(
-            BattleAlarmViewHistory.withoutId(
-                battle.getId(),
-                member.getId(),
-                LocalDateTime.now().truncatedTo(ChronoUnit.MICROS)
-            )
+                BattleAlarmViewHistory.withoutId(
+                        battle.getId(),
+                        member.getId(),
+                        LocalDateTime.now().truncatedTo(ChronoUnit.MICROS)
+                )
         );
     }
 
@@ -200,7 +209,7 @@ class BattleAlarmServiceTest extends UsingDataJpaTest implements ReplaceUnderSco
 
     private AlarmReaction createAlarmReaction(final Long alarmId, final Long memberId) {
         return alarmReactionRepository.save(
-            AlarmReaction.praiseWithoutId(alarmId, memberId, new AlarmReactionContent("칭찬"))
+                AlarmReaction.praiseWithoutId(alarmId, memberId, new AlarmReactionContent("칭찬"))
         );
     }
 
@@ -211,14 +220,14 @@ class BattleAlarmServiceTest extends UsingDataJpaTest implements ReplaceUnderSco
 
     private Vote createVote(final Long battleId, final Long memberId) {
         return voteRepository.save(
-            Vote.withoutId(
-                battleId,
-                memberId,
-                new VoteAmount(1000),
-                new VoteDuration(LocalDateTime.now(), VoteDurationType.TEN_MINUTE),
-                new VoteName("초코우유"),
-                VoteStatus.PROGRESS
-            )
+                Vote.withoutId(
+                        battleId,
+                        memberId,
+                        new VoteAmount(1000),
+                        new VoteDuration(LocalDateTime.now(), VoteDurationType.TEN_MINUTE),
+                        new VoteName("초코우유"),
+                        VoteStatus.PROGRESS
+                )
         );
     }
 

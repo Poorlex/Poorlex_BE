@@ -1,9 +1,9 @@
 package com.poorlex.poorlex.point.domain;
 
+import com.poorlex.poorlex.exception.ApiException;
+import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-
-import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
 import org.junit.jupiter.api.Test;
 
 class PointTest implements ReplaceUnderScoreTest {
@@ -16,7 +16,7 @@ class PointTest implements ReplaceUnderScoreTest {
         //when
         //then
         assertThatThrownBy(() -> new Point(pointValue))
-            .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(ApiException.class);
     }
 
     @Test

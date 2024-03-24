@@ -1,5 +1,7 @@
 package com.poorlex.poorlex.battle.domain;
 
+import com.poorlex.poorlex.exception.ApiException;
+import com.poorlex.poorlex.exception.ExceptionTag;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import lombok.AccessLevel;
@@ -20,7 +22,9 @@ public class BattleImageUrl {
 
     private void validate(final String value) {
         if (!StringUtils.hasText(value)) {
-            throw new IllegalArgumentException("배틀 이미지 URL 이 비어있습니다.");
+            final String errorMessage = "배틀 이미지 URL 이 비어있습니다.";
+            throw new ApiException(ExceptionTag.BATTLE_IMAGE, errorMessage);
+
         }
     }
 

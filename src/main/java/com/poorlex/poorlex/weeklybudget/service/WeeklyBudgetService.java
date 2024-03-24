@@ -1,5 +1,7 @@
 package com.poorlex.poorlex.weeklybudget.service;
 
+import com.poorlex.poorlex.exception.ApiException;
+import com.poorlex.poorlex.exception.ExceptionTag;
 import com.poorlex.poorlex.expenditure.domain.ExpenditureRepository;
 import com.poorlex.poorlex.member.domain.MemberRepository;
 import com.poorlex.poorlex.weeklybudget.domain.WeeklyBudget;
@@ -9,7 +11,6 @@ import com.poorlex.poorlex.weeklybudget.domain.WeeklyBudgetRepository;
 import com.poorlex.poorlex.weeklybudget.service.dto.response.WeeklyBudgetLeftResponse;
 import com.poorlex.poorlex.weeklybudget.service.dto.response.WeeklyBudgetResponse;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -33,26 +34,27 @@ public class WeeklyBudgetService {
         weeklyBudgetRepository.save(weeklyBudget);
     }
 
-    public WeeklyBudgetResponse findCurrentBudgetByMemberIdAndDate(final Long memberId, final LocalDateTime date) {
+    public WeeklyBudgetResponse findCurrentBudgetByMemberIdAndDate(final Long memberId, final LocalDate date) {
         validateMemberId(memberId);
 
         return weeklyBudgetRepository.findByMemberIdAndCurrentDate(memberId, date)
-            .map(findWeeklyBudget -> WeeklyBudgetResponse.exist(findWeeklyBudget, findWeeklyBudget.getDDay(date)))
-            .orElseGet(WeeklyBudgetResponse::empty);
+                .map(findWeeklyBudget -> WeeklyBudgetResponse.exist(findWeeklyBudget, findWeeklyBudget.getDDay(date)))
+                .orElseGet(WeeklyBudgetResponse::empty);
     }
 
     private void validateMemberId(final Long memberId) {
         if (!memberRepository.existsById(memberId)) {
-            throw new IllegalArgumentException("Id에 해당하는 멤버가 없습니다.");
+            final String errorMessage = String.format("Id 에 해당하는 회원이 존재하지 않습니다. ( ID : %d )", memberId);
+            throw new ApiException(ExceptionTag.MEMBER_FIND, errorMessage);
         }
     }
 
     public WeeklyBudgetLeftResponse findCurrentBudgetLeftByMemberIdAndDate(final Long memberId,
-                                                                           final LocalDateTime date) {
+                                                                           final LocalDate date) {
         validateMemberId(memberId);
 
         final WeeklyBudget weeklyBudget = weeklyBudgetRepository.findByMemberIdAndCurrentDate(memberId, date)
-            .orElse(null);
+                .orElse(null);
         if (Objects.isNull(weeklyBudget)) {
             return WeeklyBudgetLeftResponse.withNullWeeklyBudget();
         }

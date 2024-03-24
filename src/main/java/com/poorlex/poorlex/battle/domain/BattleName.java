@@ -1,5 +1,7 @@
 package com.poorlex.poorlex.battle.domain;
 
+import com.poorlex.poorlex.exception.ApiException;
+import com.poorlex.poorlex.exception.ExceptionTag;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import lombok.AccessLevel;
@@ -22,16 +24,19 @@ public class BattleName {
 
     private void validate(final String value) {
         if (!StringUtils.hasText(value)) {
-            throw new IllegalArgumentException("배틀 명이 비어있습니다.");
+            final String errorMessage = "배틀 명이 비어있습니다.";
+            throw new ApiException(ExceptionTag.BATTLE_NAME, errorMessage);
         }
         validateLength(value.length());
     }
 
     private void validateLength(final int length) {
         if (MINIMUM_NAME_LENGTH > length || length > MAXIMUM_NAME_LENGTH) {
-            throw new IllegalArgumentException(
-                    String.format("배틀명은 %d자 이상 %d자 이하여야 합니다. ( 입력한 길이 : %d )", MINIMUM_NAME_LENGTH, MAXIMUM_NAME_LENGTH, length)
-            );
+            final String errorMessage = String.format("배틀명은 %d자 이상 %d자 이하여야 합니다. ( 입력한 길이 : %d )",
+                                                      MINIMUM_NAME_LENGTH,
+                                                      MAXIMUM_NAME_LENGTH,
+                                                      length);
+            throw new ApiException(ExceptionTag.BATTLE_NAME, errorMessage);
         }
     }
 

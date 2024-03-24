@@ -21,8 +21,6 @@ import com.poorlex.poorlex.support.IntegrationTest;
 import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
 import com.poorlex.poorlex.weeklybudget.domain.WeeklyBudgetDuration;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
@@ -59,15 +57,15 @@ class ExpenditureQueryServiceTest extends IntegrationTest implements ReplaceUnde
     void 멤버의_기간중의_지출의_총합을_구한다_지출이_있을_때() {
         //given
         final Member member = createMember("oauthId");
-        final LocalDateTime dateTime = LocalDateTime.now().truncatedTo(ChronoUnit.MICROS);
-        final WeeklyExpenditureDuration weeklyExpenditureDuration = WeeklyExpenditureDuration.from(dateTime);
+        final LocalDate date = LocalDate.now();
+        final WeeklyExpenditureDuration weeklyExpenditureDuration = WeeklyExpenditureDuration.from(date);
 
         createExpenditureWithMainImage(1000, member.getId(), LocalDate.from(weeklyExpenditureDuration.getStart()));
         createExpenditureWithMainImage(2000, member.getId(), LocalDate.from(weeklyExpenditureDuration.getStart()));
 
         //when
         final MemberWeeklyTotalExpenditureResponse response =
-                expenditureQueryService.findMemberWeeklyTotalExpenditure(member.getId(), dateTime);
+                expenditureQueryService.findMemberWeeklyTotalExpenditure(member.getId(), date);
 
         //then
         assertThat(response.getAmount()).isEqualTo(3000);

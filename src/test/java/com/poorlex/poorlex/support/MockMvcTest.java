@@ -1,8 +1,5 @@
 package com.poorlex.poorlex.support;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.poorlex.poorlex.config.auth.argumentresolver.MemberArgumentResolver;
 import com.poorlex.poorlex.config.auth.argumentresolver.MemberInfo;
@@ -10,6 +7,8 @@ import com.poorlex.poorlex.config.auth.interceptor.TokenInterceptor;
 import com.poorlex.poorlex.security.SecurityConfig;
 import com.poorlex.poorlex.support.security.MockUserSecurityTest;
 import org.junit.jupiter.api.extension.ExtendWith;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -20,7 +19,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(excludeFilters = {
-    @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = SecurityConfig.class)
+        @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = SecurityConfig.class)
 })
 @AutoConfigureRestDocs
 public abstract class MockMvcTest implements MockUserSecurityTest {

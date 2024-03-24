@@ -4,6 +4,7 @@ import com.poorlex.poorlex.battle.domain.Battle;
 import com.poorlex.poorlex.battle.domain.BattleRepository;
 import com.poorlex.poorlex.battle.domain.BattleStatus;
 import com.poorlex.poorlex.battle.fixture.BattleFixture;
+import com.poorlex.poorlex.exception.ApiException;
 import com.poorlex.poorlex.member.domain.Member;
 import com.poorlex.poorlex.member.domain.MemberNickname;
 import com.poorlex.poorlex.member.domain.MemberRepository;
@@ -12,18 +13,16 @@ import com.poorlex.poorlex.participate.domain.BattleParticipant;
 import com.poorlex.poorlex.participate.domain.BattleParticipantRepository;
 import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
 import com.poorlex.poorlex.support.db.UsingDataJpaTest;
+import java.util.Optional;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 @DisplayName("배틀 참가 서비스 테스트")
 class BattleParticipantServiceTest extends UsingDataJpaTest implements ReplaceUnderScoreTest {
@@ -42,9 +41,9 @@ class BattleParticipantServiceTest extends UsingDataJpaTest implements ReplaceUn
     @BeforeEach
     void setUp() {
         battleParticipantService = new BattleParticipantService(
-            memberRepository,
-            battleRepository,
-            battleParticipantRepository
+                memberRepository,
+                battleRepository,
+                battleParticipantRepository
         );
     }
 
@@ -68,7 +67,7 @@ class BattleParticipantServiceTest extends UsingDataJpaTest implements ReplaceUn
         //when
         //then
         assertThatThrownBy(() -> battleParticipantService.participate(notExistBattleId, memberId))
-            .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(ApiException.class);
     }
 
     @Test
@@ -88,7 +87,7 @@ class BattleParticipantServiceTest extends UsingDataJpaTest implements ReplaceUn
         //when
         //then
         assertThatThrownBy(() -> battleParticipantService.participate(battle4.getId(), member.getId()))
-            .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(ApiException.class);
     }
 
     @ParameterizedTest(name = "배틀의 상태가 {0}일 때")
@@ -102,7 +101,7 @@ class BattleParticipantServiceTest extends UsingDataJpaTest implements ReplaceUn
         //when
         //then
         assertThatThrownBy(() -> battleParticipantService.participate(battleId, memberId))
-            .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(ApiException.class);
     }
 
     @ParameterizedTest(name = "배틀의 상태가 {0} 일 때")
@@ -118,8 +117,8 @@ class BattleParticipantServiceTest extends UsingDataJpaTest implements ReplaceUn
 
         //then
         final Optional<BattleParticipant> removedBattleParticipant = battleParticipantRepository.findByBattleIdAndMemberId(
-            battle.getId(),
-            member.getId()
+                battle.getId(),
+                member.getId()
         );
         assertThat(removedBattleParticipant).isEmpty();
     }
@@ -135,7 +134,7 @@ class BattleParticipantServiceTest extends UsingDataJpaTest implements ReplaceUn
         //when
         //then
         assertThatThrownBy(() -> battleParticipantService.withdraw(battle.getId(), member.getId()))
-            .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(ApiException.class);
 
     }
 
@@ -150,18 +149,18 @@ class BattleParticipantServiceTest extends UsingDataJpaTest implements ReplaceUn
         //when
         //then
         assertThatThrownBy(() -> battleParticipantService.withdraw(battle.getId(), member.getId()))
-            .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(ApiException.class);
     }
 
     private Member createMember() {
         return memberRepository.save(
-            Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname")));
+                Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname")));
     }
 
     private Battle createBattleWithStatus(final BattleStatus status) {
         final Battle battle = BattleFixture.initialBattleBuilder()
-            .status(status)
-            .build();
+                .status(status)
+                .build();
         return battleRepository.save(battle);
     }
 

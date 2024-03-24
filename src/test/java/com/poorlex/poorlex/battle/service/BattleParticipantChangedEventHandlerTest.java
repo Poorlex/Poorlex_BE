@@ -1,7 +1,5 @@
 package com.poorlex.poorlex.battle.service;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import com.poorlex.poorlex.battle.domain.Battle;
 import com.poorlex.poorlex.battle.domain.BattleParticipantSize;
 import com.poorlex.poorlex.battle.domain.BattleRepository;
@@ -16,6 +14,7 @@ import com.poorlex.poorlex.participate.domain.BattleParticipantRepository;
 import com.poorlex.poorlex.participate.service.event.BattleParticipantAddedEvent;
 import com.poorlex.poorlex.support.IntegrationTest;
 import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
+import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -47,21 +46,21 @@ class BattleParticipantChangedEventHandlerTest extends IntegrationTest implement
 
         //then
         final BattleStatus battleStatus = battleRepository.findById(battle.getId())
-            .orElseThrow(IllegalArgumentException::new)
-            .getStatus();
+                .orElseThrow(IllegalArgumentException::new)
+                .getStatus();
 
         assertThat(battleStatus).isEqualTo(BattleStatus.RECRUITING_FINISHED);
     }
 
     public Member createMember(final String oauthId) {
         return memberRepository.save(
-            Member.withoutId(Oauth2RegistrationId.APPLE, oauthId, new MemberNickname("nickname")));
+                Member.withoutId(Oauth2RegistrationId.APPLE, oauthId, new MemberNickname("nickname")));
     }
 
     public Battle createBattleWithMaxSize(final int count) {
         final Battle battle = BattleFixture.initialBattleBuilder()
-            .battleParticipantSize(new BattleParticipantSize(count))
-            .build();
+                .battleParticipantSize(new BattleParticipantSize(count))
+                .build();
         return battleRepository.save(battle);
     }
 

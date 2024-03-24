@@ -1,7 +1,5 @@
 package com.poorlex.poorlex.voting.vote.service;
 
-import static org.assertj.core.api.SoftAssertions.assertSoftly;
-
 import com.poorlex.poorlex.participate.domain.BattleParticipantRepository;
 import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
 import com.poorlex.poorlex.support.db.UsingDataJpaTest;
@@ -15,6 +13,7 @@ import com.poorlex.poorlex.voting.vote.domain.VoteStatus;
 import com.poorlex.poorlex.voting.vote.service.dto.response.VoteResponse;
 import java.time.LocalDateTime;
 import java.util.List;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,22 +48,22 @@ class VoteServiceTest extends UsingDataJpaTest implements ReplaceUnderScoreTest 
 
         //then
         assertSoftly(
-            softly -> {
-                softly.assertThat(battleVotes).hasSize(3);
-                softly.assertThat(battleVotes.get(0).getVoteName()).isEqualTo(vote1.getName());
-                softly.assertThat(battleVotes.get(1).getVoteName()).isEqualTo(vote2.getName());
-                softly.assertThat(battleVotes.get(2).getVoteName()).isEqualTo(vote3.getName());
-            }
+                softly -> {
+                    softly.assertThat(battleVotes).hasSize(3);
+                    softly.assertThat(battleVotes.get(0).getVoteName()).isEqualTo(vote1.getName());
+                    softly.assertThat(battleVotes.get(1).getVoteName()).isEqualTo(vote2.getName());
+                    softly.assertThat(battleVotes.get(2).getVoteName()).isEqualTo(vote3.getName());
+                }
         );
     }
 
     private Vote createVote(final Long battleId, final Long memberId, final String voteName) {
         return voteRepository.save(Vote.withoutId(battleId,
-            memberId,
-            new VoteAmount(1000L),
-            new VoteDuration(LocalDateTime.now(), VoteDurationType.SIXTY_MINUTE),
-            new VoteName(voteName),
-            VoteStatus.PROGRESS)
+                                                  memberId,
+                                                  new VoteAmount(1000L),
+                                                  new VoteDuration(LocalDateTime.now(), VoteDurationType.SIXTY_MINUTE),
+                                                  new VoteName(voteName),
+                                                  VoteStatus.PROGRESS)
         );
     }
 }

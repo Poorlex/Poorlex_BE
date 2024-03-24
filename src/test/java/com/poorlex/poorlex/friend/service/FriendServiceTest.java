@@ -11,17 +11,15 @@ import com.poorlex.poorlex.member.domain.MemberRepository;
 import com.poorlex.poorlex.member.domain.Oauth2RegistrationId;
 import com.poorlex.poorlex.support.IntegrationTest;
 import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
-
 import java.util.List;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
+import org.junit.jupiter.api.Test;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.doNothing;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
 class FriendServiceTest extends IntegrationTest implements ReplaceUnderScoreTest {
 
@@ -52,9 +50,9 @@ class FriendServiceTest extends IntegrationTest implements ReplaceUnderScoreTest
         final Friend expected = Friend.withoutId(memberId, request.getFriendMemberId());
         assertThat(friends).hasSize(1);
         assertThat(friends.get(0))
-            .usingRecursiveComparison()
-            .ignoringFields("id")
-            .isEqualTo(expected);
+                .usingRecursiveComparison()
+                .ignoringFields("id")
+                .isEqualTo(expected);
     }
 
     @Test
@@ -68,7 +66,7 @@ class FriendServiceTest extends IntegrationTest implements ReplaceUnderScoreTest
         //when
         //then
         assertThatThrownBy(() -> friendService.inviteAccept(memberId, request))
-            .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
@@ -87,24 +85,24 @@ class FriendServiceTest extends IntegrationTest implements ReplaceUnderScoreTest
 
         //then
         final List<FriendResponse> expected = List.of(
-            new FriendResponse(1, friend1.getNickname(), 0),
-            new FriendResponse(1, friend2.getNickname(), 0),
-            new FriendResponse(1, friend3.getNickname(), 0)
+                new FriendResponse(1, friend1.getNickname(), 0),
+                new FriendResponse(1, friend2.getNickname(), 0),
+                new FriendResponse(1, friend3.getNickname(), 0)
         );
 
         assertSoftly(
-            softly -> {
-                softly.assertThat(responses).hasSize(3);
-                softly.assertThat(responses)
-                    .usingRecursiveFieldByFieldElementComparatorOnFields()
-                    .isEqualTo(expected);
-            }
+                softly -> {
+                    softly.assertThat(responses).hasSize(3);
+                    softly.assertThat(responses)
+                            .usingRecursiveFieldByFieldElementComparatorOnFields()
+                            .isEqualTo(expected);
+                }
         );
     }
 
     private Member createMember(final String oauthId, final String nickname) {
         return memberRepository.save(
-            Member.withoutId(Oauth2RegistrationId.APPLE, oauthId, new MemberNickname(nickname)));
+                Member.withoutId(Oauth2RegistrationId.APPLE, oauthId, new MemberNickname(nickname)));
     }
 
     private void beFriend(final Member member, final Member other) {

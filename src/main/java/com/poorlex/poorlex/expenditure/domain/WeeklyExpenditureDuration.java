@@ -25,15 +25,14 @@ public class WeeklyExpenditureDuration {
         this.end = end;
     }
 
-    public static WeeklyExpenditureDuration from(final LocalDateTime dateTime) {
-        final LocalDate date = LocalDate.from(dateTime);
+    public static WeeklyExpenditureDuration from(final LocalDate date) {
         final LocalDateTime start = LocalDateTime.of(
-            date.minusDays(getDaysAfterMonday(date)),
-            START_TIME
+                date.minusDays(getDaysAfterMonday(date)),
+                START_TIME
         );
         final LocalDateTime end = LocalDateTime.of(
-            LocalDate.from(start).plusDays(BATTLE_DAYS),
-            END_TIME
+                LocalDate.from(start).plusDays(BATTLE_DAYS),
+                END_TIME
         );
 
         return new WeeklyExpenditureDuration(start, end);

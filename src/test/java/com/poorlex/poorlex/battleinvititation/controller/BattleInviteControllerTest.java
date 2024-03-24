@@ -1,9 +1,5 @@
 package com.poorlex.poorlex.battleinvititation.controller;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 import com.poorlex.poorlex.alarm.memberalram.domain.MemberAlarm;
 import com.poorlex.poorlex.alarm.memberalram.domain.MemberAlarmRepository;
 import com.poorlex.poorlex.alarm.memberalram.domain.MemberAlarmType;
@@ -30,6 +26,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @DisplayName("배틀 초대 인수 테스트")
 class BattleInviteControllerTest extends IntegrationTest implements ReplaceUnderScoreTest {
@@ -67,12 +66,12 @@ class BattleInviteControllerTest extends IntegrationTest implements ReplaceUnder
         //when
         //then
         mockMvc.perform(
-                post("/battles/{battleId}/invite", battle.getId())
-                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
-                    .content(objectMapper.writeValueAsString(request))
-                    .contentType(MediaType.APPLICATION_JSON)
-            ).andDo(print())
-            .andExpect(status().isCreated());
+                        post("/battles/{battleId}/invite", battle.getId())
+                                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                                .content(objectMapper.writeValueAsString(request))
+                                .contentType(MediaType.APPLICATION_JSON)
+                ).andDo(print())
+                .andExpect(status().isCreated());
     }
 
     @Test
@@ -90,12 +89,12 @@ class BattleInviteControllerTest extends IntegrationTest implements ReplaceUnder
         //when
         //then
         mockMvc.perform(
-                post("/battle-invite/accept")
-                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
-                    .content(objectMapper.writeValueAsString(request))
-                    .contentType(MediaType.APPLICATION_JSON)
-            ).andDo(print())
-            .andExpect(status().isOk());
+                        post("/battle-invite/accept")
+                                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                                .content(objectMapper.writeValueAsString(request))
+                                .contentType(MediaType.APPLICATION_JSON)
+                ).andDo(print())
+                .andExpect(status().isOk());
     }
 
     @Test
@@ -113,17 +112,17 @@ class BattleInviteControllerTest extends IntegrationTest implements ReplaceUnder
         //when
         //then
         mockMvc.perform(
-                post("/battle-invite/deny")
-                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
-                    .content(objectMapper.writeValueAsString(request))
-                    .contentType(MediaType.APPLICATION_JSON)
-            ).andDo(print())
-            .andExpect(status().isOk());
+                        post("/battle-invite/deny")
+                                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                                .content(objectMapper.writeValueAsString(request))
+                                .contentType(MediaType.APPLICATION_JSON)
+                ).andDo(print())
+                .andExpect(status().isOk());
     }
 
     private Member createMember(final String oauthId, final String nickname) {
         return memberRepository.save(
-            Member.withoutId(Oauth2RegistrationId.APPLE, oauthId, new MemberNickname(nickname)));
+                Member.withoutId(Oauth2RegistrationId.APPLE, oauthId, new MemberNickname(nickname)));
     }
 
     private Battle createBattle() {
@@ -140,9 +139,9 @@ class BattleInviteControllerTest extends IntegrationTest implements ReplaceUnder
 
     private void createBattleInviteAlarm(final BattleParticipant inviteBattleParticipant, final Member invitedMember) {
         memberAlarmRepository.save(MemberAlarm.withoutId(
-            invitedMember.getId(),
-            inviteBattleParticipant.getId(),
-            MemberAlarmType.BATTLE_INVITATION_NOT_ACCEPTED)
+                invitedMember.getId(),
+                inviteBattleParticipant.getId(),
+                MemberAlarmType.BATTLE_INVITATION_NOT_ACCEPTED)
         );
     }
 }

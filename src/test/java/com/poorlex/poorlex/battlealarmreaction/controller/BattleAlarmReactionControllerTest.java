@@ -1,9 +1,5 @@
 package com.poorlex.poorlex.battlealarmreaction.controller;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 import com.poorlex.poorlex.alarm.battlealarm.domain.BattleAlarm;
 import com.poorlex.poorlex.alarm.battlealarm.domain.BattleAlarmRepository;
 import com.poorlex.poorlex.alarm.battlealarm.domain.BattleAlarmType;
@@ -24,6 +20,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class BattleAlarmReactionControllerTest extends IntegrationTest implements ReplaceUnderScoreTest {
 
@@ -55,18 +54,18 @@ class BattleAlarmReactionControllerTest extends IntegrationTest implements Repla
 
         final String accessToken = memberTokenGenerator.createAccessToken(member);
         final AlarmReactionCreateRequest request = new AlarmReactionCreateRequest(battleAlarm.getId(), "PRAISE",
-            "알림 반응 문구");
+                                                                                  "알림 반응 문구");
 
         //when
         //then
         mockMvc.perform(
-                post("/alarm-reaction")
-                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
-                    .content(objectMapper.writeValueAsString(request))
-                    .contentType(MediaType.APPLICATION_JSON)
-            )
-            .andDo(print())
-            .andExpect(status().isCreated());
+                        post("/alarm-reaction")
+                                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                                .content(objectMapper.writeValueAsString(request))
+                                .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andDo(print())
+                .andExpect(status().isCreated());
     }
 
     @Test
@@ -78,18 +77,18 @@ class BattleAlarmReactionControllerTest extends IntegrationTest implements Repla
 
         final String accessToken = memberTokenGenerator.createAccessToken(member);
         final AlarmReactionCreateRequest request = new AlarmReactionCreateRequest(battleAlarm.getId(), "SCOLD",
-            "알림 반응 문구");
+                                                                                  "알림 반응 문구");
 
         //when
         //then
         mockMvc.perform(
-                post("/alarm-reaction")
-                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
-                    .content(objectMapper.writeValueAsString(request))
-                    .contentType(MediaType.APPLICATION_JSON)
-            )
-            .andDo(print())
-            .andExpect(status().isCreated());
+                        post("/alarm-reaction")
+                                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                                .content(objectMapper.writeValueAsString(request))
+                                .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andDo(print())
+                .andExpect(status().isCreated());
     }
 
     private Battle createBattle() {
@@ -98,7 +97,7 @@ class BattleAlarmReactionControllerTest extends IntegrationTest implements Repla
 
     private Member createMember(final String oauthId) {
         return memberRepository.save(
-            Member.withoutId(Oauth2RegistrationId.APPLE, oauthId, new MemberNickname("nicknmae")));
+                Member.withoutId(Oauth2RegistrationId.APPLE, oauthId, new MemberNickname("nicknmae")));
     }
 
     private BattleAlarm createAlarm(final Battle battle, final Member member, final BattleAlarmType type) {

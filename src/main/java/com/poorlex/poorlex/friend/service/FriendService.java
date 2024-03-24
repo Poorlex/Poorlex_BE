@@ -16,7 +16,7 @@ import com.poorlex.poorlex.member.domain.MemberLevel;
 import com.poorlex.poorlex.member.domain.MemberRepository;
 import com.poorlex.poorlex.point.domain.MemberPointRepository;
 import com.poorlex.poorlex.point.domain.Point;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -75,28 +75,28 @@ public class FriendService {
     }
 
     public List<FriendResponse> findMemberFriendsWithCurrentDateTime(final Long memberId) {
-        return findMemberFriends(memberId, LocalDateTime.now());
+        return findMemberFriends(memberId, LocalDate.now());
     }
 
-    public List<FriendResponse> findMemberFriends(final Long memberId, final LocalDateTime dateTime) {
+    public List<FriendResponse> findMemberFriends(final Long memberId, final LocalDate date) {
         final List<Long> friendMemberIds = friendRepository.findMembersFriendMemberId(memberId);
 
         return friendMemberIds.stream()
-                .map(friendMemberId -> generateResponse(friendMemberId, dateTime))
+                .map(friendMemberId -> generateResponse(friendMemberId, date))
                 .toList();
     }
 
-    private FriendResponse generateResponse(final Long friendMemberId, final LocalDateTime dateTime) {
+    private FriendResponse generateResponse(final Long friendMemberId, final LocalDate date) {
         return new FriendResponse(
                 getFriendLevel(friendMemberId),
                 getFriendNickname(friendMemberId),
-                getFriendWeeklyTotalExpenditure(friendMemberId, dateTime)
+                getFriendWeeklyTotalExpenditure(friendMemberId, date)
         );
     }
 
-    private int getFriendWeeklyTotalExpenditure(final Long friendMemberId, final LocalDateTime dateTime) {
+    private int getFriendWeeklyTotalExpenditure(final Long friendMemberId, final LocalDate date) {
         final MemberWeeklyTotalExpenditureResponse weeklyTotalExpenditure =
-                expenditureQueryService.findMemberWeeklyTotalExpenditure(friendMemberId, dateTime);
+                expenditureQueryService.findMemberWeeklyTotalExpenditure(friendMemberId, date);
 
         return weeklyTotalExpenditure.getAmount();
     }

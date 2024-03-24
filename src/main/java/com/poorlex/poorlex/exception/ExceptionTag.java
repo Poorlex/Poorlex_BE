@@ -17,9 +17,25 @@ public enum ExceptionTag {
 
     //배틀 관련
     BATTLE_FIND("배틀 조회 에러"),
+    BATTLE_BUDGET("배틀 예산 에러"),
+    BATTLE_PROGRESS("배틀 진행 에러"),
+    BATTLE_PARTICIPANT_SIZE("배틀 참가 인원 에러"),
+    BATTLE_INTRODUCTION("배틀 소개 에러"),
+    BATTLE_IMAGE("배틀 이미지 에러"),
+    BATTLE_STATUS("배틀 상태 에러"),
+    BATTLE_DIFFICULTY("배틀 난이도 에러"),
+    BATTLE_NAME("배틀 이름 에러"),
+    BATTLE_TYPE("배틀 타입 에러"),
+
+    // 배틀 참가 관련
+    BATTLE_WITHDRAW("배틀 탈퇴 에러"),
+    BATTLE_PARTICIPATE("배틀 참가 에러"),
+    BATTLE_PARTICIPANT_FIND("배틀 참가자 조회 에러"),
 
     //AWS 관련
-    AWS_S3("S3 관련 에러");
+    AWS_S3("S3 관련 에러"),
+    WEEKLY_BUDGET_AMOUNT("주간 예산 금액 에러"),
+    WEEKLY_BUDGET_DURATION("주간 예산 기간 에러");
 
     private final String tag;
 
