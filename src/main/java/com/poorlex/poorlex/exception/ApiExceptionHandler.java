@@ -10,15 +10,15 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @Slf4j
 public class ApiExceptionHandler {
 
-    private static final String HANDLED_EXCEPTION_LOG_MESSAGE = "Handled Message : {}";
+    private static final String HANDLED_EXCEPTION_LOG_MESSAGE = "[Exception] Tag : {} / Message : {}";
     private static final String UNHANDLED_EXCEPTION_LOG_MESSAGE = "Unhandled Exception : {}";
 
     @ExceptionHandler(ApiException.class)
     public ResponseEntity<ExceptionResponse> handle(final ApiException exception) {
         setSentryTag(exception);
         captureWithSentry(exception);
-        log.warn(HANDLED_EXCEPTION_LOG_MESSAGE, exception.getMessage());
-        return ResponseEntity.badRequest().body(new ExceptionResponse(exception));
+        log.warn(HANDLED_EXCEPTION_LOG_MESSAGE, exception.getTag().getValue(), exception.getMessage());
+        return ResponseEntity.badRequest().body(ExceptionResponse.from(exception));
     }
 
     @ExceptionHandler(Exception.class)
@@ -26,7 +26,7 @@ public class ApiExceptionHandler {
         captureWithSentry(exception);
         exception.printStackTrace();
         log.warn(UNHANDLED_EXCEPTION_LOG_MESSAGE, exception.getClass());
-        return ResponseEntity.internalServerError().body(new ExceptionResponse(exception));
+        return ResponseEntity.internalServerError().body(ExceptionResponse.from(exception));
     }
 
     private void setSentryTag(final ApiException exception) {
