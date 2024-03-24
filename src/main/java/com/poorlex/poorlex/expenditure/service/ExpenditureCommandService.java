@@ -2,6 +2,8 @@ package com.poorlex.poorlex.expenditure.service;
 
 import com.poorlex.poorlex.config.aws.AWSS3Service;
 import com.poorlex.poorlex.config.event.Events;
+import com.poorlex.poorlex.exception.ApiException;
+import com.poorlex.poorlex.exception.ExceptionTag;
 import com.poorlex.poorlex.expenditure.domain.Expenditure;
 import com.poorlex.poorlex.expenditure.domain.ExpenditureAmount;
 import com.poorlex.poorlex.expenditure.domain.ExpenditureDescription;
@@ -59,7 +61,7 @@ public class ExpenditureCommandService {
 
     private void validateMainImageExist(final MultipartFile mainImage) {
         if (Objects.isNull(mainImage)) {
-            throw new IllegalArgumentException("지출 메인 이미지가 없습니다.");
+            throw new ApiException(ExceptionTag.EXPENDITURE_IMAGE, "지출 메인 이미지가 없습니다.");
         }
     }
 
@@ -86,7 +88,7 @@ public class ExpenditureCommandService {
                                   final Optional<String> updateSubImageUrl,
                                   final ExpenditureUpdateRequest request) {
         final Expenditure expenditure = expenditureRepository.findById(expenditureId)
-                .orElseThrow(() -> new IllegalArgumentException("수정하려는 지출이 존재하지 않습니다."));
+                .orElseThrow(() -> new ApiException(ExceptionTag.EXPENDITURE_UPDATE, "수정하려는 지출이 존재하지 않습니다."));
 
         validateUpdateAuthority(memberId, expenditure);
         expenditure.updateAmount(new ExpenditureAmount(request.getAmount()));
@@ -97,7 +99,7 @@ public class ExpenditureCommandService {
 
     private void validateUpdateAuthority(final Long memberId, final Expenditure expenditure) {
         if (!expenditure.owned(memberId)) {
-            throw new IllegalArgumentException("지출을 수정할 수 있는 권한이 없습니다.");
+            throw new ApiException(ExceptionTag.EXPENDITURE_UPDATE, "지출을 수정할 수 있는 권한이 없습니다.");
         }
     }
 
@@ -114,7 +116,7 @@ public class ExpenditureCommandService {
             return;
         }
 
-        throw new IllegalArgumentException("지출의 메인 이미지는 반드시 존재해야 합니다.");
+        throw new ApiException(ExceptionTag.EXPENDITURE_IMAGE, "지출의 메인 이미지는 반드시 존재해야 합니다.");
     }
 
     private void updateMainImageWithImageFile(final Expenditure expenditure,
@@ -179,10 +181,10 @@ public class ExpenditureCommandService {
 
     public void deleteExpenditure(final Long memberId, final Long expenditureId) {
         final Expenditure expenditure = expenditureRepository.findById(expenditureId)
-                .orElseThrow(() -> new IllegalArgumentException("삭제하려는 지출이 존재하지 않습니다."));
+                .orElseThrow(() -> new ApiException(ExceptionTag.EXPENDITURE_UPDATE, "삭제하려는 지출이 존재하지 않습니다."));
 
         if (!expenditure.owned(memberId)) {
-            throw new IllegalArgumentException("삭제하려는 지출이 본인의 지출이 아닙니다.");
+            throw new ApiException(ExceptionTag.EXPENDITURE_UPDATE, "삭제하려는 지출이 본인의 지출이 아닙니다.");
         }
 
         awss3Service.deleteFile(expenditure.getMainImageUrl());

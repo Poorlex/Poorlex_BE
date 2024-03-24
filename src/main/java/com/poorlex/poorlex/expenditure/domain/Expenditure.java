@@ -1,5 +1,7 @@
 package com.poorlex.poorlex.expenditure.domain;
 
+import com.poorlex.poorlex.exception.ApiException;
+import com.poorlex.poorlex.exception.ExceptionTag;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
@@ -58,7 +60,7 @@ public class Expenditure {
 
     public void updateMainImage(final String mainImageUrl) {
         if (Objects.isNull(mainImageUrl)) {
-            throw new IllegalArgumentException("메인 이미지가 반드시 존재해야 합니다.");
+            throw new ApiException(ExceptionTag.EXPENDITURE_IMAGE, "메인 이미지가 반드시 존재해야 합니다.");
         }
         this.mainImageUrl = mainImageUrl;
     }
