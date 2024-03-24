@@ -1,5 +1,7 @@
 package com.poorlex.poorlex.point.domain;
 
+import com.poorlex.poorlex.exception.ApiException;
+import com.poorlex.poorlex.exception.ExceptionTag;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import lombok.AccessLevel;
@@ -19,7 +21,8 @@ public class Point {
 
     private void validation(final int value) {
         if (value < 0) {
-            throw new IllegalArgumentException();
+            final String errorMessage = String.format("포인트는 음수일 수 없습니다. ( 포인트 : %d )", value);
+            throw new ApiException(ExceptionTag.MEMBER_POINT, errorMessage);
         }
     }
 

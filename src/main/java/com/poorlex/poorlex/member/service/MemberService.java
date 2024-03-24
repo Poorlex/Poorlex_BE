@@ -3,6 +3,8 @@ package com.poorlex.poorlex.member.service;
 import com.poorlex.poorlex.battle.service.dto.response.BattleSuccessCountResponse;
 import com.poorlex.poorlex.battlesuccess.service.BattleSuccessService;
 import com.poorlex.poorlex.config.event.Events;
+import com.poorlex.poorlex.exception.ApiException;
+import com.poorlex.poorlex.exception.ExceptionTag;
 import com.poorlex.poorlex.expenditure.service.ExpenditureQueryService;
 import com.poorlex.poorlex.expenditure.service.dto.response.MyPageExpenditureResponse;
 import com.poorlex.poorlex.friend.service.FriendService;
@@ -46,7 +48,10 @@ public class MemberService {
     @Transactional
     public void updateProfile(final Long memberId, final MemberProfileUpdateRequest request) {
         final Member member = memberRepository.findById(memberId)
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(() -> {
+                    final String errorMessage = String.format("Id 에 해당하는 회원이 존재하지 않습니다. ( ID : %d )", memberId);
+                    return new ApiException(ExceptionTag.MEMBER_FIND, errorMessage);
+                });
         final String newNickname = request.getNickname();
         final String newDescription = request.getDescription();
 
@@ -64,7 +69,10 @@ public class MemberService {
 
     public MyPageResponse getMyPageInfo(final Long memberId, final LocalDateTime dateTime) {
         final Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 Id 의 멤버가 존재하지 않습니다."));
+                .orElseThrow(() -> {
+                    final String errorMessage = String.format("Id 에 해당하는 회원이 존재하지 않습니다. ( ID : %d )", memberId);
+                    return new ApiException(ExceptionTag.MEMBER_FIND, errorMessage);
+                });
         final MyPageLevelInfoResponse memberLevelInfo = memberPointService.findMemberLevelInfo(memberId);
         final BattleSuccessCountResponse battleSuccessCounts =
                 battleSuccessService.findMemberBattleSuccessCounts(memberId);
@@ -87,7 +95,10 @@ public class MemberService {
     @Transactional
     public void deleteMember(final Long memberId) {
         final Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new IllegalArgumentException("ID 에 해당하는 멤버가 존재하지 않습니다."));
+                .orElseThrow(() -> {
+                    final String errorMessage = String.format("Id 에 해당하는 회원이 존재하지 않습니다. ( ID : %d )", memberId);
+                    return new ApiException(ExceptionTag.MEMBER_FIND, errorMessage);
+                });
         memberRepository.delete(member);
 
         Events.raise(new MemberDeletedEvent(memberId));
