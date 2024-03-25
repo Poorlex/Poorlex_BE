@@ -1,16 +1,15 @@
-package com.poorlex.poorlex.point.service;
+package com.poorlex.poorlex.user.point.service;
 
 import com.poorlex.poorlex.user.member.service.event.MemberDeletedEvent;
-import com.poorlex.poorlex.point.domain.MemberPoint;
-import com.poorlex.poorlex.point.domain.MemberPointRepository;
+import com.poorlex.poorlex.user.point.domain.MemberPoint;
+import com.poorlex.poorlex.user.point.domain.MemberPointRepository;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
-
-import java.util.List;
 
 @Component
 @Transactional(propagation = Propagation.REQUIRED)

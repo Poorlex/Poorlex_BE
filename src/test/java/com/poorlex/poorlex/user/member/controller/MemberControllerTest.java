@@ -35,8 +35,8 @@ class MemberControllerTest extends IntegrationTest implements ReplaceUnderScoreT
     void 멤버의_프로필을_변경시_200_상태코드로_응답한다() throws Exception {
         //given
         final Long 회원_ID = 1L;
-        토큰이_다음과_같은_회원_ID를_가진_클레임을_반환하도록한다(회원_ID);
-        다음과_같은_ID로_회원조회시_임의의_회원을_반환하도록_한다(회원_ID);
+        MOCKING_토큰이_회원_ID를_가진_클레임을_반환하도록_한다(회원_ID);
+        MOCKING_ID로_회원조회시_동일한_ID를_가지는_임의의_회원을_반환하도록_한다(회원_ID);
 
         final String 회원_액세스_토큰 = "access_token";
         final MemberProfileUpdateRequest 변경_요청 = new MemberProfileUpdateRequest("닉네임", "소개");
@@ -56,8 +56,8 @@ class MemberControllerTest extends IntegrationTest implements ReplaceUnderScoreT
     void ERROR_프로필_변경시_닉네임이_빈칸으로_이루어져_있으면_400_상태코드로_응답한다() throws Exception {
         //given
         final Long 회원_ID = 1L;
-        토큰이_다음과_같은_회원_ID를_가진_클레임을_반환하도록한다(회원_ID);
-        다음과_같은_ID로_회원조회시_임의의_회원을_반환하도록_한다(회원_ID);
+        MOCKING_토큰이_회원_ID를_가진_클레임을_반환하도록_한다(회원_ID);
+        MOCKING_ID로_회원조회시_동일한_ID를_가지는_임의의_회원을_반환하도록_한다(회원_ID);
 
         final String 회원_액세스_토큰 = "access_token";
         final MemberProfileUpdateRequest 변경_요청 = new MemberProfileUpdateRequest("    ", "소개");
@@ -78,8 +78,8 @@ class MemberControllerTest extends IntegrationTest implements ReplaceUnderScoreT
     void ERROR_멤버_닉네임수정시_2자_미만이면_400_상태코드로_응답한다() throws Exception {
         //given
         final Long 회원_ID = 1L;
-        토큰이_다음과_같은_회원_ID를_가진_클레임을_반환하도록한다(회원_ID);
-        다음과_같은_ID로_회원조회시_임의의_회원을_반환하도록_한다(회원_ID);
+        MOCKING_토큰이_회원_ID를_가진_클레임을_반환하도록_한다(회원_ID);
+        MOCKING_ID로_회원조회시_동일한_ID를_가지는_임의의_회원을_반환하도록_한다(회원_ID);
 
         final String 회원_액세스_토큰 = "access_token";
         final MemberProfileUpdateRequest 변경_요청 = new MemberProfileUpdateRequest("a", "소개");
@@ -100,8 +100,8 @@ class MemberControllerTest extends IntegrationTest implements ReplaceUnderScoreT
     void ERROR_멤버_닉네임수정시_15자를_초과하면_400_상태코드로_응답한다() throws Exception {
         //given
         final Long 회원_ID = 1L;
-        토큰이_다음과_같은_회원_ID를_가진_클레임을_반환하도록한다(회원_ID);
-        다음과_같은_ID로_회원조회시_임의의_회원을_반환하도록_한다(회원_ID);
+        MOCKING_토큰이_회원_ID를_가진_클레임을_반환하도록_한다(회원_ID);
+        MOCKING_ID로_회원조회시_동일한_ID를_가지는_임의의_회원을_반환하도록_한다(회원_ID);
 
         final String 회원_액세스_토큰 = "access_token";
         final MemberProfileUpdateRequest 변경_요청 = new MemberProfileUpdateRequest("a".repeat(16), "소개");
@@ -122,8 +122,8 @@ class MemberControllerTest extends IntegrationTest implements ReplaceUnderScoreT
     void ERROR_멤버_닉네임수정시_소개가_비어있으면_400_상태코드로_응답한다() throws Exception {
         //given
         final Long 회원_ID = 1L;
-        토큰이_다음과_같은_회원_ID를_가진_클레임을_반환하도록한다(회원_ID);
-        다음과_같은_ID로_회원조회시_임의의_회원을_반환하도록_한다(회원_ID);
+        MOCKING_토큰이_회원_ID를_가진_클레임을_반환하도록_한다(회원_ID);
+        MOCKING_ID로_회원조회시_동일한_ID를_가지는_임의의_회원을_반환하도록_한다(회원_ID);
 
         final String 회원_액세스_토큰 = "access_token";
         final MemberProfileUpdateRequest 변경_요청 = new MemberProfileUpdateRequest("닉네임", "    ");
@@ -144,8 +144,8 @@ class MemberControllerTest extends IntegrationTest implements ReplaceUnderScoreT
     void ERROR_멤버_닉네임수정시_소개가_2자미만이면_400_상태코드로_응답한다() throws Exception {
         //given
         final Long 회원_ID = 1L;
-        토큰이_다음과_같은_회원_ID를_가진_클레임을_반환하도록한다(회원_ID);
-        다음과_같은_ID로_회원조회시_임의의_회원을_반환하도록_한다(회원_ID);
+        MOCKING_토큰이_회원_ID를_가진_클레임을_반환하도록_한다(회원_ID);
+        MOCKING_ID로_회원조회시_동일한_ID를_가지는_임의의_회원을_반환하도록_한다(회원_ID);
 
         final String 회원_액세스_토큰 = "access_token";
         final MemberProfileUpdateRequest 변경_요청 = new MemberProfileUpdateRequest("닉네임", "a");
@@ -166,8 +166,8 @@ class MemberControllerTest extends IntegrationTest implements ReplaceUnderScoreT
     void ERROR_멤버_닉네임수정시_소개가_300자를_초과하면_400_상태코드로_응답한다() throws Exception {
         //given
         final Long 회원_ID = 1L;
-        토큰이_다음과_같은_회원_ID를_가진_클레임을_반환하도록한다(회원_ID);
-        다음과_같은_ID로_회원조회시_임의의_회원을_반환하도록_한다(회원_ID);
+        MOCKING_토큰이_회원_ID를_가진_클레임을_반환하도록_한다(회원_ID);
+        MOCKING_ID로_회원조회시_동일한_ID를_가지는_임의의_회원을_반환하도록_한다(회원_ID);
 
         final String 회원_액세스_토큰 = "access_token";
         final MemberProfileUpdateRequest 변경_요청 = new MemberProfileUpdateRequest("닉네임", "a".repeat(301));
@@ -184,12 +184,12 @@ class MemberControllerTest extends IntegrationTest implements ReplaceUnderScoreT
                 .andExpect(jsonPath("$.message").exists());
     }
 
-    private void 다음과_같은_ID로_회원조회시_임의의_회원을_반환하도록_한다(final Long 회원_ID) {
+    private void MOCKING_ID로_회원조회시_동일한_ID를_가지는_임의의_회원을_반환하도록_한다(final Long 회원_ID) {
         final Member 스플릿 = new Member(회원_ID, Oauth2RegistrationId.APPLE, "고유 ID", new MemberNickname("스플릿"));
         when(memberRepository.findById(anyLong())).thenReturn(Optional.of(스플릿));
     }
 
-    private void 토큰이_다음과_같은_회원_ID를_가진_클레임을_반환하도록한다(final Long 회원_ID) {
+    private void MOCKING_토큰이_회원_ID를_가진_클레임을_반환하도록_한다(final Long 회원_ID) {
         final DefaultClaims 토큰_정보 = new DefaultClaims(Map.of("memberId", 회원_ID));
         when(jwtTokenProvider.getPayload(any())).thenReturn(토큰_정보);
     }

@@ -1,4 +1,4 @@
-package com.poorlex.poorlex.point.service.dto.response;
+package com.poorlex.poorlex.user.point.service.dto.response;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

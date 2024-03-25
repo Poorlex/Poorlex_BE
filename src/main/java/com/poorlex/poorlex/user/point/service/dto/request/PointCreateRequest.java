@@ -1,4 +1,4 @@
-package com.poorlex.poorlex.point.service.dto.request;
+package com.poorlex.poorlex.user.point.service.dto.request;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
