@@ -2,7 +2,7 @@ spring:
   config:
     activate:
       on-profile: local
-    import: classpath:secure/application-dev-info.yml
+    import: classpath:application-local-info.yml
 
   datasource:
     driver-class-name: org.h2.Driver
