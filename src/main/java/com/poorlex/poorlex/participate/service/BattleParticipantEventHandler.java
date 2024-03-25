@@ -2,7 +2,7 @@ package com.poorlex.poorlex.participate.service;
 
 import com.poorlex.poorlex.battle.service.event.BattleCreatedEvent;
 import com.poorlex.poorlex.config.event.Events;
-import com.poorlex.poorlex.member.service.event.MemberDeletedEvent;
+import com.poorlex.poorlex.user.member.service.event.MemberDeletedEvent;
 import com.poorlex.poorlex.participate.domain.BattleParticipant;
 import com.poorlex.poorlex.participate.domain.BattleParticipantRepository;
 import com.poorlex.poorlex.participate.service.event.BattleParticipantAddedEvent;
@@ -27,7 +27,7 @@ public class BattleParticipantEventHandler {
         final Long battleId = event.getBattleId();
         final BattleParticipant manager = BattleParticipant.manager(battleId, event.getManagerId());
         battleParticipantRepository.save(manager);
-        
+
         Events.raise(new BattleParticipantAddedEvent(battleId));
     }
 

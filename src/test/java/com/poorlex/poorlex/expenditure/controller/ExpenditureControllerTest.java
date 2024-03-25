@@ -9,18 +9,17 @@ import com.poorlex.poorlex.expenditure.domain.Expenditure;
 import com.poorlex.poorlex.expenditure.domain.ExpenditureRepository;
 import com.poorlex.poorlex.expenditure.domain.WeeklyExpenditureDuration;
 import com.poorlex.poorlex.expenditure.fixture.ExpenditureFixture;
-import com.poorlex.poorlex.expenditure.service.ExpenditureEventHandler;
 import com.poorlex.poorlex.expenditure.service.dto.request.MemberWeeklyTotalExpenditureRequest;
-import com.poorlex.poorlex.member.domain.Member;
-import com.poorlex.poorlex.member.domain.MemberNickname;
-import com.poorlex.poorlex.member.domain.MemberRepository;
-import com.poorlex.poorlex.member.domain.Oauth2RegistrationId;
 import com.poorlex.poorlex.participate.domain.BattleParticipant;
 import com.poorlex.poorlex.participate.domain.BattleParticipantRepository;
 import com.poorlex.poorlex.support.IntegrationTest;
 import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
 import com.poorlex.poorlex.support.TestMemberTokenGenerator;
 import com.poorlex.poorlex.token.JwtTokenProvider;
+import com.poorlex.poorlex.user.member.domain.Member;
+import com.poorlex.poorlex.user.member.domain.MemberNickname;
+import com.poorlex.poorlex.user.member.domain.MemberRepository;
+import com.poorlex.poorlex.user.member.domain.Oauth2RegistrationId;
 import java.io.FileInputStream;
 import java.time.LocalDate;
 import org.junit.jupiter.api.BeforeEach;
@@ -62,9 +61,6 @@ class ExpenditureControllerTest extends IntegrationTest implements ReplaceUnderS
 
     @MockBean
     private AWSS3Service awss3Service;
-
-    @MockBean
-    private ExpenditureEventHandler expenditureEventHandler;
 
     private TestMemberTokenGenerator testMemberTokenGenerator;
 

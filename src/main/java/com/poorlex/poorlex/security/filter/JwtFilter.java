@@ -1,6 +1,6 @@
 package com.poorlex.poorlex.security.filter;
 
-import com.poorlex.poorlex.member.domain.MemberRepository;
+import com.poorlex.poorlex.user.member.domain.MemberRepository;
 import com.poorlex.poorlex.token.JwtTokenProvider;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -41,7 +41,9 @@ public class JwtFilter extends OncePerRequestFilter {
         }
 
         final UsernamePasswordAuthenticationToken authenticationToken =
-            new UsernamePasswordAuthenticationToken(authorization, null, List.of(new SimpleGrantedAuthority("USER")));
+                new UsernamePasswordAuthenticationToken(authorization,
+                                                        null,
+                                                        List.of(new SimpleGrantedAuthority("USER")));
 
         authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);

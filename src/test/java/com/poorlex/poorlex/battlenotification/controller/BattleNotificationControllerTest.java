@@ -7,10 +7,10 @@ import com.poorlex.poorlex.battlenotification.domain.BattleNotificationRepositor
 import com.poorlex.poorlex.battlenotification.service.dto.request.BattleNotificationCreateRequest;
 import com.poorlex.poorlex.battlenotification.service.dto.request.BattleNotificationUpdateRequest;
 import com.poorlex.poorlex.config.aws.AWSS3Service;
-import com.poorlex.poorlex.member.domain.Member;
-import com.poorlex.poorlex.member.domain.MemberNickname;
-import com.poorlex.poorlex.member.domain.MemberRepository;
-import com.poorlex.poorlex.member.domain.Oauth2RegistrationId;
+import com.poorlex.poorlex.user.member.domain.Member;
+import com.poorlex.poorlex.user.member.domain.MemberNickname;
+import com.poorlex.poorlex.user.member.domain.MemberRepository;
+import com.poorlex.poorlex.user.member.domain.Oauth2RegistrationId;
 import com.poorlex.poorlex.support.IntegrationTest;
 import com.poorlex.poorlex.support.MockMultipartFileFixture;
 import com.poorlex.poorlex.support.ReplaceUnderScoreTest;

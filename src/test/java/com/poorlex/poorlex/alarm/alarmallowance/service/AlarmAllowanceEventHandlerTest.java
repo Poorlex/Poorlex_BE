@@ -2,7 +2,7 @@ package com.poorlex.poorlex.alarm.alarmallowance.service;
 
 import com.poorlex.poorlex.alarm.alarmallowance.domain.AlarmAllowance;
 import com.poorlex.poorlex.alarm.alarmallowance.domain.AlarmAllowanceRepository;
-import com.poorlex.poorlex.member.service.event.MemberRegisteredEvent;
+import com.poorlex.poorlex.user.member.service.event.MemberRegisteredEvent;
 import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
 import com.poorlex.poorlex.support.db.UsingDataJpaTest;
 import static org.assertj.core.api.Assertions.assertThat;

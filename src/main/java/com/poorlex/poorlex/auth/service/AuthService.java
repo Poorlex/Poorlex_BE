@@ -2,10 +2,10 @@ package com.poorlex.poorlex.auth.service;
 
 import com.poorlex.poorlex.auth.service.dto.request.LoginRequest;
 import com.poorlex.poorlex.auth.service.dto.response.LoginTokenResponse;
-import com.poorlex.poorlex.member.domain.Member;
-import com.poorlex.poorlex.member.domain.MemberNickname;
-import com.poorlex.poorlex.member.domain.MemberRepository;
-import com.poorlex.poorlex.member.domain.Oauth2RegistrationId;
+import com.poorlex.poorlex.user.member.domain.Member;
+import com.poorlex.poorlex.user.member.domain.MemberNickname;
+import com.poorlex.poorlex.user.member.domain.MemberRepository;
+import com.poorlex.poorlex.user.member.domain.Oauth2RegistrationId;
 import com.poorlex.poorlex.token.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,7 +22,7 @@ public class AuthService {
     @Transactional
     public LoginTokenResponse loginAfterRegisterIfNotExist(final LoginRequest request) {
         final Member member = memberRepository.findByOauthId(request.getOauthId())
-            .orElseGet(() -> createMember(request));
+                .orElseGet(() -> createMember(request));
         final String accessToken = jwtTokenProvider.createAccessToken(member.getId());
 
         return new LoginTokenResponse(accessToken);
@@ -30,8 +30,8 @@ public class AuthService {
 
     private Member createMember(final LoginRequest request) {
         return memberRepository.save(
-            Member.withoutId(Oauth2RegistrationId.APPLE, request.getOauthId(),
-                new MemberNickname(request.getNickname()))
+                Member.withoutId(Oauth2RegistrationId.APPLE, request.getOauthId(),
+                                 new MemberNickname(request.getNickname()))
         );
     }
 }

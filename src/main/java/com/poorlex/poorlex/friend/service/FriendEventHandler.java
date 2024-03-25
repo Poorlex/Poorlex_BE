@@ -2,7 +2,7 @@ package com.poorlex.poorlex.friend.service;
 
 import com.poorlex.poorlex.friend.domain.Friend;
 import com.poorlex.poorlex.friend.domain.FriendRepository;
-import com.poorlex.poorlex.member.service.event.MemberDeletedEvent;
+import com.poorlex.poorlex.user.member.service.event.MemberDeletedEvent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
@@ -16,6 +16,7 @@ import java.util.List;
 @Transactional(propagation = Propagation.REQUIRED)
 @RequiredArgsConstructor
 public class FriendEventHandler {
+
     private final FriendRepository friendRepository;
 
     @TransactionalEventListener(value = MemberDeletedEvent.class, phase = TransactionPhase.BEFORE_COMMIT)

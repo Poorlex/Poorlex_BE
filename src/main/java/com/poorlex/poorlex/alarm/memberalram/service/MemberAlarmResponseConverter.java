@@ -4,7 +4,7 @@ import com.poorlex.poorlex.alarm.memberalram.domain.MemberAlarm;
 import com.poorlex.poorlex.alarm.memberalram.domain.MemberAlarmType;
 import com.poorlex.poorlex.alarm.memberalram.service.dto.response.MemberAlarmResponse;
 import com.poorlex.poorlex.battle.domain.BattleRepository;
-import com.poorlex.poorlex.member.domain.MemberRepository;
+import com.poorlex.poorlex.user.member.domain.MemberRepository;
 import com.poorlex.poorlex.participate.domain.BattleParticipant;
 import com.poorlex.poorlex.participate.domain.BattleParticipantRepository;
 import java.time.LocalDateTime;
@@ -22,8 +22,8 @@ public class MemberAlarmResponseConverter {
 
     public List<MemberAlarmResponse> convert(final List<MemberAlarm> memberAlarms, final LocalDateTime dateTime) {
         return memberAlarms.stream()
-            .map(memberAlarm -> convert(memberAlarm, dateTime))
-            .toList();
+                .map(memberAlarm -> convert(memberAlarm, dateTime))
+                .toList();
     }
 
     public MemberAlarmResponse convert(final MemberAlarm memberAlarm, final LocalDateTime dateTime) {
@@ -46,7 +46,7 @@ public class MemberAlarmResponseConverter {
     private MemberAlarmResponse generateBattleInvitationTypeAlarmResponse(final MemberAlarm memberAlarm,
                                                                           final LocalDateTime dateTime) {
         final BattleParticipant battleParticipant = battleParticipantRepository.findById(memberAlarm.getTargetId())
-            .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(IllegalArgumentException::new);
         final String friendNickname = getFriendNickname(battleParticipant);
         final String battleName = getBattleName(battleParticipant);
 

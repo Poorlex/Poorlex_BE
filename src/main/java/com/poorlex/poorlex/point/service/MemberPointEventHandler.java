@@ -1,6 +1,6 @@
 package com.poorlex.poorlex.point.service;
 
-import com.poorlex.poorlex.member.service.event.MemberDeletedEvent;
+import com.poorlex.poorlex.user.member.service.event.MemberDeletedEvent;
 import com.poorlex.poorlex.point.domain.MemberPoint;
 import com.poorlex.poorlex.point.domain.MemberPointRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +16,7 @@ import java.util.List;
 @Transactional(propagation = Propagation.REQUIRED)
 @RequiredArgsConstructor
 public class MemberPointEventHandler {
+
     private final MemberPointRepository memberPointRepository;
 
     @TransactionalEventListener(value = MemberDeletedEvent.class, phase = TransactionPhase.BEFORE_COMMIT)

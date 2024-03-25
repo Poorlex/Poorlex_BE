@@ -12,10 +12,10 @@ import com.poorlex.poorlex.battleinvititation.service.dto.request.BattleInviteDe
 import com.poorlex.poorlex.battleinvititation.service.dto.request.BattleInviteRequest;
 import com.poorlex.poorlex.friend.domain.Friend;
 import com.poorlex.poorlex.friend.domain.FriendRepository;
-import com.poorlex.poorlex.member.domain.Member;
-import com.poorlex.poorlex.member.domain.MemberNickname;
-import com.poorlex.poorlex.member.domain.MemberRepository;
-import com.poorlex.poorlex.member.domain.Oauth2RegistrationId;
+import com.poorlex.poorlex.user.member.domain.Member;
+import com.poorlex.poorlex.user.member.domain.MemberNickname;
+import com.poorlex.poorlex.user.member.domain.MemberRepository;
+import com.poorlex.poorlex.user.member.domain.Oauth2RegistrationId;
 import com.poorlex.poorlex.participate.domain.BattleParticipant;
 import com.poorlex.poorlex.participate.domain.BattleParticipantRepository;
 import com.poorlex.poorlex.support.IntegrationTest;

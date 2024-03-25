@@ -1,6 +1,5 @@
 package com.poorlex.poorlex.security;
 
-import com.poorlex.poorlex.member.domain.MemberRepository;
 import com.poorlex.poorlex.security.coverter.AppleRequestEntityConverter;
 import com.poorlex.poorlex.security.filter.JwtFilter;
 import com.poorlex.poorlex.security.handler.AppleTokenOauth2AuthenticationSuccessHandler;
@@ -9,6 +8,7 @@ import com.poorlex.poorlex.security.handler.Oauth2AuthenticationSuccessHandler;
 import com.poorlex.poorlex.security.handler.TokenOauth2AuthenticationSuccessHandlerFacade;
 import com.poorlex.poorlex.security.service.CustomOauth2UserService;
 import com.poorlex.poorlex.token.JwtTokenProvider;
+import com.poorlex.poorlex.user.member.domain.MemberRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -52,7 +52,6 @@ public class SecurityConfig {
         configureBaseAuthorization(http);
         configureAuthorizeRequests(http);
         configureOauth2Login(http);
-        configureFilter(http);
         configureLogout(http);
 
         return http.build();
@@ -60,21 +59,21 @@ public class SecurityConfig {
 
     private void configureBaseAuthorization(final HttpSecurity http) throws Exception {
         http
-            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-            .csrf(csrf -> {
-                    try {
-                        csrf.disable()
-                            .headers(headers -> headers
-                                .frameOptions(FrameOptionsConfig::disable));
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        throw new RuntimeException(e);
-                    }
-                }
-            )
-            .httpBasic(AbstractHttpConfigurer::disable)
-            .formLogin(AbstractHttpConfigurer::disable)
-            .sessionManagement(AbstractHttpConfigurer::disable);
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .csrf(csrf -> {
+                          try {
+                              csrf.disable()
+                                      .headers(headers -> headers
+                                              .frameOptions(FrameOptionsConfig::disable));
+                          } catch (Exception e) {
+                              e.printStackTrace();
+                              throw new RuntimeException(e);
+                          }
+                      }
+                )
+                .httpBasic(AbstractHttpConfigurer::disable)
+                .formLogin(AbstractHttpConfigurer::disable)
+                .sessionManagement(AbstractHttpConfigurer::disable);
     }
 
     public CorsConfigurationSource corsConfigurationSource() {
@@ -90,51 +89,40 @@ public class SecurityConfig {
     }
 
     private void configureAuthorizeRequests(final HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests(oauth2 -> oauth2
-                .anyRequest().permitAll()
-//            .requestMatchers("/oauth2/login/**").permitAll()
-//            .requestMatchers("/h2-console/**").permitAll()
-//            .requestMatchers("/swagger-ui/**").permitAll()
-//            .requestMatchers("/swagger/**").permitAll()
-//            .requestMatchers("/api-docs/**").permitAll()
-//            .requestMatchers("/battles").permitAll()
-//            .requestMatchers(new RegexRequestMatcher("/battles/\\d+", HttpMethod.GET.name())).permitAll()
-//            .requestMatchers("/login/success").permitAll()
-//            .anyRequest().authenticated()
-        );
+        http.authorizeHttpRequests(oauth2 -> oauth2.anyRequest().permitAll());
     }
 
     private void configureOauth2Login(final HttpSecurity http) throws Exception {
         http.oauth2Login(oauth2Login -> oauth2Login
-            .tokenEndpoint(tokenEndpoint -> tokenEndpoint.accessTokenResponseClient(accessTokenResponseClient()))
-            .userInfoEndpoint(userInfo -> userInfo.userService(oAuth2UserService))
-            .successHandler(oAuth2AuthenticationSuccessHandler())
+                .tokenEndpoint(tokenEndpoint -> tokenEndpoint.accessTokenResponseClient(accessTokenResponseClient()))
+                .userInfoEndpoint(userInfo -> userInfo.userService(oAuth2UserService))
+                .successHandler(oAuth2AuthenticationSuccessHandler())
         );
     }
 
     private void configureFilter(final HttpSecurity http) {
         http.addFilterBefore(
-            new JwtFilter(memberRepository, jwtTokenProvider), UsernamePasswordAuthenticationFilter.class
+                new JwtFilter(memberRepository, jwtTokenProvider), UsernamePasswordAuthenticationFilter.class
         );
     }
 
     @Bean
     public Oauth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler() {
         final TokenOauth2AuthenticationSuccessHandlerFacade facade =
-            new TokenOauth2AuthenticationSuccessHandlerFacade(memberRepository, jwtTokenProvider);
+                new TokenOauth2AuthenticationSuccessHandlerFacade(memberRepository, jwtTokenProvider);
 
         facade.addHandlers(
-            new KaKaoTokenOauth2AuthenticationSuccessHandler(memberRepository, jwtTokenProvider, serverUrl));
+                new KaKaoTokenOauth2AuthenticationSuccessHandler(memberRepository, jwtTokenProvider, serverUrl));
         facade.addHandlers(
-            new AppleTokenOauth2AuthenticationSuccessHandler(memberRepository, jwtTokenProvider, serverUrl));
+                new AppleTokenOauth2AuthenticationSuccessHandler(memberRepository, jwtTokenProvider, serverUrl));
 
         return facade;
     }
 
     private void configureLogout(final HttpSecurity http) throws Exception {
         http.logout(logoutConfigure -> logoutConfigure
-            .logoutUrl("/logout")
-            .clearAuthentication(true));
+                .logoutUrl("/logout")
+                .clearAuthentication(true));
     }
 
     @Bean
