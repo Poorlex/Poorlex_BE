@@ -32,7 +32,7 @@ import com.poorlex.poorlex.participate.domain.BattleParticipantRepository;
 import com.poorlex.poorlex.point.domain.Point;
 import com.poorlex.poorlex.point.service.MemberPointService;
 import com.poorlex.poorlex.user.member.domain.MemberLevel;
-import com.poorlex.poorlex.user.member.service.MemberService;
+import com.poorlex.poorlex.user.member.service.MemberQueryService;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Comparator;
@@ -54,7 +54,7 @@ public class BattleService {
     private final BattleAlarmService battleAlarmService;
     private final MemberPointService memberPointService;
     private final ExpenditureQueryService expenditureQueryService;
-    private final MemberService memberService;
+    private final MemberQueryService memberQueryService;
     private final AWSS3Service awss3Service;
     private final String bucketDirectory;
 
@@ -63,7 +63,7 @@ public class BattleService {
                          final BattleAlarmService battleAlarmService,
                          final MemberPointService memberPointService,
                          final ExpenditureQueryService expenditureQueryService,
-                         final MemberService memberService,
+                         final MemberQueryService memberQueryService,
                          final AWSS3Service awss3Service,
                          @Value("${aws.s3.battle-directory}") final String bucketDirectory) {
         this.battleRepository = battleRepository;
@@ -71,7 +71,7 @@ public class BattleService {
         this.battleAlarmService = battleAlarmService;
         this.memberPointService = memberPointService;
         this.expenditureQueryService = expenditureQueryService;
-        this.memberService = memberService;
+        this.memberQueryService = memberQueryService;
         this.awss3Service = awss3Service;
         this.bucketDirectory = bucketDirectory;
     }
@@ -253,7 +253,7 @@ public class BattleService {
     }
 
     private Map<Long, String> getParticipantsNickname(final List<Long> memberIds) {
-        return memberService.getMembersNickname(memberIds);
+        return memberQueryService.getMembersNickname(memberIds);
     }
 
     private Map<Long, Integer> getParticipantsTotalPoint(final List<Long> memberIds) {

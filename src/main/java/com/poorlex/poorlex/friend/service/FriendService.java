@@ -12,10 +12,10 @@ import com.poorlex.poorlex.friend.service.dto.response.FriendResponse;
 import com.poorlex.poorlex.friend.service.event.FriendAcceptedEvent;
 import com.poorlex.poorlex.friend.service.event.FriendDeniedEvent;
 import com.poorlex.poorlex.friend.service.event.FriendInvitedEvent;
-import com.poorlex.poorlex.user.member.domain.MemberLevel;
-import com.poorlex.poorlex.user.member.domain.MemberRepository;
 import com.poorlex.poorlex.point.domain.MemberPointRepository;
 import com.poorlex.poorlex.point.domain.Point;
+import com.poorlex.poorlex.user.member.domain.MemberLevel;
+import com.poorlex.poorlex.user.member.domain.MemberRepository;
 import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -79,7 +79,7 @@ public class FriendService {
     }
 
     public List<FriendResponse> findMemberFriends(final Long memberId, final LocalDate date) {
-        final List<Long> friendMemberIds = friendRepository.findMembersFriendMemberId(memberId);
+        final List<Long> friendMemberIds = friendRepository.findFriendIdsByMemberId(memberId);
 
         return friendMemberIds.stream()
                 .map(friendMemberId -> generateResponse(friendMemberId, date))
@@ -87,14 +87,13 @@ public class FriendService {
     }
 
     private FriendResponse generateResponse(final Long friendMemberId, final LocalDate date) {
-        return new FriendResponse(
-                getFriendLevel(friendMemberId),
-                getFriendNickname(friendMemberId),
-                getFriendWeeklyTotalExpenditure(friendMemberId, date)
-        );
+        return new FriendResponse(friendMemberId,
+                                  getFriendLevel(friendMemberId),
+                                  getFriendNickname(friendMemberId),
+                                  getFriendWeeklyTotalExpenditure(friendMemberId, date));
     }
 
-    private int getFriendWeeklyTotalExpenditure(final Long friendMemberId, final LocalDate date) {
+    private Long getFriendWeeklyTotalExpenditure(final Long friendMemberId, final LocalDate date) {
         final MemberWeeklyTotalExpenditureResponse weeklyTotalExpenditure =
                 expenditureQueryService.findMemberWeeklyTotalExpenditure(friendMemberId, date);
 

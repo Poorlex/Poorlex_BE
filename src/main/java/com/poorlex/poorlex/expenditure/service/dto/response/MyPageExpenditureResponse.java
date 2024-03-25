@@ -1,5 +1,6 @@
 package com.poorlex.poorlex.expenditure.service.dto.response;
 
+import com.poorlex.poorlex.user.member.service.dto.ExpenditureDto;
 import java.time.LocalDate;
 import lombok.Getter;
 
@@ -21,12 +22,12 @@ public class MyPageExpenditureResponse {
         this.imageUrl = imageUrl;
     }
 
-    public static MyPageExpenditureResponse from(final ExpenditureResponse expenditureResponse) {
+    public static MyPageExpenditureResponse from(final ExpenditureDto expenditureDto) {
         return new MyPageExpenditureResponse(
-                expenditureResponse.getId(),
-                LocalDate.from(expenditureResponse.getDate()),
-                expenditureResponse.getAmount(),
-                expenditureResponse.getMainImageUrl()
+                expenditureDto.getId(),
+                LocalDate.from(expenditureDto.getDate()),
+                expenditureDto.getAmount(),
+                expenditureDto.getImageUrl()
         );
     }
 }

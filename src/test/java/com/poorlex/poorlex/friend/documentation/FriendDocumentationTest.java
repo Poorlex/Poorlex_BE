@@ -52,22 +52,23 @@ class FriendDocumentationTest extends MockMvcTest implements ReplaceUnderScoreTe
         //when
         //then
         final ResultActions result = mockMvc.perform(
-            post("/friends/invite")
-                .header(HttpHeaders.AUTHORIZATION, "Bearer {accessToken}")
-                .content(objectMapper.writeValueAsString(request))
-                .contentType(MediaType.APPLICATION_JSON)
-                .with(csrf())
+                post("/friends/invite")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer {accessToken}")
+                        .content(objectMapper.writeValueAsString(request))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .with(csrf())
         );
         result.andExpect(status().isOk())
-            .andDo(
-                document("friend-invite",
-                    ApiDocumentUtils.getDocumentRequest(),
-                    ApiDocumentUtils.getDocumentResponse(),
-                    requestFields(
-                        fieldWithPath("inviteMemberId").type(JsonFieldType.NUMBER).description("친구 요청할 멤버 Id")
-                    )
-                )
-            );
+                .andDo(
+                        document("friend-invite",
+                                 ApiDocumentUtils.getDocumentRequest(),
+                                 ApiDocumentUtils.getDocumentResponse(),
+                                 requestFields(
+                                         fieldWithPath("inviteMemberId").type(JsonFieldType.NUMBER)
+                                                 .description("친구 요청할 멤버 Id")
+                                 )
+                        )
+                );
     }
 
     @Test
@@ -82,22 +83,23 @@ class FriendDocumentationTest extends MockMvcTest implements ReplaceUnderScoreTe
         //when
         //then
         final ResultActions result = mockMvc.perform(
-            post("/friends/invite/accept")
-                .header(HttpHeaders.AUTHORIZATION, "Bearer {accessToken}")
-                .content(objectMapper.writeValueAsString(request))
-                .contentType(MediaType.APPLICATION_JSON)
-                .with(csrf())
+                post("/friends/invite/accept")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer {accessToken}")
+                        .content(objectMapper.writeValueAsString(request))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .with(csrf())
         );
         result.andExpect(status().isCreated())
-            .andDo(
-                document("friend-invite-accept",
-                    ApiDocumentUtils.getDocumentRequest(),
-                    ApiDocumentUtils.getDocumentResponse(),
-                    requestFields(
-                        fieldWithPath("friendMemberId").type(JsonFieldType.NUMBER).description("친구 요청한 멤버 Id")
-                    )
-                )
-            );
+                .andDo(
+                        document("friend-invite-accept",
+                                 ApiDocumentUtils.getDocumentRequest(),
+                                 ApiDocumentUtils.getDocumentResponse(),
+                                 requestFields(
+                                         fieldWithPath("friendMemberId").type(JsonFieldType.NUMBER)
+                                                 .description("친구 요청한 멤버 Id")
+                                 )
+                        )
+                );
     }
 
     @Test
@@ -112,22 +114,23 @@ class FriendDocumentationTest extends MockMvcTest implements ReplaceUnderScoreTe
         //when
         //then
         final ResultActions result = mockMvc.perform(
-            post("/friends/invite/deny")
-                .header(HttpHeaders.AUTHORIZATION, "Bearer {accessToken}")
-                .content(objectMapper.writeValueAsString(request))
-                .contentType(MediaType.APPLICATION_JSON)
-                .with(csrf())
+                post("/friends/invite/deny")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer {accessToken}")
+                        .content(objectMapper.writeValueAsString(request))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .with(csrf())
         );
         result.andExpect(status().isOk())
-            .andDo(
-                document("friend-invite-deny",
-                    ApiDocumentUtils.getDocumentRequest(),
-                    ApiDocumentUtils.getDocumentResponse(),
-                    requestFields(
-                        fieldWithPath("inviteMemberId").type(JsonFieldType.NUMBER).description("친구 요청한 멤버 Id")
-                    )
-                )
-            );
+                .andDo(
+                        document("friend-invite-deny",
+                                 ApiDocumentUtils.getDocumentRequest(),
+                                 ApiDocumentUtils.getDocumentResponse(),
+                                 requestFields(
+                                         fieldWithPath("inviteMemberId").type(JsonFieldType.NUMBER)
+                                                 .description("친구 요청한 멤버 Id")
+                                 )
+                        )
+                );
     }
 
     @Test
@@ -136,31 +139,36 @@ class FriendDocumentationTest extends MockMvcTest implements ReplaceUnderScoreTe
         mockingTokenInterceptor();
         mockingMemberArgumentResolver();
         given(friendService.findMemberFriendsWithCurrentDateTime(any()))
-            .willReturn(List.of(
-                new FriendResponse(1, "친구1 닉네임", 1000),
-                new FriendResponse(3, "친구2 닉네임", 0),
-                new FriendResponse(2, "친구3 닉네임", 13000)
-            ));
+                .willReturn(List.of(
+                        new FriendResponse(1L, 1, "친구1 닉네임", 1000L),
+                        new FriendResponse(2L, 3, "친구2 닉네임", 0L),
+                        new FriendResponse(3L, 2, "친구3 닉네임", 13000L)
+                ));
 
         //when
         //then
         final ResultActions result = mockMvc.perform(
-            get("/friends")
-                .header(HttpHeaders.AUTHORIZATION, "Bearer {accessToken}")
+                get("/friends")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer {accessToken}")
         );
 
         result.andExpect(status().isOk())
-            .andDo(
-                document("friend-find",
-                    ApiDocumentUtils.getDocumentRequest(),
-                    ApiDocumentUtils.getDocumentResponse(),
-                    responseFields(fieldWithPath("[]").description("친구 리스트"))
-                        .andWithPrefix("[].",
-                            fieldWithPath("level").type(JsonFieldType.NUMBER).description("친구의 레벨"),
-                            fieldWithPath("nickname").type(JsonFieldType.STRING).description("친구의 닉네임"),
-                            fieldWithPath("weeklyExpenditure").type(JsonFieldType.NUMBER).description("친구의 주간 총 지출")
+                .andDo(
+                        document("friend-find",
+                                 ApiDocumentUtils.getDocumentRequest(),
+                                 ApiDocumentUtils.getDocumentResponse(),
+                                 responseFields(fieldWithPath("[]").description("친구 리스트"))
+                                         .andWithPrefix("[].",
+                                                        fieldWithPath("id").type(JsonFieldType.NUMBER)
+                                                                .description("친구의 멤버 ID"),
+                                                        fieldWithPath("level").type(JsonFieldType.NUMBER)
+                                                                .description("친구의 레벨"),
+                                                        fieldWithPath("nickname").type(JsonFieldType.STRING)
+                                                                .description("친구의 닉네임"),
+                                                        fieldWithPath("weeklyExpenditure").type(JsonFieldType.NUMBER)
+                                                                .description("친구의 주간 총 지출")
+                                         )
                         )
-                )
-            );
+                );
     }
 }

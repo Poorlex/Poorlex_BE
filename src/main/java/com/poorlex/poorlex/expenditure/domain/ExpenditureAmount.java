@@ -14,14 +14,14 @@ public class ExpenditureAmount {
     private static final long MINIMUM_PRICE = 0L;
     private static final long MAXIMUM_PRICE = 9_999_999L;
     @Column(name = "amount", nullable = false)
-    private long value;
+    private Long value;
 
-    public ExpenditureAmount(final long value) {
+    public ExpenditureAmount(final Long value) {
         validate(value);
         this.value = value;
     }
 
-    private void validate(final long value) {
+    private void validate(final Long value) {
         if (MINIMUM_PRICE > value || value > MAXIMUM_PRICE) {
             final String errorMessage = String.format("지출 금액은 %d원 이상 %d원 이하입니다. ( 입력 지출 금액 : %d )",
                                                       MINIMUM_PRICE,
@@ -31,7 +31,7 @@ public class ExpenditureAmount {
         }
     }
 
-    public long getValue() {
+    public Long getValue() {
         return value;
     }
 }

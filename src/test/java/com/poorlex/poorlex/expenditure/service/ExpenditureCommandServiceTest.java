@@ -7,12 +7,12 @@ import com.poorlex.poorlex.expenditure.fixture.ExpenditureFixture;
 import com.poorlex.poorlex.expenditure.fixture.ExpenditureRequestFixture;
 import com.poorlex.poorlex.expenditure.service.dto.request.ExpenditureCreateRequest;
 import com.poorlex.poorlex.expenditure.service.dto.request.ExpenditureUpdateRequest;
+import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
+import com.poorlex.poorlex.support.db.UsingDataJpaTest;
 import com.poorlex.poorlex.user.member.domain.Member;
 import com.poorlex.poorlex.user.member.domain.MemberNickname;
 import com.poorlex.poorlex.user.member.domain.MemberRepository;
 import com.poorlex.poorlex.user.member.domain.Oauth2RegistrationId;
-import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
-import com.poorlex.poorlex.support.db.UsingDataJpaTest;
 import jakarta.persistence.EntityManager;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -100,7 +100,7 @@ class ExpenditureCommandServiceTest extends UsingDataJpaTest implements ReplaceU
         //given
         final Member member = memberRepository.save(
                 Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname")));
-        final Expenditure expenditure = createExpenditureWithMainImageAndSubImage(1000,
+        final Expenditure expenditure = createExpenditureWithMainImageAndSubImage(1000L,
                                                                                   member.getId(),
                                                                                   LocalDate.now());
         final String prevMainImageUrl = expenditure.getMainImageUrl();
@@ -138,7 +138,7 @@ class ExpenditureCommandServiceTest extends UsingDataJpaTest implements ReplaceU
         //given
         final Member member = memberRepository.save(
                 Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname")));
-        final Expenditure expenditure = createExpenditureWithMainImageAndSubImage(1000,
+        final Expenditure expenditure = createExpenditureWithMainImageAndSubImage(1000L,
                                                                                   member.getId(),
                                                                                   LocalDate.now());
         final ExpenditureUpdateRequest request = new ExpenditureUpdateRequest(2000L, "업데이트된 소개");
@@ -195,7 +195,7 @@ class ExpenditureCommandServiceTest extends UsingDataJpaTest implements ReplaceU
         //given
         final Member member = memberRepository.save(
                 Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname")));
-        final Expenditure expenditure = createExpenditureWithMainImageAndSubImage(1000,
+        final Expenditure expenditure = createExpenditureWithMainImageAndSubImage(1000L,
                                                                                   member.getId(),
                                                                                   LocalDate.now());
         final String prevExpenditureImageUrl = expenditure.getMainImageUrl();
@@ -243,7 +243,7 @@ class ExpenditureCommandServiceTest extends UsingDataJpaTest implements ReplaceU
         //given
         final Member member = memberRepository.save(
                 Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname")));
-        final Expenditure expenditure = createExpenditureWithMainImageAndSubImage(1000,
+        final Expenditure expenditure = createExpenditureWithMainImageAndSubImage(1000L,
                                                                                   member.getId(),
                                                                                   LocalDate.now());
         final String prevSubImageUrl = expenditure.getSubImageUrl().get();
@@ -291,7 +291,7 @@ class ExpenditureCommandServiceTest extends UsingDataJpaTest implements ReplaceU
         //given
         final Member member = memberRepository.save(
                 Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname")));
-        final Expenditure expenditure = createExpenditureWithMainImageAndSubImage(1000,
+        final Expenditure expenditure = createExpenditureWithMainImageAndSubImage(1000L,
                                                                                   member.getId(),
                                                                                   LocalDate.now());
         final String prevSubImageUrl = expenditure.getSubImageUrl().get();
@@ -328,7 +328,7 @@ class ExpenditureCommandServiceTest extends UsingDataJpaTest implements ReplaceU
         //given
         final Member member = memberRepository.save(
                 Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname")));
-        final Expenditure expenditure = createExpenditureWithMainImageAndSubImage(1000,
+        final Expenditure expenditure = createExpenditureWithMainImageAndSubImage(1000L,
                                                                                   member.getId(),
                                                                                   LocalDate.now());
         final String prevSubImageUrl = expenditure.getSubImageUrl().get();
@@ -369,7 +369,7 @@ class ExpenditureCommandServiceTest extends UsingDataJpaTest implements ReplaceU
         //given
         final Member member = memberRepository.save(
                 Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname")));
-        final Expenditure expenditure = createExpenditureWithMainImageAndSubImage(1000,
+        final Expenditure expenditure = createExpenditureWithMainImageAndSubImage(1000L,
                                                                                   member.getId(),
                                                                                   LocalDate.now());
         final String prevMainImageUrl = expenditure.getMainImageUrl();
@@ -401,7 +401,7 @@ class ExpenditureCommandServiceTest extends UsingDataJpaTest implements ReplaceU
         );
     }
 
-    private Expenditure createExpenditureWithMainImageAndSubImage(final int amount,
+    private Expenditure createExpenditureWithMainImageAndSubImage(final Long amount,
                                                                   final Long memberId,
                                                                   final LocalDate date) {
         return expenditureRepository.save(ExpenditureFixture.simpleWithMainImageAndSubImage(amount, memberId, date));

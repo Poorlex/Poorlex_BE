@@ -2,11 +2,8 @@ package com.poorlex.poorlex.battlesuccess.service;
 
 import com.poorlex.poorlex.battle.domain.Battle;
 import com.poorlex.poorlex.battle.domain.BattleRepository;
-import com.poorlex.poorlex.battle.service.dto.response.BattleSuccessCountResponse;
-import com.poorlex.poorlex.battlesuccess.domain.BattleSuccessCountGroup;
 import com.poorlex.poorlex.battlesuccess.domain.BattleSuccessHistory;
 import com.poorlex.poorlex.battlesuccess.domain.BattleSuccessHistoryRepository;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,17 +19,10 @@ public class BattleSuccessService {
     @Transactional
     public void saveBattleSuccessHistory(final Long memberId, final Long battleId) {
         final Battle battle = battleRepository.findById(battleId)
-            .orElseThrow(() -> new IllegalArgumentException("해당 Id의 배틀이 존재하지 않습니다."));
+                .orElseThrow(() -> new IllegalArgumentException("해당 Id의 배틀이 존재하지 않습니다."));
         final BattleSuccessHistory battleSuccessHistory =
-            BattleSuccessHistory.withoutId(memberId, battle.getId(), battle.getDifficulty());
+                BattleSuccessHistory.withoutId(memberId, battle.getId(), battle.getDifficulty());
 
         battleSuccessHistoryRepository.save(battleSuccessHistory);
-    }
-
-    public BattleSuccessCountResponse findMemberBattleSuccessCounts(final Long memberId) {
-        final List<BattleSuccessCountGroup> battleSuccessCountsPerDifficulties =
-            battleSuccessHistoryRepository.findDifficultySuccessCountsByMemberId(memberId);
-        
-        return new BattleSuccessCountResponse(battleSuccessCountsPerDifficulties);
     }
 }

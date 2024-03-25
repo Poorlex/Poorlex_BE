@@ -103,7 +103,7 @@ public class Expenditure {
         return memberId;
     }
 
-    public long getAmount() {
+    public Long getAmount() {
         return amount.getValue();
     }
 

@@ -5,9 +5,9 @@ import lombok.Getter;
 @Getter
 public class MemberWeeklyTotalExpenditureResponse {
 
-    private final int amount;
+    private final Long amount;
 
-    public MemberWeeklyTotalExpenditureResponse(final int amount) {
+    public MemberWeeklyTotalExpenditureResponse(final Long amount) {
         this.amount = amount;
     }
 }

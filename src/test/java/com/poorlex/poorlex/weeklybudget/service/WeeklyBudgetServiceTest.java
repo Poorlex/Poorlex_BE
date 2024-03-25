@@ -3,12 +3,12 @@ package com.poorlex.poorlex.weeklybudget.service;
 import com.poorlex.poorlex.expenditure.domain.Expenditure;
 import com.poorlex.poorlex.expenditure.domain.ExpenditureRepository;
 import com.poorlex.poorlex.expenditure.fixture.ExpenditureFixture;
+import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
+import com.poorlex.poorlex.support.db.UsingDataJpaTest;
 import com.poorlex.poorlex.user.member.domain.Member;
 import com.poorlex.poorlex.user.member.domain.MemberNickname;
 import com.poorlex.poorlex.user.member.domain.MemberRepository;
 import com.poorlex.poorlex.user.member.domain.Oauth2RegistrationId;
-import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
-import com.poorlex.poorlex.support.db.UsingDataJpaTest;
 import com.poorlex.poorlex.weeklybudget.domain.WeeklyBudget;
 import com.poorlex.poorlex.weeklybudget.domain.WeeklyBudgetAmount;
 import com.poorlex.poorlex.weeklybudget.domain.WeeklyBudgetDuration;
@@ -107,7 +107,7 @@ class WeeklyBudgetServiceTest extends UsingDataJpaTest implements ReplaceUnderSc
         final Member member = memberRepository.save(
                 Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname")));
         final WeeklyBudget weaklyBudget = createWeaklyBudget(member.getId(), 10000L);
-        final Expenditure expenditure = expend(1000,
+        final Expenditure expenditure = expend(1000L,
                                                member.getId(),
                                                LocalDate.from(weaklyBudget.getDuration().getStart()));
 
@@ -128,7 +128,7 @@ class WeeklyBudgetServiceTest extends UsingDataJpaTest implements ReplaceUnderSc
         final Member member = memberRepository.save(
                 Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname")));
         final LocalDate date = LocalDate.now();
-        expend(1000, member.getId(), date);
+        expend(1000L, member.getId(), date);
 
         //when
         final WeeklyBudgetLeftResponse budgetLeft = weeklyBudgetService.findCurrentBudgetLeftByMemberIdAndDate(member.getId(),
@@ -149,7 +149,7 @@ class WeeklyBudgetServiceTest extends UsingDataJpaTest implements ReplaceUnderSc
         return weeklyBudgetRepository.save(weeklyBudget);
     }
 
-    private Expenditure expend(final int amount, final Long memberId, final LocalDate date) {
+    private Expenditure expend(final Long amount, final Long memberId, final LocalDate date) {
         return expenditureRepository.save(ExpenditureFixture.simpleWithMainImage(amount, memberId, date));
     }
 }

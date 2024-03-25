@@ -12,7 +12,6 @@ import com.poorlex.poorlex.battlesuccess.domain.BattleSuccessHistoryRepository;
 import com.poorlex.poorlex.expenditure.domain.Expenditure;
 import com.poorlex.poorlex.expenditure.domain.ExpenditureRepository;
 import com.poorlex.poorlex.expenditure.fixture.ExpenditureFixture;
-import com.poorlex.poorlex.expenditure.service.dto.response.ExpenditureResponse;
 import com.poorlex.poorlex.expenditure.service.dto.response.MyPageExpenditureResponse;
 import com.poorlex.poorlex.fixture.MemberFixture;
 import com.poorlex.poorlex.friend.domain.Friend;
@@ -29,6 +28,7 @@ import com.poorlex.poorlex.user.member.domain.Member;
 import com.poorlex.poorlex.user.member.domain.MemberLevel;
 import com.poorlex.poorlex.user.member.domain.MemberRepository;
 import static com.poorlex.poorlex.user.member.domain.Oauth2RegistrationId.APPLE;
+import com.poorlex.poorlex.user.member.service.dto.ExpenditureDto;
 import com.poorlex.poorlex.user.member.service.dto.response.MyPageResponse;
 import java.time.LocalDate;
 import java.util.List;
@@ -47,7 +47,7 @@ class MemberQueryServiceTest extends IntegrationTest implements ReplaceUnderScor
     private MemberPointRepository memberPointRepository;
 
     @Autowired
-    private MemberService memberService;
+    private MemberQueryService memberQueryService;
 
     @Autowired
     private FriendRepository friendRepository;
@@ -76,15 +76,15 @@ class MemberQueryServiceTest extends IntegrationTest implements ReplaceUnderScor
         회원이_배틀에_참가한다(푸얼렉스, 난이도_HARD_배틀);
 
         final LocalDate 배틀_시작_날짜 = LocalDate.from(난이도_HARD_배틀.getDuration().getStart());
-        final Expenditure 스플릿_첫번쨰_지출 = 지출을_생성한다(10000, 스플릿.getId(), 배틀_시작_날짜);
-        final Expenditure 스플릿_두번쨰_지출 = 지출을_생성한다(20000, 스플릿.getId(), 배틀_시작_날짜);
-        final Expenditure 푸얼렉스_첫번쨰_지출 = 지출을_생성한다(10000, 푸얼렉스.getId(), 배틀_시작_날짜);
+        final Expenditure 스플릿_첫번쨰_지출 = 지출을_생성한다(10000L, 스플릿.getId(), 배틀_시작_날짜);
+        final Expenditure 스플릿_두번쨰_지출 = 지출을_생성한다(20000L, 스플릿.getId(), 배틀_시작_날짜);
+        final Expenditure 푸얼렉스_첫번쨰_지출 = 지출을_생성한다(10000L, 푸얼렉스.getId(), 배틀_시작_날짜);
 
         final int 스플릿_배틀_등수 = 1;
         회원이_배틀에_해당_순위로_성공한다(스플릿, 난이도_HARD_배틀, 스플릿_배틀_등수);
 
         //when
-        final MyPageResponse myPageInfo = memberService.getMyPageInfo(스플릿.getId(), 배틀_시작_날짜);
+        final MyPageResponse myPageInfo = memberQueryService.getMyPageInfo(스플릿.getId(), 배틀_시작_날짜);
 
         //then
         final int 배틀_성공_점수 = 난이도_HARD_배틀.getBattleType().getScore(스플릿_배틀_등수);
@@ -95,8 +95,8 @@ class MemberQueryServiceTest extends IntegrationTest implements ReplaceUnderScor
         final List<FriendResponse> 회원_친구_목록 = myPageInfo.getFriends();
         final BattleSuccessCountResponse 회원_배틀_성공_기록 = myPageInfo.getBattleSuccessInfo();
         final List<MyPageExpenditureResponse> 예상_지출_목록 = List.of(
-                MyPageExpenditureResponse.from(ExpenditureResponse.from(스플릿_첫번쨰_지출)),
-                MyPageExpenditureResponse.from(ExpenditureResponse.from(스플릿_두번쨰_지출))
+                MyPageExpenditureResponse.from(mapFromExpenditure(스플릿_첫번쨰_지출)),
+                MyPageExpenditureResponse.from(mapFromExpenditure(스플릿_두번쨰_지출))
         );
 
         assertSoftly(
@@ -127,7 +127,7 @@ class MemberQueryServiceTest extends IntegrationTest implements ReplaceUnderScor
         friendRepository.save(Friend.withoutId(member.getId(), friend.getId()));
     }
 
-    private Expenditure 지출을_생성한다(final int amount, final Long memberId, final LocalDate date) {
+    private Expenditure 지출을_생성한다(final Long amount, final Long memberId, final LocalDate date) {
         return expenditureRepository.save(ExpenditureFixture.simpleWithMainImage(amount, memberId, date));
     }
 
@@ -154,5 +154,12 @@ class MemberQueryServiceTest extends IntegrationTest implements ReplaceUnderScor
         final BattleType 배틀_타입 = 참가중인_배틀.getBattleType();
         final int 배틀_성공_점수 = 배틀_타입.getScore(순위);
         memberPointRepository.save(MemberPoint.withoutId(new Point(배틀_성공_점수), 회원.getId()));
+    }
+
+    private ExpenditureDto mapFromExpenditure(final Expenditure expenditure) {
+        return new ExpenditureDto(expenditure.getId(),
+                                  expenditure.getDate(),
+                                  expenditure.getAmount(),
+                                  expenditure.getMainImageUrl());
     }
 }
