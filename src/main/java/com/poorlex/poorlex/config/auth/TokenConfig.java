@@ -38,7 +38,7 @@ public class TokenConfig implements WebMvcConfigurer {
         tokenInterceptor.addExcludePattern(ExcludePattern.withGet(Pattern.compile("/battles/\\d+")));
         tokenInterceptor.addExcludePattern(ExcludePattern.withGet(Pattern.compile("/goals/type")));
         tokenInterceptor.addExcludePattern(ExcludePattern.withGet(Pattern.compile("/battles")));
-        tokenInterceptor.addExcludePattern(ExcludePattern.withGet(Pattern.compile("/expenditures/\\d+")));
+        tokenInterceptor.addExcludePattern(ExcludePattern.withGet(Pattern.compile("/expenditures/-?\\d+")));
     }
 
     @Override
