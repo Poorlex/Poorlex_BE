@@ -59,11 +59,11 @@ public class WeeklyBudgetService {
             return WeeklyBudgetLeftResponse.withNullWeeklyBudget();
         }
 
-        final int sumExpenditure = getSumExpenditureByMemberIdInDuration(memberId, weeklyBudget.getDuration());
+        final Long sumExpenditure = getSumExpenditureByMemberIdInDuration(memberId, weeklyBudget.getDuration());
         return WeeklyBudgetLeftResponse.from(weeklyBudget, sumExpenditure);
     }
 
-    public int getSumExpenditureByMemberIdInDuration(final Long memberId, final WeeklyBudgetDuration duration) {
+    public Long getSumExpenditureByMemberIdInDuration(final Long memberId, final WeeklyBudgetDuration duration) {
         final LocalDate start = LocalDate.from(duration.getStart());
         final LocalDate end = LocalDate.from(duration.getEnd());
         return expenditureRepository.findSumExpenditureByMemberIdAndBetween(memberId, start, end);

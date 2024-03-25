@@ -11,14 +11,14 @@ import com.poorlex.poorlex.expenditure.fixture.ExpenditureFixture;
 import com.poorlex.poorlex.expenditure.service.dto.response.BattleExpenditureResponse;
 import com.poorlex.poorlex.expenditure.service.dto.response.ExpenditureResponse;
 import com.poorlex.poorlex.expenditure.service.dto.response.MemberWeeklyTotalExpenditureResponse;
-import com.poorlex.poorlex.user.member.domain.Member;
-import com.poorlex.poorlex.user.member.domain.MemberNickname;
-import com.poorlex.poorlex.user.member.domain.MemberRepository;
-import com.poorlex.poorlex.user.member.domain.Oauth2RegistrationId;
 import com.poorlex.poorlex.participate.domain.BattleParticipant;
 import com.poorlex.poorlex.participate.domain.BattleParticipantRepository;
 import com.poorlex.poorlex.support.IntegrationTest;
 import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
+import com.poorlex.poorlex.user.member.domain.Member;
+import com.poorlex.poorlex.user.member.domain.MemberNickname;
+import com.poorlex.poorlex.user.member.domain.MemberRepository;
+import com.poorlex.poorlex.user.member.domain.Oauth2RegistrationId;
 import com.poorlex.poorlex.weeklybudget.domain.WeeklyBudgetDuration;
 import java.time.LocalDate;
 import java.util.List;
@@ -60,15 +60,15 @@ class ExpenditureQueryServiceTest extends IntegrationTest implements ReplaceUnde
         final LocalDate date = LocalDate.now();
         final WeeklyExpenditureDuration weeklyExpenditureDuration = WeeklyExpenditureDuration.from(date);
 
-        createExpenditureWithMainImage(1000, member.getId(), LocalDate.from(weeklyExpenditureDuration.getStart()));
-        createExpenditureWithMainImage(2000, member.getId(), LocalDate.from(weeklyExpenditureDuration.getStart()));
+        createExpenditureWithMainImage(1000L, member.getId(), LocalDate.from(weeklyExpenditureDuration.getStart()));
+        createExpenditureWithMainImage(2000L, member.getId(), LocalDate.from(weeklyExpenditureDuration.getStart()));
 
         //when
         final MemberWeeklyTotalExpenditureResponse response =
                 expenditureQueryService.findMemberWeeklyTotalExpenditure(member.getId(), date);
 
         //then
-        assertThat(response.getAmount()).isEqualTo(3000);
+        assertThat(response.getAmount()).isEqualTo(3000L);
     }
 
     @Test
@@ -77,10 +77,10 @@ class ExpenditureQueryServiceTest extends IntegrationTest implements ReplaceUnde
         final WeeklyBudgetDuration weeklyBudgetDuration = WeeklyBudgetDuration.current();
         final Member member = createMember("oauthId");
 
-        createExpenditureWithMainImage(1000,
+        createExpenditureWithMainImage(1000L,
                                        member.getId(),
                                        LocalDate.from(weeklyBudgetDuration.getStart()).minusDays(1));
-        createExpenditureWithMainImage(2000,
+        createExpenditureWithMainImage(2000L,
                                        member.getId(),
                                        LocalDate.from(weeklyBudgetDuration.getStart()).minusDays(1));
 
@@ -98,7 +98,7 @@ class ExpenditureQueryServiceTest extends IntegrationTest implements ReplaceUnde
     void 해당_ID를_가진_지출을_조회한다() {
         //given
         final Member member = createMember("oauthId");
-        final Expenditure expenditure = createExpenditureWithMainImage(1000, member.getId(), LocalDate.now());
+        final Expenditure expenditure = createExpenditureWithMainImage(1000L, member.getId(), LocalDate.now());
 
         //when
         final ExpenditureResponse response = expenditureQueryService.findExpenditureById(expenditure.getId());
@@ -120,7 +120,7 @@ class ExpenditureQueryServiceTest extends IntegrationTest implements ReplaceUnde
     void 멤버의_지출목록을_조회한다() {
         //given
         final Member member = createMember("oauthId");
-        final Expenditure expenditure = createExpenditureWithMainImage(1000, member.getId(), LocalDate.now());
+        final Expenditure expenditure = createExpenditureWithMainImage(1000L, member.getId(), LocalDate.now());
 
         //when
         final List<ExpenditureResponse> responses = expenditureQueryService.findMemberExpenditures(member.getId());
@@ -150,8 +150,8 @@ class ExpenditureQueryServiceTest extends IntegrationTest implements ReplaceUnde
         join(battle, member);
 
         final LocalDate battleStartDate = LocalDate.from(battle.getDuration().getStart());
-        createExpenditureWithMainImage(1000, member.getId(), battleStartDate.minusDays(1));
-        final Expenditure expenditure = createExpenditureWithMainImage(1000, member.getId(), battleStartDate);
+        createExpenditureWithMainImage(1000L, member.getId(), battleStartDate.minusDays(1));
+        final Expenditure expenditure = createExpenditureWithMainImage(1000L, member.getId(), battleStartDate);
 
         //when
         final List<BattleExpenditureResponse> responses =
@@ -183,9 +183,9 @@ class ExpenditureQueryServiceTest extends IntegrationTest implements ReplaceUnde
         join(battle, other);
 
         final LocalDate battleStart = LocalDate.from(battle.getDuration().getStart());
-        final Expenditure memberExpenditure = createExpenditureWithMainImage(1000, member.getId(), battleStart);
-        createExpenditureWithMainImage(2000, member.getId(), battleStart.minusWeeks(1));
-        final Expenditure otherExpenditure = createExpenditureWithMainImage(1000, other.getId(), battleStart);
+        final Expenditure memberExpenditure = createExpenditureWithMainImage(1000L, member.getId(), battleStart);
+        createExpenditureWithMainImage(2000L, member.getId(), battleStart.minusWeeks(1));
+        final Expenditure otherExpenditure = createExpenditureWithMainImage(1000L, other.getId(), battleStart);
 
         //when
         final List<BattleExpenditureResponse> responses = expenditureQueryService.findBattleExpendituresInDayOfWeek(
@@ -224,11 +224,11 @@ class ExpenditureQueryServiceTest extends IntegrationTest implements ReplaceUnde
         join(battle, member);
         join(battle, other);
 
-        final Expenditure memberExpenditure = createExpenditureWithMainImage(1000,
+        final Expenditure memberExpenditure = createExpenditureWithMainImage(1000L,
                                                                              member.getId(),
                                                                              LocalDate.from(battle.getDuration()
                                                                                                     .getStart()));
-        createExpenditureWithMainImage(1000, other.getId(), LocalDate.from(battle.getDuration().getStart()));
+        createExpenditureWithMainImage(1000L, other.getId(), LocalDate.from(battle.getDuration().getStart()));
 
         //when
         final List<BattleExpenditureResponse> responses = expenditureQueryService.findBattleExpendituresInDayOfWeek(
@@ -270,7 +270,7 @@ class ExpenditureQueryServiceTest extends IntegrationTest implements ReplaceUnde
                 Member.withoutId(Oauth2RegistrationId.APPLE, oauthId, new MemberNickname("nickname")));
     }
 
-    private Expenditure createExpenditureWithMainImage(final int amount, final Long memberId, final LocalDate date) {
+    private Expenditure createExpenditureWithMainImage(final Long amount, final Long memberId, final LocalDate date) {
         return expenditureRepository.save(ExpenditureFixture.simpleWithMainImage(amount, memberId, date));
     }
 

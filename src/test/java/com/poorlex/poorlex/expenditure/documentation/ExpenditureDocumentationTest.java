@@ -145,7 +145,7 @@ class ExpenditureDocumentationTest extends MockMvcTest {
 
         final MemberWeeklyTotalExpenditureRequest request = new MemberWeeklyTotalExpenditureRequest(LocalDate.now());
         given(expenditureQueryService.findMemberWeeklyTotalExpenditure(any(), any()))
-                .willReturn(new MemberWeeklyTotalExpenditureResponse(1000));
+                .willReturn(new MemberWeeklyTotalExpenditureResponse(1000L));
 
         //when
         final ResultActions result = mockMvc.perform(
@@ -177,7 +177,7 @@ class ExpenditureDocumentationTest extends MockMvcTest {
         mockingMemberArgumentResolver();
 
         given(expenditureQueryService.findMemberCurrentWeeklyTotalExpenditure(any()))
-                .willReturn(new MemberWeeklyTotalExpenditureResponse(1000));
+                .willReturn(new MemberWeeklyTotalExpenditureResponse(1000L));
 
         //when
         final ResultActions result = mockMvc.perform(

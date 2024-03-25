@@ -4,6 +4,7 @@ import com.poorlex.poorlex.battle.service.dto.response.BattleSuccessCountRespons
 import com.poorlex.poorlex.expenditure.service.dto.response.MyPageExpenditureResponse;
 import com.poorlex.poorlex.friend.service.dto.response.FriendResponse;
 import com.poorlex.poorlex.point.service.dto.response.MyPageLevelInfoResponse;
+import com.poorlex.poorlex.user.member.domain.Member;
 import java.util.List;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -35,5 +36,18 @@ public class MyPageResponse {
         this.friends = friends;
         this.expenditureTotalCount = expenditures.size();
         this.expenditures = expenditures;
+    }
+
+    public static MyPageResponse of(final Member mebmer,
+                                    final MyPageLevelInfoResponse levelInfo,
+                                    final BattleSuccessCountResponse battleSuccessInfo,
+                                    final List<FriendResponse> friends,
+                                    final List<MyPageExpenditureResponse> expenditures) {
+        return new MyPageResponse(mebmer.getNickname(),
+                                  mebmer.getDescription().orElse(null),
+                                  levelInfo,
+                                  battleSuccessInfo,
+                                  friends,
+                                  expenditures);
     }
 }

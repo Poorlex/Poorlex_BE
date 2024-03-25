@@ -1,10 +1,9 @@
 package com.poorlex.poorlex.weeklybudget.service.dto.response;
 
 import com.poorlex.poorlex.weeklybudget.domain.WeeklyBudget;
+import java.util.Objects;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-
-import java.util.Objects;
 
 @RequiredArgsConstructor
 @Getter
@@ -18,7 +17,7 @@ public class WeeklyBudgetLeftResponse {
         return new WeeklyBudgetLeftResponse(false, 0L);
     }
 
-    public static WeeklyBudgetLeftResponse from(final WeeklyBudget weeklyBudget, final int sumExpenditures) {
+    public static WeeklyBudgetLeftResponse from(final WeeklyBudget weeklyBudget, final Long sumExpenditures) {
         if (Objects.isNull(weeklyBudget)) {
             return new WeeklyBudgetLeftResponse(false, 0L);
         }

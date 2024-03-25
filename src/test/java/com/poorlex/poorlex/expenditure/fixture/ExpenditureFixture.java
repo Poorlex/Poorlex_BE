@@ -11,7 +11,7 @@ public class ExpenditureFixture {
 
     }
 
-    public static Expenditure simpleWithMainImage(final int amount, final Long memberId, final LocalDate date) {
+    public static Expenditure simpleWithMainImage(final Long amount, final Long memberId, final LocalDate date) {
         final ExpenditureAmount expenditureAmount = new ExpenditureAmount(amount);
         final ExpenditureDescription description = new ExpenditureDescription("description");
 
@@ -19,7 +19,7 @@ public class ExpenditureFixture {
     }
 
 
-    public static Expenditure simpleWithMainImageAndSubImage(final int amount,
+    public static Expenditure simpleWithMainImageAndSubImage(final Long amount,
                                                              final Long memberId,
                                                              final LocalDate date) {
         final ExpenditureAmount expenditureAmount = new ExpenditureAmount(amount);

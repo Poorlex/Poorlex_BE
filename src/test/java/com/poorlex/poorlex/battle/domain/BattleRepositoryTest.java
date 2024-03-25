@@ -4,14 +4,14 @@ import com.poorlex.poorlex.battle.fixture.BattleFixture;
 import com.poorlex.poorlex.expenditure.domain.Expenditure;
 import com.poorlex.poorlex.expenditure.domain.ExpenditureRepository;
 import com.poorlex.poorlex.expenditure.fixture.ExpenditureFixture;
-import com.poorlex.poorlex.user.member.domain.Member;
-import com.poorlex.poorlex.user.member.domain.MemberNickname;
-import com.poorlex.poorlex.user.member.domain.MemberRepository;
-import com.poorlex.poorlex.user.member.domain.Oauth2RegistrationId;
 import com.poorlex.poorlex.participate.domain.BattleParticipant;
 import com.poorlex.poorlex.participate.domain.BattleParticipantRepository;
 import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
 import com.poorlex.poorlex.support.db.UsingDataJpaTest;
+import com.poorlex.poorlex.user.member.domain.Member;
+import com.poorlex.poorlex.user.member.domain.MemberNickname;
+import com.poorlex.poorlex.user.member.domain.MemberRepository;
+import com.poorlex.poorlex.user.member.domain.Oauth2RegistrationId;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -54,8 +54,8 @@ class BattleRepositoryTest extends UsingDataJpaTest implements ReplaceUnderScore
         join(progressBattle1, member);
         join(progressBattle2, member);
 
-        expend(1000, member, LocalDate.from(BATTLE_START_TIME));
-        expend(2000, member, LocalDate.from(BATTLE_START_TIME));
+        expend(1000L, member, LocalDate.from(BATTLE_START_TIME));
+        expend(2000L, member, LocalDate.from(BATTLE_START_TIME));
 
         //when
         final List<BattleWithMemberExpenditure> progressBattleInfos =
@@ -117,8 +117,8 @@ class BattleRepositoryTest extends UsingDataJpaTest implements ReplaceUnderScore
         join(progressBattle, member);
         join(recruitingBattle, member);
 
-        expend(1000, member, LocalDate.from(BATTLE_START_TIME));
-        expend(2000, member, LocalDate.from(BATTLE_START_TIME));
+        expend(1000L, member, LocalDate.from(BATTLE_START_TIME));
+        expend(2000L, member, LocalDate.from(BATTLE_START_TIME));
 
         //when
         final List<BattleWithMemberExpenditure> progressBattleInfos =
@@ -132,7 +132,7 @@ class BattleRepositoryTest extends UsingDataJpaTest implements ReplaceUnderScore
 
                     final BattleWithMemberExpenditure battleInfo = progressBattleInfos.get(0);
                     softly.assertThat(battleInfo.getBattle()).isEqualTo(progressBattle);
-                    softly.assertThat(battleInfo.getExpenditure()).isEqualTo(3000);
+                    softly.assertThat(battleInfo.getExpenditure()).isEqualTo(3000L);
                 }
         );
     }
@@ -147,8 +147,8 @@ class BattleRepositoryTest extends UsingDataJpaTest implements ReplaceUnderScore
         join(completeBattle1, member);
         join(completeBattle2, member);
 
-        expend(1000, member, LocalDate.from(BATTLE_START_TIME));
-        expend(2000, member, LocalDate.from(BATTLE_START_TIME));
+        expend(1000L, member, LocalDate.from(BATTLE_START_TIME));
+        expend(2000L, member, LocalDate.from(BATTLE_START_TIME));
 
         //when
         final List<BattleWithMemberExpenditure> completeBattleInfos =
@@ -162,7 +162,7 @@ class BattleRepositoryTest extends UsingDataJpaTest implements ReplaceUnderScore
 
                     final BattleWithMemberExpenditure battleInfo1 = completeBattleInfos.get(0);
                     softly.assertThat(battleInfo1.getBattle()).isEqualTo(completeBattle1);
-                    softly.assertThat(battleInfo1.getExpenditure()).isEqualTo(3000);
+                    softly.assertThat(battleInfo1.getExpenditure()).isEqualTo(3000L);
 
                     final BattleWithMemberExpenditure battleInfo2 = completeBattleInfos.get(1);
                     softly.assertThat(battleInfo2.getBattle()).isEqualTo(completeBattle2);
@@ -181,8 +181,8 @@ class BattleRepositoryTest extends UsingDataJpaTest implements ReplaceUnderScore
         join(completeBattle, member);
         join(progressBattle, member);
 
-        expend(1000, member, LocalDate.from(BATTLE_START_TIME));
-        expend(2000, member, LocalDate.from(BATTLE_START_TIME));
+        expend(1000L, member, LocalDate.from(BATTLE_START_TIME));
+        expend(2000L, member, LocalDate.from(BATTLE_START_TIME));
 
         //when
         final List<BattleWithMemberExpenditure> completeBattleInfos =
@@ -210,9 +210,9 @@ class BattleRepositoryTest extends UsingDataJpaTest implements ReplaceUnderScore
 
         final BattleParticipant battleParticipantMember1 = join(battle, member1);
         final BattleParticipant battleParticipantMember2 = join(battle, member2);
-        expend(1000, member1, LocalDate.from(BATTLE_START_TIME));
-        expend(2000, member1, LocalDate.from(BATTLE_START_TIME));
-        expend(4000, member2, LocalDate.from(BATTLE_START_TIME));
+        expend(1000L, member1, LocalDate.from(BATTLE_START_TIME));
+        expend(2000L, member1, LocalDate.from(BATTLE_START_TIME));
+        expend(4000L, member2, LocalDate.from(BATTLE_START_TIME));
 
         //when
         final List<BattleParticipantWithExpenditure> battleParticipantsWithExpenditure =
@@ -256,7 +256,7 @@ class BattleRepositoryTest extends UsingDataJpaTest implements ReplaceUnderScore
         return battleParticipantRepository.save(battleParticipant);
     }
 
-    private Expenditure expend(final int amount, final Member member, final LocalDate date) {
+    private Expenditure expend(final Long amount, final Member member, final LocalDate date) {
         final Expenditure expenditure = ExpenditureFixture.simpleWithMainImage(amount, member.getId(), date);
         return expenditureRepository.save(expenditure);
     }

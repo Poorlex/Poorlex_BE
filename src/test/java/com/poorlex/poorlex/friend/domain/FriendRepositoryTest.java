@@ -26,7 +26,7 @@ class FriendRepositoryTest extends UsingDataJpaTest implements ReplaceUnderScore
         friendRepository.save(secondFriendShip);
 
         //when
-        final List<Friend> friends = friendRepository.findFriendsByFirstMemberIdOrSecondMemberId(memberId);
+        final List<Friend> friends = friendRepository.findFriendsByMemberId(memberId);
 
         //then
         final List<Friend> expectedFriends = List.of(firstFriendShip, secondFriendShip);

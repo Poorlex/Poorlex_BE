@@ -306,7 +306,7 @@ class ExpenditureControllerTest extends IntegrationTest implements ReplaceUnderS
     void 지출을_수정한다() throws Exception {
         //given
         final Member member = createMember("oauthId");
-        final Expenditure expenditure = createExpenditureWithMainImage(1000, member.getId(), LocalDate.now());
+        final Expenditure expenditure = createExpenditureWithMainImage(1000L, member.getId(), LocalDate.now());
         final String accessToken = testMemberTokenGenerator.createAccessToken(member);
 
         final MockMultipartFile mainImage = new MockMultipartFile(
@@ -349,8 +349,8 @@ class ExpenditureControllerTest extends IntegrationTest implements ReplaceUnderS
         final LocalDate date = LocalDate.now();
         final WeeklyExpenditureDuration weeklyExpenditureDuration = WeeklyExpenditureDuration.from(date);
 
-        createExpenditureWithMainImage(1000, member.getId(), LocalDate.from(weeklyExpenditureDuration.getStart()));
-        createExpenditureWithMainImage(2000, member.getId(), LocalDate.from(weeklyExpenditureDuration.getStart()));
+        createExpenditureWithMainImage(1000L, member.getId(), LocalDate.from(weeklyExpenditureDuration.getStart()));
+        createExpenditureWithMainImage(2000L, member.getId(), LocalDate.from(weeklyExpenditureDuration.getStart()));
 
         final String accessToken = testMemberTokenGenerator.createAccessToken(member);
         final MemberWeeklyTotalExpenditureRequest request = new MemberWeeklyTotalExpenditureRequest(date);
@@ -374,8 +374,8 @@ class ExpenditureControllerTest extends IntegrationTest implements ReplaceUnderS
         final Member member = createMember("oauthId");
         final LocalDate date = LocalDate.now();
 
-        createExpenditureWithMainImage(1000, member.getId(), date);
-        createExpenditureWithMainImage(2000, member.getId(), date);
+        createExpenditureWithMainImage(1000L, member.getId(), date);
+        createExpenditureWithMainImage(2000L, member.getId(), date);
 
         final String accessToken = testMemberTokenGenerator.createAccessToken(member);
         final MemberWeeklyTotalExpenditureRequest request =
@@ -398,7 +398,7 @@ class ExpenditureControllerTest extends IntegrationTest implements ReplaceUnderS
     void Id에_해당하는_지출을_조회한다() throws Exception {
         //given
         final Member member = createMember("oauthId");
-        final Expenditure expenditure = createExpenditureWithMainImage(1000, member.getId(), LocalDate.now());
+        final Expenditure expenditure = createExpenditureWithMainImage(1000L, member.getId(), LocalDate.now());
 
         //when
         //then
@@ -407,7 +407,7 @@ class ExpenditureControllerTest extends IntegrationTest implements ReplaceUnderS
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(expenditure.getId()))
                 .andExpect(jsonPath("$.date").value(LocalDate.from(expenditure.getDate()).toString()))
-                .andExpect(jsonPath("$.amount").value(1000))
+                .andExpect(jsonPath("$.amount").value(1000L))
                 .andExpect(jsonPath("$.description").value(expenditure.getDescription()))
                 .andExpect(jsonPath("$.mainImageUrl").value(expenditure.getMainImageUrl()))
                 .andExpect(jsonPath("$.subImageUrl").value(expenditure.getSubImageUrl().orElse(null)));
@@ -417,7 +417,7 @@ class ExpenditureControllerTest extends IntegrationTest implements ReplaceUnderS
     void 멤버의_지출목록을_조회한다() throws Exception {
         //given
         final Member member = createMember("oauthId");
-        final Expenditure expenditure = createExpenditureWithMainImage(1000, member.getId(), LocalDate.now());
+        final Expenditure expenditure = createExpenditureWithMainImage(1000L, member.getId(), LocalDate.now());
         final String accessToken = jwtTokenProvider.createAccessToken(member.getId());
 
         //when
@@ -431,7 +431,7 @@ class ExpenditureControllerTest extends IntegrationTest implements ReplaceUnderS
                 .andExpect(jsonPath("$.length()").value(1))
                 .andExpect(jsonPath("$[0].id").value(expenditure.getId()))
                 .andExpect(jsonPath("$[0].date").value(LocalDate.from(expenditure.getDate()).toString()))
-                .andExpect(jsonPath("$[0].amount").value(1000))
+                .andExpect(jsonPath("$[0].amount").value(1000L))
                 .andExpect(jsonPath("$[0].description").value(expenditure.getDescription()))
                 .andExpect(jsonPath("$[0].mainImageUrl").value(expenditure.getMainImageUrl()))
                 .andExpect(jsonPath("$[0].subImageUrl").value(expenditure.getSubImageUrl().orElse(null)));
@@ -448,9 +448,9 @@ class ExpenditureControllerTest extends IntegrationTest implements ReplaceUnderS
         join(other, battle);
 
         final LocalDate battleStart = LocalDate.from(battle.getDuration().getStart());
-        final Expenditure memberExpenditure = createExpenditureWithMainImage(1000, member.getId(), battleStart);
-        createExpenditureWithMainImage(1000, member.getId(), battleStart.minusWeeks(1));
-        final Expenditure otherExpenditure = createExpenditureWithMainImage(1000, other.getId(), battleStart);
+        final Expenditure memberExpenditure = createExpenditureWithMainImage(1000L, member.getId(), battleStart);
+        createExpenditureWithMainImage(1000L, member.getId(), battleStart.minusWeeks(1));
+        final Expenditure otherExpenditure = createExpenditureWithMainImage(1000L, other.getId(), battleStart);
         final String accessToken = jwtTokenProvider.createAccessToken(member.getId());
 
         //when
@@ -484,9 +484,9 @@ class ExpenditureControllerTest extends IntegrationTest implements ReplaceUnderS
         join(other, battle);
 
         final LocalDate battleStart = LocalDate.from(battle.getDuration().getStart());
-        createExpenditureWithMainImage(3000, member.getId(), battleStart.minusDays(1));
-        createExpenditureWithMainImage(2000, other.getId(), battleStart);
-        final Expenditure memberExpenditure = createExpenditureWithMainImage(1000, member.getId(), battleStart);
+        createExpenditureWithMainImage(3000L, member.getId(), battleStart.minusDays(1));
+        createExpenditureWithMainImage(2000L, other.getId(), battleStart);
+        final Expenditure memberExpenditure = createExpenditureWithMainImage(1000L, member.getId(), battleStart);
 
         final String accessToken = jwtTokenProvider.createAccessToken(member.getId());
 
@@ -518,7 +518,7 @@ class ExpenditureControllerTest extends IntegrationTest implements ReplaceUnderS
                 Member.withoutId(Oauth2RegistrationId.APPLE, oauthId, new MemberNickname("nickname")));
     }
 
-    private Expenditure createExpenditureWithMainImage(final int amount, final Long memberId, final LocalDate date) {
+    private Expenditure createExpenditureWithMainImage(final Long amount, final Long memberId, final LocalDate date) {
         return expenditureRepository.save(ExpenditureFixture.simpleWithMainImage(amount, memberId, date));
     }
 }

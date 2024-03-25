@@ -1,19 +1,23 @@
 package com.poorlex.poorlex.user.member.service;
 
 import com.poorlex.poorlex.battle.service.dto.response.BattleSuccessCountResponse;
-import com.poorlex.poorlex.battlesuccess.service.BattleSuccessService;
 import com.poorlex.poorlex.exception.ApiException;
 import com.poorlex.poorlex.exception.ExceptionTag;
-import com.poorlex.poorlex.expenditure.service.ExpenditureQueryService;
 import com.poorlex.poorlex.expenditure.service.dto.response.MyPageExpenditureResponse;
-import com.poorlex.poorlex.friend.service.FriendService;
 import com.poorlex.poorlex.friend.service.dto.response.FriendResponse;
-import com.poorlex.poorlex.point.service.MemberPointService;
+import com.poorlex.poorlex.point.domain.MemberPointRepository;
+import com.poorlex.poorlex.point.domain.Point;
 import com.poorlex.poorlex.point.service.dto.response.MyPageLevelInfoResponse;
 import com.poorlex.poorlex.user.member.domain.Member;
 import com.poorlex.poorlex.user.member.domain.MemberIdAndNicknameDto;
+import com.poorlex.poorlex.user.member.domain.MemberLevel;
 import com.poorlex.poorlex.user.member.domain.MemberRepository;
+import com.poorlex.poorlex.user.member.service.dto.ExpenditureDto;
 import com.poorlex.poorlex.user.member.service.dto.response.MyPageResponse;
+import com.poorlex.poorlex.user.member.service.provider.BattleSuccessCountProvider;
+import com.poorlex.poorlex.user.member.service.provider.ExpenditureProvider;
+import com.poorlex.poorlex.user.member.service.provider.FriendProvider;
+import com.poorlex.poorlex.user.member.service.provider.WeeklyExpenditureProvider;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
@@ -28,10 +32,11 @@ import org.springframework.transaction.annotation.Transactional;
 public class MemberQueryService {
 
     private final MemberRepository memberRepository;
-    private final MemberPointService memberPointService;
-    private final FriendService friendService;
-    private final BattleSuccessService battleSuccessService;
-    private final ExpenditureQueryService expenditureQueryService;
+    private final MemberPointRepository memberPointRepository;
+    private final BattleSuccessCountProvider battleSuccessCountProvider;
+    private final FriendProvider friendProvider;
+    private final WeeklyExpenditureProvider weeklyExpenditureProvider;
+    private final ExpenditureProvider expenditureProvider;
 
     public Map<Long, String> getMembersNickname(final List<Long> memberIds) {
         return memberRepository.getMemberNicknamesByMemberIds(memberIds)
@@ -45,23 +50,57 @@ public class MemberQueryService {
 
     public MyPageResponse getMyPageInfo(final Long memberId, final LocalDate date) {
         final Member member = getMemberById(memberId);
-        final MyPageLevelInfoResponse memberLevelInfo = memberPointService.findMemberLevelInfo(memberId);
-        final BattleSuccessCountResponse battleSuccessCounts =
-                battleSuccessService.findMemberBattleSuccessCounts(memberId);
-        final List<FriendResponse> friends = friendService.findMemberFriends(memberId, date);
-        final List<MyPageExpenditureResponse> expenditures = expenditureQueryService.findMemberExpenditures(memberId)
-                .stream()
-                .map(MyPageExpenditureResponse::from)
-                .toList();
+        final MyPageLevelInfoResponse levelInfo = getLevelInfo(memberId);
+        final BattleSuccessCountResponse battleSuccessCounts = battleSuccessCountProvider.getByMemberId(memberId);
+        final List<FriendResponse> friends = getFriends(memberId, date);
+        final List<MyPageExpenditureResponse> expenditures = getExpenditure(memberId);
 
         return new MyPageResponse(
                 member.getNickname(),
                 member.getDescription().orElse(null),
-                memberLevelInfo,
+                levelInfo,
                 battleSuccessCounts,
                 friends,
                 expenditures
         );
+    }
+
+    private MyPageLevelInfoResponse getLevelInfo(final Long memberId) {
+        final int sumPoint = memberPointRepository.findSumByMemberId(memberId);
+        final MemberLevel memberLevel = getMemberLevelBySumPoint(sumPoint);
+        final Integer pointForNextLevel = memberLevel.getGetPointForNextLevel(sumPoint);
+
+        return new MyPageLevelInfoResponse(memberLevel.getNumber(), sumPoint, pointForNextLevel);
+    }
+
+    private static MemberLevel getMemberLevelBySumPoint(final int sumPoint) {
+        return MemberLevel.findByPoint(new Point(sumPoint))
+                .orElseThrow(() -> {
+                    final String errorMessage = String.format("포인트에 해당하는 레벨이 존재하지 않습니다. ( 포인트 : %d )", sumPoint);
+                    return new ApiException(ExceptionTag.MEMBER_LEVEL, errorMessage);
+                });
+    }
+
+    private List<FriendResponse> getFriends(final Long memberId, final LocalDate date) {
+        final List<Long> friendIds = friendProvider.getByMemberId(memberId);
+
+        return friendIds.stream()
+                .map(friendId -> {
+                    final String nickname = memberRepository.findMemberNicknameByMemberId(friendId);
+                    final int sumPoint = memberPointRepository.findSumByMemberId(friendId);
+                    final MemberLevel memberLevel = getMemberLevelBySumPoint(sumPoint);
+                    final Long weeklyExpenditure = weeklyExpenditureProvider.getByMemberId(friendId, date);
+                    return new FriendResponse(friendId, memberLevel.getNumber(), nickname, weeklyExpenditure);
+                })
+                .toList();
+    }
+
+    private List<MyPageExpenditureResponse> getExpenditure(final Long memberId) {
+        final List<ExpenditureDto> expenditures = expenditureProvider.getByMemberId(memberId);
+
+        return expenditures.stream()
+                .map(MyPageExpenditureResponse::from)
+                .toList();
     }
 
     private Member getMemberById(final Long memberId) {

@@ -3,14 +3,14 @@ package com.poorlex.poorlex.weeklybudget.controller;
 import com.poorlex.poorlex.expenditure.domain.Expenditure;
 import com.poorlex.poorlex.expenditure.domain.ExpenditureRepository;
 import com.poorlex.poorlex.expenditure.fixture.ExpenditureFixture;
-import com.poorlex.poorlex.user.member.domain.Member;
-import com.poorlex.poorlex.user.member.domain.MemberNickname;
-import com.poorlex.poorlex.user.member.domain.MemberRepository;
-import com.poorlex.poorlex.user.member.domain.Oauth2RegistrationId;
 import com.poorlex.poorlex.support.IntegrationTest;
 import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
 import com.poorlex.poorlex.support.TestMemberTokenGenerator;
 import com.poorlex.poorlex.token.JwtTokenProvider;
+import com.poorlex.poorlex.user.member.domain.Member;
+import com.poorlex.poorlex.user.member.domain.MemberNickname;
+import com.poorlex.poorlex.user.member.domain.MemberRepository;
+import com.poorlex.poorlex.user.member.domain.Oauth2RegistrationId;
 import com.poorlex.poorlex.weeklybudget.domain.WeeklyBudget;
 import com.poorlex.poorlex.weeklybudget.domain.WeeklyBudgetAmount;
 import com.poorlex.poorlex.weeklybudget.domain.WeeklyBudgetDuration;
@@ -159,7 +159,7 @@ class WeeklyBudgetControllerTest extends IntegrationTest implements ReplaceUnder
         //given
         final Member member = createMember("oauthId");
         final WeeklyBudget weaklyBudget = createWeaklyBudget(member.getId(), 10000L);
-        final Expenditure expenditure = expend(1000,
+        final Expenditure expenditure = expend(1000L,
                                                member.getId(),
                                                LocalDate.from(weaklyBudget.getDuration().getStart()));
 
@@ -185,7 +185,7 @@ class WeeklyBudgetControllerTest extends IntegrationTest implements ReplaceUnder
         //given
         final Member member = createMember("oauthId");
         final LocalDateTime dateTime = LocalDateTime.now().truncatedTo(ChronoUnit.MICROS);
-        expend(1000, member.getId(), LocalDate.from(dateTime));
+        expend(1000L, member.getId(), LocalDate.from(dateTime));
 
         final String accessToken = memberTokenGenerator.createAccessToken(member);
         final WeeklyBudgetLeftRequest request = new WeeklyBudgetLeftRequest(LocalDate.from(dateTime));
@@ -219,7 +219,7 @@ class WeeklyBudgetControllerTest extends IntegrationTest implements ReplaceUnder
         return weeklyBudgetRepository.save(weeklyBudget);
     }
 
-    private Expenditure expend(final int amount, final Long memberId, final LocalDate date) {
+    private Expenditure expend(final Long amount, final Long memberId, final LocalDate date) {
         return expenditureRepository.save(ExpenditureFixture.simpleWithMainImage(amount, memberId, date));
     }
 }
