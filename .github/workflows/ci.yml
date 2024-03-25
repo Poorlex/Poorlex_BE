@@ -4,9 +4,9 @@ name: CI
 # 해당 workflow가 언제 실행될 것인지에 대한 트리거를 지정
 on:
   pull_request:
-    branches: [main] # main branch로 pull request될 때 실행됩니다.
-    types: [opened, synchronize, reopened]
-    
+    branches: [ main ] # main branch로 pull request될 때 실행됩니다.
+    types: [ opened, synchronize, reopened ]
+
 permissions: write-all
 
 # workflow는 한개 이상의 job을 가지며, 각 job은 여러 step에 따라 단계를 나눌 수 있습니다.
@@ -26,7 +26,9 @@ jobs:
         with:
           java-version: '17'
           distribution: 'zulu'
-
+          submodules: recursive
+          token: ${{ secrets.PAT_TOKEN }}
+          
       - name: Grant execute permission for gradlew
         run: chmod +x ./gradlew
         shell: bash
