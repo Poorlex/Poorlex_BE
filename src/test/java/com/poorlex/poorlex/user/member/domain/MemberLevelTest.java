@@ -1,7 +1,7 @@
 package com.poorlex.poorlex.user.member.domain;
 
-import com.poorlex.poorlex.point.domain.Point;
 import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
+import com.poorlex.poorlex.user.point.domain.Point;
 import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;

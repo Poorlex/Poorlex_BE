@@ -1,12 +1,14 @@
-package com.poorlex.poorlex.point.documentation;
+package com.poorlex.poorlex.documentation;
 
-import com.poorlex.poorlex.user.member.domain.MemberLevel;
-import com.poorlex.poorlex.point.controller.MemberPointController;
-import com.poorlex.poorlex.point.service.MemberPointService;
-import com.poorlex.poorlex.point.service.dto.request.PointCreateRequest;
-import com.poorlex.poorlex.point.service.dto.response.MemberLevelBarResponse;
-import com.poorlex.poorlex.point.service.dto.response.MemberPointResponse;
 import com.poorlex.poorlex.support.MockMvcTest;
+import com.poorlex.poorlex.user.member.domain.MemberLevel;
+import com.poorlex.poorlex.user.point.controller.MemberPointCommandController;
+import com.poorlex.poorlex.user.point.controller.MemberPointQueryController;
+import com.poorlex.poorlex.user.point.service.MemberPointCommandService;
+import com.poorlex.poorlex.user.point.service.MemberPointQueryService;
+import com.poorlex.poorlex.user.point.service.dto.request.PointCreateRequest;
+import com.poorlex.poorlex.user.point.service.dto.response.MemberLevelBarResponse;
+import com.poorlex.poorlex.user.point.service.dto.response.MemberPointAndLevelResponse;
 import com.poorlex.poorlex.util.ApiDocumentUtils;
 import org.junit.jupiter.api.Test;
 import static org.mockito.ArgumentMatchers.any;
@@ -31,14 +33,17 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(MemberPointController.class)
+@WebMvcTest({MemberPointCommandController.class, MemberPointQueryController.class})
 class MemberPointDocumentationTest extends MockMvcTest {
 
     @Autowired
     private MockMvc mockMvc;
 
     @MockBean
-    private MemberPointService memberPointService;
+    private MemberPointCommandService memberPointService;
+
+    @MockBean
+    private MemberPointQueryService memberPointQueryService;
 
     @Test
     void create() throws Exception {
@@ -51,7 +56,7 @@ class MemberPointDocumentationTest extends MockMvcTest {
 
         //when
         final ResultActions result = mockMvc.perform(
-                post("/points")
+                post("/point")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer {accessToken}")
                         .content(objectMapper.writeValueAsString(request))
                         .contentType(MediaType.APPLICATION_JSON)
@@ -75,12 +80,12 @@ class MemberPointDocumentationTest extends MockMvcTest {
         //given
         mockingTokenInterceptor();
         mockingMemberArgumentResolver();
-        given(memberPointService.findMemberTotalPoint(any()))
-                .willReturn(new MemberPointResponse(1000, MemberLevel.LEVEL_4.getNumber()));
+        given(memberPointQueryService.findMemberSumPointAndLevel(any()))
+                .willReturn(new MemberPointAndLevelResponse(1000, MemberLevel.LEVEL_4.getNumber()));
 
         //when
         final ResultActions result = mockMvc.perform(
-                get("/points")
+                get("/point")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer {accessToken}")
         );
 
@@ -102,12 +107,12 @@ class MemberPointDocumentationTest extends MockMvcTest {
         //given
         mockingTokenInterceptor();
         mockingMemberArgumentResolver();
-        given(memberPointService.findPointsForLevelBar(any()))
+        given(memberPointQueryService.findMemberLevelBarInfo(any()))
                 .willReturn(new MemberLevelBarResponse(MemberLevel.LEVEL_1.getLevelRange(), 10, 10));
 
         //when
         final ResultActions result = mockMvc.perform(
-                get("/points/level-bar")
+                get("/point/level-bar")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer {accessToken}")
         );
 

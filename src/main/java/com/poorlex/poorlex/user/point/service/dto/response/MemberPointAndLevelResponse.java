@@ -1,11 +1,11 @@
-package com.poorlex.poorlex.point.service.dto.response;
+package com.poorlex.poorlex.user.point.service.dto.response;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public class MemberPointResponse {
+public class MemberPointAndLevelResponse {
 
     private final int totalPoint;
     private final int level;

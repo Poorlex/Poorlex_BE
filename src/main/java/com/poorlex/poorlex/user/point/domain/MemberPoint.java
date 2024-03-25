@@ -1,4 +1,4 @@
-package com.poorlex.poorlex.point.domain;
+package com.poorlex.poorlex.user.point.domain;
 
 import com.poorlex.poorlex.common.BaseCreatedAtEntity;
 import jakarta.persistence.Embedded;

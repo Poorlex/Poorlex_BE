@@ -7,7 +7,6 @@ import com.poorlex.poorlex.user.member.domain.Member;
 import com.poorlex.poorlex.user.member.domain.MemberRepository;
 import static com.poorlex.poorlex.user.member.domain.Oauth2RegistrationId.APPLE;
 import com.poorlex.poorlex.user.member.service.dto.request.MemberProfileUpdateRequest;
-import jakarta.transaction.Transactional;
 import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,7 +29,6 @@ class MemberCommandServiceTest extends UsingDataJpaTest implements ReplaceUnderS
     }
 
     @Test
-    @Transactional
     void 멤버의_프로필을_업데이트한다() {
         //given
         final String 기존_닉네임 = "기존 닉네임";
@@ -56,7 +54,6 @@ class MemberCommandServiceTest extends UsingDataJpaTest implements ReplaceUnderS
     }
 
     @Test
-    @Transactional
     void 업데이트시_닉네임이_null이면_닉네임은_업데이트되지_않는다() {
         //given
         final String 기존_닉네임 = "닉네임";
@@ -81,7 +78,6 @@ class MemberCommandServiceTest extends UsingDataJpaTest implements ReplaceUnderS
     }
 
     @Test
-    @Transactional
     void 업데이트시_회원소개가_null이면_회원소개는_업데이트되지_않는다() {
         //given
         final String 기존_소개 = "소개";
@@ -106,7 +102,6 @@ class MemberCommandServiceTest extends UsingDataJpaTest implements ReplaceUnderS
     }
 
     @Test
-    @Transactional
     void 업데이트시_회원소개와_닉네임이_모두_null이면_모두_업데이트되지_않는다() {
         //given
         final String 기존_닉네임 = "닉네임";

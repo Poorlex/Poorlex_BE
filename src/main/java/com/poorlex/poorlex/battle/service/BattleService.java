@@ -29,10 +29,10 @@ import com.poorlex.poorlex.expenditure.service.ExpenditureQueryService;
 import com.poorlex.poorlex.expenditure.service.dto.RankAndTotalExpenditureDto;
 import com.poorlex.poorlex.participate.domain.BattleParticipant;
 import com.poorlex.poorlex.participate.domain.BattleParticipantRepository;
-import com.poorlex.poorlex.point.domain.Point;
-import com.poorlex.poorlex.point.service.MemberPointService;
 import com.poorlex.poorlex.user.member.domain.MemberLevel;
 import com.poorlex.poorlex.user.member.service.MemberQueryService;
+import com.poorlex.poorlex.user.point.domain.Point;
+import com.poorlex.poorlex.user.point.service.MemberPointQueryService;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Comparator;
@@ -52,7 +52,7 @@ public class BattleService {
     private final BattleRepository battleRepository;
     private final BattleParticipantRepository battleParticipantRepository;
     private final BattleAlarmService battleAlarmService;
-    private final MemberPointService memberPointService;
+    private final MemberPointQueryService memberPointService;
     private final ExpenditureQueryService expenditureQueryService;
     private final MemberQueryService memberQueryService;
     private final AWSS3Service awss3Service;
@@ -63,7 +63,7 @@ public class BattleService {
     public BattleService(final BattleRepository battleRepository,
                          final BattleParticipantRepository battleParticipantRepository,
                          final BattleAlarmService battleAlarmService,
-                         final MemberPointService memberPointService,
+                         final MemberPointQueryService memberPointService,
                          final ExpenditureQueryService expenditureQueryService,
                          final MemberQueryService memberQueryService,
                          final AWSS3Service awss3Service,

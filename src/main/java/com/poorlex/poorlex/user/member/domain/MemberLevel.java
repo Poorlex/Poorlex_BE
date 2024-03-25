@@ -1,6 +1,6 @@
 package com.poorlex.poorlex.user.member.domain;
 
-import com.poorlex.poorlex.point.domain.Point;
+import com.poorlex.poorlex.user.point.domain.Point;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.function.Function;

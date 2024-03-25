@@ -1,16 +1,15 @@
-package com.poorlex.poorlex.point.service;
+package com.poorlex.poorlex.user.point.service;
 
 import com.poorlex.poorlex.exception.ApiException;
 import com.poorlex.poorlex.exception.ExceptionTag;
 import com.poorlex.poorlex.user.member.domain.MemberLevel;
-import com.poorlex.poorlex.user.member.domain.MemberRepository;
-import com.poorlex.poorlex.point.domain.MemberIdAndTotalPointDto;
-import com.poorlex.poorlex.point.domain.MemberPoint;
-import com.poorlex.poorlex.point.domain.MemberPointRepository;
-import com.poorlex.poorlex.point.domain.Point;
-import com.poorlex.poorlex.point.service.dto.response.MemberLevelBarResponse;
-import com.poorlex.poorlex.point.service.dto.response.MemberPointResponse;
-import com.poorlex.poorlex.point.service.dto.response.MyPageLevelInfoResponse;
+import com.poorlex.poorlex.user.point.domain.MemberIdAndTotalPointDto;
+import com.poorlex.poorlex.user.point.domain.MemberPoint;
+import com.poorlex.poorlex.user.point.domain.MemberPointRepository;
+import com.poorlex.poorlex.user.point.domain.Point;
+import com.poorlex.poorlex.user.point.service.dto.response.MemberLevelBarResponse;
+import com.poorlex.poorlex.user.point.service.dto.response.MemberPointAndLevelResponse;
+import com.poorlex.poorlex.user.point.service.dto.response.MyPageLevelInfoResponse;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -21,26 +20,15 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class MemberPointService {
+public class MemberPointQueryService {
 
     private final MemberPointRepository memberPointRepository;
-    private final MemberRepository memberRepository;
 
-    @Transactional
-    public void createPoint(final Long memberId, final int point) {
-        if (!memberRepository.existsById(memberId)) {
-            final String errorMessage = String.format("Id 에 해당하는 회원이 존재하지 않습니다. ( ID : %d )", memberId);
-            throw new ApiException(ExceptionTag.MEMBER_FIND, errorMessage);
-        }
-
-        memberPointRepository.save(MemberPoint.withoutId(new Point(point), memberId));
-    }
-
-    public MemberPointResponse findMemberTotalPoint(final Long memberId) {
+    public MemberPointAndLevelResponse findMemberSumPointAndLevel(final Long memberId) {
         final int sumPoint = memberPointRepository.findSumByMemberId(memberId);
         final MemberLevel memberLevel = getMemberLevel(sumPoint);
 
-        return new MemberPointResponse(sumPoint, memberLevel.getNumber());
+        return new MemberPointAndLevelResponse(sumPoint, memberLevel.getNumber());
     }
 
     public Map<Long, Integer> findMembersTotalPoint(final List<Long> memberIds) {
@@ -50,7 +38,7 @@ public class MemberPointService {
                                           MemberIdAndTotalPointDto::getTotalPoint));
     }
 
-    public MemberLevelBarResponse findPointsForLevelBar(final Long memberId) {
+    public MemberLevelBarResponse findMemberLevelBarInfo(final Long memberId) {
         final int totalMemberPoint = memberPointRepository.findSumByMemberId(memberId);
         final MemberLevel memberLevel = getMemberLevel(totalMemberPoint);
         final int currentPoint = getPointAddedFromLevelLowerBound(totalMemberPoint, memberLevel);
@@ -79,7 +67,7 @@ public class MemberPointService {
     }
 
     private int getMemberRecentPoint(final Long memberId) {
-        final MemberPoint recentMemberPoint = memberPointRepository.findFirstByMemberIdOrderByIdDesc(memberId)
+        final MemberPoint recentMemberPoint = memberPointRepository.findFirstByMemberIdOrderByCreatedAt(memberId)
                 .orElse(MemberPoint.withoutId(new Point(0), memberId));
 
         return recentMemberPoint.getPoint();
