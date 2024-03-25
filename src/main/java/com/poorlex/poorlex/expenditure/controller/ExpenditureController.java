@@ -129,7 +129,7 @@ public class ExpenditureController implements ExpenditureControllerSwaggerInterf
             @RequestBody final MemberWeeklyTotalExpenditureRequest request) {
         final MemberWeeklyTotalExpenditureResponse response = expenditureQueryService.findMemberWeeklyTotalExpenditure(
                 memberInfo.getMemberId(),
-                request.getDateTime()
+                request.getDate()
         );
 
         return ResponseEntity.ok(response);

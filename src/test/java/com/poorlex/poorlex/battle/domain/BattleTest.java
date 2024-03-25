@@ -1,6 +1,7 @@
 package com.poorlex.poorlex.battle.domain;
 
 import com.poorlex.poorlex.battle.fixture.BattleFixture;
+import com.poorlex.poorlex.exception.ApiException;
 import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -50,7 +51,7 @@ class BattleTest implements ReplaceUnderScoreTest {
 
         //when
         assertThatThrownBy(() -> battle.start(VALID_START_TIME))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(ApiException.class);
     }
 
     @Test
@@ -77,7 +78,7 @@ class BattleTest implements ReplaceUnderScoreTest {
         //when
         //then
         assertThatThrownBy(() -> battle.start(startTime))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(ApiException.class);
     }
 
     @Test
@@ -106,7 +107,7 @@ class BattleTest implements ReplaceUnderScoreTest {
 
         //when
         assertThatThrownBy(() -> battle.end(VALID_END_TIME))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(ApiException.class);
     }
 
     @Test
@@ -135,6 +136,6 @@ class BattleTest implements ReplaceUnderScoreTest {
         //when
         //then
         assertThatThrownBy(() -> battle.start(endTime))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(ApiException.class);
     }
 }

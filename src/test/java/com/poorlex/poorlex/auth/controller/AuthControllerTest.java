@@ -1,10 +1,5 @@
 package com.poorlex.poorlex.auth.controller;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 import com.poorlex.poorlex.auth.service.dto.request.LoginRequest;
 import com.poorlex.poorlex.auth.service.dto.response.LoginTokenResponse;
 import com.poorlex.poorlex.member.domain.Member;
@@ -14,10 +9,14 @@ import com.poorlex.poorlex.member.domain.Oauth2RegistrationId;
 import com.poorlex.poorlex.support.IntegrationTest;
 import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
 import com.poorlex.poorlex.token.JwtTokenProvider;
+import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class AuthControllerTest extends IntegrationTest implements ReplaceUnderScoreTest {
 
@@ -35,13 +34,13 @@ class AuthControllerTest extends IntegrationTest implements ReplaceUnderScoreTes
 
         //when
         final MvcResult mvcResult = mockMvc.perform(
-                post("/login")
-                    .content(objectMapper.writeValueAsString(request))
-                    .contentType(MediaType.APPLICATION_JSON)
-            )
-            .andDo(print())
-            .andExpect(status().isOk())
-            .andReturn();
+                        post("/login")
+                                .content(objectMapper.writeValueAsString(request))
+                                .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn();
 
         //then
         final Long tokenMemberId = extractMemberIdFromAccessToken(mvcResult);
@@ -55,17 +54,17 @@ class AuthControllerTest extends IntegrationTest implements ReplaceUnderScoreTes
 
         //when
         final MvcResult mvcResult = mockMvc.perform(
-                post("/login")
-                    .content(objectMapper.writeValueAsString(request))
-                    .contentType(MediaType.APPLICATION_JSON)
-            )
-            .andDo(print())
-            .andExpect(status().isOk())
-            .andReturn();
+                        post("/login")
+                                .content(objectMapper.writeValueAsString(request))
+                                .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn();
 
         //then
         final Member createdMember = memberRepository.findByOauthId(request.getOauthId())
-            .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(IllegalArgumentException::new);
         final Long tokenMemberId = extractMemberIdFromAccessToken(mvcResult);
 
         assertThat(tokenMemberId).isEqualTo(createdMember.getId());
@@ -73,7 +72,7 @@ class AuthControllerTest extends IntegrationTest implements ReplaceUnderScoreTes
 
     private Member createMember(final String oauthId, final String nickname) {
         return memberRepository.save(
-            Member.withoutId(Oauth2RegistrationId.APPLE, oauthId, new MemberNickname(nickname)));
+                Member.withoutId(Oauth2RegistrationId.APPLE, oauthId, new MemberNickname(nickname)));
     }
 
     private Long extractMemberIdFromAccessToken(final MvcResult result) throws Exception {
@@ -81,6 +80,6 @@ class AuthControllerTest extends IntegrationTest implements ReplaceUnderScoreTes
         final LoginTokenResponse response = objectMapper.readValue(responseBody, LoginTokenResponse.class);
 
         return jwtTokenProvider.getPayload(response.getAccessToken())
-            .get("memberId", Long.class);
+                .get("memberId", Long.class);
     }
 }

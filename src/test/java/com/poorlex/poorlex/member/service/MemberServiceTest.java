@@ -157,7 +157,7 @@ class MemberServiceTest extends IntegrationTest implements ReplaceUnderScoreTest
         beFriend(member, friend);
 
         //when
-        final MyPageResponse myPageInfo = memberService.getMyPageInfo(member.getId(), battleStartTime);
+        final MyPageResponse myPageInfo = memberService.getMyPageInfo(member.getId(), LocalDate.from(battleStartTime));
 
         //then
         assertSoftly(

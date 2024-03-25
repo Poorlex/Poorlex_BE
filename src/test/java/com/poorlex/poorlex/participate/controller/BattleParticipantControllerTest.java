@@ -13,6 +13,8 @@ import com.poorlex.poorlex.participate.domain.BattleParticipantRepository;
 import com.poorlex.poorlex.support.IntegrationTest;
 import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
 import com.poorlex.poorlex.token.JwtTokenProvider;
+import java.util.Optional;
+import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -20,14 +22,12 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.test.web.servlet.MockMvc;
-
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @DisplayName("배틀 참가 인수 테스트")
 class BattleParticipantControllerTest extends IntegrationTest implements ReplaceUnderScoreTest {
@@ -57,12 +57,12 @@ class BattleParticipantControllerTest extends IntegrationTest implements Replace
         //when
         //then
         mockMvc.perform(
-                post("/battles/{battleId}/participants", battle.getId())
-                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
-            )
-            .andDo(print())
-            .andExpect(status().isCreated())
-            .andExpect(header().exists(HttpHeaders.LOCATION));
+                        post("/battles/{battleId}/participants", battle.getId())
+                                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                )
+                .andDo(print())
+                .andExpect(status().isCreated())
+                .andExpect(header().exists(HttpHeaders.LOCATION));
     }
 
     @Test
@@ -79,12 +79,12 @@ class BattleParticipantControllerTest extends IntegrationTest implements Replace
         //when
         //then
         mockMvc.perform(
-                post("/battles/{battleId}/participants", battle.getId())
-                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
-            )
-            .andDo(print())
-            .andExpect(status().isBadRequest())
-            .andExpect(jsonPath("$.message").exists());
+                        post("/battles/{battleId}/participants", battle.getId())
+                                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                )
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").exists());
     }
 
     @ParameterizedTest
@@ -98,12 +98,12 @@ class BattleParticipantControllerTest extends IntegrationTest implements Replace
         //when
         //then
         mockMvc.perform(
-                post("/battles/{battleId}/participants", battle.getId())
-                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
-            )
-            .andDo(print())
-            .andExpect(status().isBadRequest())
-            .andExpect(jsonPath("$.message").exists());
+                        post("/battles/{battleId}/participants", battle.getId())
+                                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                )
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").exists());
     }
 
     @Test
@@ -118,15 +118,15 @@ class BattleParticipantControllerTest extends IntegrationTest implements Replace
         //when
         //then
         mockMvc.perform(
-                delete("/battles/{battleId}/participants", battle.getId())
-                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
-            )
-            .andDo(print())
-            .andExpect(status().isNoContent());
+                        delete("/battles/{battleId}/participants", battle.getId())
+                                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                )
+                .andDo(print())
+                .andExpect(status().isNoContent());
 
         final Optional<BattleParticipant> removedBattleParticipant = battleParticipantRepository.findByBattleIdAndMemberId(
-            battle.getId(),
-            member2.getId()
+                battle.getId(),
+                member2.getId()
         );
         assertThat(removedBattleParticipant).isEmpty();
     }
@@ -141,12 +141,12 @@ class BattleParticipantControllerTest extends IntegrationTest implements Replace
         //when
         //then
         mockMvc.perform(
-                delete("/battles/{battleId}/participants", battle.getId())
-                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
-            )
-            .andDo(print())
-            .andExpect(status().isBadRequest())
-            .andExpect(jsonPath("$.message").exists());
+                        delete("/battles/{battleId}/participants", battle.getId())
+                                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                )
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").exists());
     }
 
     private Member createMember(final String oauthId) {
@@ -160,9 +160,9 @@ class BattleParticipantControllerTest extends IntegrationTest implements Replace
 
     private Battle createBattleWithStatus(final BattleStatus battleStatus) {
         return battleRepository.save(
-            BattleFixture.initialBattleBuilder()
-                .status(battleStatus)
-                .build()
+                BattleFixture.initialBattleBuilder()
+                        .status(battleStatus)
+                        .build()
         );
     }
 

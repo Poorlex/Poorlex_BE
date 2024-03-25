@@ -1,9 +1,9 @@
 package com.poorlex.poorlex.expenditure.domain;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.Test;
 
 class WeeklyExpenditureDurationTest implements ReplaceUnderScoreTest {
@@ -11,7 +11,7 @@ class WeeklyExpenditureDurationTest implements ReplaceUnderScoreTest {
     @Test
     void 날짜를_기준으로_지출_주간_기간을_생성한다() {
         //given
-        final LocalDateTime januaryThirdWednesday = LocalDateTime.of(2024, 1, 3, 9, 00);
+        final LocalDate januaryThirdWednesday = LocalDate.of(2024, 1, 3);
 
         //when
         final WeeklyExpenditureDuration duration = WeeklyExpenditureDuration.from(januaryThirdWednesday);

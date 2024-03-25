@@ -1,5 +1,7 @@
 package com.poorlex.poorlex.battle.domain;
 
+import com.poorlex.poorlex.exception.ApiException;
+import com.poorlex.poorlex.exception.ExceptionTag;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import lombok.AccessLevel;
@@ -22,16 +24,20 @@ public class BattleIntroduction {
 
     private void validate(final String value) {
         if (!StringUtils.hasText(value)) {
-            throw new IllegalArgumentException("배틀 소개 내용이 없습니다.");
+            final String errorMessage = "배틀 소개 내용이 없습니다.";
+            throw new ApiException(ExceptionTag.BATTLE_INTRODUCTION, errorMessage);
         }
         validateLength(value.length());
     }
 
     private void validateLength(final int length) {
         if (MINIMUM_NAME_LENGTH > length || length > MAXIMUM_NAME_LENGTH) {
-            throw new IllegalArgumentException(
-                    String.format("배틀 소개는 %d자 이상 %d자 이하여야 합니다. ( 입력값 : %d )", MINIMUM_NAME_LENGTH, MAXIMUM_NAME_LENGTH, length)
-            );
+            final String errorMessage = String.format("배틀 소개는 %d자 이상 %d자 이하여야 합니다. ( 입력값 : %d )",
+                                                      MINIMUM_NAME_LENGTH,
+                                                      MAXIMUM_NAME_LENGTH,
+                                                      length);
+            throw new ApiException(ExceptionTag.BATTLE_INTRODUCTION, errorMessage);
+
         }
     }
 

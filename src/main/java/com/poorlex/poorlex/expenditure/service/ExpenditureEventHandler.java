@@ -1,6 +1,8 @@
 package com.poorlex.poorlex.expenditure.service;
 
 import com.poorlex.poorlex.config.aws.AWSS3Service;
+import com.poorlex.poorlex.exception.ApiException;
+import com.poorlex.poorlex.exception.ExceptionTag;
 import com.poorlex.poorlex.expenditure.domain.Expenditure;
 import com.poorlex.poorlex.expenditure.domain.ExpenditureRepository;
 import com.poorlex.poorlex.expenditure.service.event.ExpenditureImageUnusedEvent;
@@ -17,6 +19,7 @@ import org.springframework.transaction.event.TransactionalEventListener;
 @RequiredArgsConstructor
 @Transactional(propagation = Propagation.REQUIRED)
 public class ExpenditureEventHandler {
+
     private final ExpenditureRepository expenditureRepository;
     private final AWSS3Service awss3Service;
 
@@ -40,7 +43,7 @@ public class ExpenditureEventHandler {
         try {
             awss3Service.deleteFile(event.getImageUrl());
         } catch (Exception e) {
-            throw new IllegalArgumentException("이미지 삭제에 실패했습니다.");
+            throw new ApiException(ExceptionTag.AWS_S3, "S3 이미지 삭제에 실패했습니다.");
         }
     }
 }

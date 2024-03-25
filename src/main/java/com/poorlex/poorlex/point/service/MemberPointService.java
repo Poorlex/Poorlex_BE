@@ -1,5 +1,7 @@
 package com.poorlex.poorlex.point.service;
 
+import com.poorlex.poorlex.exception.ApiException;
+import com.poorlex.poorlex.exception.ExceptionTag;
 import com.poorlex.poorlex.member.domain.MemberLevel;
 import com.poorlex.poorlex.member.domain.MemberRepository;
 import com.poorlex.poorlex.point.domain.MemberIdAndTotalPointDto;
@@ -27,7 +29,8 @@ public class MemberPointService {
     @Transactional
     public void createPoint(final Long memberId, final int point) {
         if (!memberRepository.existsById(memberId)) {
-            throw new IllegalArgumentException("해당 ID의 멤버가 존재하지 않습니다.");
+            final String errorMessage = String.format("Id 에 해당하는 회원이 존재하지 않습니다. ( ID : %d )", memberId);
+            throw new ApiException(ExceptionTag.MEMBER_FIND, errorMessage);
         }
 
         memberPointRepository.save(MemberPoint.withoutId(new Point(point), memberId));
@@ -35,16 +38,16 @@ public class MemberPointService {
 
     public MemberPointResponse findMemberTotalPoint(final Long memberId) {
         final int sumPoint = memberPointRepository.findSumByMemberId(memberId);
-        final MemberLevel memberLevel = MemberLevel.findByPoint(new Point(sumPoint))
-            .orElseThrow(IllegalArgumentException::new);
+        final MemberLevel memberLevel = getMemberLevel(sumPoint);
 
         return new MemberPointResponse(sumPoint, memberLevel.getNumber());
     }
 
     public Map<Long, Integer> findMembersTotalPoint(final List<Long> memberIds) {
         return memberPointRepository.findTotalPointsByMemberIdIn(memberIds)
-            .stream()
-            .collect(Collectors.toMap(MemberIdAndTotalPointDto::getMemberId, MemberIdAndTotalPointDto::getTotalPoint));
+                .stream()
+                .collect(Collectors.toMap(MemberIdAndTotalPointDto::getMemberId,
+                                          MemberIdAndTotalPointDto::getTotalPoint));
     }
 
     public MemberLevelBarResponse findPointsForLevelBar(final Long memberId) {
@@ -65,7 +68,10 @@ public class MemberPointService {
 
     private MemberLevel getMemberLevel(final int point) {
         return MemberLevel.findByPoint(new Point(point))
-            .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(() -> {
+                    final String errorMessage = String.format("포인트에 해당하는 레벨이 존재하지 않습니다. ( 포인트 : %d )", point);
+                    return new ApiException(ExceptionTag.MEMBER_LEVEL, errorMessage);
+                });
     }
 
     private int getPointAddedFromLevelLowerBound(final int point, final MemberLevel memberLevel) {
@@ -74,7 +80,7 @@ public class MemberPointService {
 
     private int getMemberRecentPoint(final Long memberId) {
         final MemberPoint recentMemberPoint = memberPointRepository.findFirstByMemberIdOrderByIdDesc(memberId)
-            .orElse(MemberPoint.withoutId(new Point(0), memberId));
+                .orElse(MemberPoint.withoutId(new Point(0), memberId));
 
         return recentMemberPoint.getPoint();
     }

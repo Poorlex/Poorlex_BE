@@ -28,8 +28,8 @@ public class WeeklyBudgetController {
     public ResponseEntity<WeeklyBudgetResponse> findWeeklyBudget(@MemberOnly final MemberInfo memberInfo,
                                                                  @RequestBody final WeeklyBudgetRequest request) {
         final WeeklyBudgetResponse response = weeklyBudgetService.findCurrentBudgetByMemberIdAndDate(
-            memberInfo.getMemberId(),
-            request.getDateTime()
+                memberInfo.getMemberId(),
+                request.getDate()
         );
 
         return ResponseEntity.ok(response);
@@ -37,10 +37,11 @@ public class WeeklyBudgetController {
 
     @GetMapping("/left")
     public ResponseEntity<WeeklyBudgetLeftResponse> findWeeklyBudgetLeft(@MemberOnly final MemberInfo memberInfo,
-                                                                         @RequestBody final WeeklyBudgetLeftRequest request) {
+                                                                         @RequestBody
+                                                                         final WeeklyBudgetLeftRequest request) {
         final WeeklyBudgetLeftResponse response = weeklyBudgetService.findCurrentBudgetLeftByMemberIdAndDate(
-            memberInfo.getMemberId(),
-            request.getDateTime()
+                memberInfo.getMemberId(),
+                request.getDate()
         );
 
         return ResponseEntity.ok(response);

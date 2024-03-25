@@ -2,12 +2,10 @@ package com.poorlex.poorlex.friend.domain;
 
 import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
 import com.poorlex.poorlex.support.db.UsingDataJpaTest;
+import java.util.List;
+import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 class FriendRepositoryTest extends UsingDataJpaTest implements ReplaceUnderScoreTest {
 
@@ -15,7 +13,7 @@ class FriendRepositoryTest extends UsingDataJpaTest implements ReplaceUnderScore
     private FriendRepository friendRepository;
 
     @Test
-    public void Id를_포함한_모든_친구를_조회한다() {
+    void Id를_포함한_모든_친구를_조회한다() {
         //given
         final long memberId = 1L;
         final long friend1Id = 2L;
@@ -35,7 +33,7 @@ class FriendRepositoryTest extends UsingDataJpaTest implements ReplaceUnderScore
 
         assertThat(friends).hasSize(2);
         assertThat(friends).usingRecursiveAssertion()
-            .ignoringFields("id")
-            .isEqualTo(expectedFriends);
+                .ignoringFields("id")
+                .isEqualTo(expectedFriends);
     }
 }

@@ -1,8 +1,5 @@
 package com.poorlex.poorlex.battlealarmreaction.service;
 
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-
 import com.poorlex.poorlex.alarm.battlealarm.domain.BattleAlarm;
 import com.poorlex.poorlex.alarm.battlealarm.domain.BattleAlarmRepository;
 import com.poorlex.poorlex.alarm.battlealarm.domain.BattleAlarmType;
@@ -10,6 +7,8 @@ import com.poorlex.poorlex.battlealarmreaction.domain.AlarmReactionRepository;
 import com.poorlex.poorlex.battlealarmreaction.service.dto.request.AlarmReactionCreateRequest;
 import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
 import com.poorlex.poorlex.support.db.UsingDataJpaTest;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -36,14 +35,14 @@ class BattleAlarmReactionServiceTest extends UsingDataJpaTest implements Replace
         //given
         final long memberId = 1L;
         final BattleAlarm battleAlarm = battleAlarmRepository.save(
-            BattleAlarm.withoutId(1L, memberId, battleAlarmType));
+                BattleAlarm.withoutId(1L, memberId, battleAlarmType));
         final AlarmReactionCreateRequest request = new AlarmReactionCreateRequest(battleAlarm.getId(), "PRAISE",
-            "알림 반응 문구");
+                                                                                  "알림 반응 문구");
 
         //when
         //then
         assertThatThrownBy(() -> alarmReactionService.createAlarmReaction(memberId, request))
-            .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class);
     }
 
     @ParameterizedTest(name = "알림 타입이 {0} 인 경우")
@@ -52,9 +51,9 @@ class BattleAlarmReactionServiceTest extends UsingDataJpaTest implements Replace
         //given
         final long memberId = 1L;
         final BattleAlarm battleAlarm = battleAlarmRepository.save(
-            BattleAlarm.withoutId(1L, memberId, battleAlarmType));
+                BattleAlarm.withoutId(1L, memberId, battleAlarmType));
         final AlarmReactionCreateRequest request = new AlarmReactionCreateRequest(battleAlarm.getId(), "PRAISE",
-            "알림 반응 문구");
+                                                                                  "알림 반응 문구");
 
         //when
         //then

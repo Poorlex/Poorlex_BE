@@ -1,7 +1,5 @@
 package com.poorlex.poorlex.alarm.memberalram.service;
 
-import static org.assertj.core.api.SoftAssertions.assertSoftly;
-
 import com.poorlex.poorlex.alarm.memberalram.domain.MemberAlarm;
 import com.poorlex.poorlex.alarm.memberalram.domain.MemberAlarmRepository;
 import com.poorlex.poorlex.alarm.memberalram.domain.MemberAlarmType;
@@ -23,6 +21,7 @@ import com.poorlex.poorlex.participate.domain.BattleParticipantRepository;
 import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
 import com.poorlex.poorlex.support.db.UsingDataJpaTest;
 import java.util.List;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,9 +51,9 @@ class MemberAlarmEventHandlerTest extends UsingDataJpaTest implements ReplaceUnd
     void 친구_초대_이벤트_발생시_초대받은_멤버의_친구_초대_알림을_생성한다() {
         //given
         final FriendInvitedEvent friendInvitedEvent = FriendInvitedEvent.builder()
-            .inviteMemberId(1L)
-            .invitedMemberId(2L)
-            .build();
+                .inviteMemberId(1L)
+                .invitedMemberId(2L)
+                .build();
 
         //when
         memberAlarmEventHandler.friendInvitation(friendInvitedEvent);
@@ -63,14 +62,14 @@ class MemberAlarmEventHandlerTest extends UsingDataJpaTest implements ReplaceUnd
         final List<MemberAlarm> memberAlarms = memberAlarmRepository.findAll();
 
         assertSoftly(
-            softly -> {
-                softly.assertThat(memberAlarms).hasSize(1);
+                softly -> {
+                    softly.assertThat(memberAlarms).hasSize(1);
 
-                final MemberAlarm memberAlarm = memberAlarms.get(0);
-                softly.assertThat(memberAlarm.getMemberId()).isEqualTo(friendInvitedEvent.getInvitedMemberId());
-                softly.assertThat(memberAlarm.getTargetId()).isEqualTo(friendInvitedEvent.getInviteMemberId());
-                softly.assertThat(memberAlarm.getType()).isEqualTo(MemberAlarmType.FRIEND_INVITATION_NOT_ACCEPTED);
-            }
+                    final MemberAlarm memberAlarm = memberAlarms.get(0);
+                    softly.assertThat(memberAlarm.getMemberId()).isEqualTo(friendInvitedEvent.getInvitedMemberId());
+                    softly.assertThat(memberAlarm.getTargetId()).isEqualTo(friendInvitedEvent.getInviteMemberId());
+                    softly.assertThat(memberAlarm.getType()).isEqualTo(MemberAlarmType.FRIEND_INVITATION_NOT_ACCEPTED);
+                }
         );
     }
 
@@ -83,9 +82,9 @@ class MemberAlarmEventHandlerTest extends UsingDataJpaTest implements ReplaceUnd
         createFriendInviteAlarm(inviteMember, invitedMember);
 
         final FriendAcceptedEvent friendAcceptedEvent = FriendAcceptedEvent.builder()
-            .inviteMemberId(inviteMember.getId())
-            .acceptMemberId(invitedMember.getId())
-            .build();
+                .inviteMemberId(inviteMember.getId())
+                .acceptMemberId(invitedMember.getId())
+                .build();
 
         //when
         memberAlarmEventHandler.friendInvitationAccepted(friendAcceptedEvent);
@@ -97,19 +96,20 @@ class MemberAlarmEventHandlerTest extends UsingDataJpaTest implements ReplaceUnd
         final List<MemberAlarm> inviteMemberAlarms = memberAlarmRepository.findAllByMemberId(inviteMemberId);
 
         assertSoftly(
-            softly -> {
-                softly.assertThat(inviteMemberAlarms).hasSize(1);
-                final MemberAlarm inviteMemberAlarm = inviteMemberAlarms.get(0);
-                softly.assertThat(inviteMemberAlarm.getMemberId()).isEqualTo(inviteMemberId);
-                softly.assertThat(inviteMemberAlarm.getTargetId()).isEqualTo(invitedMemberId);
-                softly.assertThat(inviteMemberAlarm.getType()).isEqualTo(MemberAlarmType.FRIEND_ACCEPTED);
+                softly -> {
+                    softly.assertThat(inviteMemberAlarms).hasSize(1);
+                    final MemberAlarm inviteMemberAlarm = inviteMemberAlarms.get(0);
+                    softly.assertThat(inviteMemberAlarm.getMemberId()).isEqualTo(inviteMemberId);
+                    softly.assertThat(inviteMemberAlarm.getTargetId()).isEqualTo(invitedMemberId);
+                    softly.assertThat(inviteMemberAlarm.getType()).isEqualTo(MemberAlarmType.FRIEND_ACCEPTED);
 
-                softly.assertThat(invitedMemberAlarms).hasSize(1);
-                final MemberAlarm invitedMemberAlarm = invitedMemberAlarms.get(0);
-                softly.assertThat(invitedMemberAlarm.getMemberId()).isEqualTo(invitedMemberId);
-                softly.assertThat(invitedMemberAlarm.getTargetId()).isEqualTo(inviteMemberId);
-                softly.assertThat(invitedMemberAlarm.getType()).isEqualTo(MemberAlarmType.FRIEND_INVITATION_ACCEPTED);
-            }
+                    softly.assertThat(invitedMemberAlarms).hasSize(1);
+                    final MemberAlarm invitedMemberAlarm = invitedMemberAlarms.get(0);
+                    softly.assertThat(invitedMemberAlarm.getMemberId()).isEqualTo(invitedMemberId);
+                    softly.assertThat(invitedMemberAlarm.getTargetId()).isEqualTo(inviteMemberId);
+                    softly.assertThat(invitedMemberAlarm.getType())
+                            .isEqualTo(MemberAlarmType.FRIEND_INVITATION_ACCEPTED);
+                }
         );
     }
 
@@ -122,9 +122,9 @@ class MemberAlarmEventHandlerTest extends UsingDataJpaTest implements ReplaceUnd
         createFriendInviteAlarm(inviteMember, invitedMember);
 
         final FriendDeniedEvent friendDeniedEvent = FriendDeniedEvent.builder()
-            .inviteMemberId(inviteMember.getId())
-            .denyMemberId(invitedMember.getId())
-            .build();
+                .inviteMemberId(inviteMember.getId())
+                .denyMemberId(invitedMember.getId())
+                .build();
 
         //when
         memberAlarmEventHandler.friendInvitationDenied(friendDeniedEvent);
@@ -133,14 +133,14 @@ class MemberAlarmEventHandlerTest extends UsingDataJpaTest implements ReplaceUnd
         final List<MemberAlarm> memberAlarms = memberAlarmRepository.findAll();
 
         assertSoftly(
-            softly -> {
-                softly.assertThat(memberAlarms).hasSize(1);
+                softly -> {
+                    softly.assertThat(memberAlarms).hasSize(1);
 
-                final MemberAlarm memberAlarm = memberAlarms.get(0);
-                softly.assertThat(memberAlarm.getMemberId()).isEqualTo(invitedMember.getId());
-                softly.assertThat(memberAlarm.getTargetId()).isEqualTo(inviteMember.getId());
-                softly.assertThat(memberAlarm.getType()).isEqualTo(MemberAlarmType.FRIEND_INVITATION_DENIED);
-            }
+                    final MemberAlarm memberAlarm = memberAlarms.get(0);
+                    softly.assertThat(memberAlarm.getMemberId()).isEqualTo(invitedMember.getId());
+                    softly.assertThat(memberAlarm.getTargetId()).isEqualTo(inviteMember.getId());
+                    softly.assertThat(memberAlarm.getType()).isEqualTo(MemberAlarmType.FRIEND_INVITATION_DENIED);
+                }
         );
     }
 
@@ -153,7 +153,7 @@ class MemberAlarmEventHandlerTest extends UsingDataJpaTest implements ReplaceUnd
         final BattleParticipant inviteBattleParticipant = join(invitedMember, battle);
 
         final BattleInvitedEvent battleInvitedEvent =
-            new BattleInvitedEvent(inviteBattleParticipant.getId(), invitedMember.getId());
+                new BattleInvitedEvent(inviteBattleParticipant.getId(), invitedMember.getId());
 
         //when
         memberAlarmEventHandler.battleInvitation(battleInvitedEvent);
@@ -162,14 +162,14 @@ class MemberAlarmEventHandlerTest extends UsingDataJpaTest implements ReplaceUnd
         final List<MemberAlarm> memberAlarms = memberAlarmRepository.findAll();
 
         assertSoftly(
-            softly -> {
-                softly.assertThat(memberAlarms).hasSize(1);
+                softly -> {
+                    softly.assertThat(memberAlarms).hasSize(1);
 
-                final MemberAlarm memberAlarm = memberAlarms.get(0);
-                softly.assertThat(memberAlarm.getMemberId()).isEqualTo(invitedMember.getId());
-                softly.assertThat(memberAlarm.getTargetId()).isEqualTo(inviteBattleParticipant.getId());
-                softly.assertThat(memberAlarm.getType()).isEqualTo(MemberAlarmType.BATTLE_INVITATION_NOT_ACCEPTED);
-            }
+                    final MemberAlarm memberAlarm = memberAlarms.get(0);
+                    softly.assertThat(memberAlarm.getMemberId()).isEqualTo(invitedMember.getId());
+                    softly.assertThat(memberAlarm.getTargetId()).isEqualTo(inviteBattleParticipant.getId());
+                    softly.assertThat(memberAlarm.getType()).isEqualTo(MemberAlarmType.BATTLE_INVITATION_NOT_ACCEPTED);
+                }
         );
     }
 
@@ -183,11 +183,11 @@ class MemberAlarmEventHandlerTest extends UsingDataJpaTest implements ReplaceUnd
         createBattleInviteAlarm(inviteBattleParticipant, invitedMember);
 
         final BattleInviteAcceptedEvent battleInviteAcceptedEvent =
-            new BattleInviteAcceptedEvent(
-                inviteBattleParticipant.getId(),
-                inviteBattleParticipant.getMemberId(),
-                invitedMember.getId()
-            );
+                new BattleInviteAcceptedEvent(
+                        inviteBattleParticipant.getId(),
+                        inviteBattleParticipant.getMemberId(),
+                        invitedMember.getId()
+                );
 
         //when
         memberAlarmEventHandler.battleInvitationAccepted(battleInviteAcceptedEvent);
@@ -197,19 +197,20 @@ class MemberAlarmEventHandlerTest extends UsingDataJpaTest implements ReplaceUnd
         final List<MemberAlarm> invitedMemberAlarms = memberAlarmRepository.findAllByMemberId(invitedMember.getId());
 
         assertSoftly(
-            softly -> {
-                softly.assertThat(inviteMemberAlarms).hasSize(1);
-                final MemberAlarm inviteMemberAlarm = inviteMemberAlarms.get(0);
-                softly.assertThat(inviteMemberAlarm.getMemberId()).isEqualTo(inviteBattleParticipant.getMemberId());
-                softly.assertThat(inviteMemberAlarm.getTargetId()).isEqualTo(invitedMember.getId());
-                softly.assertThat(inviteMemberAlarm.getType()).isEqualTo(MemberAlarmType.BATTLE_INVITATION_ACCEPT);
+                softly -> {
+                    softly.assertThat(inviteMemberAlarms).hasSize(1);
+                    final MemberAlarm inviteMemberAlarm = inviteMemberAlarms.get(0);
+                    softly.assertThat(inviteMemberAlarm.getMemberId()).isEqualTo(inviteBattleParticipant.getMemberId());
+                    softly.assertThat(inviteMemberAlarm.getTargetId()).isEqualTo(invitedMember.getId());
+                    softly.assertThat(inviteMemberAlarm.getType()).isEqualTo(MemberAlarmType.BATTLE_INVITATION_ACCEPT);
 
-                softly.assertThat(invitedMemberAlarms).hasSize(1);
-                final MemberAlarm invitedMemberAlarm = invitedMemberAlarms.get(0);
-                softly.assertThat(invitedMemberAlarm.getMemberId()).isEqualTo(invitedMember.getId());
-                softly.assertThat(invitedMemberAlarm.getTargetId()).isEqualTo(inviteBattleParticipant.getId());
-                softly.assertThat(invitedMemberAlarm.getType()).isEqualTo(MemberAlarmType.BATTLE_INVITATION_ACCEPTED);
-            }
+                    softly.assertThat(invitedMemberAlarms).hasSize(1);
+                    final MemberAlarm invitedMemberAlarm = invitedMemberAlarms.get(0);
+                    softly.assertThat(invitedMemberAlarm.getMemberId()).isEqualTo(invitedMember.getId());
+                    softly.assertThat(invitedMemberAlarm.getTargetId()).isEqualTo(inviteBattleParticipant.getId());
+                    softly.assertThat(invitedMemberAlarm.getType())
+                            .isEqualTo(MemberAlarmType.BATTLE_INVITATION_ACCEPTED);
+                }
         );
     }
 
@@ -223,10 +224,10 @@ class MemberAlarmEventHandlerTest extends UsingDataJpaTest implements ReplaceUnd
         createBattleInviteAlarm(inviteBattleParticipant, invitedMember);
 
         final BattleInviteDeniedEvent battleInviteDeniedEventEvent =
-            new BattleInviteDeniedEvent(
-                inviteBattleParticipant.getId(),
-                invitedMember.getId()
-            );
+                new BattleInviteDeniedEvent(
+                        inviteBattleParticipant.getId(),
+                        invitedMember.getId()
+                );
 
         //when
         memberAlarmEventHandler.battleInvitationDenied(battleInviteDeniedEventEvent);
@@ -235,14 +236,14 @@ class MemberAlarmEventHandlerTest extends UsingDataJpaTest implements ReplaceUnd
         final List<MemberAlarm> invitedMemberAlarms = memberAlarmRepository.findAllByMemberId(invitedMember.getId());
 
         assertSoftly(
-            softly -> {
-                softly.assertThat(invitedMemberAlarms).hasSize(1);
+                softly -> {
+                    softly.assertThat(invitedMemberAlarms).hasSize(1);
 
-                final MemberAlarm invitedMemberAlarm = invitedMemberAlarms.get(0);
-                softly.assertThat(invitedMemberAlarm.getMemberId()).isEqualTo(invitedMember.getId());
-                softly.assertThat(invitedMemberAlarm.getTargetId()).isEqualTo(inviteBattleParticipant.getId());
-                softly.assertThat(invitedMemberAlarm.getType()).isEqualTo(MemberAlarmType.BATTLE_INVITATION_DENIED);
-            }
+                    final MemberAlarm invitedMemberAlarm = invitedMemberAlarms.get(0);
+                    softly.assertThat(invitedMemberAlarm.getMemberId()).isEqualTo(invitedMember.getId());
+                    softly.assertThat(invitedMemberAlarm.getTargetId()).isEqualTo(inviteBattleParticipant.getId());
+                    softly.assertThat(invitedMemberAlarm.getType()).isEqualTo(MemberAlarmType.BATTLE_INVITATION_DENIED);
+                }
         );
     }
 
@@ -253,9 +254,9 @@ class MemberAlarmEventHandlerTest extends UsingDataJpaTest implements ReplaceUnd
 
     private void createFriendInviteAlarm(final Member inviteMember, final Member invitedMember) {
         memberAlarmRepository.save(MemberAlarm.withoutId(
-            invitedMember.getId(),
-            inviteMember.getId(),
-            MemberAlarmType.FRIEND_INVITATION_NOT_ACCEPTED)
+                invitedMember.getId(),
+                inviteMember.getId(),
+                MemberAlarmType.FRIEND_INVITATION_NOT_ACCEPTED)
         );
     }
 
@@ -265,9 +266,9 @@ class MemberAlarmEventHandlerTest extends UsingDataJpaTest implements ReplaceUnd
 
     private void createBattleInviteAlarm(final BattleParticipant inviteBattleParticipant, final Member invitedMember) {
         memberAlarmRepository.save(MemberAlarm.withoutId(
-            invitedMember.getId(),
-            inviteBattleParticipant.getId(),
-            MemberAlarmType.BATTLE_INVITATION_NOT_ACCEPTED)
+                invitedMember.getId(),
+                inviteBattleParticipant.getId(),
+                MemberAlarmType.BATTLE_INVITATION_NOT_ACCEPTED)
         );
     }
 }

@@ -1,5 +1,7 @@
 package com.poorlex.poorlex.expenditure.domain;
 
+import com.poorlex.poorlex.exception.ApiException;
+import com.poorlex.poorlex.exception.ExceptionTag;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import lombok.AccessLevel;
@@ -21,9 +23,11 @@ public class ExpenditureAmount {
 
     private void validate(final long value) {
         if (MINIMUM_PRICE > value || value > MAXIMUM_PRICE) {
-            throw new IllegalArgumentException(
-                    String.format("지출 금액은 %d원 이상 %d원 이하입니다. ( 입력 지출 금액 : %d )", MINIMUM_PRICE, MAXIMUM_PRICE, value)
-            );
+            final String errorMessage = String.format("지출 금액은 %d원 이상 %d원 이하입니다. ( 입력 지출 금액 : %d )",
+                                                      MINIMUM_PRICE,
+                                                      MAXIMUM_PRICE,
+                                                      value);
+            throw new ApiException(ExceptionTag.EXPENDITURE_AMOUNT, errorMessage);
         }
     }
 

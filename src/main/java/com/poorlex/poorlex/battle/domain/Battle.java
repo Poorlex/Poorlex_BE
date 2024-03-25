@@ -1,5 +1,7 @@
 package com.poorlex.poorlex.battle.domain;
 
+import com.poorlex.poorlex.exception.ApiException;
+import com.poorlex.poorlex.exception.ExceptionTag;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -78,14 +80,13 @@ public class Battle {
 
     private void validateStartable(final LocalDateTime startTime) {
         if (!isTimeAbleToStart(startTime) || !isStatusAbleToStart()) {
-            throw new IllegalArgumentException(
-                    String.format("배틀을 시작할 수 없습니다. ( 요청 : %s ( %d:%d ), 현재 배틀 상태 : %s)",
-                                  startTime.getDayOfWeek().name(),
-                                  startTime.getHour(),
-                                  startTime.getMinute(),
-                                  status.name()
-                    )
+            final String errorMessage = String.format("배틀을 시작할 수 없습니다. ( 요청 : %s ( %d:%d ), 현재 배틀 상태 : %s)",
+                                                      startTime.getDayOfWeek().name(),
+                                                      startTime.getHour(),
+                                                      startTime.getMinute(),
+                                                      status.name()
             );
+            throw new ApiException(ExceptionTag.BATTLE_PROGRESS, errorMessage);
         }
     }
 
@@ -113,14 +114,13 @@ public class Battle {
 
     private void validateEndable(final LocalDateTime endTime) {
         if (!isTimeAbleToEnd(endTime) || !isStatusAbleToEnd()) {
-            throw new IllegalArgumentException(
-                    String.format("배틀을 종료할 수 없습니다. ( 요청 : %s ( %d:%d ), 현재 배틀 상태 : %s)",
-                                  endTime.getDayOfWeek().name(),
-                                  endTime.getHour(),
-                                  endTime.getMinute(),
-                                  status.name()
-                    )
+            final String errorMessage = String.format("배틀을 종료할 수 없습니다. ( 요청 : %s ( %d:%d ), 현재 배틀 상태 : %s)",
+                                                      endTime.getDayOfWeek().name(),
+                                                      endTime.getHour(),
+                                                      endTime.getMinute(),
+                                                      status.name()
             );
+            throw new ApiException(ExceptionTag.BATTLE_PROGRESS, errorMessage);
         }
     }
 

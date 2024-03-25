@@ -1,9 +1,8 @@
 package com.poorlex.poorlex.battlenotification.domain;
 
+import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-
-import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -19,7 +18,7 @@ class BattleNotificationContentTest implements ReplaceUnderScoreTest {
         //when
         //then
         assertThatThrownBy(() -> new BattleNotificationContent(notificationContent))
-            .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
@@ -42,7 +41,7 @@ class BattleNotificationContentTest implements ReplaceUnderScoreTest {
         //when
         //then
         assertThatThrownBy(() -> new BattleNotificationContent(notificationContent))
-            .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test

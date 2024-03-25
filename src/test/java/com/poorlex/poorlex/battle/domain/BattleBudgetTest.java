@@ -1,8 +1,8 @@
 package com.poorlex.poorlex.battle.domain;
 
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-
+import com.poorlex.poorlex.exception.ApiException;
 import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -17,7 +17,7 @@ class BattleBudgetTest implements ReplaceUnderScoreTest {
         //when
         //then
         assertThatThrownBy(() -> new BattleBudget(budget))
-            .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(ApiException.class);
     }
 
     @ParameterizedTest(name = "예산이 {0} 인 경우")
@@ -27,6 +27,6 @@ class BattleBudgetTest implements ReplaceUnderScoreTest {
         //when
         //then
         assertThatThrownBy(() -> new BattleBudget(budget))
-            .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(ApiException.class);
     }
 }

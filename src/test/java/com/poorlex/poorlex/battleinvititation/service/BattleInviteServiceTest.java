@@ -1,8 +1,5 @@
 package com.poorlex.poorlex.battleinvititation.service;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-
 import com.poorlex.poorlex.alarm.memberalram.domain.MemberAlarm;
 import com.poorlex.poorlex.alarm.memberalram.domain.MemberAlarmRepository;
 import com.poorlex.poorlex.alarm.memberalram.domain.MemberAlarmType;
@@ -27,6 +24,8 @@ import com.poorlex.poorlex.participate.domain.BattleParticipant;
 import com.poorlex.poorlex.participate.domain.BattleParticipantRepository;
 import com.poorlex.poorlex.support.IntegrationTest;
 import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -90,8 +89,8 @@ class BattleInviteServiceTest extends IntegrationTest implements ReplaceUnderSco
         //when
         //then
         assertThatThrownBy(() -> battleInviteService.invite(battle.getId(), inviteMember.getId(), request))
-            .isInstanceOf(IllegalArgumentException.class)
-            .hasMessage("초대자가 배틀 참가자가 아닙니다.");
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("초대자가 배틀 참가자가 아닙니다.");
     }
 
     @Test
@@ -106,8 +105,8 @@ class BattleInviteServiceTest extends IntegrationTest implements ReplaceUnderSco
         //when
         //then
         assertThatThrownBy(() -> battleInviteService.invite(battle.getId(), inviteMember.getId(), request))
-            .isInstanceOf(IllegalArgumentException.class)
-            .hasMessage("초대한 멤버가 친구가 아닙니다.");
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("초대한 멤버가 친구가 아닙니다.");
     }
 
     @Test
@@ -142,8 +141,8 @@ class BattleInviteServiceTest extends IntegrationTest implements ReplaceUnderSco
         //when
         //then
         assertThatThrownBy(() -> battleInviteService.inviteAccept(invitedMember.getId(), request))
-            .isInstanceOf(IllegalArgumentException.class)
-            .hasMessage("초대한 참자가가 배틀방에 없습니다.");
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("초대한 참자가가 배틀방에 없습니다.");
     }
 
     @Test
@@ -160,8 +159,8 @@ class BattleInviteServiceTest extends IntegrationTest implements ReplaceUnderSco
         //when
         //then
         assertThatThrownBy(() -> battleInviteService.inviteAccept(invitedMember.getId(), request))
-            .isInstanceOf(IllegalArgumentException.class)
-            .hasMessage("이미 참가중인 배틀입니다.");
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("이미 참가중인 배틀입니다.");
     }
 
     @Test
@@ -184,7 +183,7 @@ class BattleInviteServiceTest extends IntegrationTest implements ReplaceUnderSco
 
     private Member createMember(final String oauthId, final String nickname) {
         return memberRepository.save(
-            Member.withoutId(Oauth2RegistrationId.APPLE, oauthId, new MemberNickname(nickname)));
+                Member.withoutId(Oauth2RegistrationId.APPLE, oauthId, new MemberNickname(nickname)));
     }
 
     private Battle createBattle() {
@@ -201,9 +200,9 @@ class BattleInviteServiceTest extends IntegrationTest implements ReplaceUnderSco
 
     private void createBattleInviteAlarm(final BattleParticipant inviteBattleParticipant, final Member invitedMember) {
         memberAlarmRepository.save(MemberAlarm.withoutId(
-            invitedMember.getId(),
-            inviteBattleParticipant.getId(),
-            MemberAlarmType.BATTLE_INVITATION_NOT_ACCEPTED)
+                invitedMember.getId(),
+                inviteBattleParticipant.getId(),
+                MemberAlarmType.BATTLE_INVITATION_NOT_ACCEPTED)
         );
     }
 

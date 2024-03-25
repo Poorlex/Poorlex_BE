@@ -23,7 +23,6 @@ import com.poorlex.poorlex.support.TestMemberTokenGenerator;
 import com.poorlex.poorlex.token.JwtTokenProvider;
 import java.io.FileInputStream;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -66,7 +65,7 @@ class ExpenditureControllerTest extends IntegrationTest implements ReplaceUnderS
 
     @MockBean
     private ExpenditureEventHandler expenditureEventHandler;
-    
+
     private TestMemberTokenGenerator testMemberTokenGenerator;
 
     @BeforeEach
@@ -351,14 +350,14 @@ class ExpenditureControllerTest extends IntegrationTest implements ReplaceUnderS
     void 멤버의_기간중의_지출의_총합을_구한다_지출이_있을_때() throws Exception {
         //given
         final Member member = createMember("oauthId");
-        final LocalDateTime dateTime = LocalDateTime.now();
-        final WeeklyExpenditureDuration weeklyExpenditureDuration = WeeklyExpenditureDuration.from(dateTime);
+        final LocalDate date = LocalDate.now();
+        final WeeklyExpenditureDuration weeklyExpenditureDuration = WeeklyExpenditureDuration.from(date);
 
         createExpenditureWithMainImage(1000, member.getId(), LocalDate.from(weeklyExpenditureDuration.getStart()));
         createExpenditureWithMainImage(2000, member.getId(), LocalDate.from(weeklyExpenditureDuration.getStart()));
 
         final String accessToken = testMemberTokenGenerator.createAccessToken(member);
-        final MemberWeeklyTotalExpenditureRequest request = new MemberWeeklyTotalExpenditureRequest(dateTime);
+        final MemberWeeklyTotalExpenditureRequest request = new MemberWeeklyTotalExpenditureRequest(date);
 
         //when
         //then
@@ -377,14 +376,14 @@ class ExpenditureControllerTest extends IntegrationTest implements ReplaceUnderS
     void 멤버의_기간중의_지출의_총합을_구한다_지출이_없을_때() throws Exception {
         //given
         final Member member = createMember("oauthId");
-        final LocalDateTime dateTime = LocalDateTime.now();
+        final LocalDate date = LocalDate.now();
 
-        createExpenditureWithMainImage(1000, member.getId(), LocalDate.from(dateTime));
-        createExpenditureWithMainImage(2000, member.getId(), LocalDate.from(dateTime));
+        createExpenditureWithMainImage(1000, member.getId(), date);
+        createExpenditureWithMainImage(2000, member.getId(), date);
 
         final String accessToken = testMemberTokenGenerator.createAccessToken(member);
         final MemberWeeklyTotalExpenditureRequest request =
-                new MemberWeeklyTotalExpenditureRequest(dateTime.plusDays(7));
+                new MemberWeeklyTotalExpenditureRequest(date.plusDays(7));
 
         //when
         //then

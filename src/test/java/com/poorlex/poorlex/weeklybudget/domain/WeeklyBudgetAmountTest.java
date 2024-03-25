@@ -1,10 +1,10 @@
 package com.poorlex.poorlex.weeklybudget.domain;
 
+import com.poorlex.poorlex.exception.ApiException;
 import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class WeeklyBudgetAmountTest implements ReplaceUnderScoreTest {
 
@@ -15,7 +15,7 @@ class WeeklyBudgetAmountTest implements ReplaceUnderScoreTest {
         //when
         //then
         assertThatThrownBy(() -> new WeeklyBudgetAmount(budget))
-            .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(ApiException.class);
     }
 
 }

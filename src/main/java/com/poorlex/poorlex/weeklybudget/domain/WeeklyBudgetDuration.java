@@ -1,11 +1,11 @@
 package com.poorlex.poorlex.weeklybudget.domain;
 
+import com.poorlex.poorlex.exception.ApiException;
+import com.poorlex.poorlex.exception.ExceptionTag;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -14,21 +14,15 @@ import lombok.NoArgsConstructor;
 public class WeeklyBudgetDuration {
 
     private static final DayOfWeek START_DAY_OF_WEEK = DayOfWeek.MONDAY;
-    private static final int START_HOUR = 9;
-    private static final int START_MINUTE = 0;
-    private static final LocalTime START_TIME = LocalTime.of(START_HOUR, START_MINUTE);
     private static final DayOfWeek END_DAY_OF_WEEK = DayOfWeek.SUNDAY;
-    private static final int END_HOUR = 22;
-    private static final int END_MINUTE = 0;
-    private static final LocalTime END_TIME = LocalTime.of(END_HOUR, END_MINUTE);
     private static final int BATTLE_DAYS = END_DAY_OF_WEEK.getValue() - START_DAY_OF_WEEK.getValue();
 
     @Column(name = "start_date")
-    private LocalDateTime start;
+    private LocalDate start;
     @Column(name = "end_date")
-    private LocalDateTime end;
+    private LocalDate end;
 
-    public WeeklyBudgetDuration(final LocalDateTime start, final LocalDateTime end) {
+    public WeeklyBudgetDuration(final LocalDate start, final LocalDate end) {
         validate(start, end);
         this.start = start;
         this.end = end;
@@ -37,14 +31,8 @@ public class WeeklyBudgetDuration {
     public static WeeklyBudgetDuration current() {
         final LocalDate now = LocalDate.now();
 
-        final LocalDateTime start = LocalDateTime.of(
-            LocalDate.from(now).plusDays(getDaysBeforeMonday(now)),
-            START_TIME
-        );
-        final LocalDateTime end = LocalDateTime.of(
-            LocalDate.from(start).plusDays(BATTLE_DAYS),
-            END_TIME
-        );
+        final LocalDate start = LocalDate.from(now).plusDays(getDaysBeforeMonday(now));
+        final LocalDate end = start.plusDays(BATTLE_DAYS);
 
         return new WeeklyBudgetDuration(start, end);
     }
@@ -54,36 +42,36 @@ public class WeeklyBudgetDuration {
         return 8 - currentDayOrder;
     }
 
-    private void validate(final LocalDateTime start, final LocalDateTime end) {
+    private void validate(final LocalDate start, final LocalDate end) {
         validateStart(start);
         validateEnd(end);
     }
 
-    private void validateStart(final LocalDateTime start) {
+    private void validateStart(final LocalDate start) {
         final DayOfWeek dayOfWeek = start.getDayOfWeek();
-        final int hour = start.getHour();
-        final int minute = start.getMinute();
-
-        if (dayOfWeek != START_DAY_OF_WEEK || hour != START_HOUR || minute != START_MINUTE) {
-            throw new IllegalArgumentException();
+        if (dayOfWeek != START_DAY_OF_WEEK) {
+            final String errorMessage = String.format("주간 예산 기간의 시작 요일은 %s 입니다. ( 현재 시작 요일 : %s )",
+                                                      START_DAY_OF_WEEK.name(),
+                                                      dayOfWeek.name());
+            throw new ApiException(ExceptionTag.WEEKLY_BUDGET_DURATION, errorMessage);
         }
     }
 
-    private void validateEnd(final LocalDateTime end) {
+    private void validateEnd(final LocalDate end) {
         final DayOfWeek dayOfWeek = end.getDayOfWeek();
-        final int hour = end.getHour();
-        final int minute = end.getMinute();
-
-        if (dayOfWeek != END_DAY_OF_WEEK || hour != END_HOUR || minute != END_MINUTE) {
-            throw new IllegalArgumentException();
+        if (dayOfWeek != END_DAY_OF_WEEK) {
+            final String errorMessage = String.format("주간 예산 기간의 종료 요일은 %s 입니다. ( 현재 시작 요일 : %s )",
+                                                      END_DAY_OF_WEEK.name(),
+                                                      dayOfWeek.name());
+            throw new ApiException(ExceptionTag.WEEKLY_BUDGET_DURATION, errorMessage);
         }
     }
 
-    public LocalDateTime getStart() {
+    public LocalDate getStart() {
         return start;
     }
 
-    public LocalDateTime getEnd() {
+    public LocalDate getEnd() {
         return end;
     }
 }

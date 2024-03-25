@@ -1,13 +1,5 @@
 package com.poorlex.poorlex.goal.controller;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 import com.poorlex.poorlex.goal.domain.Goal;
 import com.poorlex.poorlex.goal.domain.GoalAmount;
 import com.poorlex.poorlex.goal.domain.GoalDuration;
@@ -33,6 +25,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class GoalControllerTest extends IntegrationTest implements ReplaceUnderScoreTest {
 
@@ -54,85 +53,85 @@ class GoalControllerTest extends IntegrationTest implements ReplaceUnderScoreTes
     void 목표를_생성한다() throws Exception {
         //given
         final GoalCreateRequest request = new GoalCreateRequest(
-            GoalType.REST_AND_REFRESH.name(),
-            "목표명",
-            10000,
-            LocalDate.now().minusDays(1),
-            LocalDate.now()
+                GoalType.REST_AND_REFRESH.name(),
+                "목표명",
+                10000,
+                LocalDate.now().minusDays(1),
+                LocalDate.now()
         );
         final String accessToken = testMemberTokenGenerator.createTokenWithNewMember("oauthId");
 
         //when
         //then
         mockMvc.perform(
-                post("/goals")
-                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
-                    .content(objectMapper.writeValueAsString(request))
-                    .contentType(MediaType.APPLICATION_JSON)
-            )
-            .andDo(print())
-            .andExpect(status().isCreated());
+                        post("/goals")
+                                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                                .content(objectMapper.writeValueAsString(request))
+                                .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andDo(print())
+                .andExpect(status().isCreated());
     }
 
     @Test
     void 목표를_수정한다() throws Exception {
         //given
         final Member member = memberRepository.save(
-            Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname")));
+                Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname")));
         final Goal goal = saveGoalWithMemberId(member.getId());
         final String accessToken = jwtTokenProvider.createAccessToken(member.getId());
         final GoalUpdateRequest request = new GoalUpdateRequest(
-            GoalType.REST_AND_REFRESH.name(),
-            "목표명",
-            10000,
-            LocalDate.now().minusDays(1),
-            LocalDate.now()
+                GoalType.REST_AND_REFRESH.name(),
+                "목표명",
+                10000,
+                LocalDate.now().minusDays(1),
+                LocalDate.now()
         );
 
         //when
         //then
         mockMvc.perform(
-                patch("/goals/{goalId}", goal.getId())
-                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
-                    .content(objectMapper.writeValueAsString(request))
-                    .contentType(MediaType.APPLICATION_JSON)
-            )
-            .andDo(print())
-            .andExpect(status().isOk());
+                        patch("/goals/{goalId}", goal.getId())
+                                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                                .content(objectMapper.writeValueAsString(request))
+                                .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andDo(print())
+                .andExpect(status().isOk());
     }
 
     @Test
     void 목표를_삭제한다() throws Exception {
         //given
         final Member member = memberRepository.save(
-            Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname")));
+                Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname")));
         final Goal goal = saveGoalWithMemberId(member.getId());
         final String accessToken = jwtTokenProvider.createAccessToken(member.getId());
 
         //when
         //then
         mockMvc.perform(
-                delete("/goals/{goalId}", goal.getId())
-                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
-            ).andDo(print())
-            .andExpect(status().isNoContent());
+                        delete("/goals/{goalId}", goal.getId())
+                                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                ).andDo(print())
+                .andExpect(status().isNoContent());
     }
 
     @Test
     void 목표를_완료한다() throws Exception {
         //given
         final Member member = memberRepository.save(
-            Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname")));
+                Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname")));
         final Goal goal = saveGoalWithMemberId(member.getId());
         final String accessToken = jwtTokenProvider.createAccessToken(member.getId());
 
         //when
         //then
         mockMvc.perform(
-                post("/goals/{goalId}/finish", goal.getId())
-                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
-            ).andDo(print())
-            .andExpect(status().isOk());
+                        post("/goals/{goalId}/finish", goal.getId())
+                                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                ).andDo(print())
+                .andExpect(status().isOk());
     }
 
     @Test
@@ -143,16 +142,16 @@ class GoalControllerTest extends IntegrationTest implements ReplaceUnderScoreTes
         //when
         //then
         mockMvc.perform(get("/goals/types"))
-            .andDo(print())
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.length()").value(goalTypes.length));
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(goalTypes.length));
     }
 
     @Test
     void 회원이_진행중인_목표목록을_조회한다() throws Exception {
         //given
         final Member member = memberRepository.save(
-            Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname")));
+                Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname")));
         final LocalDate requestDate = LocalDate.now();
         final Goal goal = saveGoalWithMemberId(member.getId(), requestDate.minusYears(1), requestDate.plusDays(10));
         final MemberGoalRequest request = new MemberGoalRequest("PROGRESS", requestDate);
@@ -161,27 +160,27 @@ class GoalControllerTest extends IntegrationTest implements ReplaceUnderScoreTes
         //when
         //then
         mockMvc.perform(
-                get("/goals")
-                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
-                    .content(objectMapper.writeValueAsString(request))
-                    .contentType(MediaType.APPLICATION_JSON)
-            ).andDo(print())
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.length()").value(1))
-            .andExpect(jsonPath("$[0].name").value(goal.getName()))
-            .andExpect(jsonPath("$[0].durationType").value(GoalDurationType.MIDDLE.name()))
-            .andExpect(jsonPath("$[0].amount").value(goal.getAmount()))
-            .andExpect(jsonPath("$[0].dayLeft").value(10))
-            .andExpect(jsonPath("$[0].monthLeft").value(goal.getMonthLeft(requestDate)))
-            .andExpect(jsonPath("$[0].startDate").value(goal.getStartDate().toString()))
-            .andExpect(jsonPath("$[0].endDate").value(goal.getEndDate().toString()));
+                        get("/goals")
+                                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                                .content(objectMapper.writeValueAsString(request))
+                                .contentType(MediaType.APPLICATION_JSON)
+                ).andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(1))
+                .andExpect(jsonPath("$[0].name").value(goal.getName()))
+                .andExpect(jsonPath("$[0].durationType").value(GoalDurationType.MIDDLE.name()))
+                .andExpect(jsonPath("$[0].amount").value(goal.getAmount()))
+                .andExpect(jsonPath("$[0].dayLeft").value(10))
+                .andExpect(jsonPath("$[0].monthLeft").value(goal.getMonthLeft(requestDate)))
+                .andExpect(jsonPath("$[0].startDate").value(goal.getStartDate().toString()))
+                .andExpect(jsonPath("$[0].endDate").value(goal.getEndDate().toString()));
     }
 
     @Test
     void 회원이_완료한_목표목록을_조회한다() throws Exception {
         //given
         final Member member = memberRepository.save(
-            Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname")));
+                Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname")));
         final LocalDate requestDate = LocalDate.now();
         final Goal goal = saveGoalWithMemberId(member.getId(), requestDate.minusYears(1), requestDate.plusYears(3));
         final String accessToken = jwtTokenProvider.createAccessToken(member.getId());
@@ -191,27 +190,27 @@ class GoalControllerTest extends IntegrationTest implements ReplaceUnderScoreTes
         //when
         //then
         mockMvc.perform(
-                get("/goals")
-                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
-                    .content(objectMapper.writeValueAsString(request))
-                    .contentType(MediaType.APPLICATION_JSON)
-            ).andDo(print())
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.length()").value(1))
-            .andExpect(jsonPath("$[0].name").value(goal.getName()))
-            .andExpect(jsonPath("$[0].durationType").value(GoalDurationType.MIDDLE.name()))
-            .andExpect(jsonPath("$[0].amount").value(goal.getAmount()))
-            .andExpect(jsonPath("$[0].dayLeft").value(0))
-            .andExpect(jsonPath("$[0].monthLeft").value(0))
-            .andExpect(jsonPath("$[0].startDate").value(goal.getStartDate().toString()))
-            .andExpect(jsonPath("$[0].endDate").value(goal.getEndDate().toString()));
+                        get("/goals")
+                                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                                .content(objectMapper.writeValueAsString(request))
+                                .contentType(MediaType.APPLICATION_JSON)
+                ).andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(1))
+                .andExpect(jsonPath("$[0].name").value(goal.getName()))
+                .andExpect(jsonPath("$[0].durationType").value(GoalDurationType.MIDDLE.name()))
+                .andExpect(jsonPath("$[0].amount").value(goal.getAmount()))
+                .andExpect(jsonPath("$[0].dayLeft").value(0))
+                .andExpect(jsonPath("$[0].monthLeft").value(0))
+                .andExpect(jsonPath("$[0].startDate").value(goal.getStartDate().toString()))
+                .andExpect(jsonPath("$[0].endDate").value(goal.getEndDate().toString()));
     }
 
     @Test
     void 멤버의_목표들의_Id를_조회한다() throws Exception {
         //given
         final Member member = memberRepository.save(
-            Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname")));
+                Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname")));
 
         final String accessToken = testMemberTokenGenerator.createAccessToken(member);
         final Goal goal1 = saveGoalWithMemberId(member.getId());
@@ -221,15 +220,15 @@ class GoalControllerTest extends IntegrationTest implements ReplaceUnderScoreTes
         //when
         //then
         mockMvc.perform(
-                get("/goals/ids")
-                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
-            )
-            .andDo(print())
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.length()").value(3))
-            .andExpect(jsonPath("$[0].goalId").value(goal1.getId()))
-            .andExpect(jsonPath("$[1].goalId").value(goal2.getId()))
-            .andExpect(jsonPath("$[2].goalId").value(goal3.getId()));
+                        get("/goals/ids")
+                                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(3))
+                .andExpect(jsonPath("$[0].goalId").value(goal1.getId()))
+                .andExpect(jsonPath("$[1].goalId").value(goal2.getId()))
+                .andExpect(jsonPath("$[2].goalId").value(goal3.getId()));
     }
 
     private Goal saveGoalWithMemberId(final Long memberId) {
@@ -254,8 +253,8 @@ class GoalControllerTest extends IntegrationTest implements ReplaceUnderScoreTes
 
     private void sendRequestToFinishGoal(final Long goalId, final String accessToken) throws Exception {
         mockMvc.perform(
-            post("/goals/{goalId}/finish", goalId)
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                post("/goals/{goalId}/finish", goalId)
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
         );
     }
 }

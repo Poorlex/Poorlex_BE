@@ -2,6 +2,8 @@ package com.poorlex.poorlex.expenditure.service;
 
 import com.poorlex.poorlex.battle.domain.Battle;
 import com.poorlex.poorlex.battle.domain.BattleRepository;
+import com.poorlex.poorlex.exception.ApiException;
+import com.poorlex.poorlex.exception.ExceptionTag;
 import com.poorlex.poorlex.expenditure.domain.Expenditure;
 import com.poorlex.poorlex.expenditure.domain.ExpenditureRepository;
 import com.poorlex.poorlex.expenditure.domain.TotalExpenditureAndMemberIdDto;
@@ -23,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional(readOnly = true)
 public class ExpenditureQueryService {
+
     private final BattleRepository battleRepository;
     private final ExpenditureRepository expenditureRepository;
 
@@ -34,12 +37,12 @@ public class ExpenditureQueryService {
 
 
     public MemberWeeklyTotalExpenditureResponse findMemberCurrentWeeklyTotalExpenditure(final Long memberId) {
-        return findMemberWeeklyTotalExpenditure(memberId, LocalDateTime.now());
+        return findMemberWeeklyTotalExpenditure(memberId, LocalDate.now());
     }
 
     public MemberWeeklyTotalExpenditureResponse findMemberWeeklyTotalExpenditure(final Long memberId,
-                                                                                 final LocalDateTime dateTime) {
-        final WeeklyExpenditureDuration duration = WeeklyExpenditureDuration.from(dateTime);
+                                                                                 final LocalDate date) {
+        final WeeklyExpenditureDuration duration = WeeklyExpenditureDuration.from(date);
         final int sumExpenditure = expenditureRepository.findSumExpenditureByMemberIdAndBetween(
                 memberId,
                 LocalDate.from(duration.getStart()),
@@ -88,7 +91,10 @@ public class ExpenditureQueryService {
     public ExpenditureResponse findExpenditureById(final Long expenditureId) {
         return expenditureRepository.findById(expenditureId)
                 .map(ExpenditureResponse::from)
-                .orElseThrow(() -> new IllegalArgumentException("해당 Id 의 지출이 존재하지 않습니다."));
+                .orElseThrow(() -> {
+                    final String errorMessage = String.format("Id에 해당 지출이 없습니다. ( 지출 ID : %d )", expenditureId);
+                    return new ApiException(ExceptionTag.EXPENDITURE_FIND, errorMessage);
+                });
     }
 
     public List<ExpenditureResponse> findMemberExpenditures(final Long memberId) {
@@ -113,7 +119,10 @@ public class ExpenditureQueryService {
 
     public List<BattleExpenditureResponse> findMemberBattleExpenditures(final Long battleId, final Long memberId) {
         final Battle battle = battleRepository.findById(battleId)
-                .orElseThrow(() -> new IllegalArgumentException("Id에 해당하는 배틀이 없습니다."));
+                .orElseThrow(() -> {
+                    final String errorMessage = String.format("Id에 해당하는 배틀이 없습니다. ( 배틀 Id : %d )", battleId);
+                    return new ApiException(ExceptionTag.BATTLE_FIND, errorMessage);
+                });
 
         final List<Expenditure> expenditures = expenditureRepository.findExpendituresByMemberIdAndDateBetween(
                 memberId,

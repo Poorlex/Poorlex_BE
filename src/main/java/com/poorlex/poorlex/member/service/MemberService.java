@@ -3,6 +3,8 @@ package com.poorlex.poorlex.member.service;
 import com.poorlex.poorlex.battle.service.dto.response.BattleSuccessCountResponse;
 import com.poorlex.poorlex.battlesuccess.service.BattleSuccessService;
 import com.poorlex.poorlex.config.event.Events;
+import com.poorlex.poorlex.exception.ApiException;
+import com.poorlex.poorlex.exception.ExceptionTag;
 import com.poorlex.poorlex.expenditure.service.ExpenditureQueryService;
 import com.poorlex.poorlex.expenditure.service.dto.response.MyPageExpenditureResponse;
 import com.poorlex.poorlex.friend.service.FriendService;
@@ -17,7 +19,7 @@ import com.poorlex.poorlex.member.service.dto.response.MyPageResponse;
 import com.poorlex.poorlex.member.service.event.MemberDeletedEvent;
 import com.poorlex.poorlex.point.service.MemberPointService;
 import com.poorlex.poorlex.point.service.dto.response.MyPageLevelInfoResponse;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -46,7 +48,10 @@ public class MemberService {
     @Transactional
     public void updateProfile(final Long memberId, final MemberProfileUpdateRequest request) {
         final Member member = memberRepository.findById(memberId)
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(() -> {
+                    final String errorMessage = String.format("Id 에 해당하는 회원이 존재하지 않습니다. ( ID : %d )", memberId);
+                    return new ApiException(ExceptionTag.MEMBER_FIND, errorMessage);
+                });
         final String newNickname = request.getNickname();
         final String newDescription = request.getDescription();
 
@@ -59,16 +64,19 @@ public class MemberService {
     }
 
     public MyPageResponse getMyPageInfoFromCurrentDatetime(final Long memberId) {
-        return getMyPageInfo(memberId, LocalDateTime.now());
+        return getMyPageInfo(memberId, LocalDate.now());
     }
 
-    public MyPageResponse getMyPageInfo(final Long memberId, final LocalDateTime dateTime) {
+    public MyPageResponse getMyPageInfo(final Long memberId, final LocalDate date) {
         final Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 Id 의 멤버가 존재하지 않습니다."));
+                .orElseThrow(() -> {
+                    final String errorMessage = String.format("Id 에 해당하는 회원이 존재하지 않습니다. ( ID : %d )", memberId);
+                    return new ApiException(ExceptionTag.MEMBER_FIND, errorMessage);
+                });
         final MyPageLevelInfoResponse memberLevelInfo = memberPointService.findMemberLevelInfo(memberId);
         final BattleSuccessCountResponse battleSuccessCounts =
                 battleSuccessService.findMemberBattleSuccessCounts(memberId);
-        final List<FriendResponse> friends = friendService.findMemberFriends(memberId, dateTime);
+        final List<FriendResponse> friends = friendService.findMemberFriends(memberId, date);
         final List<MyPageExpenditureResponse> expenditures = expenditureQueryService.findMemberExpenditures(memberId)
                 .stream()
                 .map(MyPageExpenditureResponse::from)
@@ -87,7 +95,10 @@ public class MemberService {
     @Transactional
     public void deleteMember(final Long memberId) {
         final Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new IllegalArgumentException("ID 에 해당하는 멤버가 존재하지 않습니다."));
+                .orElseThrow(() -> {
+                    final String errorMessage = String.format("Id 에 해당하는 회원이 존재하지 않습니다. ( ID : %d )", memberId);
+                    return new ApiException(ExceptionTag.MEMBER_FIND, errorMessage);
+                });
         memberRepository.delete(member);
 
         Events.raise(new MemberDeletedEvent(memberId));

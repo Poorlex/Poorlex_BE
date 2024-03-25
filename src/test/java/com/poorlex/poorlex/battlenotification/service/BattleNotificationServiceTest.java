@@ -1,8 +1,5 @@
 package com.poorlex.poorlex.battlenotification.service;
 
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.assertj.core.api.SoftAssertions.assertSoftly;
-
 import com.poorlex.poorlex.battle.domain.Battle;
 import com.poorlex.poorlex.battle.domain.BattleRepository;
 import com.poorlex.poorlex.battle.fixture.BattleFixture;
@@ -21,6 +18,8 @@ import com.poorlex.poorlex.participate.domain.BattleParticipantRepository;
 import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
 import com.poorlex.poorlex.support.db.UsingDataJpaTest;
 import java.util.List;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,7 +43,7 @@ class BattleNotificationServiceTest extends UsingDataJpaTest implements ReplaceU
     @BeforeEach
     void setUp() {
         this.battleNotificationService =
-            new BattleNotificationService(battleNotificationRepository, battleParticipantRepository);
+                new BattleNotificationService(battleNotificationRepository, battleParticipantRepository);
     }
 
     @Test
@@ -53,7 +52,7 @@ class BattleNotificationServiceTest extends UsingDataJpaTest implements ReplaceU
         final Battle battle = createBattle();
         final BattleParticipant manager = createManager(battle);
         final BattleNotificationCreateRequest request =
-            new BattleNotificationCreateRequest("12345678901234567890", "imageUrl");
+                new BattleNotificationCreateRequest("12345678901234567890", "imageUrl");
 
         //when
         battleNotificationService.createNotification(battle.getId(), manager.getMemberId(), request);
@@ -61,18 +60,18 @@ class BattleNotificationServiceTest extends UsingDataJpaTest implements ReplaceU
         //then
         final List<BattleNotification> battleNotifications = battleNotificationRepository.findAll();
         assertSoftly(
-            softly -> {
-                softly.assertThat(battleNotifications).hasSize(1);
+                softly -> {
+                    softly.assertThat(battleNotifications).hasSize(1);
 
-                final BattleNotification battleNotification = battleNotifications.get(0);
-                softly.assertThat(battleNotification.getBattleId()).isEqualTo(battle.getId());
-                softly.assertThat(battleNotification.getContent()).isEqualTo(request.getContent());
-                softly.assertThat(battleNotification.getImageUrl()).isPresent();
-                softly.assertThat(battleNotification.getImageUrl())
-                    .isPresent()
-                    .get()
-                    .isEqualTo(request.getImageUrl());
-            }
+                    final BattleNotification battleNotification = battleNotifications.get(0);
+                    softly.assertThat(battleNotification.getBattleId()).isEqualTo(battle.getId());
+                    softly.assertThat(battleNotification.getContent()).isEqualTo(request.getContent());
+                    softly.assertThat(battleNotification.getImageUrl()).isPresent();
+                    softly.assertThat(battleNotification.getImageUrl())
+                            .isPresent()
+                            .get()
+                            .isEqualTo(request.getImageUrl());
+                }
         );
     }
 
@@ -82,7 +81,7 @@ class BattleNotificationServiceTest extends UsingDataJpaTest implements ReplaceU
         final Battle battle = createBattle();
         final BattleParticipant manager = createManager(battle);
         final BattleNotificationCreateRequest request =
-            new BattleNotificationCreateRequest("12345678901234567890", null);
+                new BattleNotificationCreateRequest("12345678901234567890", null);
 
         //when
         battleNotificationService.createNotification(battle.getId(), manager.getMemberId(), request);
@@ -90,14 +89,14 @@ class BattleNotificationServiceTest extends UsingDataJpaTest implements ReplaceU
         //then
         final List<BattleNotification> battleNotifications = battleNotificationRepository.findAll();
         assertSoftly(
-            softly -> {
-                softly.assertThat(battleNotifications).hasSize(1);
+                softly -> {
+                    softly.assertThat(battleNotifications).hasSize(1);
 
-                final BattleNotification battleNotification = battleNotifications.get(0);
-                softly.assertThat(battleNotification.getBattleId()).isEqualTo(battle.getId());
-                softly.assertThat(battleNotification.getContent()).isEqualTo(request.getContent());
-                softly.assertThat(battleNotification.getImageUrl()).isEmpty();
-            }
+                    final BattleNotification battleNotification = battleNotifications.get(0);
+                    softly.assertThat(battleNotification.getBattleId()).isEqualTo(battle.getId());
+                    softly.assertThat(battleNotification.getContent()).isEqualTo(request.getContent());
+                    softly.assertThat(battleNotification.getImageUrl()).isEmpty();
+                }
         );
     }
 
@@ -107,15 +106,15 @@ class BattleNotificationServiceTest extends UsingDataJpaTest implements ReplaceU
         final Battle battle = createBattle();
         final BattleParticipant manager = createNormalPlayer(battle);
         final BattleNotificationCreateRequest request =
-            new BattleNotificationCreateRequest("12345678901234567890", null);
+                new BattleNotificationCreateRequest("12345678901234567890", null);
 
         //when
         //then
         assertThatThrownBy(() -> battleNotificationService.createNotification(
-                battle.getId(),
-                manager.getMemberId(),
-                request
-            )
+                                   battle.getId(),
+                                   manager.getMemberId(),
+                                   request
+                           )
         ).isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -126,14 +125,14 @@ class BattleNotificationServiceTest extends UsingDataJpaTest implements ReplaceU
         final Battle anotherBattle = createBattle();
         final BattleParticipant anotherBattleManager = createManager(anotherBattle);
         final BattleNotificationCreateRequest request =
-            new BattleNotificationCreateRequest("12345678901234567890", null);
+                new BattleNotificationCreateRequest("12345678901234567890", null);
 
         //when
         //then
         assertThatThrownBy(() -> battleNotificationService.createNotification(
-            battle.getId(),
-            anotherBattleManager.getMemberId(),
-            request)
+                battle.getId(),
+                anotherBattleManager.getMemberId(),
+                request)
         ).isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -144,8 +143,8 @@ class BattleNotificationServiceTest extends UsingDataJpaTest implements ReplaceU
         final BattleParticipant manager = createManager(battle);
         final BattleNotification battleNotification = createBattleNotification(battle);
         final BattleNotificationUpdateRequest request = new BattleNotificationUpdateRequest(
-            "newContentNewContent",
-            "newImageUrl"
+                "newContentNewContent",
+                "newImageUrl"
         );
 
         //when
@@ -154,13 +153,13 @@ class BattleNotificationServiceTest extends UsingDataJpaTest implements ReplaceU
         //then
         final List<BattleNotification> battleNotifications = battleNotificationRepository.findAll();
         assertSoftly(
-            softly -> {
-                softly.assertThat(battleNotifications).hasSize(1);
+                softly -> {
+                    softly.assertThat(battleNotifications).hasSize(1);
 
-                final BattleNotification findBattleNotification = battleNotifications.get(0);
-                softly.assertThat(findBattleNotification.getContent()).isEqualTo(request.getContent());
-                softly.assertThat(findBattleNotification.getImageUrl()).contains(request.getImageUrl());
-            }
+                    final BattleNotification findBattleNotification = battleNotifications.get(0);
+                    softly.assertThat(findBattleNotification.getContent()).isEqualTo(request.getContent());
+                    softly.assertThat(findBattleNotification.getImageUrl()).contains(request.getImageUrl());
+                }
         );
     }
 
@@ -171,8 +170,8 @@ class BattleNotificationServiceTest extends UsingDataJpaTest implements ReplaceU
         final BattleParticipant manager = createManager(battle);
         final BattleNotification battleNotification = createBattleNotification(battle);
         final BattleNotificationUpdateRequest request = new BattleNotificationUpdateRequest(
-            "newContentNewContent",
-            null
+                "newContentNewContent",
+                null
         );
 
         //when
@@ -181,13 +180,13 @@ class BattleNotificationServiceTest extends UsingDataJpaTest implements ReplaceU
         //then
         final List<BattleNotification> battleNotifications = battleNotificationRepository.findAll();
         assertSoftly(
-            softly -> {
-                softly.assertThat(battleNotifications).hasSize(1);
+                softly -> {
+                    softly.assertThat(battleNotifications).hasSize(1);
 
-                final BattleNotification findBattleNotification = battleNotifications.get(0);
-                softly.assertThat(findBattleNotification.getContent()).isEqualTo(request.getContent());
-                softly.assertThat(findBattleNotification.getImageUrl()).isEmpty();
-            }
+                    final BattleNotification findBattleNotification = battleNotifications.get(0);
+                    softly.assertThat(findBattleNotification.getContent()).isEqualTo(request.getContent());
+                    softly.assertThat(findBattleNotification.getImageUrl()).isEmpty();
+                }
         );
     }
 
@@ -198,13 +197,13 @@ class BattleNotificationServiceTest extends UsingDataJpaTest implements ReplaceU
 
     private BattleParticipant createManager(final Battle battle) {
         final Member member = memberRepository.save(
-            Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname")));
+                Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname")));
         return battleParticipantRepository.save(BattleParticipant.manager(battle.getId(), member.getId()));
     }
 
     private BattleParticipant createNormalPlayer(final Battle battle) {
         final Member member = memberRepository.save(
-            Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname")));
+                Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname")));
         return battleParticipantRepository.save(BattleParticipant.normalPlayer(battle.getId(), member.getId()));
     }
 

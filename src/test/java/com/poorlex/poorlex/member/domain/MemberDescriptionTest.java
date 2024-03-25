@@ -1,8 +1,8 @@
 package com.poorlex.poorlex.member.domain;
 
+import com.poorlex.poorlex.exception.ApiException;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -20,7 +20,7 @@ class MemberDescriptionTest {
         //when
         //then
         assertThatThrownBy(() -> new MemberDescription(introduction))
-            .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(ApiException.class);
     }
 
     @Test
@@ -43,7 +43,7 @@ class MemberDescriptionTest {
         //when
         //then
         assertThatThrownBy(() -> new MemberDescription(introduction))
-            .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(ApiException.class);
     }
 
     @Test

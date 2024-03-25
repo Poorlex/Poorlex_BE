@@ -1,11 +1,14 @@
 package com.poorlex.poorlex.weeklybudget.domain;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -36,7 +39,7 @@ public class WeeklyBudget {
         return new WeeklyBudget(null, amount, duration, memberId);
     }
 
-    public long getDDay(final LocalDateTime current) {
+    public long getDDay(final LocalDate current) {
         return ChronoUnit.DAYS.between(current, duration.getEnd());
     }
 

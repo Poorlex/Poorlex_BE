@@ -1,11 +1,5 @@
 package com.poorlex.poorlex.point.controller;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 import com.poorlex.poorlex.member.domain.Member;
 import com.poorlex.poorlex.member.domain.MemberLevel;
 import com.poorlex.poorlex.member.domain.MemberNickname;
@@ -24,6 +18,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class MemberPointControllerTest extends IntegrationTest implements ReplaceUnderScoreTest {
 
@@ -52,13 +51,13 @@ class MemberPointControllerTest extends IntegrationTest implements ReplaceUnderS
         //when
         //then
         mockMvc.perform(
-                post("/points")
-                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
-                    .content(objectMapper.writeValueAsString(pointCreateRequest))
-                    .contentType(MediaType.APPLICATION_JSON)
-            )
-            .andDo(print())
-            .andExpect(status().isCreated());
+                        post("/points")
+                                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                                .content(objectMapper.writeValueAsString(pointCreateRequest))
+                                .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andDo(print())
+                .andExpect(status().isCreated());
     }
 
     @Test
@@ -71,13 +70,13 @@ class MemberPointControllerTest extends IntegrationTest implements ReplaceUnderS
         //when
         //then
         mockMvc.perform(
-                get("/points")
-                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
-            )
-            .andDo(print())
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.totalPoint").value(memberPoint.getPoint()))
-            .andExpect(jsonPath("$.level").value(MemberLevel.LEVEL_1.getNumber()));
+                        get("/points")
+                                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.totalPoint").value(memberPoint.getPoint()))
+                .andExpect(jsonPath("$.level").value(MemberLevel.LEVEL_1.getNumber()));
     }
 
     @Test
@@ -90,19 +89,19 @@ class MemberPointControllerTest extends IntegrationTest implements ReplaceUnderS
         //when
         //then
         mockMvc.perform(
-                get("/points/level-bar")
-                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
-            )
-            .andDo(print())
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.levelRange").value(MemberLevel.LEVEL_1.getLevelRange()))
-            .andExpect(jsonPath("$.currentPoint").value(memberPoint.getPoint()))
-            .andExpect(jsonPath("$.recentPoint").value(memberPoint.getPoint()));
+                        get("/points/level-bar")
+                                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.levelRange").value(MemberLevel.LEVEL_1.getLevelRange()))
+                .andExpect(jsonPath("$.currentPoint").value(memberPoint.getPoint()))
+                .andExpect(jsonPath("$.recentPoint").value(memberPoint.getPoint()));
     }
 
     private Member createMember(final String oauthId) {
         return memberRepository.save(
-            Member.withoutId(Oauth2RegistrationId.APPLE, oauthId, new MemberNickname("nickname")));
+                Member.withoutId(Oauth2RegistrationId.APPLE, oauthId, new MemberNickname("nickname")));
     }
 
     private MemberPoint createMemberPoint(final int point, final Member member) {

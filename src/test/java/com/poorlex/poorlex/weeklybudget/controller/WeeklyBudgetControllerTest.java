@@ -137,7 +137,7 @@ class WeeklyBudgetControllerTest extends IntegrationTest implements ReplaceUnder
         //given
         final Member member = createMember("oauthId");
         final String accessToken = memberTokenGenerator.createAccessToken(member);
-        final WeeklyBudgetRequest request = new WeeklyBudgetRequest(LocalDateTime.now().truncatedTo(ChronoUnit.MICROS));
+        final WeeklyBudgetRequest request = new WeeklyBudgetRequest(LocalDate.now());
 
         //when
         //then
@@ -188,7 +188,7 @@ class WeeklyBudgetControllerTest extends IntegrationTest implements ReplaceUnder
         expend(1000, member.getId(), LocalDate.from(dateTime));
 
         final String accessToken = memberTokenGenerator.createAccessToken(member);
-        final WeeklyBudgetLeftRequest request = new WeeklyBudgetLeftRequest(dateTime);
+        final WeeklyBudgetLeftRequest request = new WeeklyBudgetLeftRequest(LocalDate.from(dateTime));
 
         //when
         //then

@@ -1,8 +1,5 @@
 package com.poorlex.poorlex.auth.service;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.SoftAssertions.assertSoftly;
-
 import com.poorlex.poorlex.auth.service.dto.request.LoginRequest;
 import com.poorlex.poorlex.auth.service.dto.response.LoginTokenResponse;
 import com.poorlex.poorlex.member.domain.Member;
@@ -13,6 +10,8 @@ import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
 import com.poorlex.poorlex.support.db.UsingDataJpaTest;
 import com.poorlex.poorlex.token.JwtTokenProvider;
 import java.util.Optional;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,7 +44,7 @@ class AuthServiceTest extends UsingDataJpaTest implements ReplaceUnderScoreTest 
         //then
         final String createdToken = loginTokenResponse.getAccessToken();
         final Long tokenMemberId = tokenProvider.getPayload(createdToken)
-            .get("memberId", Long.class);
+                .get("memberId", Long.class);
 
         assertThat(tokenMemberId).isEqualTo(member.getId());
     }
@@ -61,22 +60,22 @@ class AuthServiceTest extends UsingDataJpaTest implements ReplaceUnderScoreTest 
 
         //then
         final Member expectedMember = Member.withoutId(Oauth2RegistrationId.APPLE, request.getOauthId(),
-            new MemberNickname(request.getNickname()));
+                                                       new MemberNickname(request.getNickname()));
         final Optional<Member> member = memberRepository.findByOauthId(request.getOauthId());
         assertSoftly(
-            softly -> {
-                softly.assertThat(member).isPresent()
-                    .get()
-                    .usingRecursiveComparison()
-                    .ignoringFields("id")
-                    .isEqualTo(expectedMember);
-                softly.assertThat(loginTokenResponse.getAccessToken()).isNotBlank();
-            }
+                softly -> {
+                    softly.assertThat(member).isPresent()
+                            .get()
+                            .usingRecursiveComparison()
+                            .ignoringFields("id")
+                            .isEqualTo(expectedMember);
+                    softly.assertThat(loginTokenResponse.getAccessToken()).isNotBlank();
+                }
         );
     }
 
     private Member createMember(final String oauthId, final String nickname) {
         return memberRepository.save(
-            Member.withoutId(Oauth2RegistrationId.APPLE, oauthId, new MemberNickname(nickname)));
+                Member.withoutId(Oauth2RegistrationId.APPLE, oauthId, new MemberNickname(nickname)));
     }
 }

@@ -1,11 +1,5 @@
 package com.poorlex.poorlex.friend.controller;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 import com.poorlex.poorlex.alarm.memberalram.domain.MemberAlarm;
 import com.poorlex.poorlex.alarm.memberalram.domain.MemberAlarmRepository;
 import com.poorlex.poorlex.alarm.memberalram.domain.MemberAlarmType;
@@ -25,6 +19,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class FriendControllerTest extends IntegrationTest implements ReplaceUnderScoreTest {
 
@@ -51,12 +50,12 @@ class FriendControllerTest extends IntegrationTest implements ReplaceUnderScoreT
         //when
         //then
         mockMvc.perform(
-                post("/friends/invite")
-                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
-                    .content(objectMapper.writeValueAsString(request))
-                    .contentType(MediaType.APPLICATION_JSON)
-            ).andDo(print())
-            .andExpect(status().isOk());
+                        post("/friends/invite")
+                                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                                .content(objectMapper.writeValueAsString(request))
+                                .contentType(MediaType.APPLICATION_JSON)
+                ).andDo(print())
+                .andExpect(status().isOk());
     }
 
     @Test
@@ -71,12 +70,12 @@ class FriendControllerTest extends IntegrationTest implements ReplaceUnderScoreT
         //when
         //then
         mockMvc.perform(
-                post("/friends/invite/accept")
-                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
-                    .content(objectMapper.writeValueAsString(request))
-                    .contentType(MediaType.APPLICATION_JSON)
-            ).andDo(print())
-            .andExpect(status().isCreated());
+                        post("/friends/invite/accept")
+                                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                                .content(objectMapper.writeValueAsString(request))
+                                .contentType(MediaType.APPLICATION_JSON)
+                ).andDo(print())
+                .andExpect(status().isCreated());
     }
 
     @Test
@@ -91,12 +90,12 @@ class FriendControllerTest extends IntegrationTest implements ReplaceUnderScoreT
         //when
         //then
         mockMvc.perform(
-                post("/friends/invite/deny")
-                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
-                    .content(objectMapper.writeValueAsString(request))
-                    .contentType(MediaType.APPLICATION_JSON)
-            ).andDo(print())
-            .andExpect(status().isOk());
+                        post("/friends/invite/deny")
+                                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                                .content(objectMapper.writeValueAsString(request))
+                                .contentType(MediaType.APPLICATION_JSON)
+                ).andDo(print())
+                .andExpect(status().isOk());
     }
 
     @Test
@@ -116,25 +115,25 @@ class FriendControllerTest extends IntegrationTest implements ReplaceUnderScoreT
         //when
         //then
         mockMvc.perform(
-                get("/friends")
-                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
-            ).andDo(print())
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.length()").value(3))
-            .andExpect(jsonPath("$[0].nickname").value("friend1"))
-            .andExpect(jsonPath("$[0].level").isNotEmpty())
-            .andExpect(jsonPath("$[0].weeklyExpenditure").isNotEmpty())
-            .andExpect(jsonPath("$[1].nickname").value("friend2"))
-            .andExpect(jsonPath("$[1].level").isNotEmpty())
-            .andExpect(jsonPath("$[1].weeklyExpenditure").isNotEmpty())
-            .andExpect(jsonPath("$[2].nickname").value("friend3"))
-            .andExpect(jsonPath("$[2].level").isNotEmpty())
-            .andExpect(jsonPath("$[2].weeklyExpenditure").isNotEmpty());
+                        get("/friends")
+                                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                ).andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(3))
+                .andExpect(jsonPath("$[0].nickname").value("friend1"))
+                .andExpect(jsonPath("$[0].level").isNotEmpty())
+                .andExpect(jsonPath("$[0].weeklyExpenditure").isNotEmpty())
+                .andExpect(jsonPath("$[1].nickname").value("friend2"))
+                .andExpect(jsonPath("$[1].level").isNotEmpty())
+                .andExpect(jsonPath("$[1].weeklyExpenditure").isNotEmpty())
+                .andExpect(jsonPath("$[2].nickname").value("friend3"))
+                .andExpect(jsonPath("$[2].level").isNotEmpty())
+                .andExpect(jsonPath("$[2].weeklyExpenditure").isNotEmpty());
     }
 
     private Member createMember(final String oauthId, final String nickname) {
         return memberRepository.save(
-            Member.withoutId(Oauth2RegistrationId.APPLE, oauthId, new MemberNickname(nickname)));
+                Member.withoutId(Oauth2RegistrationId.APPLE, oauthId, new MemberNickname(nickname)));
     }
 
     private void beFriend(final Member member, final Member other) {
@@ -143,9 +142,9 @@ class FriendControllerTest extends IntegrationTest implements ReplaceUnderScoreT
 
     private void createFriendRequest(final Member inviteMember, final Member invitedMember) {
         memberAlarmRepository.save(MemberAlarm.withoutId(
-            invitedMember.getId(),
-            inviteMember.getId(),
-            MemberAlarmType.FRIEND_INVITATION_NOT_ACCEPTED
+                invitedMember.getId(),
+                inviteMember.getId(),
+                MemberAlarmType.FRIEND_INVITATION_NOT_ACCEPTED
         ));
     }
 }

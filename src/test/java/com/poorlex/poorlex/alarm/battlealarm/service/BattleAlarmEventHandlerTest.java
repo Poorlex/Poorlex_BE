@@ -17,14 +17,12 @@ import com.poorlex.poorlex.participate.domain.BattleParticipant;
 import com.poorlex.poorlex.participate.domain.BattleParticipantRepository;
 import com.poorlex.poorlex.support.IntegrationTest;
 import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
-
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 class BattleAlarmEventHandlerTest extends IntegrationTest implements ReplaceUnderScoreTest {
 
@@ -55,25 +53,25 @@ class BattleAlarmEventHandlerTest extends IntegrationTest implements ReplaceUnde
 
         //when
         battleNotificationService.createNotification(
-            battle.getId(),
-            member.getId(),
-            new BattleNotificationCreateRequest("notificationContentNotificationContent", "imageUrl")
+                battle.getId(),
+                member.getId(),
+                new BattleNotificationCreateRequest("notificationContentNotificationContent", "imageUrl")
         );
 
         //then
         final List<BattleAlarm> battleAlarms = battleAlarmRepository.findByType(
-            BattleAlarmType.BATTLE_NOTIFICATION_CHANGED);
+                BattleAlarmType.BATTLE_NOTIFICATION_CHANGED);
         assertSoftly(
-            softly -> {
-                softly.assertThat(battleAlarms).hasSize(1);
+                softly -> {
+                    softly.assertThat(battleAlarms).hasSize(1);
 
-                final BattleAlarm battleAlarm = battleAlarms.get(0);
-                softly.assertThat(battleAlarm.getType()).isEqualTo(BattleAlarmType.BATTLE_NOTIFICATION_CHANGED);
-                softly.assertThat(battleAlarm.getBattleId()).isEqualTo(battle.getId());
-                softly.assertThat(battleAlarm.getMemberId()).isEqualTo(member.getId());
-                softly.assertThat(battleAlarm.getCreatedAt())
-                    .isBeforeOrEqualTo(LocalDateTime.now().truncatedTo(ChronoUnit.MICROS));
-            }
+                    final BattleAlarm battleAlarm = battleAlarms.get(0);
+                    softly.assertThat(battleAlarm.getType()).isEqualTo(BattleAlarmType.BATTLE_NOTIFICATION_CHANGED);
+                    softly.assertThat(battleAlarm.getBattleId()).isEqualTo(battle.getId());
+                    softly.assertThat(battleAlarm.getMemberId()).isEqualTo(member.getId());
+                    softly.assertThat(battleAlarm.getCreatedAt())
+                            .isBeforeOrEqualTo(LocalDateTime.now().truncatedTo(ChronoUnit.MICROS));
+                }
         );
     }
 
@@ -88,19 +86,19 @@ class BattleAlarmEventHandlerTest extends IntegrationTest implements ReplaceUnde
 
         //then
         final List<BattleAlarm> battleAlarms = battleAlarmRepository.findByType(
-            BattleAlarmType.BATTLE_NOTIFICATION_CHANGED);
+                BattleAlarmType.BATTLE_NOTIFICATION_CHANGED);
         assertSoftly(
-            softly -> {
-                softly.assertThat(battleAlarms).hasSize(1);
+                softly -> {
+                    softly.assertThat(battleAlarms).hasSize(1);
 
-                final BattleAlarm battleAlarm = battleAlarms.get(0);
-                softly.assertThat(battleAlarm.getType()).isEqualTo(BattleAlarmType.BATTLE_NOTIFICATION_CHANGED);
-                softly.assertThat(battleAlarm.getBattleId()).isEqualTo(1L);
-                softly.assertThat(battleAlarm.getMemberId()).isEqualTo(1L);
-                softly.assertThat(battleAlarm.getCreatedAt())
-                    .isBeforeOrEqualTo(
-                        LocalDateTime.now().truncatedTo(ChronoUnit.MICROS).truncatedTo(ChronoUnit.MICROS));
-            }
+                    final BattleAlarm battleAlarm = battleAlarms.get(0);
+                    softly.assertThat(battleAlarm.getType()).isEqualTo(BattleAlarmType.BATTLE_NOTIFICATION_CHANGED);
+                    softly.assertThat(battleAlarm.getBattleId()).isEqualTo(1L);
+                    softly.assertThat(battleAlarm.getMemberId()).isEqualTo(1L);
+                    softly.assertThat(battleAlarm.getCreatedAt())
+                            .isBeforeOrEqualTo(
+                                    LocalDateTime.now().truncatedTo(ChronoUnit.MICROS).truncatedTo(ChronoUnit.MICROS));
+                }
         );
     }
 

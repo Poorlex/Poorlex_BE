@@ -16,8 +16,6 @@ import com.poorlex.poorlex.weeklybudget.domain.WeeklyBudgetRepository;
 import com.poorlex.poorlex.weeklybudget.service.dto.response.WeeklyBudgetLeftResponse;
 import com.poorlex.poorlex.weeklybudget.service.dto.response.WeeklyBudgetResponse;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
@@ -95,7 +93,7 @@ class WeeklyBudgetServiceTest extends UsingDataJpaTest implements ReplaceUnderSc
         //when
         final WeeklyBudgetResponse weeklyBudgetResponse = weeklyBudgetService.findCurrentBudgetByMemberIdAndDate(
                 member.getId(),
-                LocalDateTime.now().truncatedTo(ChronoUnit.MICROS)
+                LocalDate.now()
         );
 
         //then
@@ -129,14 +127,12 @@ class WeeklyBudgetServiceTest extends UsingDataJpaTest implements ReplaceUnderSc
         //given
         final Member member = memberRepository.save(
                 Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname")));
-        final LocalDateTime dateTime = LocalDateTime.now().truncatedTo(ChronoUnit.MICROS);
-        expend(1000, member.getId(), LocalDate.from(dateTime));
+        final LocalDate date = LocalDate.now();
+        expend(1000, member.getId(), date);
 
         //when
-        final WeeklyBudgetLeftResponse budgetLeft = weeklyBudgetService.findCurrentBudgetLeftByMemberIdAndDate(
-                member.getId(),
-                dateTime
-        );
+        final WeeklyBudgetLeftResponse budgetLeft = weeklyBudgetService.findCurrentBudgetLeftByMemberIdAndDate(member.getId(),
+                                                                                                               date);
 
         //then
         assertThat(budgetLeft.isExist()).isFalse();

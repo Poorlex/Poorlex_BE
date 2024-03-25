@@ -1,12 +1,11 @@
 package com.poorlex.poorlex.battlenotification.domain;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-
 import com.poorlex.poorlex.battle.domain.Battle;
 import com.poorlex.poorlex.battle.fixture.BattleFixture;
 import com.poorlex.poorlex.participate.domain.BattleParticipant;
 import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -25,7 +24,7 @@ class BattleNotificationTest implements ReplaceUnderScoreTest {
             final BattleNotificationContent content = new BattleNotificationContent("12345678901234567890");
             final BattleNotificationImageUrl imageUrl = new BattleNotificationImageUrl("imageUrl");
             final BattleNotification battleNotification =
-                BattleNotification.withoutId(battle.getId(), content, imageUrl);
+                    BattleNotification.withoutId(battle.getId(), content, imageUrl);
 
             //when
             final BattleNotificationContent newContent = new BattleNotificationContent("new12345678901234567890");
@@ -43,7 +42,7 @@ class BattleNotificationTest implements ReplaceUnderScoreTest {
             final BattleNotificationContent content = new BattleNotificationContent("12345678901234567890");
             final BattleNotificationImageUrl imageUrl = new BattleNotificationImageUrl("imageUrl");
             final BattleNotification battleNotification =
-                BattleNotification.withoutId(battle.getId(), content, imageUrl);
+                    BattleNotification.withoutId(battle.getId(), content, imageUrl);
 
             final BattleNotificationContent newContent = new BattleNotificationContent("new12345678901234567890");
             final BattleParticipant normalPlayer = BattleParticipant.normalPlayer(battle.getId(), 1L);
@@ -51,7 +50,7 @@ class BattleNotificationTest implements ReplaceUnderScoreTest {
             //when
             //then
             assertThatThrownBy(() -> battleNotification.changeContent(normalPlayer, newContent))
-                .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
@@ -62,7 +61,7 @@ class BattleNotificationTest implements ReplaceUnderScoreTest {
             final BattleNotificationContent content = new BattleNotificationContent("12345678901234567890");
             final BattleNotificationImageUrl imageUrl = new BattleNotificationImageUrl("imageUrl");
             final BattleNotification battleNotification =
-                BattleNotification.withoutId(battle.getId(), content, imageUrl);
+                    BattleNotification.withoutId(battle.getId(), content, imageUrl);
 
             final BattleNotificationContent newContent = new BattleNotificationContent("new12345678901234567890");
             final BattleParticipant normalPlayer = BattleParticipant.manager(anotherBattleId, 1L);
@@ -70,7 +69,7 @@ class BattleNotificationTest implements ReplaceUnderScoreTest {
             //when
             //then
             assertThatThrownBy(() -> battleNotification.changeContent(normalPlayer, newContent))
-                .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class);
         }
     }
 
@@ -85,7 +84,7 @@ class BattleNotificationTest implements ReplaceUnderScoreTest {
             final BattleNotificationContent content = new BattleNotificationContent("12345678901234567890");
             final BattleNotificationImageUrl imageUrl = new BattleNotificationImageUrl("imageUrl");
             final BattleNotification battleNotification =
-                BattleNotification.withoutId(battle.getId(), content, imageUrl);
+                    BattleNotification.withoutId(battle.getId(), content, imageUrl);
 
             //when
             final BattleNotificationImageUrl newImageUrl = new BattleNotificationImageUrl("newImageUrl");
@@ -104,7 +103,7 @@ class BattleNotificationTest implements ReplaceUnderScoreTest {
             final BattleNotificationContent content = new BattleNotificationContent("12345678901234567890");
             final BattleNotificationImageUrl imageUrl = new BattleNotificationImageUrl("imageUrl");
             final BattleNotification battleNotification =
-                BattleNotification.withoutId(battle.getId(), content, imageUrl);
+                    BattleNotification.withoutId(battle.getId(), content, imageUrl);
 
             final BattleNotificationImageUrl newImageUrl = new BattleNotificationImageUrl("newImageUrl");
             final BattleParticipant normalPlayer = BattleParticipant.normalPlayer(battle.getId(), 1L);
@@ -112,7 +111,7 @@ class BattleNotificationTest implements ReplaceUnderScoreTest {
             //when
             //then
             assertThatThrownBy(() -> battleNotification.changeImage(normalPlayer, newImageUrl))
-                .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
@@ -123,7 +122,7 @@ class BattleNotificationTest implements ReplaceUnderScoreTest {
             final BattleNotificationContent content = new BattleNotificationContent("12345678901234567890");
             final BattleNotificationImageUrl imageUrl = new BattleNotificationImageUrl("imageUrl");
             final BattleNotification battleNotification =
-                BattleNotification.withoutId(battle.getId(), content, imageUrl);
+                    BattleNotification.withoutId(battle.getId(), content, imageUrl);
 
             final BattleNotificationImageUrl newImageUrl = new BattleNotificationImageUrl("newImageUrl");
             final BattleParticipant normalPlayer = BattleParticipant.manager(anotherBattleId, 1L);
@@ -131,7 +130,7 @@ class BattleNotificationTest implements ReplaceUnderScoreTest {
             //when
             //then
             assertThatThrownBy(() -> battleNotification.changeImage(normalPlayer, newImageUrl))
-                .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IllegalArgumentException.class);
         }
 
         @Test
@@ -141,7 +140,7 @@ class BattleNotificationTest implements ReplaceUnderScoreTest {
             final BattleNotificationContent content = new BattleNotificationContent("12345678901234567890");
             final BattleNotificationImageUrl imageUrl = new BattleNotificationImageUrl("imageUrl");
             final BattleNotification battleNotification =
-                BattleNotification.withoutId(battle.getId(), content, imageUrl);
+                    BattleNotification.withoutId(battle.getId(), content, imageUrl);
 
             //when
             final BattleParticipant manager = BattleParticipant.manager(battle.getId(), 1L);
