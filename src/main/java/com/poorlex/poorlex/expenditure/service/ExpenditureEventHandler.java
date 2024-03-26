@@ -6,7 +6,7 @@ import com.poorlex.poorlex.exception.ExceptionTag;
 import com.poorlex.poorlex.expenditure.domain.Expenditure;
 import com.poorlex.poorlex.expenditure.domain.ExpenditureRepository;
 import com.poorlex.poorlex.expenditure.service.event.ExpenditureImageUnusedEvent;
-import com.poorlex.poorlex.member.service.event.MemberDeletedEvent;
+import com.poorlex.poorlex.user.member.service.event.MemberDeletedEvent;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

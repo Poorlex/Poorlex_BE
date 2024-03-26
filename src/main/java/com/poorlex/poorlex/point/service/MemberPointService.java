@@ -2,8 +2,8 @@ package com.poorlex.poorlex.point.service;
 
 import com.poorlex.poorlex.exception.ApiException;
 import com.poorlex.poorlex.exception.ExceptionTag;
-import com.poorlex.poorlex.member.domain.MemberLevel;
-import com.poorlex.poorlex.member.domain.MemberRepository;
+import com.poorlex.poorlex.user.member.domain.MemberLevel;
+import com.poorlex.poorlex.user.member.domain.MemberRepository;
 import com.poorlex.poorlex.point.domain.MemberIdAndTotalPointDto;
 import com.poorlex.poorlex.point.domain.MemberPoint;
 import com.poorlex.poorlex.point.domain.MemberPointRepository;

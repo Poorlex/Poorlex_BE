@@ -1,12 +1,10 @@
 package com.poorlex.poorlex.security.handler;
 
-import com.poorlex.poorlex.member.domain.MemberRepository;
 import com.poorlex.poorlex.token.JwtTokenProvider;
+import com.poorlex.poorlex.user.member.domain.MemberRepository;
 import org.springframework.security.web.authentication.AbstractAuthenticationTargetUrlRequestHandler;
 
-public abstract class AbstractTokenOauth2AuthenticationSuccessHandler extends
-    AbstractAuthenticationTargetUrlRequestHandler
-    implements Oauth2AuthenticationSuccessHandler {
+public abstract class AbstractTokenOauth2AuthenticationSuccessHandler extends AbstractAuthenticationTargetUrlRequestHandler implements Oauth2AuthenticationSuccessHandler {
 
     protected static final int NICKNAME_MINIMUM_LENGTH = 2;
     protected static final int NICKNAME_MAXIMUM_LENGTH = 15;

@@ -12,10 +12,10 @@ import com.poorlex.poorlex.battle.service.dto.response.MemberProgressBattleRespo
 import com.poorlex.poorlex.config.aws.AWSS3Service;
 import com.poorlex.poorlex.expenditure.domain.ExpenditureRepository;
 import com.poorlex.poorlex.expenditure.fixture.ExpenditureFixture;
-import com.poorlex.poorlex.member.domain.Member;
-import com.poorlex.poorlex.member.domain.MemberNickname;
-import com.poorlex.poorlex.member.domain.MemberRepository;
-import com.poorlex.poorlex.member.domain.Oauth2RegistrationId;
+import com.poorlex.poorlex.user.member.domain.Member;
+import com.poorlex.poorlex.user.member.domain.MemberNickname;
+import com.poorlex.poorlex.user.member.domain.MemberRepository;
+import com.poorlex.poorlex.user.member.domain.Oauth2RegistrationId;
 import com.poorlex.poorlex.participate.domain.BattleParticipant;
 import com.poorlex.poorlex.participate.domain.BattleParticipantRepository;
 import com.poorlex.poorlex.participate.service.event.BattleParticipantAddedEvent;

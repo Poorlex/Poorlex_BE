@@ -1,9 +1,9 @@
 package com.poorlex.poorlex.config.auth.interceptor;
 
 import com.poorlex.poorlex.config.auth.ExcludePattern;
-import com.poorlex.poorlex.member.domain.Member;
-import com.poorlex.poorlex.member.domain.MemberRepository;
 import com.poorlex.poorlex.token.JwtTokenProvider;
+import com.poorlex.poorlex.user.member.domain.Member;
+import com.poorlex.poorlex.user.member.domain.MemberRepository;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -32,17 +32,18 @@ public class TokenInterceptor implements HandlerInterceptor {
                              final HttpServletResponse response,
                              final Object handler) {
         final String requestURI = request.getRequestURI();
-        
+
         //anyMatch 로 최적화
         final boolean isHandleablePattern = excludePatterns.stream()
-            .noneMatch(excludePattern -> excludePattern.matches(requestURI, HttpMethod.valueOf(request.getMethod())));
+                .noneMatch(excludePattern -> excludePattern.matches(requestURI,
+                                                                    HttpMethod.valueOf(request.getMethod())));
 
         if (isHandleablePattern) {
             final String token = parseToken(request);
             final Claims payload = tokenProvider.getPayload(token);
             final Long memberId = payload.get("memberId", Long.class);
             final Member member = memberRepository.findById(memberId)
-                .orElseThrow(IllegalArgumentException::new);
+                    .orElseThrow(IllegalArgumentException::new);
             requestMemberInfo.setMemberId(member.getId());
         }
         return true;

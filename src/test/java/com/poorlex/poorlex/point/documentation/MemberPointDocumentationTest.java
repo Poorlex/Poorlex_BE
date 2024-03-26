@@ -1,6 +1,6 @@
 package com.poorlex.poorlex.point.documentation;
 
-import com.poorlex.poorlex.member.domain.MemberLevel;
+import com.poorlex.poorlex.user.member.domain.MemberLevel;
 import com.poorlex.poorlex.point.controller.MemberPointController;
 import com.poorlex.poorlex.point.service.MemberPointService;
 import com.poorlex.poorlex.point.service.dto.request.PointCreateRequest;

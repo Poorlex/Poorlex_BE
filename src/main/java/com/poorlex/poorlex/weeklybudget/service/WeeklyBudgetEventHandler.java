@@ -1,6 +1,6 @@
 package com.poorlex.poorlex.weeklybudget.service;
 
-import com.poorlex.poorlex.member.service.event.MemberDeletedEvent;
+import com.poorlex.poorlex.user.member.service.event.MemberDeletedEvent;
 import com.poorlex.poorlex.weeklybudget.domain.WeeklyBudget;
 import com.poorlex.poorlex.weeklybudget.domain.WeeklyBudgetRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +16,7 @@ import java.util.List;
 @Transactional(propagation = Propagation.REQUIRED)
 @RequiredArgsConstructor
 public class WeeklyBudgetEventHandler {
+
     private final WeeklyBudgetRepository weeklyBudgetRepository;
 
     @TransactionalEventListener(value = MemberDeletedEvent.class, phase = TransactionPhase.BEFORE_COMMIT)

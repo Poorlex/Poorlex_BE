@@ -1,6 +1,5 @@
 package com.poorlex.poorlex.security;
 
-import com.poorlex.poorlex.member.domain.MemberRepository;
 import com.poorlex.poorlex.security.coverter.AppleRequestEntityConverter;
 import com.poorlex.poorlex.security.filter.JwtFilter;
 import com.poorlex.poorlex.security.handler.AppleTokenOauth2AuthenticationSuccessHandler;
@@ -9,6 +8,7 @@ import com.poorlex.poorlex.security.handler.Oauth2AuthenticationSuccessHandler;
 import com.poorlex.poorlex.security.handler.TokenOauth2AuthenticationSuccessHandlerFacade;
 import com.poorlex.poorlex.security.service.CustomOauth2UserService;
 import com.poorlex.poorlex.token.JwtTokenProvider;
+import com.poorlex.poorlex.user.member.domain.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -42,7 +42,6 @@ public class SecurityConfig {
         configureBaseAuthorization(http);
         configureAuthorizeRequests(http);
         configureOauth2Login(http);
-        configureFilter(http);
         configureLogout(http);
 
         return http.build();
@@ -80,18 +79,7 @@ public class SecurityConfig {
     }
 
     private void configureAuthorizeRequests(final HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests(oauth2 -> oauth2
-                                           .anyRequest().permitAll()
-//            .requestMatchers("/oauth2/login/**").permitAll()
-//            .requestMatchers("/h2-console/**").permitAll()
-//            .requestMatchers("/swagger-ui/**").permitAll()
-//            .requestMatchers("/swagger/**").permitAll()
-//            .requestMatchers("/api-docs/**").permitAll()
-//            .requestMatchers("/battles").permitAll()
-//            .requestMatchers(new RegexRequestMatcher("/battles/\\d+", HttpMethod.GET.name())).permitAll()
-//            .requestMatchers("/login/success").permitAll()
-//            .anyRequest().authenticated()
-        );
+        http.authorizeHttpRequests(oauth2 -> oauth2.anyRequest().permitAll());
     }
 
     private void configureOauth2Login(final HttpSecurity http) throws Exception {

@@ -3,7 +3,7 @@ package com.poorlex.poorlex.weeklybudget.service;
 import com.poorlex.poorlex.exception.ApiException;
 import com.poorlex.poorlex.exception.ExceptionTag;
 import com.poorlex.poorlex.expenditure.domain.ExpenditureRepository;
-import com.poorlex.poorlex.member.domain.MemberRepository;
+import com.poorlex.poorlex.user.member.domain.MemberRepository;
 import com.poorlex.poorlex.weeklybudget.domain.WeeklyBudget;
 import com.poorlex.poorlex.weeklybudget.domain.WeeklyBudgetAmount;
 import com.poorlex.poorlex.weeklybudget.domain.WeeklyBudgetDuration;
