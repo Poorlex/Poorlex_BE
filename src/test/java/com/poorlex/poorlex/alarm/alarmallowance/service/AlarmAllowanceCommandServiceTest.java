@@ -32,7 +32,7 @@ class AlarmAllowanceCommandServiceTest extends UsingDataJpaTest implements Repla
     }
 
     @TestFactory
-    Stream<DynamicTest> 알람_허용_내용을_수정한다() {
+    Stream<DynamicTest> 알람_허용_내용을_허용안함으로_수정한다() {
         //given
         final Long memberId = 1L;
         alarmAllowanceRepository.save(AlarmAllowance.withoutIdWithAllAllowed(memberId));
@@ -52,6 +52,55 @@ class AlarmAllowanceCommandServiceTest extends UsingDataJpaTest implements Repla
                                              final AlarmAllowanceStatusChangeRequest request =
                                                      new AlarmAllowanceStatusChangeRequest(testInfo.blockAllowanceType.name(),
                                                                                            false);
+
+                                             //when
+                                             alarmAllowanceCommandService.changeAlarmAllowanceStatus(memberId, request);
+                                             entityManager.flush();
+                                             entityManager.clear();
+
+                                             //then
+                                             final AlarmAllowance alarmAllowance =
+                                                     alarmAllowanceRepository.findByMemberId(memberId).orElseThrow();
+
+                                             assertSoftly(
+                                                     softly -> {
+                                                         softly.assertThat(alarmAllowance.isAllowFriendAlarm())
+                                                                 .isEqualTo(testInfo.expectedFriendAlarmAllowance);
+                                                         softly.assertThat(alarmAllowance.isAllowBattleChatAlarm())
+                                                                 .isEqualTo(testInfo.expectedBattleChatAlarmAllowance);
+                                                         softly.assertThat(alarmAllowance.isAllowBattleStatusAlarm())
+                                                                 .isEqualTo(testInfo.expectedBattleStatusAlarmAllowance);
+                                                         softly.assertThat(alarmAllowance.isAllowBattleInvitationAlarm())
+                                                                 .isEqualTo(testInfo.expectedBattleInvitationAlarmAllowance);
+                                                         softly.assertThat(alarmAllowance.isAllowExpenditureRequestAlarm())
+                                                                 .isEqualTo(testInfo.expectedExpenditureRequestAlarmAllowance);
+                                                     }
+                                             );
+                                         })
+                );
+    }
+
+    @TestFactory
+    Stream<DynamicTest> 알람_허용_내용을_허용함으로_수정한다() {
+        //given
+        final Long memberId = 1L;
+        alarmAllowanceRepository.save(AlarmAllowance.withoutId(memberId, false, false, false, false, false));
+        final List<AlarmAllowanceTestInfo> alarmAllowanceTestInfos = List.of(
+                new AlarmAllowanceTestInfo(AlarmAllowanceType.EXPENDITURE_REQUEST, true, false, false, false, false),
+                new AlarmAllowanceTestInfo(AlarmAllowanceType.BATTLE_STATUS, true, true, false, false, false),
+                new AlarmAllowanceTestInfo(AlarmAllowanceType.BATTLE_CHAT, true, true, true, false, false),
+                new AlarmAllowanceTestInfo(AlarmAllowanceType.FRIEND, true, true, true, true, false),
+                new AlarmAllowanceTestInfo(AlarmAllowanceType.BATTLE_INVITE, true, true, true, true, true)
+        );
+
+        return alarmAllowanceTestInfos.stream()
+                .map(testInfo ->
+                             dynamicTest(String.format("%s 타입의 알림을 차단한다", testInfo.blockAllowanceType.name()),
+                                         () -> {
+                                             //given
+                                             final AlarmAllowanceStatusChangeRequest request =
+                                                     new AlarmAllowanceStatusChangeRequest(testInfo.blockAllowanceType.name(),
+                                                                                           true);
 
                                              //when
                                              alarmAllowanceCommandService.changeAlarmAllowanceStatus(memberId, request);
