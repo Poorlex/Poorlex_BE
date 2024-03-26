@@ -14,12 +14,16 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.util.UriComponentsBuilder;
 
 @Slf4j
+@Component
 public class AppleTokenOauth2AuthenticationSuccessHandler extends AbstractTokenOauth2AuthenticationSuccessHandler {
 
     private static final String REGISTRATION_ID = "APPLE";
@@ -28,11 +32,12 @@ public class AppleTokenOauth2AuthenticationSuccessHandler extends AbstractTokenO
 
     public AppleTokenOauth2AuthenticationSuccessHandler(final MemberRepository memberRepository,
                                                         final JwtTokenProvider jwtTokenProvider,
-                                                        final String serverUrl) {
+                                                        @Value("${url.server}") final String serverUrl) {
         super(memberRepository, jwtTokenProvider, serverUrl);
     }
 
     @Override
+    @Transactional
     public void onAuthenticationSuccess(final HttpServletRequest request,
                                         final HttpServletResponse response,
                                         final Authentication authentication) throws IOException {

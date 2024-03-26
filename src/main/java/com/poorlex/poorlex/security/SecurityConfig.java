@@ -9,7 +9,7 @@ import com.poorlex.poorlex.security.handler.Oauth2AuthenticationSuccessHandler;
 import com.poorlex.poorlex.security.handler.TokenOauth2AuthenticationSuccessHandlerFacade;
 import com.poorlex.poorlex.security.service.CustomOauth2UserService;
 import com.poorlex.poorlex.token.JwtTokenProvider;
-import org.springframework.beans.factory.annotation.Value;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -27,25 +27,15 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
 
     private final MemberRepository memberRepository;
     private final JwtTokenProvider jwtTokenProvider;
-    private final AppleRequestEntityConverter appleRequestEntityConverter;
     private final CustomOauth2UserService oAuth2UserService;
-    private final String serverUrl;
-
-    public SecurityConfig(final MemberRepository memberRepository,
-                          final JwtTokenProvider jwtTokenProvider,
-                          final AppleRequestEntityConverter appleRequestEntityConverter,
-                          final CustomOauth2UserService oAuth2UserService,
-                          @Value("${url.server}") final String serverUrl) {
-        this.memberRepository = memberRepository;
-        this.jwtTokenProvider = jwtTokenProvider;
-        this.appleRequestEntityConverter = appleRequestEntityConverter;
-        this.oAuth2UserService = oAuth2UserService;
-        this.serverUrl = serverUrl;
-    }
+    private final AppleRequestEntityConverter appleRequestEntityConverter;
+    private final KaKaoTokenOauth2AuthenticationSuccessHandler kaKaoTokenOauth2AuthenticationSuccessHandler;
+    private final AppleTokenOauth2AuthenticationSuccessHandler appleTokenOauth2AuthenticationSuccessHandler;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -60,21 +50,21 @@ public class SecurityConfig {
 
     private void configureBaseAuthorization(final HttpSecurity http) throws Exception {
         http
-            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-            .csrf(csrf -> {
-                    try {
-                        csrf.disable()
-                            .headers(headers -> headers
-                                .frameOptions(FrameOptionsConfig::disable));
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        throw new RuntimeException(e);
-                    }
-                }
-            )
-            .httpBasic(AbstractHttpConfigurer::disable)
-            .formLogin(AbstractHttpConfigurer::disable)
-            .sessionManagement(AbstractHttpConfigurer::disable);
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .csrf(csrf -> {
+                          try {
+                              csrf.disable()
+                                      .headers(headers -> headers
+                                              .frameOptions(FrameOptionsConfig::disable));
+                          } catch (Exception e) {
+                              e.printStackTrace();
+                              throw new RuntimeException(e);
+                          }
+                      }
+                )
+                .httpBasic(AbstractHttpConfigurer::disable)
+                .formLogin(AbstractHttpConfigurer::disable)
+                .sessionManagement(AbstractHttpConfigurer::disable);
     }
 
     public CorsConfigurationSource corsConfigurationSource() {
@@ -91,7 +81,7 @@ public class SecurityConfig {
 
     private void configureAuthorizeRequests(final HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(oauth2 -> oauth2
-                .anyRequest().permitAll()
+                                           .anyRequest().permitAll()
 //            .requestMatchers("/oauth2/login/**").permitAll()
 //            .requestMatchers("/h2-console/**").permitAll()
 //            .requestMatchers("/swagger-ui/**").permitAll()
@@ -106,35 +96,33 @@ public class SecurityConfig {
 
     private void configureOauth2Login(final HttpSecurity http) throws Exception {
         http.oauth2Login(oauth2Login -> oauth2Login
-            .tokenEndpoint(tokenEndpoint -> tokenEndpoint.accessTokenResponseClient(accessTokenResponseClient()))
-            .userInfoEndpoint(userInfo -> userInfo.userService(oAuth2UserService))
-            .successHandler(oAuth2AuthenticationSuccessHandler())
+                .tokenEndpoint(tokenEndpoint -> tokenEndpoint.accessTokenResponseClient(accessTokenResponseClient()))
+                .userInfoEndpoint(userInfo -> userInfo.userService(oAuth2UserService))
+                .successHandler(oAuth2AuthenticationSuccessHandler())
         );
     }
 
     private void configureFilter(final HttpSecurity http) {
         http.addFilterBefore(
-            new JwtFilter(memberRepository, jwtTokenProvider), UsernamePasswordAuthenticationFilter.class
+                new JwtFilter(memberRepository, jwtTokenProvider), UsernamePasswordAuthenticationFilter.class
         );
     }
 
     @Bean
     public Oauth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler() {
         final TokenOauth2AuthenticationSuccessHandlerFacade facade =
-            new TokenOauth2AuthenticationSuccessHandlerFacade(memberRepository, jwtTokenProvider);
+                new TokenOauth2AuthenticationSuccessHandlerFacade(memberRepository, jwtTokenProvider);
 
-        facade.addHandlers(
-            new KaKaoTokenOauth2AuthenticationSuccessHandler(memberRepository, jwtTokenProvider, serverUrl));
-        facade.addHandlers(
-            new AppleTokenOauth2AuthenticationSuccessHandler(memberRepository, jwtTokenProvider, serverUrl));
+        facade.addHandlers(kaKaoTokenOauth2AuthenticationSuccessHandler);
+        facade.addHandlers(appleTokenOauth2AuthenticationSuccessHandler);
 
         return facade;
     }
 
     private void configureLogout(final HttpSecurity http) throws Exception {
         http.logout(logoutConfigure -> logoutConfigure
-            .logoutUrl("/logout")
-            .clearAuthentication(true));
+                .logoutUrl("/logout")
+                .clearAuthentication(true));
     }
 
     @Bean
