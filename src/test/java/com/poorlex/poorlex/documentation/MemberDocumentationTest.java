@@ -2,7 +2,6 @@ package com.poorlex.poorlex.documentation;
 
 import com.poorlex.poorlex.support.MockMvcTest;
 import com.poorlex.poorlex.user.member.controller.MemberCommandController;
-import com.poorlex.poorlex.user.member.controller.MemberQueryController;
 import com.poorlex.poorlex.user.member.service.MemberCommandService;
 import com.poorlex.poorlex.user.member.service.dto.request.MemberProfileUpdateRequest;
 import com.poorlex.poorlex.util.ApiDocumentUtils;
@@ -24,7 +23,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-@WebMvcTest({MemberQueryController.class, MemberCommandController.class})
+@WebMvcTest(MemberCommandController.class)
 class MemberDocumentationTest extends MockMvcTest {
 
     @Autowired
