@@ -11,5 +11,5 @@ public class AlarmAllowanceStatusChangeRequest {
     @Schema(description = "알림 타입",
             allowableValues = {"EXPENDITURE_REQUEST", "BATTLE_STATUS", "BATTLE_CHAT", "FRIEND", "BATTLE_INVITE"})
     private final String alarmType;
-    private final boolean isAllowed;
+    private final boolean allowed;
 }
