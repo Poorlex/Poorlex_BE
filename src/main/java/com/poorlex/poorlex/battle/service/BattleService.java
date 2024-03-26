@@ -57,6 +57,8 @@ public class BattleService {
     private final MemberService memberService;
     private final AWSS3Service awss3Service;
     private final String bucketDirectory;
+    private final boolean activateStartTimeValidation;
+    private final boolean activateEndTimeValidation;
 
     public BattleService(final BattleRepository battleRepository,
                          final BattleParticipantRepository battleParticipantRepository,
@@ -65,7 +67,9 @@ public class BattleService {
                          final ExpenditureQueryService expenditureQueryService,
                          final MemberService memberService,
                          final AWSS3Service awss3Service,
-                         @Value("${aws.s3.battle-directory}") final String bucketDirectory) {
+                         @Value("${aws.s3.battle-directory}") final String bucketDirectory,
+                         @Value("${validation.start-time}") final boolean activateStartTimeValidation,
+                         @Value("${validation.start-time}") final boolean activateEndTimeValidation) {
         this.battleRepository = battleRepository;
         this.battleParticipantRepository = battleParticipantRepository;
         this.battleAlarmService = battleAlarmService;
@@ -74,6 +78,8 @@ public class BattleService {
         this.memberService = memberService;
         this.awss3Service = awss3Service;
         this.bucketDirectory = bucketDirectory;
+        this.activateStartTimeValidation = activateStartTimeValidation;
+        this.activateEndTimeValidation = activateEndTimeValidation;
     }
 
     @Transactional
@@ -213,8 +219,11 @@ public class BattleService {
                     final String errorMessage = String.format("ID에 해당하는 배틀이 존재하지 않습니다. ( ID : %d )", battleId);
                     return new ApiException(ExceptionTag.BATTLE_FIND, errorMessage);
                 });
-
-        battle.start(current);
+        if (activateStartTimeValidation) {
+            battle.start(current);
+            return;
+        }
+        battle.startWithoutValidate();
     }
 
     @Transactional
@@ -224,8 +233,11 @@ public class BattleService {
                     final String errorMessage = String.format("ID에 해당하는 배틀이 존재하지 않습니다. ( ID : %d )", battleId);
                     return new ApiException(ExceptionTag.BATTLE_FIND, errorMessage);
                 });
-
-        battle.end(current);
+        if (activateEndTimeValidation) {
+            battle.end(current);
+            return;
+        }
+        battle.endWithoutValidate();
     }
 
     public BattleResponse getBattleInfo(final Long battleId, final BattleFindRequest request) {
