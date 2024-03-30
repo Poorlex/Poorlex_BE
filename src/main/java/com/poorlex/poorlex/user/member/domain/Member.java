@@ -1,6 +1,5 @@
 package com.poorlex.poorlex.user.member.domain;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -33,7 +32,6 @@ public class Member {
     @Enumerated(value = EnumType.STRING)
     private Oauth2RegistrationId oauth2RegistrationId;
 
-    @Column(unique = true, columnDefinition = "TEXT")
     private String oauthId;
 
     @Embedded
