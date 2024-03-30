@@ -6,6 +6,7 @@ import com.poorlex.poorlex.user.member.service.dto.ExpenditureDto;
 import com.poorlex.poorlex.user.member.service.provider.ExpenditureProvider;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -15,8 +16,9 @@ public class ExpenditureProviderImpl implements ExpenditureProvider {
     private final ExpenditureRepository expenditureRepository;
 
     @Override
-    public List<ExpenditureDto> getByMemberId(final Long memberId) {
-        final List<Expenditure> expenditures = expenditureRepository.findAllByMemberId(memberId);
+    public List<ExpenditureDto> getByMemberIdPageable(final Long memberId, final Pageable pageable) {
+        final List<Expenditure> expenditures = expenditureRepository.findAllByMemberIdOrderByCreatedAtDesc(memberId,
+                                                                                                           pageable);
         return expenditures.stream()
                 .map(this::mapToExpenditureDto)
                 .toList();
@@ -27,5 +29,10 @@ public class ExpenditureProviderImpl implements ExpenditureProvider {
                                   expenditure.getDate(),
                                   expenditure.getAmount(),
                                   expenditure.getMainImageUrl());
+    }
+
+    @Override
+    public Long getAllExpenditureCountByMemberId(final Long memberId) {
+        return expenditureRepository.countAllByMemberId(memberId);
     }
 }

@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,6 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class MemberQueryService {
 
+    private static final PageRequest EXPENDITURE_PAGEABLE = PageRequest.of(0, 4);
     private final MemberRepository memberRepository;
     private final MemberPointRepository memberPointRepository;
     private final BattleSuccessCountProvider battleSuccessCountProvider;
@@ -54,6 +56,7 @@ public class MemberQueryService {
         final BattleSuccessCountResponse battleSuccessCounts = battleSuccessCountProvider.getByMemberId(memberId);
         final List<FriendResponse> friends = getFriends(memberId, date);
         final List<MyPageExpenditureResponse> expenditures = getExpenditure(memberId);
+        final Long expendituresCount = expenditureProvider.getAllExpenditureCountByMemberId(memberId);
 
         return new MyPageResponse(
                 member.getNickname(),
@@ -61,6 +64,7 @@ public class MemberQueryService {
                 levelInfo,
                 battleSuccessCounts,
                 friends,
+                expendituresCount,
                 expenditures
         );
     }
@@ -96,7 +100,8 @@ public class MemberQueryService {
     }
 
     private List<MyPageExpenditureResponse> getExpenditure(final Long memberId) {
-        final List<ExpenditureDto> expenditures = expenditureProvider.getByMemberId(memberId);
+        final List<ExpenditureDto> expenditures = expenditureProvider.getByMemberIdPageable(memberId,
+                                                                                            EXPENDITURE_PAGEABLE);
 
         return expenditures.stream()
                 .map(MyPageExpenditureResponse::from)

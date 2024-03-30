@@ -78,6 +78,9 @@ class MemberQueryServiceTest extends IntegrationTest implements ReplaceUnderScor
         final LocalDate 배틀_시작_날짜 = LocalDate.from(난이도_HARD_배틀.getDuration().getStart());
         final Expenditure 스플릿_첫번쨰_지출 = 지출을_생성한다(10000L, 스플릿.getId(), 배틀_시작_날짜);
         final Expenditure 스플릿_두번쨰_지출 = 지출을_생성한다(20000L, 스플릿.getId(), 배틀_시작_날짜);
+        final Expenditure 스플릿_세번쨰_지출 = 지출을_생성한다(30000L, 스플릿.getId(), 배틀_시작_날짜);
+        final Expenditure 스플릿_네번쨰_지출 = 지출을_생성한다(40000L, 스플릿.getId(), 배틀_시작_날짜);
+        final Expenditure 스플릿_다섯번쨰_지출 = 지출을_생성한다(50000L, 스플릿.getId(), 배틀_시작_날짜);
         final Expenditure 푸얼렉스_첫번쨰_지출 = 지출을_생성한다(10000L, 푸얼렉스.getId(), 배틀_시작_날짜);
 
         final int 스플릿_배틀_등수 = 1;
@@ -94,8 +97,11 @@ class MemberQueryServiceTest extends IntegrationTest implements ReplaceUnderScor
         final MemberLevel 회원_레벨 = MemberLevel.findByNumber(회원_레벨_숫자).get();
         final List<FriendResponse> 회원_친구_목록 = myPageInfo.getFriends();
         final BattleSuccessCountResponse 회원_배틀_성공_기록 = myPageInfo.getBattleSuccessInfo();
-        final List<MyPageExpenditureResponse> 예상_지출_목록 = List.of(
-                MyPageExpenditureResponse.from(mapFromExpenditure(스플릿_첫번쨰_지출)),
+
+        final List<MyPageExpenditureResponse> 예상_최근_지출_4개 = List.of(
+                MyPageExpenditureResponse.from(mapFromExpenditure(스플릿_다섯번쨰_지출)),
+                MyPageExpenditureResponse.from(mapFromExpenditure(스플릿_네번쨰_지출)),
+                MyPageExpenditureResponse.from(mapFromExpenditure(스플릿_세번쨰_지출)),
                 MyPageExpenditureResponse.from(mapFromExpenditure(스플릿_두번쨰_지출))
         );
 
@@ -116,9 +122,10 @@ class MemberQueryServiceTest extends IntegrationTest implements ReplaceUnderScor
                     softly.assertThat(회원_배틀_성공_기록.getEasyBattleSuccessCount()).isZero();
                     softly.assertThat(회원_배틀_성공_기록.getNormalBattleSuccessCount()).isZero();
 
+                    softly.assertThat(myPageInfo.getExpenditureTotalCount()).isEqualTo(5);
                     softly.assertThat(myPageInfo.getExpenditures())
                             .usingRecursiveComparison()
-                            .isEqualTo(예상_지출_목록);
+                            .isEqualTo(예상_최근_지출_4개);
                 }
         );
     }

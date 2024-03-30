@@ -1,5 +1,6 @@
 package com.poorlex.poorlex.expenditure.domain;
 
+import com.poorlex.poorlex.common.BaseCreatedAtEntity;
 import com.poorlex.poorlex.exception.ApiException;
 import com.poorlex.poorlex.exception.ExceptionTag;
 import jakarta.persistence.Column;
@@ -16,7 +17,7 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Expenditure {
+public class Expenditure extends BaseCreatedAtEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

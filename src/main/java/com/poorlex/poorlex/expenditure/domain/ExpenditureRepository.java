@@ -2,6 +2,7 @@ package com.poorlex.poorlex.expenditure.domain;
 
 import java.time.LocalDate;
 import java.util.List;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -35,4 +36,8 @@ public interface ExpenditureRepository extends JpaRepository<Expenditure, Long> 
                                                                final LocalDate end);
 
     List<Expenditure> findAllByMemberId(final Long memberId);
+
+    List<Expenditure> findAllByMemberIdOrderByCreatedAtDesc(final Long memberId, final Pageable pageable);
+
+    Long countAllByMemberId(final Long memberId);
 }
