@@ -24,6 +24,10 @@ public class WeeklyExpenditureDuration {
         return new WeeklyExpenditureDuration(start, end);
     }
 
+    public boolean contains(final LocalDate date) {
+        return (start.isEqual(date) || start.isBefore(date)) && (end.isEqual(date) || end.isAfter(date));
+    }
+
     private static int getDaysAfterMonday(final LocalDate date) {
         final int currentDayOrder = date.getDayOfWeek().getValue();
         return currentDayOrder - 1;

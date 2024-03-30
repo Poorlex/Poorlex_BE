@@ -8,11 +8,13 @@ import com.poorlex.poorlex.expenditure.domain.Expenditure;
 import com.poorlex.poorlex.expenditure.domain.ExpenditureAmount;
 import com.poorlex.poorlex.expenditure.domain.ExpenditureDescription;
 import com.poorlex.poorlex.expenditure.domain.ExpenditureRepository;
+import com.poorlex.poorlex.expenditure.domain.WeeklyExpenditureDuration;
 import com.poorlex.poorlex.expenditure.service.dto.request.ExpenditureCreateRequest;
 import com.poorlex.poorlex.expenditure.service.dto.request.ExpenditureUpdateRequest;
 import com.poorlex.poorlex.expenditure.service.event.ExpenditureCreatedEvent;
 import com.poorlex.poorlex.expenditure.service.event.ExpenditureImageUnusedEvent;
 import com.poorlex.poorlex.expenditure.service.event.ZeroExpenditureCreatedEvent;
+import java.time.LocalDate;
 import java.util.Objects;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Value;
@@ -91,6 +93,7 @@ public class ExpenditureCommandService {
                 .orElseThrow(() -> new ApiException(ExceptionTag.EXPENDITURE_UPDATE, "수정하려는 지출이 존재하지 않습니다."));
 
         validateUpdateAuthority(memberId, expenditure);
+        validateUpdatableDate(expenditure);
         expenditure.updateAmount(new ExpenditureAmount(request.getAmount()));
         expenditure.updateDescription(new ExpenditureDescription(request.getDescription()));
         updateMainImage(expenditure, updateMainImage, updateMainImageUrl);
@@ -100,6 +103,18 @@ public class ExpenditureCommandService {
     private void validateUpdateAuthority(final Long memberId, final Expenditure expenditure) {
         if (!expenditure.owned(memberId)) {
             throw new ApiException(ExceptionTag.EXPENDITURE_UPDATE, "지출을 수정할 수 있는 권한이 없습니다.");
+        }
+    }
+
+    private void validateUpdatableDate(final Expenditure expenditure) {
+        final LocalDate current = LocalDate.now();
+        final WeeklyExpenditureDuration currentWeek = WeeklyExpenditureDuration.from(current);
+        final LocalDate expenditureDate = expenditure.getDate();
+        if (!currentWeek.contains(expenditureDate)) {
+            final String errorMessage = String.format("지출은 지출 일자가 포함된 주에만 수정할 수 있습니다. ( 현재 날짜 : %s , 지출 일자 : %s )",
+                                                      current,
+                                                      expenditureDate.toString());
+            throw new ApiException(ExceptionTag.EXPENDITURE_UPDATE, errorMessage);
         }
     }
 

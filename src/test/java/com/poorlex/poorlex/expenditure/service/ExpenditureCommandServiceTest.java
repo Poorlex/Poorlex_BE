@@ -1,8 +1,10 @@
 package com.poorlex.poorlex.expenditure.service;
 
 import com.poorlex.poorlex.config.aws.AWSS3Service;
+import com.poorlex.poorlex.exception.ApiException;
 import com.poorlex.poorlex.expenditure.domain.Expenditure;
 import com.poorlex.poorlex.expenditure.domain.ExpenditureRepository;
+import com.poorlex.poorlex.expenditure.domain.WeeklyExpenditureDuration;
 import com.poorlex.poorlex.expenditure.fixture.ExpenditureFixture;
 import com.poorlex.poorlex.expenditure.fixture.ExpenditureRequestFixture;
 import com.poorlex.poorlex.expenditure.service.dto.request.ExpenditureCreateRequest;
@@ -18,6 +20,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.Optional;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -100,9 +103,11 @@ class ExpenditureCommandServiceTest extends UsingDataJpaTest implements ReplaceU
         //given
         final Member member = memberRepository.save(
                 Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname")));
+        final LocalDate currentDate = LocalDate.now();
+        final WeeklyExpenditureDuration weeklyDuration = WeeklyExpenditureDuration.from(currentDate);
         final Expenditure expenditure = createExpenditureWithMainImageAndSubImage(1000L,
                                                                                   member.getId(),
-                                                                                  LocalDate.now());
+                                                                                  weeklyDuration.getStart());
         final String prevMainImageUrl = expenditure.getMainImageUrl();
         final String prevSubImageUrl = expenditure.getSubImageUrl().get();
         final ExpenditureUpdateRequest request = new ExpenditureUpdateRequest(2000L, "업데이트된 소개");
@@ -399,6 +404,63 @@ class ExpenditureCommandServiceTest extends UsingDataJpaTest implements ReplaceU
                     softly.assertThat(updatedExpenditure.getSubImageUrl()).isEmpty();
                 }
         );
+    }
+
+    @Test
+    void ERROR_다른_회원의_지출을_수정하려는_경우() {
+        //given
+        final Member 스플릿 = memberRepository.save(
+                Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId1", new MemberNickname("스플릿")));
+        final Member 푸얼렉스 = memberRepository.save(
+                Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId2", new MemberNickname("푸얼렉스")));
+        final Expenditure 푸얼렉스_지출 = createExpenditureWithMainImageAndSubImage(1000L,
+                                                                              푸얼렉스.getId(),
+                                                                              LocalDate.now());
+        final ExpenditureUpdateRequest 지출_수정_요청 = new ExpenditureUpdateRequest(2000L, "업데이트된 소개");
+
+        //when
+        //then
+        assertThatThrownBy(() -> expenditureCommandService.updateExpenditure(푸얼렉스_지출.getId(),
+                                                                             스플릿.getId(),
+                                                                             Optional.empty(),
+                                                                             Optional.of(푸얼렉스_지출.getSubImageUrl()
+                                                                                                 .get()),
+                                                                             Optional.empty(),
+                                                                             Optional.of(푸얼렉스_지출.getMainImageUrl()),
+                                                                             지출_수정_요청))
+                .isInstanceOf(ApiException.class)
+                .hasMessage("지출을 수정할 수 있는 권한이 없습니다.");
+    }
+
+    @Test
+    void ERROR_현재_날짜가_포함된_주에_등록하지_않은_지출을_수정하려는_경우() {
+        //given
+        final Member 스플릿 = memberRepository.save(
+                Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId1", new MemberNickname("스플릿")));
+        final LocalDate currentDate = LocalDate.now();
+        final WeeklyExpenditureDuration weeklyDuration = WeeklyExpenditureDuration.from(currentDate);
+
+        final Expenditure 스플릿_지출 = createExpenditureWithMainImageAndSubImage(1000L,
+                                                                             스플릿.getId(),
+                                                                             weeklyDuration.getStart().minusDays(1));
+        final ExpenditureUpdateRequest 지출_수정_요청 = new ExpenditureUpdateRequest(2000L, "업데이트된 소개");
+
+        //when
+        //then
+        final String expectedErrorMessage = String.format("지출은 지출 일자가 포함된 주에만 수정할 수 있습니다. ( 현재 날짜 : %s , 지출 일자 : %s )",
+                                                          LocalDate.now(),
+                                                          스플릿_지출.getDate().toString());
+
+        assertThatThrownBy(() -> expenditureCommandService.updateExpenditure(스플릿_지출.getId(),
+                                                                             스플릿.getId(),
+                                                                             Optional.empty(),
+                                                                             Optional.of(스플릿_지출.getSubImageUrl()
+                                                                                                 .get()),
+                                                                             Optional.empty(),
+                                                                             Optional.of(스플릿_지출.getMainImageUrl()),
+                                                                             지출_수정_요청))
+                .isInstanceOf(ApiException.class)
+                .hasMessage(expectedErrorMessage);
     }
 
     private Expenditure createExpenditureWithMainImageAndSubImage(final Long amount,
