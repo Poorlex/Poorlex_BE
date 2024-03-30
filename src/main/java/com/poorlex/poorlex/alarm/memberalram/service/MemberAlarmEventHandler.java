@@ -26,9 +26,9 @@ public class MemberAlarmEventHandler {
     @TransactionalEventListener(value = FriendInvitedEvent.class, phase = TransactionPhase.BEFORE_COMMIT)
     public void friendInvitation(final FriendInvitedEvent event) {
         final MemberAlarm memberAlarm = MemberAlarm.withoutId(
-            event.getInvitedMemberId(),
-            event.getInviteMemberId(),
-            MemberAlarmType.FRIEND_INVITATION_NOT_ACCEPTED
+                event.getInvitedMemberId(),
+                event.getInviteMemberId(),
+                MemberAlarmType.FRIEND_INVITATION_NOT_ACCEPTED
         );
 
         memberAlarmRepository.save(memberAlarm);
@@ -42,18 +42,18 @@ public class MemberAlarmEventHandler {
 
     private void saveInviteMemberAcceptedAlarm(final FriendAcceptedEvent event) {
         final MemberAlarm memberAlarm = MemberAlarm.withoutId(
-            event.getInviteMemberId(),
-            event.getAcceptMemberId(),
-            MemberAlarmType.FRIEND_ACCEPTED
+                event.getInviteMemberId(),
+                event.getAcceptMemberId(),
+                MemberAlarmType.FRIEND_ACCEPTED
         );
         memberAlarmRepository.save(memberAlarm);
     }
 
     private void updateInvitedMemberMemberAlarmToAccepted(final FriendAcceptedEvent event) {
         final MemberAlarm memberAlarm = memberAlarmRepository.findMemberAlarmByMemberIdAndTargetIdAndType(
-            event.getAcceptMemberId(),
-            event.getInviteMemberId(),
-            MemberAlarmType.FRIEND_INVITATION_NOT_ACCEPTED
+                event.getAcceptMemberId(),
+                event.getInviteMemberId(),
+                MemberAlarmType.FRIEND_INVITATION_NOT_ACCEPTED
         ).orElseThrow(() -> new IllegalArgumentException("친구 요청을 받은 멤버의 초대 알림을 찾을 수 없습니다"));
 
         memberAlarm.updateType(MemberAlarmType.FRIEND_INVITATION_ACCEPTED);
@@ -62,9 +62,9 @@ public class MemberAlarmEventHandler {
     @TransactionalEventListener(value = FriendDeniedEvent.class, phase = TransactionPhase.BEFORE_COMMIT)
     public void friendInvitationDenied(final FriendDeniedEvent event) {
         final MemberAlarm memberAlarm = memberAlarmRepository.findMemberAlarmByMemberIdAndTargetIdAndType(
-            event.getDenyMemberId(),
-            event.getInviteMemberId(),
-            MemberAlarmType.FRIEND_INVITATION_NOT_ACCEPTED
+                event.getDenyMemberId(),
+                event.getInviteMemberId(),
+                MemberAlarmType.FRIEND_INVITATION_NOT_ACCEPTED
         ).orElseThrow(() -> new IllegalArgumentException("친구 요청을 받은 멤버의 초대 알림을 찾을 수 없습니다"));
 
         memberAlarm.updateType(MemberAlarmType.FRIEND_INVITATION_DENIED);
@@ -73,9 +73,9 @@ public class MemberAlarmEventHandler {
     @TransactionalEventListener(value = BattleInvitedEvent.class, phase = TransactionPhase.BEFORE_COMMIT)
     public void battleInvitation(final BattleInvitedEvent event) {
         final MemberAlarm memberAlarm = MemberAlarm.withoutId(
-            event.getInvitedMemberId(),
-            event.getInviteBattleParticipantId(),
-            MemberAlarmType.BATTLE_INVITATION_NOT_ACCEPTED
+                event.getInvitedMemberId(),
+                event.getInviteBattleParticipantId(),
+                MemberAlarmType.BATTLE_INVITATION_NOT_ACCEPTED
         );
 
         memberAlarmRepository.save(memberAlarm);
@@ -89,9 +89,9 @@ public class MemberAlarmEventHandler {
 
     private void updateInvitedMemberBattleInviteAlarm(final BattleInviteAcceptedEvent event) {
         final MemberAlarm memberAlarm = memberAlarmRepository.findMemberAlarmByMemberIdAndTargetIdAndType(
-            event.getInvitedMemberId(),
-            event.getInviteBattleParticipantId(),
-            MemberAlarmType.BATTLE_INVITATION_NOT_ACCEPTED
+                event.getInvitedMemberId(),
+                event.getInviteBattleParticipantId(),
+                MemberAlarmType.BATTLE_INVITATION_NOT_ACCEPTED
         ).orElseThrow(() -> new IllegalArgumentException("배틀 참가 요청을 받은 멤버의 초대 알림을 찾을 수 없습니다"));
 
         memberAlarm.updateType(MemberAlarmType.BATTLE_INVITATION_ACCEPTED);
@@ -99,9 +99,9 @@ public class MemberAlarmEventHandler {
 
     private void saveInviteMemberAcceptedAlarm(final BattleInviteAcceptedEvent event) {
         final MemberAlarm memberAlarm = MemberAlarm.withoutId(
-            event.getInviteMemberId(),
-            event.getInvitedMemberId(),
-            MemberAlarmType.BATTLE_INVITATION_ACCEPT
+                event.getInviteMemberId(),
+                event.getInvitedMemberId(),
+                MemberAlarmType.BATTLE_INVITATION_ACCEPT
         );
         memberAlarmRepository.save(memberAlarm);
     }
@@ -109,9 +109,9 @@ public class MemberAlarmEventHandler {
     @TransactionalEventListener(value = BattleInviteDeniedEvent.class, phase = TransactionPhase.BEFORE_COMMIT)
     public void battleInvitationDenied(final BattleInviteDeniedEvent event) {
         final MemberAlarm memberAlarm = memberAlarmRepository.findMemberAlarmByMemberIdAndTargetIdAndType(
-            event.getInvitedMemberId(),
-            event.getInviteBattleParticipantId(),
-            MemberAlarmType.BATTLE_INVITATION_NOT_ACCEPTED
+                event.getInvitedMemberId(),
+                event.getInviteBattleParticipantId(),
+                MemberAlarmType.BATTLE_INVITATION_NOT_ACCEPTED
         ).orElseThrow(() -> new IllegalArgumentException("배틀 참가 요청을 받은 멤버의 초대 알림을 찾을 수 없습니다"));
 
         memberAlarm.updateType(MemberAlarmType.BATTLE_INVITATION_DENIED);
