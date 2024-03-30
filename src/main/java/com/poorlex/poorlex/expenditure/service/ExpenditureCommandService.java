@@ -55,10 +55,29 @@ public class ExpenditureCommandService {
         final ExpenditureAmount amount = new ExpenditureAmount(request.getAmount());
         final ExpenditureDescription description = new ExpenditureDescription(request.getDescription());
         validateMainImageExist(mainImage);
+        validateDateCreatable(request.getDate());
         final String mainImageUrl = getUploadedImageUrl(mainImage);
         final String subImageUrl = getUploadedImageUrl(subImage);
 
         return Expenditure.withoutId(amount, memberId, request.getDate(), description, mainImageUrl, subImageUrl);
+    }
+
+    private void validateDateCreatable(final LocalDate date) {
+        final LocalDate currentDate = LocalDate.now();
+        final WeeklyExpenditureDuration weeklyExpenditureDuration = WeeklyExpenditureDuration.from(currentDate);
+        if (currentDate.isBefore(date)) {
+            final String errorMessage = String.format("현재 날짜 이후의 지출은 생성할 수 없습니다. ( 현재 날짜 : %s , 등록하려는 날짜 : %s )",
+                                                      currentDate,
+                                                      date);
+            throw new ApiException(ExceptionTag.EXPENDITURE_DATE, errorMessage);
+        }
+
+        if (date.isBefore(weeklyExpenditureDuration.getStart())) {
+            final String errorMessage = String.format("현재 날짜 포함 주 이전의 지출은 생성할 수 없습니다. ( 주 시작 날짜 : %s , 등록하려는 날짜 : %s )",
+                                                      weeklyExpenditureDuration.getStart(),
+                                                      date);
+            throw new ApiException(ExceptionTag.EXPENDITURE_DATE, errorMessage);
+        }
     }
 
     private void validateMainImageExist(final MultipartFile mainImage) {

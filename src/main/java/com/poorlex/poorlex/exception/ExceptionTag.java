@@ -9,6 +9,7 @@ public enum ExceptionTag {
     MEMBER_LEVEL("회원 레벨 에러"),
 
     //지출 관련
+    EXPENDITURE_DATE("지출 날짜 에러"),
     EXPENDITURE_AMOUNT("지출 가격 에러"),
     EXPENDITURE_DESCRIPTION("지출 설명 에러"),
     EXPENDITURE_IMAGE("지출 이미지 에러"),

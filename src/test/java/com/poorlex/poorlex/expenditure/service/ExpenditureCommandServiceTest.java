@@ -2,6 +2,7 @@ package com.poorlex.poorlex.expenditure.service;
 
 import com.poorlex.poorlex.config.aws.AWSS3Service;
 import com.poorlex.poorlex.exception.ApiException;
+import com.poorlex.poorlex.exception.ExceptionTag;
 import com.poorlex.poorlex.expenditure.domain.Expenditure;
 import com.poorlex.poorlex.expenditure.domain.ExpenditureRepository;
 import com.poorlex.poorlex.expenditure.domain.WeeklyExpenditureDuration;
@@ -32,7 +33,6 @@ import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.transaction.annotation.Transactional;
 
 @DisplayName("지출 서비스 테스트")
 class ExpenditureCommandServiceTest extends UsingDataJpaTest implements ReplaceUnderScoreTest {
@@ -59,7 +59,6 @@ class ExpenditureCommandServiceTest extends UsingDataJpaTest implements ReplaceU
     }
 
     @Test
-    @Transactional
     void 지출을_생성한다() throws IOException {
         //given
         final String mainImageUploadedUrl = "uploadedImageUrl";
@@ -96,6 +95,75 @@ class ExpenditureCommandServiceTest extends UsingDataJpaTest implements ReplaceU
                     softly.assertThat(expenditure.getSubImageUrl()).isEmpty();
                 }
         );
+    }
+
+    @Test
+    void ERROR_미래의_지출을_생성시_예외를_던진다() throws IOException {
+        //given
+        final String mainImageUploadedUrl = "uploadedImageUrl";
+        given(awss3Service.uploadMultipartFile(any(), any())).willReturn(mainImageUploadedUrl);
+        final Member member = memberRepository.save(
+                Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname")));
+        final LocalDate currentDate = LocalDate.now();
+        final ExpenditureCreateRequest request = ExpenditureRequestFixture.getWithDate(currentDate.plusDays(2));
+
+        final MockMultipartFile image = new MockMultipartFile(
+                "image",
+                "cat-8415620_640",
+                MediaType.MULTIPART_FORM_DATA_VALUE,
+                new FileInputStream(
+                        "src/test/resources/testImage/cat-8415620_640.jpg")
+        );
+
+        //when
+        //then
+        final String expectedErrorMessage = String.format("현재 날짜 이후의 지출은 생성할 수 없습니다. ( 현재 날짜 : %s , 등록하려는 날짜 : %s )",
+                                                          currentDate,
+                                                          request.getDate());
+
+        assertThatThrownBy(() -> expenditureCommandService.createExpenditure(member.getId(),
+                                                                             image,
+                                                                             null,
+                                                                             request))
+                .isInstanceOf(ApiException.class)
+                .hasFieldOrPropertyWithValue("tag", ExceptionTag.EXPENDITURE_DATE)
+                .hasMessage(expectedErrorMessage);
+    }
+
+    @Test
+    void ERROR_이전_주의_지출_생성시_예외를_던진다() throws IOException {
+        //given
+        final String mainImageUploadedUrl = "uploadedImageUrl";
+        given(awss3Service.uploadMultipartFile(any(), any())).willReturn(mainImageUploadedUrl);
+        final Member member = memberRepository.save(
+                Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname")));
+        final LocalDate currentDate = LocalDate.now();
+        final WeeklyExpenditureDuration weeklyExpenditureDuration = WeeklyExpenditureDuration.from(currentDate);
+        final ExpenditureCreateRequest request = ExpenditureRequestFixture.getWithDate(weeklyExpenditureDuration.getStart()
+                                                                                               .minusDays(1));
+
+        final MockMultipartFile image = new MockMultipartFile(
+                "image",
+                "cat-8415620_640",
+                MediaType.MULTIPART_FORM_DATA_VALUE,
+                new FileInputStream(
+                        "src/test/resources/testImage/cat-8415620_640.jpg")
+        );
+
+        //when
+        //then
+        final String expectedErrorMessage = String.format(
+                "현재 날짜 포함 주 이전의 지출은 생성할 수 없습니다. ( 주 시작 날짜 : %s , 등록하려는 날짜 : %s )",
+                weeklyExpenditureDuration.getStart(),
+                request.getDate());
+
+        assertThatThrownBy(() -> expenditureCommandService.createExpenditure(member.getId(),
+                                                                             image,
+                                                                             null,
+                                                                             request))
+                .isInstanceOf(ApiException.class)
+                .hasFieldOrPropertyWithValue("tag", ExceptionTag.EXPENDITURE_DATE)
+                .hasMessage(expectedErrorMessage);
     }
 
     @Test
@@ -429,6 +497,7 @@ class ExpenditureCommandServiceTest extends UsingDataJpaTest implements ReplaceU
                                                                              Optional.of(푸얼렉스_지출.getMainImageUrl()),
                                                                              지출_수정_요청))
                 .isInstanceOf(ApiException.class)
+                .hasFieldOrPropertyWithValue("tag", ExceptionTag.EXPENDITURE_UPDATE)
                 .hasMessage("지출을 수정할 수 있는 권한이 없습니다.");
     }
 
@@ -460,6 +529,7 @@ class ExpenditureCommandServiceTest extends UsingDataJpaTest implements ReplaceU
                                                                              Optional.of(스플릿_지출.getMainImageUrl()),
                                                                              지출_수정_요청))
                 .isInstanceOf(ApiException.class)
+                .hasFieldOrPropertyWithValue("tag", ExceptionTag.EXPENDITURE_UPDATE)
                 .hasMessage(expectedErrorMessage);
     }
 
