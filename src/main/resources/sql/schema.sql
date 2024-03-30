@@ -29,6 +29,7 @@ create table expenditure
     date           date,
     main_image_url text,
     sub_image_url  text,
+    created_at      datetime(6),
     primary key (id)
 );
 

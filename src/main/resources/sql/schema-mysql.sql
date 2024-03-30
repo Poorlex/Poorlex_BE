@@ -70,6 +70,7 @@ create table if not exists expenditure
     main_image_url text   not null,
     sub_image_url  text,
     date           date   not null,
+    created_at     datetime(6),
     primary key (id)
 ) engine = InnoDB;
 
