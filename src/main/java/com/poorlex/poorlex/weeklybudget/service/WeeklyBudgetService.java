@@ -25,6 +25,7 @@ public class WeeklyBudgetService {
     private final ExpenditureRepository expenditureRepository;
     private final MemberRepository memberRepository;
 
+    @Transactional
     public void createBudget(final Long memberId, final Long budget) {
         validateMemberId(memberId);
         final WeeklyBudgetAmount amount = new WeeklyBudgetAmount(budget);
