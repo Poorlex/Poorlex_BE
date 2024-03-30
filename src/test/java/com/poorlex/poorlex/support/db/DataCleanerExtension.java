@@ -3,11 +3,15 @@ package com.poorlex.poorlex.support.db;
 import java.util.Arrays;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 public class DataCleanerExtension implements BeforeEachCallback {
+
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Override
     public void beforeEach(final ExtensionContext context) {
@@ -20,7 +24,7 @@ public class DataCleanerExtension implements BeforeEachCallback {
         final DataSourceProperties dataSourceProperties = applicationContext.getBean(DataSourceProperties.class);
         final String driverClassName = dataSourceProperties.getDriverClassName();
         final Class<? extends AbstractDataCleaner> cleanerType = DBCleaner.findTypeByDriverClassName(driverClassName);
-
+        logger.info("DataCleaner Loading :: DataCleaner = {}", cleanerType);
         return SpringExtension.getApplicationContext(extensionContext)
                 .getBean(cleanerType);
     }
