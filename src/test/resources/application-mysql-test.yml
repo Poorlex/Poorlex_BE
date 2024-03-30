@@ -1,10 +1,13 @@
 spring:
-  # 3306 포트 mysql 서버를 통한 테스트시 아래 두줄 주석 해제
-  #  profiles:
-  #    active: mysql-test
+  config:
+    activate:
+      on-profile: mysql-test
+
   datasource:
-    driver-class-name: org.h2.Driver
-    url: jdbc:h2:mem:poorlex-test
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/poorlex?useUnicode=true&characterEncoding=utf8&allowPublicKeyRetrieval=true&sslMode=DISABLED
+    username: root
+    password: root
 
   jpa:
     hibernate:
