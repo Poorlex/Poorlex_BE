@@ -45,7 +45,7 @@ class BattleExpenditureQueryControllerTest extends ControllerTest implements Rep
         //when
         //then
         mockMvc.perform(
-                        get("/battles/{battleId}/expenditures", 배틀_ID)
+                        get("/battles/{battleId}/expenditures/member", 배틀_ID)
                                 .header(HttpHeaders.AUTHORIZATION, "Bearer accessToken")
                                 .contentType(MediaType.APPLICATION_JSON)
                 )

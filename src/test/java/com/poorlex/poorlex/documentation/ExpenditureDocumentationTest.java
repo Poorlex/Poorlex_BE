@@ -104,34 +104,6 @@ class ExpenditureDocumentationTest extends MockMvcTest {
     }
 
     @Test
-    void find_weekly_expenditure_with_date() throws Exception {
-        //given
-        mockingTokenInterceptor();
-        mockingMemberArgumentResolver();
-
-        given(expenditureQueryService.findMemberCurrentWeeklyTotalExpenditure(any()))
-                .willReturn(new MemberWeeklyTotalExpenditureResponse(1000L));
-
-        //when
-        final ResultActions result = mockMvc.perform(
-                get("/expenditures/weekly?withDate=true")
-                        .header(HttpHeaders.AUTHORIZATION, "Bearer {accessToken}")
-                        .contentType(MediaType.APPLICATION_JSON)
-        );
-
-        //then
-        result.andExpect(status().isOk())
-                .andDo(
-                        document("expenditure-weekly-total-with-date",
-                                 ApiDocumentUtils.getDocumentRequest(),
-                                 ApiDocumentUtils.getDocumentResponse(),
-                                 responseFields(
-                                         fieldWithPath("amount").type(JsonFieldType.NUMBER).description("주간 총 지출 금액")
-                                 )
-                        ));
-    }
-
-    @Test
     void find_weekly_expenditure() throws Exception {
         //given
         mockingTokenInterceptor();
@@ -259,7 +231,7 @@ class ExpenditureDocumentationTest extends MockMvcTest {
         //when
         //then
         final ResultActions result = mockMvc.perform(
-                get("/battles/1/expenditures")
+                get("/battles/1/expenditures/member")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer {accessToken}")
         );
 
