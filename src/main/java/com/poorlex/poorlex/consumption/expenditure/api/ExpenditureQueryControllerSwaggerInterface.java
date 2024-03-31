@@ -11,7 +11,7 @@ import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 
-@Tag(name = "지출 관련 API")
+@Tag(name = "지출 조회 API")
 public interface ExpenditureQueryControllerSwaggerInterface {
 
     @Operation(summary = "지출 상세 조회")

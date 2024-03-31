@@ -22,15 +22,6 @@ public class BattleExpenditureQueryController implements BattleExpenditureQueryC
     private final ExpenditureQueryService expenditureQueryService;
 
 
-    @GetMapping
-    public ResponseEntity<List<BattleExpenditureResponse>> findMemberBattleExpenditures(
-            @MemberOnly final MemberInfo memberInfo,
-            @PathVariable(name = "battleId") final Long battleId
-    ) {
-        return ResponseEntity.ok()
-                .body(expenditureQueryService.findMemberBattleExpenditures(battleId, memberInfo.getMemberId()));
-    }
-
     @GetMapping(params = "dayOfWeek")
     public ResponseEntity<List<BattleExpenditureResponse>> findBattleExpenditures(
             @MemberOnly final MemberInfo memberInfo,
@@ -41,5 +32,14 @@ public class BattleExpenditureQueryController implements BattleExpenditureQueryC
                 .body(expenditureQueryService.findBattleExpendituresInDayOfWeek(battleId,
                                                                                 memberInfo.getMemberId(),
                                                                                 dayOfWeek));
+    }
+
+    @GetMapping("/member")
+    public ResponseEntity<List<BattleExpenditureResponse>> findMemberBattleExpenditures(
+            @MemberOnly final MemberInfo memberInfo,
+            @PathVariable(name = "battleId") final Long battleId
+    ) {
+        return ResponseEntity.ok()
+                .body(expenditureQueryService.findMemberBattleExpenditures(battleId, memberInfo.getMemberId()));
     }
 }

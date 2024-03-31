@@ -48,7 +48,7 @@ aws:
     battle-directory: directory
 
 url:
-  server: localhost
+  server: localhost:8080
 
 validation:
   start-time: false

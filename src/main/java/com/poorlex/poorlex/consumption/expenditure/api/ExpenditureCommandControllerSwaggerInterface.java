@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.multipart.MultipartFile;
 
-@Tag(name = "지출 관련 API")
+@Tag(name = "지출 관리 API")
 public interface ExpenditureCommandControllerSwaggerInterface {
 
     @Operation(summary = "지출 등록", description = "액세스 토큰 필요")
