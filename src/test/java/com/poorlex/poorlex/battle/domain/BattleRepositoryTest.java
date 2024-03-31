@@ -1,9 +1,9 @@
 package com.poorlex.poorlex.battle.domain;
 
 import com.poorlex.poorlex.battle.fixture.BattleFixture;
-import com.poorlex.poorlex.expenditure.domain.Expenditure;
-import com.poorlex.poorlex.expenditure.domain.ExpenditureRepository;
-import com.poorlex.poorlex.expenditure.fixture.ExpenditureFixture;
+import com.poorlex.poorlex.consumption.expenditure.domain.Expenditure;
+import com.poorlex.poorlex.consumption.expenditure.domain.ExpenditureRepository;
+import com.poorlex.poorlex.consumption.expenditure.fixture.ExpenditureFixture;
 import com.poorlex.poorlex.participate.domain.BattleParticipant;
 import com.poorlex.poorlex.participate.domain.BattleParticipantRepository;
 import com.poorlex.poorlex.support.ReplaceUnderScoreTest;

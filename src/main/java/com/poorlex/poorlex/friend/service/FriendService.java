@@ -1,8 +1,8 @@
 package com.poorlex.poorlex.friend.service;
 
 import com.poorlex.poorlex.config.event.Events;
-import com.poorlex.poorlex.expenditure.service.ExpenditureQueryService;
-import com.poorlex.poorlex.expenditure.service.dto.response.MemberWeeklyTotalExpenditureResponse;
+import com.poorlex.poorlex.consumption.expenditure.service.ExpenditureQueryService;
+import com.poorlex.poorlex.consumption.expenditure.service.dto.response.MemberWeeklyTotalExpenditureResponse;
 import com.poorlex.poorlex.friend.domain.Friend;
 import com.poorlex.poorlex.friend.domain.FriendRepository;
 import com.poorlex.poorlex.friend.service.dto.request.FriendCreateRequest;

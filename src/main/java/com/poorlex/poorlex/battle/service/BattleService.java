@@ -23,10 +23,10 @@ import com.poorlex.poorlex.battle.service.dto.response.ParticipantRankingRespons
 import com.poorlex.poorlex.battle.service.event.BattleCreatedEvent;
 import com.poorlex.poorlex.config.aws.AWSS3Service;
 import com.poorlex.poorlex.config.event.Events;
+import com.poorlex.poorlex.consumption.expenditure.service.ExpenditureQueryService;
+import com.poorlex.poorlex.consumption.expenditure.service.dto.RankAndTotalExpenditureDto;
 import com.poorlex.poorlex.exception.ApiException;
 import com.poorlex.poorlex.exception.ExceptionTag;
-import com.poorlex.poorlex.expenditure.service.ExpenditureQueryService;
-import com.poorlex.poorlex.expenditure.service.dto.RankAndTotalExpenditureDto;
 import com.poorlex.poorlex.participate.domain.BattleParticipant;
 import com.poorlex.poorlex.participate.domain.BattleParticipantRepository;
 import com.poorlex.poorlex.user.member.domain.MemberLevel;
@@ -214,11 +214,7 @@ public class BattleService {
 
     @Transactional
     public void startBattle(final Long battleId, final LocalDateTime current) {
-        final Battle battle = battleRepository.findById(battleId)
-                .orElseThrow(() -> {
-                    final String errorMessage = String.format("ID에 해당하는 배틀이 존재하지 않습니다. ( ID : %d )", battleId);
-                    return new ApiException(ExceptionTag.BATTLE_FIND, errorMessage);
-                });
+        final Battle battle = findExistBattle(battleId);
         if (activateStartTimeValidation) {
             battle.start(current);
             return;
@@ -226,13 +222,17 @@ public class BattleService {
         battle.startWithoutValidate();
     }
 
-    @Transactional
-    public void endBattle(final Long battleId, final LocalDateTime current) {
-        final Battle battle = battleRepository.findById(battleId)
+    private Battle findExistBattle(final Long battleId) {
+        return battleRepository.findById(battleId)
                 .orElseThrow(() -> {
                     final String errorMessage = String.format("ID에 해당하는 배틀이 존재하지 않습니다. ( ID : %d )", battleId);
                     return new ApiException(ExceptionTag.BATTLE_FIND, errorMessage);
                 });
+    }
+
+    @Transactional
+    public void endBattle(final Long battleId, final LocalDateTime current) {
+        final Battle battle = findExistBattle(battleId);
         if (activateEndTimeValidation) {
             battle.end(current);
             return;
@@ -241,11 +241,7 @@ public class BattleService {
     }
 
     public BattleResponse getBattleInfo(final Long battleId, final BattleFindRequest request) {
-        final Battle battle = battleRepository.findById(battleId)
-                .orElseThrow(() -> {
-                    final String errorMessage = String.format("ID에 해당하는 배틀이 존재하지 않습니다. ( ID : %d )", battleId);
-                    return new ApiException(ExceptionTag.BATTLE_FIND, errorMessage);
-                });
+        final Battle battle = findExistBattle(battleId);
 
         final List<BattleParticipant> participants = battleParticipantRepository.findAllByBattleId(battleId);
         final List<Long> participantMemberIds = participants.stream()

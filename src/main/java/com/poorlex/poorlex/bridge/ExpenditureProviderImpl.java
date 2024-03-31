@@ -1,7 +1,7 @@
 package com.poorlex.poorlex.bridge;
 
-import com.poorlex.poorlex.expenditure.domain.Expenditure;
-import com.poorlex.poorlex.expenditure.domain.ExpenditureRepository;
+import com.poorlex.poorlex.consumption.expenditure.domain.Expenditure;
+import com.poorlex.poorlex.consumption.expenditure.domain.ExpenditureRepository;
 import com.poorlex.poorlex.user.member.service.dto.ExpenditureDto;
 import com.poorlex.poorlex.user.member.service.provider.ExpenditureProvider;
 import java.util.List;

@@ -1,7 +1,7 @@
 package com.poorlex.poorlex.bridge;
 
-import com.poorlex.poorlex.expenditure.domain.ExpenditureRepository;
-import com.poorlex.poorlex.expenditure.domain.WeeklyExpenditureDuration;
+import com.poorlex.poorlex.consumption.expenditure.domain.ExpenditureRepository;
+import com.poorlex.poorlex.consumption.expenditure.domain.WeeklyExpenditureDuration;
 import com.poorlex.poorlex.user.member.service.provider.WeeklyExpenditureProvider;
 import java.time.LocalDate;
 import java.util.ArrayList;
