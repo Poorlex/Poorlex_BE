@@ -1,0 +1,52 @@
+spring:
+  config:
+    activate:
+      on-profile: local-mysql
+    import: classpath:secure/application-dev-info.yml
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/poorlex?useUnicode=true&characterEncoding=utf8&allowPublicKeyRetrieval=true&sslMode=DISABLED
+    username: root
+    password: root
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:sql/schema-mysql.sql
+
+  batch:
+    job:
+      enabled: false
+    jdbc:
+      initialize-schema: always
+
+  h2:
+    console:
+      enabled: true
+
+logging:
+  level:
+    root: INFO
+    org.hibernate.orm.jdbc.bind: trace
+    org.springframework.web: INFO
+    org.springframework.security: DEBUG
+
+springdoc:
+  swagger-ui:
+    disable-swagger-default-url: true
+    url: /api-docs
+  api-docs:
+    path: /api-docs
+  default-produces-media-type: application/json
+
+server:
+  shutdown: graceful
