@@ -1,21 +1,21 @@
 package com.poorlex.poorlex.battlenotification.controller;
 
 import com.poorlex.poorlex.battle.fixture.BattleFixture;
+import com.poorlex.poorlex.battle.service.BattleImageService;
 import com.poorlex.poorlex.battle.service.BattleService;
 import com.poorlex.poorlex.battlenotification.domain.BattleNotification;
 import com.poorlex.poorlex.battlenotification.domain.BattleNotificationRepository;
 import com.poorlex.poorlex.battlenotification.service.dto.request.BattleNotificationCreateRequest;
 import com.poorlex.poorlex.battlenotification.service.dto.request.BattleNotificationUpdateRequest;
-import com.poorlex.poorlex.config.aws.AWSS3Service;
-import com.poorlex.poorlex.user.member.domain.Member;
-import com.poorlex.poorlex.user.member.domain.MemberNickname;
-import com.poorlex.poorlex.user.member.domain.MemberRepository;
-import com.poorlex.poorlex.user.member.domain.Oauth2RegistrationId;
 import com.poorlex.poorlex.support.IntegrationTest;
 import com.poorlex.poorlex.support.MockMultipartFileFixture;
 import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
 import com.poorlex.poorlex.support.TestMemberTokenGenerator;
 import com.poorlex.poorlex.token.JwtTokenProvider;
+import com.poorlex.poorlex.user.member.domain.Member;
+import com.poorlex.poorlex.user.member.domain.MemberNickname;
+import com.poorlex.poorlex.user.member.domain.MemberRepository;
+import com.poorlex.poorlex.user.member.domain.Oauth2RegistrationId;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.mockito.ArgumentMatchers.any;
@@ -44,13 +44,13 @@ class BattleNotificationControllerTest extends IntegrationTest implements Replac
     private JwtTokenProvider jwtTokenProvider;
 
     @MockBean
-    private AWSS3Service awss3Service;
+    private BattleImageService imageService;
 
     private TestMemberTokenGenerator memberTokenGenerator;
 
     @BeforeEach
     void setUp() {
-        given(awss3Service.uploadMultipartFile(any(), any())).willReturn("imageUrl");
+        given(imageService.saveAndReturnPath(any(), any())).willReturn("imageUrl");
         this.memberTokenGenerator = new TestMemberTokenGenerator(memberRepository, jwtTokenProvider);
     }
 

@@ -1,6 +1,5 @@
 package com.poorlex.poorlex.consumption.expenditure.service;
 
-import com.poorlex.poorlex.config.aws.AWSS3Service;
 import com.poorlex.poorlex.consumption.expenditure.domain.Expenditure;
 import com.poorlex.poorlex.consumption.expenditure.domain.ExpenditureRepository;
 import com.poorlex.poorlex.consumption.expenditure.domain.WeeklyExpenditureDuration;
@@ -47,7 +46,7 @@ class ExpenditureCommandServiceTest extends UsingDataJpaTest implements ReplaceU
     private EntityManager entityManager;
 
     @Mock
-    private AWSS3Service awss3Service;
+    private ExpenditureImageService imageService;
 
     private ExpenditureCommandService expenditureCommandService;
 
@@ -55,14 +54,14 @@ class ExpenditureCommandServiceTest extends UsingDataJpaTest implements ReplaceU
     void setUp() {
         this.expenditureCommandService = new ExpenditureCommandService("bucketDirectory",
                                                                        expenditureRepository,
-                                                                       awss3Service);
+                                                                       imageService);
     }
 
     @Test
     void 지출을_생성한다() throws IOException {
         //given
         final String mainImageUploadedUrl = "uploadedImageUrl";
-        given(awss3Service.uploadMultipartFile(any(), any())).willReturn(mainImageUploadedUrl);
+        given(imageService.saveAndReturnPath(any(), any())).willReturn(mainImageUploadedUrl);
         final Member member = memberRepository.save(
                 Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname")));
         final ExpenditureCreateRequest request = ExpenditureRequestFixture.getSimpleCreateRequest();
@@ -101,7 +100,7 @@ class ExpenditureCommandServiceTest extends UsingDataJpaTest implements ReplaceU
     void ERROR_미래의_지출을_생성시_예외를_던진다() throws IOException {
         //given
         final String mainImageUploadedUrl = "uploadedImageUrl";
-        given(awss3Service.uploadMultipartFile(any(), any())).willReturn(mainImageUploadedUrl);
+        given(imageService.saveAndReturnPath(any(), any())).willReturn(mainImageUploadedUrl);
         final Member member = memberRepository.save(
                 Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname")));
         final LocalDate currentDate = LocalDate.now();
@@ -134,7 +133,7 @@ class ExpenditureCommandServiceTest extends UsingDataJpaTest implements ReplaceU
     void ERROR_이전_주의_지출_생성시_예외를_던진다() throws IOException {
         //given
         final String mainImageUploadedUrl = "uploadedImageUrl";
-        given(awss3Service.uploadMultipartFile(any(), any())).willReturn(mainImageUploadedUrl);
+        given(imageService.saveAndReturnPath(any(), any())).willReturn(mainImageUploadedUrl);
         final Member member = memberRepository.save(
                 Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname")));
         final LocalDate currentDate = LocalDate.now();
@@ -235,8 +234,8 @@ class ExpenditureCommandServiceTest extends UsingDataJpaTest implements ReplaceU
 
         final String newMainImageUrl = "newMainImage";
         final String newSubImageUrl = "newSubImage";
-        given(awss3Service.uploadMultipartFile(eq(mainImage), any())).willReturn(newMainImageUrl);
-        given(awss3Service.uploadMultipartFile(eq(subImage), any())).willReturn(newSubImageUrl);
+        given(imageService.saveAndReturnPath(eq(mainImage), any())).willReturn(newMainImageUrl);
+        given(imageService.saveAndReturnPath(eq(subImage), any())).willReturn(newSubImageUrl);
 
         expenditureCommandService.updateExpenditure(expenditure.getId(),
                                                     member.getId(),
@@ -284,7 +283,7 @@ class ExpenditureCommandServiceTest extends UsingDataJpaTest implements ReplaceU
         );
 
         final String newSubImageUrl = "newSubImage";
-        given(awss3Service.uploadMultipartFile(eq(subImage), any())).willReturn(newSubImageUrl);
+        given(imageService.saveAndReturnPath(eq(subImage), any())).willReturn(newSubImageUrl);
 
         expenditureCommandService.updateExpenditure(expenditure.getId(),
                                                     member.getId(),
@@ -332,7 +331,7 @@ class ExpenditureCommandServiceTest extends UsingDataJpaTest implements ReplaceU
         );
 
         final String newMainImageUrl = "newMainImage";
-        given(awss3Service.uploadMultipartFile(eq(mainImage), any())).willReturn(newMainImageUrl);
+        given(imageService.saveAndReturnPath(eq(mainImage), any())).willReturn(newMainImageUrl);
 
         expenditureCommandService.updateExpenditure(expenditure.getId(),
                                                     member.getId(),

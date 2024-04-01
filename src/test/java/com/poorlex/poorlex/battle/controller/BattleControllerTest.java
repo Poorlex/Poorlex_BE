@@ -2,10 +2,10 @@ package com.poorlex.poorlex.battle.controller;
 
 import com.poorlex.poorlex.battle.domain.Battle;
 import com.poorlex.poorlex.battle.domain.BattleRepository;
+import com.poorlex.poorlex.battle.service.BattleImageService;
 import com.poorlex.poorlex.battle.service.BattleService;
 import com.poorlex.poorlex.battle.service.dto.request.BattleFindRequest;
 import com.poorlex.poorlex.battle.service.event.BattleCreatedEvent;
-import com.poorlex.poorlex.config.aws.AWSS3Service;
 import com.poorlex.poorlex.consumption.expenditure.domain.ExpenditureRepository;
 import com.poorlex.poorlex.consumption.expenditure.fixture.ExpenditureFixture;
 import com.poorlex.poorlex.participate.domain.BattleParticipant;
@@ -63,7 +63,7 @@ class BattleControllerTest extends IntegrationTest implements ReplaceUnderScoreT
     private BattleService battleService;
 
     @MockBean
-    private AWSS3Service awss3Service;
+    private BattleImageService imageService;
 
     @MockBean
     private BattleParticipantEventHandler battleParticipantEventHandler;
@@ -74,7 +74,7 @@ class BattleControllerTest extends IntegrationTest implements ReplaceUnderScoreT
     void setUp() {
         this.testMemberTokenGenerator = new TestMemberTokenGenerator(memberRepository, jwtTokenProvider);
         doNothing().when(battleParticipantEventHandler).handle(any(BattleCreatedEvent.class));
-        given(awss3Service.uploadMultipartFile(any(), any())).willReturn("imageUrl");
+        given(imageService.saveAndReturnPath(any(), any())).willReturn("imageUrl");
     }
 
     @Test

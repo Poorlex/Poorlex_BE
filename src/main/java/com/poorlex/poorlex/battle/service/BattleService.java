@@ -21,7 +21,6 @@ import com.poorlex.poorlex.battle.service.dto.response.MemberCompleteBattleRespo
 import com.poorlex.poorlex.battle.service.dto.response.MemberProgressBattleResponse;
 import com.poorlex.poorlex.battle.service.dto.response.ParticipantRankingResponse;
 import com.poorlex.poorlex.battle.service.event.BattleCreatedEvent;
-import com.poorlex.poorlex.config.aws.AWSS3Service;
 import com.poorlex.poorlex.config.event.Events;
 import com.poorlex.poorlex.consumption.expenditure.service.ExpenditureQueryService;
 import com.poorlex.poorlex.consumption.expenditure.service.dto.RankAndTotalExpenditureDto;
@@ -55,7 +54,7 @@ public class BattleService {
     private final MemberPointQueryService memberPointService;
     private final ExpenditureQueryService expenditureQueryService;
     private final MemberQueryService memberQueryService;
-    private final AWSS3Service awss3Service;
+    private final BattleImageService imageService;
     private final String bucketDirectory;
     private final boolean activateStartTimeValidation;
     private final boolean activateEndTimeValidation;
@@ -66,7 +65,7 @@ public class BattleService {
                          final MemberPointQueryService memberPointService,
                          final ExpenditureQueryService expenditureQueryService,
                          final MemberQueryService memberQueryService,
-                         final AWSS3Service awss3Service,
+                         final BattleImageService imageService,
                          @Value("${aws.s3.battle-directory}") final String bucketDirectory,
                          @Value("${validation.start-time}") final boolean activateStartTimeValidation,
                          @Value("${validation.start-time}") final boolean activateEndTimeValidation) {
@@ -76,7 +75,7 @@ public class BattleService {
         this.memberPointService = memberPointService;
         this.expenditureQueryService = expenditureQueryService;
         this.memberQueryService = memberQueryService;
-        this.awss3Service = awss3Service;
+        this.imageService = imageService;
         this.bucketDirectory = bucketDirectory;
         this.activateStartTimeValidation = activateStartTimeValidation;
         this.activateEndTimeValidation = activateEndTimeValidation;
@@ -110,7 +109,7 @@ public class BattleService {
         final BattleIntroduction introduction = new BattleIntroduction(request.getIntroduction());
         final BattleBudget budget = new BattleBudget(request.getBudget());
         final BattleParticipantSize participantSize = new BattleParticipantSize(request.getMaxParticipantSize());
-        final String imageUrl = awss3Service.uploadMultipartFile(image, bucketDirectory);
+        final String imageUrl = imageService.saveAndReturnPath(image, bucketDirectory);
         return Battle.withoutBattleId(name,
                                       introduction,
                                       new BattleImageUrl(imageUrl),

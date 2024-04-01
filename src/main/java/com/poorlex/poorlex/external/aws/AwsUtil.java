@@ -1,4 +1,4 @@
-package com.poorlex.poorlex.config.aws;
+package com.poorlex.poorlex.external.aws;
 
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;

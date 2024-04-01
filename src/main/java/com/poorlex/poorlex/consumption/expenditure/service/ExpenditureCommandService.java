@@ -1,6 +1,5 @@
 package com.poorlex.poorlex.consumption.expenditure.service;
 
-import com.poorlex.poorlex.config.aws.AWSS3Service;
 import com.poorlex.poorlex.config.event.Events;
 import com.poorlex.poorlex.consumption.expenditure.domain.Expenditure;
 import com.poorlex.poorlex.consumption.expenditure.domain.ExpenditureAmount;
@@ -28,13 +27,13 @@ public class ExpenditureCommandService {
 
     private final String bucketDirectory;
     private final ExpenditureRepository expenditureRepository;
-    private final AWSS3Service awss3Service;
+    private final ExpenditureImageService imageService;
 
     public ExpenditureCommandService(@Value("${aws.s3.expenditure-directory}") final String bucketDirectory,
                                      final ExpenditureRepository expenditureRepository,
-                                     final AWSS3Service awss3Service) {
+                                     final ExpenditureImageService imageService) {
         this.expenditureRepository = expenditureRepository;
-        this.awss3Service = awss3Service;
+        this.imageService = imageService;
         this.bucketDirectory = bucketDirectory;
     }
 
@@ -42,20 +41,20 @@ public class ExpenditureCommandService {
                                   final MultipartFile mainImage,
                                   final MultipartFile subImage,
                                   final ExpenditureCreateRequest request) {
-        final Expenditure expenditure = generateExpenditure(memberId, request, mainImage, subImage);
+        final Expenditure expenditure = generateExpenditure(memberId, mainImage, subImage, request);
         expenditureRepository.save(expenditure);
         raiseEvent(expenditure.getAmount(), memberId);
         return expenditure.getId();
     }
 
     private Expenditure generateExpenditure(final Long memberId,
-                                            final ExpenditureCreateRequest request,
                                             final MultipartFile mainImage,
-                                            final MultipartFile subImage) {
+                                            final MultipartFile subImage,
+                                            final ExpenditureCreateRequest request) {
+        validateDateCreatable(request.getDate());
+        validateMainImageExist(mainImage);
         final ExpenditureAmount amount = new ExpenditureAmount(request.getAmount());
         final ExpenditureDescription description = new ExpenditureDescription(request.getDescription());
-        validateMainImageExist(mainImage);
-        validateDateCreatable(request.getDate());
         final String mainImageUrl = getUploadedImageUrl(mainImage);
         final String subImageUrl = getUploadedImageUrl(subImage);
 
@@ -65,16 +64,25 @@ public class ExpenditureCommandService {
     private void validateDateCreatable(final LocalDate date) {
         final LocalDate currentDate = LocalDate.now();
         final WeeklyExpenditureDuration weeklyExpenditureDuration = WeeklyExpenditureDuration.from(currentDate);
-        if (currentDate.isBefore(date)) {
-            final String errorMessage = String.format("현재 날짜 이후의 지출은 생성할 수 없습니다. ( 현재 날짜 : %s , 등록하려는 날짜 : %s )",
-                                                      currentDate,
-                                                      date);
-            throw new ApiException(ExceptionTag.EXPENDITURE_DATE, errorMessage);
-        }
 
+        validateExpenditureDateNotInTheFuture(date, currentDate);
+        validateExpenditureDateNotInThePreviousWeek(date, weeklyExpenditureDuration);
+    }
+
+    private static void validateExpenditureDateNotInThePreviousWeek(final LocalDate date,
+                                                                    final WeeklyExpenditureDuration weeklyExpenditureDuration) {
         if (date.isBefore(weeklyExpenditureDuration.getStart())) {
             final String errorMessage = String.format("현재 날짜 포함 주 이전의 지출은 생성할 수 없습니다. ( 주 시작 날짜 : %s , 등록하려는 날짜 : %s )",
                                                       weeklyExpenditureDuration.getStart(),
+                                                      date);
+            throw new ApiException(ExceptionTag.EXPENDITURE_DATE, errorMessage);
+        }
+    }
+
+    private static void validateExpenditureDateNotInTheFuture(final LocalDate date, final LocalDate currentDate) {
+        if (currentDate.isBefore(date)) {
+            final String errorMessage = String.format("현재 날짜 이후의 지출은 생성할 수 없습니다. ( 현재 날짜 : %s , 등록하려는 날짜 : %s )",
+                                                      currentDate,
                                                       date);
             throw new ApiException(ExceptionTag.EXPENDITURE_DATE, errorMessage);
         }
@@ -90,7 +98,7 @@ public class ExpenditureCommandService {
         if (Objects.isNull(image)) {
             return null;
         }
-        return awss3Service.uploadMultipartFile(image, bucketDirectory);
+        return imageService.saveAndReturnPath(image, bucketDirectory);
     }
 
     private void raiseEvent(final long expenditureAmount, final Long memberId) {
@@ -157,7 +165,7 @@ public class ExpenditureCommandService {
                                               final Optional<MultipartFile> updateMainImage) {
         final String prevMainImageUrl = expenditure.getMainImageUrl();
         updateMainImage.ifPresent(image -> {
-            final String updateImageUrl = awss3Service.uploadMultipartFile(image, bucketDirectory);
+            final String updateImageUrl = imageService.saveAndReturnPath(image, bucketDirectory);
             expenditure.updateMainImage(updateImageUrl);
         });
         Events.raise(new ExpenditureImageUnusedEvent(prevMainImageUrl));
@@ -200,7 +208,7 @@ public class ExpenditureCommandService {
         final Optional<String> prevSubImageUrl = expenditure.getSubImageUrl();
 
         updateSubImage.ifPresent(subImage -> {
-            final String updateImageUrl = awss3Service.uploadMultipartFile(subImage, bucketDirectory);
+            final String updateImageUrl = imageService.saveAndReturnPath(subImage, bucketDirectory);
             expenditure.updateSubImage(updateImageUrl);
         });
 
@@ -221,8 +229,8 @@ public class ExpenditureCommandService {
             throw new ApiException(ExceptionTag.EXPENDITURE_UPDATE, "삭제하려는 지출이 본인의 지출이 아닙니다.");
         }
 
-        awss3Service.deleteFile(expenditure.getMainImageUrl());
-        expenditure.getSubImageUrl().ifPresent(awss3Service::deleteFile);
+        imageService.delete(expenditure.getMainImageUrl());
+        expenditure.getSubImageUrl().ifPresent(imageService::delete);
 
         expenditureRepository.deleteById(expenditureId);
     }

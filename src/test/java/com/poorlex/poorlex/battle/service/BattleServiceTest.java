@@ -9,7 +9,6 @@ import com.poorlex.poorlex.battle.domain.BattleType;
 import com.poorlex.poorlex.battle.fixture.BattleFixture;
 import com.poorlex.poorlex.battle.service.dto.response.MemberCompleteBattleResponse;
 import com.poorlex.poorlex.battle.service.dto.response.MemberProgressBattleResponse;
-import com.poorlex.poorlex.config.aws.AWSS3Service;
 import com.poorlex.poorlex.consumption.expenditure.domain.ExpenditureRepository;
 import com.poorlex.poorlex.consumption.expenditure.fixture.ExpenditureFixture;
 import com.poorlex.poorlex.participate.domain.BattleParticipant;
@@ -71,14 +70,14 @@ class BattleServiceTest extends IntegrationTest implements ReplaceUnderScoreTest
     private ExpenditureRepository expenditureRepository;
 
     @MockBean
-    private AWSS3Service awss3Service;
+    private BattleImageService imageService;
 
     @MockBean
     private BattleParticipantChangedEventHandler battleParticipantChangedEventHandler;
 
     @BeforeEach
     void setUp() {
-        given(awss3Service.uploadMultipartFile(any(), any())).willReturn(BattleFixture.simple().getImageUrl());
+        given(imageService.saveAndReturnPath(any(), any())).willReturn(BattleFixture.simple().getImageUrl());
         doNothing().when(battleParticipantChangedEventHandler).added(any(BattleParticipantAddedEvent.class));
         doNothing().when(battleParticipantChangedEventHandler).added(any(BattlesWithdrewEvent.class));
     }
