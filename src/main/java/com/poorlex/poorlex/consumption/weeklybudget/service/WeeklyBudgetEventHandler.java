@@ -2,7 +2,7 @@ package com.poorlex.poorlex.consumption.weeklybudget.service;
 
 import com.poorlex.poorlex.consumption.weeklybudget.domain.WeeklyBudget;
 import com.poorlex.poorlex.consumption.weeklybudget.domain.WeeklyBudgetRepository;
-import com.poorlex.poorlex.user.member.service.event.MemberDeletedEvent;
+import com.poorlex.poorlex.consumption.weeklybudget.service.event.WeeklyBudgetMemberDeletedEvent;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -18,8 +18,8 @@ public class WeeklyBudgetEventHandler {
 
     private final WeeklyBudgetRepository weeklyBudgetRepository;
 
-    @TransactionalEventListener(value = MemberDeletedEvent.class, phase = TransactionPhase.BEFORE_COMMIT)
-    public void handle(final MemberDeletedEvent event) {
+    @TransactionalEventListener(value = WeeklyBudgetMemberDeletedEvent.class, phase = TransactionPhase.BEFORE_COMMIT)
+    public void handle(final WeeklyBudgetMemberDeletedEvent event) {
         final List<WeeklyBudget> weeklyBudgets = weeklyBudgetRepository.findWeeklyBudgetsByMemberId(event.getMemberId());
         weeklyBudgetRepository.deleteAllInBatch(weeklyBudgets);
     }

@@ -10,7 +10,7 @@ import org.springframework.data.repository.query.Param;
 public interface ExpenditureRepository extends JpaRepository<Expenditure, Long> {
 
     @Query(value = "select coalesce(sum(e.amount.value), 0) from Expenditure e "
-            + "where e.memberId = :memberId and e.date between :start and :end")
+            + "where e.memberId = :memberId and e.date >= :start and e.date <= :end")
     Long findSumExpenditureByMemberIdAndBetween(@Param(value = "memberId") final Long memberId,
                                                 @Param(value = "start") final LocalDate start,
                                                 @Param(value = "end") final LocalDate end);

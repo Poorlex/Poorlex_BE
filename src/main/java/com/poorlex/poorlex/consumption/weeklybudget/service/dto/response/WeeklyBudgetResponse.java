@@ -13,7 +13,7 @@ public class WeeklyBudgetResponse {
 
     private final boolean exist;
     private final Long amount;
-    private final Long dDay;
+    private final Long daysBeforeEnd;
 
     public static WeeklyBudgetResponse exist(final WeeklyBudget weeklyBudget, final Long dDay) {
         return new WeeklyBudgetResponse(BUDGET_EXIST, weeklyBudget.getAmount(), dDay);

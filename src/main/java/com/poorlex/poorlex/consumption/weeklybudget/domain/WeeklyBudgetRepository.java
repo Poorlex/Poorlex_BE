@@ -10,7 +10,7 @@ import org.springframework.data.repository.query.Param;
 public interface WeeklyBudgetRepository extends JpaRepository<WeeklyBudget, Long> {
 
     @Query(value = "select w from WeeklyBudget w "
-            + "where w.memberId = :memberId and :current between w.duration.start and w.duration.end")
+            + "where w.memberId = :memberId and :current >= w.duration.start and :current <= w.duration.end")
     Optional<WeeklyBudget> findByMemberIdAndCurrentDate(@Param(value = "memberId") final Long memberId,
                                                         @Param(value = "current") final LocalDate current);
 

@@ -1,15 +1,14 @@
 package com.poorlex.poorlex.consumption.weeklybudget.service;
 
-import com.poorlex.poorlex.consumption.expenditure.domain.ExpenditureRepository;
 import com.poorlex.poorlex.consumption.weeklybudget.domain.WeeklyBudget;
-import com.poorlex.poorlex.consumption.weeklybudget.domain.WeeklyBudgetAmount;
 import com.poorlex.poorlex.consumption.weeklybudget.domain.WeeklyBudgetDuration;
 import com.poorlex.poorlex.consumption.weeklybudget.domain.WeeklyBudgetRepository;
 import com.poorlex.poorlex.consumption.weeklybudget.service.dto.response.WeeklyBudgetLeftResponse;
 import com.poorlex.poorlex.consumption.weeklybudget.service.dto.response.WeeklyBudgetResponse;
+import com.poorlex.poorlex.consumption.weeklybudget.service.provider.MemberExistenceProvider;
+import com.poorlex.poorlex.consumption.weeklybudget.service.provider.TotalExpenditureProvider;
 import com.poorlex.poorlex.exception.ApiException;
 import com.poorlex.poorlex.exception.ExceptionTag;
-import com.poorlex.poorlex.user.member.domain.MemberRepository;
 import java.time.LocalDate;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
@@ -19,23 +18,17 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class WeeklyBudgetService {
+public class WeeklyBudgetQueryService {
 
     private final WeeklyBudgetRepository weeklyBudgetRepository;
-    private final ExpenditureRepository expenditureRepository;
-    private final MemberRepository memberRepository;
+    private final MemberExistenceProvider memberExistenceProvider;
+    private final TotalExpenditureProvider totalExpenditureProvider;
 
-    @Transactional
-    public void createBudget(final Long memberId, final Long budget) {
-        validateMemberId(memberId);
-        final WeeklyBudgetAmount amount = new WeeklyBudgetAmount(budget);
-        final WeeklyBudgetDuration duration = WeeklyBudgetDuration.current();
-        final WeeklyBudget weeklyBudget = WeeklyBudget.withoutId(amount, duration, memberId);
-
-        weeklyBudgetRepository.save(weeklyBudget);
+    public WeeklyBudgetResponse findCurrentWeeklyBudgetByMemberId(final Long memberId) {
+        return findWeeklyBudgetByMemberIdAndDate(memberId, LocalDate.now());
     }
 
-    public WeeklyBudgetResponse findCurrentBudgetByMemberIdAndDate(final Long memberId, final LocalDate date) {
+    public WeeklyBudgetResponse findWeeklyBudgetByMemberIdAndDate(final Long memberId, final LocalDate date) {
         validateMemberId(memberId);
 
         return weeklyBudgetRepository.findByMemberIdAndCurrentDate(memberId, date)
@@ -44,14 +37,18 @@ public class WeeklyBudgetService {
     }
 
     private void validateMemberId(final Long memberId) {
-        if (!memberRepository.existsById(memberId)) {
+        if (!memberExistenceProvider.byMemberId(memberId)) {
             final String errorMessage = String.format("Id 에 해당하는 회원이 존재하지 않습니다. ( ID : %d )", memberId);
             throw new ApiException(ExceptionTag.MEMBER_FIND, errorMessage);
         }
     }
 
-    public WeeklyBudgetLeftResponse findCurrentBudgetLeftByMemberIdAndDate(final Long memberId,
-                                                                           final LocalDate date) {
+    public WeeklyBudgetLeftResponse findCurrentWeeklyBudgetLeftByMemberId(final Long memberId) {
+        return findWeeklyBudgetLeftByMemberIdAndDate(memberId, LocalDate.now());
+    }
+
+    public WeeklyBudgetLeftResponse findWeeklyBudgetLeftByMemberIdAndDate(final Long memberId,
+                                                                          final LocalDate date) {
         validateMemberId(memberId);
 
         final WeeklyBudget weeklyBudget = weeklyBudgetRepository.findByMemberIdAndCurrentDate(memberId, date)
@@ -67,6 +64,6 @@ public class WeeklyBudgetService {
     public Long getSumExpenditureByMemberIdInDuration(final Long memberId, final WeeklyBudgetDuration duration) {
         final LocalDate start = LocalDate.from(duration.getStart());
         final LocalDate end = LocalDate.from(duration.getEnd());
-        return expenditureRepository.findSumExpenditureByMemberIdAndBetween(memberId, start, end);
+        return totalExpenditureProvider.byMemberIdBetween(memberId, start, end);
     }
 }

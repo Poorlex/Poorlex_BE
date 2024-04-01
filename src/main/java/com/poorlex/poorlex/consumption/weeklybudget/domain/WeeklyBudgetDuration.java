@@ -29,9 +29,11 @@ public class WeeklyBudgetDuration {
     }
 
     public static WeeklyBudgetDuration current() {
-        final LocalDate now = LocalDate.now();
+        return from(LocalDate.now());
+    }
 
-        final LocalDate start = LocalDate.from(now).plusDays(getDaysBeforeMonday(now));
+    public static WeeklyBudgetDuration from(final LocalDate date) {
+        final LocalDate start = date.plusDays(getDaysBeforeMonday(date));
         final LocalDate end = start.plusDays(BATTLE_DAYS);
 
         return new WeeklyBudgetDuration(start, end);

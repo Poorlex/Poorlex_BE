@@ -1,7 +1,9 @@
-package com.poorlex.poorlex.consumption.weeklybudget.documentation;
+package com.poorlex.poorlex.documentation;
 
-import com.poorlex.poorlex.consumption.weeklybudget.controller.WeeklyBudgetController;
-import com.poorlex.poorlex.consumption.weeklybudget.service.WeeklyBudgetService;
+import com.poorlex.poorlex.consumption.weeklybudget.controller.WeeklyBudgetCommandController;
+import com.poorlex.poorlex.consumption.weeklybudget.controller.WeeklyBudgetQueryController;
+import com.poorlex.poorlex.consumption.weeklybudget.service.WeeklyBudgetCommandService;
+import com.poorlex.poorlex.consumption.weeklybudget.service.WeeklyBudgetQueryService;
 import com.poorlex.poorlex.consumption.weeklybudget.service.dto.request.WeeklyBudgetCreateRequest;
 import com.poorlex.poorlex.consumption.weeklybudget.service.dto.request.WeeklyBudgetLeftRequest;
 import com.poorlex.poorlex.consumption.weeklybudget.service.dto.request.WeeklyBudgetRequest;
@@ -32,14 +34,18 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-@WebMvcTest(WeeklyBudgetController.class)
+@WebMvcTest(controllers = {WeeklyBudgetCommandController.class, WeeklyBudgetQueryController.class})
 class WeeklyBudgetDocumentationTest extends MockMvcTest {
 
     @Autowired
     private MockMvc mockMvc;
 
     @MockBean
-    private WeeklyBudgetService weeklyBudgetService;
+    private WeeklyBudgetCommandService weeklyBudgetCommandService;
+
+
+    @MockBean
+    private WeeklyBudgetQueryService weeklyBudgetQueryService;
 
     @Test
     void create() throws Exception {
@@ -48,7 +54,7 @@ class WeeklyBudgetDocumentationTest extends MockMvcTest {
 
         mockingTokenInterceptor();
         mockingMemberArgumentResolver();
-        doNothing().when(weeklyBudgetService).createBudget(anyLong(), anyLong());
+        doNothing().when(weeklyBudgetCommandService).createBudgetWithCurrentDuration(anyLong(), anyLong());
 
         //when
         final ResultActions result = mockMvc.perform(
@@ -78,7 +84,7 @@ class WeeklyBudgetDocumentationTest extends MockMvcTest {
 
         mockingTokenInterceptor();
         mockingMemberArgumentResolver();
-        given(weeklyBudgetService.findCurrentBudgetByMemberIdAndDate(any(), any())).willReturn(
+        given(weeklyBudgetQueryService.findCurrentWeeklyBudgetByMemberId(any())).willReturn(
                 new WeeklyBudgetResponse(true, 10000L, 5L)
         );
 
@@ -105,7 +111,7 @@ class WeeklyBudgetDocumentationTest extends MockMvcTest {
                                                  .description("요청 시간이 포함된 주의 주간 예산 등록 여부"),
                                          fieldWithPath("amount").type(JsonFieldType.NUMBER)
                                                  .description("요청 시간이 포함된 주의 주간 예산"),
-                                         fieldWithPath("dday").type(JsonFieldType.NUMBER)
+                                         fieldWithPath("daysBeforeEnd").type(JsonFieldType.NUMBER)
                                                  .description("요청 시간이 포함된 주의 종료까지의 D-Day")
                                  )
                         ));
@@ -118,7 +124,7 @@ class WeeklyBudgetDocumentationTest extends MockMvcTest {
 
         mockingTokenInterceptor();
         mockingMemberArgumentResolver();
-        given(weeklyBudgetService.findCurrentBudgetLeftByMemberIdAndDate(any(), any())).willReturn(
+        given(weeklyBudgetQueryService.findCurrentWeeklyBudgetLeftByMemberId(any())).willReturn(
                 new WeeklyBudgetLeftResponse(true, 10000L)
         );
 
