@@ -1,7 +1,6 @@
 package com.poorlex.poorlex.user.member.service;
 
 import com.poorlex.poorlex.battle.service.dto.response.BattleSuccessCountResponse;
-import com.poorlex.poorlex.consumption.expenditure.service.dto.response.MyPageExpenditureResponse;
 import com.poorlex.poorlex.exception.ApiException;
 import com.poorlex.poorlex.exception.ExceptionTag;
 import com.poorlex.poorlex.friend.service.dto.response.FriendResponse;
@@ -10,6 +9,7 @@ import com.poorlex.poorlex.user.member.domain.MemberIdAndNicknameDto;
 import com.poorlex.poorlex.user.member.domain.MemberLevel;
 import com.poorlex.poorlex.user.member.domain.MemberRepository;
 import com.poorlex.poorlex.user.member.service.dto.ExpenditureDto;
+import com.poorlex.poorlex.user.member.service.dto.response.MyPageExpenditureResponse;
 import com.poorlex.poorlex.user.member.service.dto.response.MyPageResponse;
 import com.poorlex.poorlex.user.member.service.provider.BattleSuccessCountProvider;
 import com.poorlex.poorlex.user.member.service.provider.ExpenditureProvider;

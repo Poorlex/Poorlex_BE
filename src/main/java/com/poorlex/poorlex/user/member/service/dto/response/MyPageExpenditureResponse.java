@@ -1,4 +1,4 @@
-package com.poorlex.poorlex.consumption.expenditure.service.dto.response;
+package com.poorlex.poorlex.user.member.service.dto.response;
 
 import com.poorlex.poorlex.user.member.service.dto.ExpenditureDto;
 import java.time.LocalDate;
