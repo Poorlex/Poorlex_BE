@@ -1,15 +1,15 @@
 package com.poorlex.poorlex.consumption.expenditure.service;
 
-import com.poorlex.poorlex.battle.domain.Battle;
-import com.poorlex.poorlex.battle.domain.BattleRepository;
 import com.poorlex.poorlex.consumption.expenditure.domain.Expenditure;
 import com.poorlex.poorlex.consumption.expenditure.domain.ExpenditureRepository;
 import com.poorlex.poorlex.consumption.expenditure.domain.TotalExpenditureAndMemberIdDto;
 import com.poorlex.poorlex.consumption.expenditure.domain.WeeklyExpenditureDuration;
+import com.poorlex.poorlex.consumption.expenditure.service.dto.BattleDurationDto;
 import com.poorlex.poorlex.consumption.expenditure.service.dto.RankAndTotalExpenditureDto;
 import com.poorlex.poorlex.consumption.expenditure.service.dto.response.BattleExpenditureResponse;
 import com.poorlex.poorlex.consumption.expenditure.service.dto.response.ExpenditureResponse;
 import com.poorlex.poorlex.consumption.expenditure.service.dto.response.MemberWeeklyTotalExpenditureResponse;
+import com.poorlex.poorlex.consumption.expenditure.service.provider.BattleDurationProvider;
 import com.poorlex.poorlex.exception.ApiException;
 import com.poorlex.poorlex.exception.ExceptionTag;
 import java.time.DayOfWeek;
@@ -26,15 +26,14 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class ExpenditureQueryService {
 
-    private final BattleRepository battleRepository;
+    private final BattleDurationProvider battleProvider;
     private final ExpenditureRepository expenditureRepository;
 
-    public ExpenditureQueryService(final BattleRepository battleRepository,
+    public ExpenditureQueryService(final BattleDurationProvider battleProvider,
                                    final ExpenditureRepository expenditureRepository) {
-        this.battleRepository = battleRepository;
+        this.battleProvider = battleProvider;
         this.expenditureRepository = expenditureRepository;
     }
-
 
     public MemberWeeklyTotalExpenditureResponse findMemberCurrentWeeklyTotalExpenditure(final Long memberId) {
         return findMemberWeeklyTotalExpenditure(memberId, LocalDate.now());
@@ -118,20 +117,21 @@ public class ExpenditureQueryService {
     }
 
     public List<BattleExpenditureResponse> findMemberBattleExpenditures(final Long battleId, final Long memberId) {
-        final Battle battle = battleRepository.findById(battleId)
-                .orElseThrow(() -> {
-                    final String errorMessage = String.format("Id에 해당하는 배틀이 없습니다. ( 배틀 Id : %d )", battleId);
-                    return new ApiException(ExceptionTag.BATTLE_FIND, errorMessage);
-                });
+        try {
+            final BattleDurationDto battleDurationDto = battleProvider.getDurationById(battleId);
 
-        final List<Expenditure> expenditures = expenditureRepository.findExpendituresByMemberIdAndDateBetween(
-                memberId,
-                LocalDate.from(battle.getDuration().getStart()),
-                LocalDate.from(battle.getDuration().getEnd())
-        );
+            final List<Expenditure> expenditures = expenditureRepository.findExpendituresByMemberIdAndDateBetween(
+                    memberId,
+                    LocalDate.from(battleDurationDto.getStartDate()),
+                    LocalDate.from(battleDurationDto.getEndDate())
+            );
 
-        return expenditures.stream()
-                .map(expenditure -> BattleExpenditureResponse.from(expenditure, true))
-                .toList();
+            return expenditures.stream()
+                    .map(expenditure -> BattleExpenditureResponse.from(expenditure, true))
+                    .toList();
+        } catch (Exception e) {
+            final String errorMessage = String.format("Id에 해당하는 배틀의 기간을 찾는데 실패하였습니다. ( 배틀 Id : %d )", battleId);
+            throw new ApiException(ExceptionTag.BATTLE_FIND, errorMessage);
+        }
     }
 }

@@ -11,6 +11,7 @@ import com.poorlex.poorlex.consumption.expenditure.fixture.ExpenditureFixture;
 import com.poorlex.poorlex.consumption.expenditure.service.dto.response.BattleExpenditureResponse;
 import com.poorlex.poorlex.consumption.expenditure.service.dto.response.ExpenditureResponse;
 import com.poorlex.poorlex.consumption.expenditure.service.dto.response.MemberWeeklyTotalExpenditureResponse;
+import com.poorlex.poorlex.consumption.expenditure.service.provider.BattleDurationProvider;
 import com.poorlex.poorlex.consumption.weeklybudget.domain.WeeklyBudgetDuration;
 import com.poorlex.poorlex.participate.domain.BattleParticipant;
 import com.poorlex.poorlex.participate.domain.BattleParticipantRepository;
@@ -43,13 +44,16 @@ class ExpenditureQueryServiceTest extends IntegrationTest implements ReplaceUnde
     private BattleRepository battleRepository;
 
     @Autowired
+    private BattleDurationProvider battleDurationProvider;
+
+    @Autowired
     private BattleParticipantRepository battleParticipantRepository;
 
     private ExpenditureQueryService expenditureQueryService;
 
     @BeforeEach
     void setUp() {
-        this.expenditureQueryService = new ExpenditureQueryService(battleRepository, expenditureRepository);
+        this.expenditureQueryService = new ExpenditureQueryService(battleDurationProvider, expenditureRepository);
     }
 
     @Test
