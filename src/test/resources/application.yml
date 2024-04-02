@@ -1,19 +1,22 @@
 spring:
+  # 3306 포트 mysql 서버를 통한 테스트시 아래 두줄 주석 해제
+  #  profiles:
+  #    active: mysql-test
+
+  config:
+    import: classpath:application-info.yml
+
   datasource:
     driver-class-name: org.h2.Driver
     url: jdbc:h2:mem:poorlex-test
 
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: validate
     properties:
       hibernate:
         show_sql: true
         format_sql: true
-
-  sql:
-    init:
-      mode: never
 
   security:
     oauth2:
@@ -29,46 +32,14 @@ spring:
     job:
       enabled: false
 
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath*:sql/schema.sql
+
 logging:
   level:
     root: INFO
     org.hibernate.orm.jdbc.bind: trace
     org.springframework.web: INFO
     org.springframework.security: DEBUG
-
-
-# JWT-TOKEN
-jwt:
-  token:
-    secret-key: testtokensecretkeytesttokensecretkeytesttokensecretkey
-    access-expire-length: ${JWT_ACCESS_EXPIRE:3600000}
-
-schedules:
-  battle-start:
-    cron: "* * */5 * * *"
-  save-battle-success-history:
-    cron: "* * */5 * * *"
-  battle-end:
-    cron: "* * */5 * * *"
-
-apple:
-  client-id: client_id
-  key-id: key_id
-  team-id: team_id
-  audience: https://appleid.apple.com
-  private-key: p8 file
-
-aws:
-  s3:
-    accesskey: accesskey
-    secretKey: secretKey
-    bucket: bucket
-    expenditure-directory: directory
-    battle-directory: battles
-
-url:
-  server: test
-
-validation:
-  start-time: false
-  end-time: false

@@ -1,5 +1,7 @@
 package com.poorlex.poorlex.alarm.memberalram.controller;
 
+import com.poorlex.poorlex.alarm.alarmallowance.domain.AlarmAllowance;
+import com.poorlex.poorlex.alarm.alarmallowance.domain.AlarmAllowanceRepository;
 import com.poorlex.poorlex.alarm.memberalram.domain.MemberAlarm;
 import com.poorlex.poorlex.alarm.memberalram.domain.MemberAlarmRepository;
 import com.poorlex.poorlex.alarm.memberalram.domain.MemberAlarmType;
@@ -7,15 +9,15 @@ import com.poorlex.poorlex.battle.domain.Battle;
 import com.poorlex.poorlex.battle.domain.BattleRepository;
 import com.poorlex.poorlex.battle.domain.BattleStatus;
 import com.poorlex.poorlex.battle.fixture.BattleFixture;
-import com.poorlex.poorlex.member.domain.Member;
-import com.poorlex.poorlex.member.domain.MemberNickname;
-import com.poorlex.poorlex.member.domain.MemberRepository;
-import com.poorlex.poorlex.member.domain.Oauth2RegistrationId;
 import com.poorlex.poorlex.participate.domain.BattleParticipant;
 import com.poorlex.poorlex.participate.domain.BattleParticipantRepository;
 import com.poorlex.poorlex.support.IntegrationTest;
 import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
 import com.poorlex.poorlex.token.JwtTokenProvider;
+import com.poorlex.poorlex.user.member.domain.Member;
+import com.poorlex.poorlex.user.member.domain.MemberNickname;
+import com.poorlex.poorlex.user.member.domain.MemberRepository;
+import com.poorlex.poorlex.user.member.domain.Oauth2RegistrationId;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -34,6 +36,9 @@ class MemberAlarmControllerTest extends IntegrationTest implements ReplaceUnderS
     private BattleParticipantRepository battleParticipantRepository;
 
     @Autowired
+    private AlarmAllowanceRepository alarmAllowanceRepository;
+
+    @Autowired
     private MemberAlarmRepository memberAlarmRepository;
 
     @Autowired
@@ -48,6 +53,7 @@ class MemberAlarmControllerTest extends IntegrationTest implements ReplaceUnderS
         final Member me = createMemberWithOauthId("oauthId1");
         final Member other = createMemberWithOauthId("oauthId2");
         final Battle battle = createBattle();
+        createMemberAlarmAllowance(me.getId());
         final BattleParticipant battleParticipant = join(battle, other);
         final MemberAlarm memberAlarm = memberAlarmRepository.save(
                 MemberAlarm.withoutId(
@@ -83,5 +89,9 @@ class MemberAlarmControllerTest extends IntegrationTest implements ReplaceUnderS
 
     private BattleParticipant join(final Battle battle, final Member member) {
         return battleParticipantRepository.save(BattleParticipant.normalPlayer(battle.getId(), member.getId()));
+    }
+
+    private void createMemberAlarmAllowance(final Long memberId) {
+        alarmAllowanceRepository.save(AlarmAllowance.withoutIdWithAllAllowed(memberId));
     }
 }

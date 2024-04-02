@@ -2,7 +2,7 @@ package com.poorlex.poorlex.alarm.alarmallowance.service;
 
 import com.poorlex.poorlex.alarm.alarmallowance.domain.AlarmAllowance;
 import com.poorlex.poorlex.alarm.alarmallowance.domain.AlarmAllowanceRepository;
-import com.poorlex.poorlex.member.service.event.MemberRegisteredEvent;
+import com.poorlex.poorlex.user.member.service.event.MemberRegisteredEvent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -14,6 +14,7 @@ import org.springframework.transaction.event.TransactionalEventListener;
 @Transactional(propagation = Propagation.REQUIRED)
 @RequiredArgsConstructor
 public class AlarmAllowanceEventHandler {
+
     private final AlarmAllowanceRepository alarmAllowanceRepository;
 
     @TransactionalEventListener(value = MemberRegisteredEvent.class, phase = TransactionPhase.BEFORE_COMMIT)

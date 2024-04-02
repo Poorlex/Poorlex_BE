@@ -8,8 +8,8 @@ import com.poorlex.poorlex.battle.domain.BattleRepository;
 import com.poorlex.poorlex.battle.domain.BattleStatus;
 import com.poorlex.poorlex.battle.domain.BattleWithMemberExpenditure;
 import com.poorlex.poorlex.battlenotification.service.event.BattleNotificationChangedEvent;
-import com.poorlex.poorlex.expenditure.service.event.ExpenditureCreatedEvent;
-import com.poorlex.poorlex.expenditure.service.event.ZeroExpenditureCreatedEvent;
+import com.poorlex.poorlex.consumption.expenditure.service.event.ExpenditureCreatedEvent;
+import com.poorlex.poorlex.consumption.expenditure.service.event.ZeroExpenditureCreatedEvent;
 import com.poorlex.poorlex.voting.vote.service.event.VoteCreatedEvent;
 import com.poorlex.poorlex.voting.votingpaper.service.event.VotingPaperCreatedEvent;
 import java.util.List;
@@ -31,9 +31,9 @@ public class BattleAlarmEventHandler {
     @TransactionalEventListener(value = BattleNotificationChangedEvent.class, phase = TransactionPhase.BEFORE_COMMIT)
     public void notificationChangedAlarm(final BattleNotificationChangedEvent event) {
         final BattleAlarm battleAlarm = BattleAlarm.withoutId(
-            event.getBattlId(),
-            event.getMemberId(),
-            BattleAlarmType.BATTLE_NOTIFICATION_CHANGED
+                event.getBattlId(),
+                event.getMemberId(),
+                BattleAlarmType.BATTLE_NOTIFICATION_CHANGED
         );
 
         battleAlarmRepository.save(battleAlarm);
@@ -44,7 +44,7 @@ public class BattleAlarmEventHandler {
         final Long memberId = event.getMemberId();
 
         final List<BattleWithMemberExpenditure> battleInfos =
-            battleRepository.findMemberBattlesByMemberIdAndStatusWithExpenditure(memberId, BattleStatus.PROGRESS);
+                battleRepository.findMemberBattlesByMemberIdAndStatusWithExpenditure(memberId, BattleStatus.PROGRESS);
 
         for (final BattleWithMemberExpenditure battleInfo : battleInfos) {
             final Battle battle = battleInfo.getBattle();
@@ -57,7 +57,7 @@ public class BattleAlarmEventHandler {
 
     private void createExpenditureCreatedAlarm(final Long battleId, final Long memberId) {
         battleAlarmRepository.save(
-            BattleAlarm.withoutId(battleId, memberId, BattleAlarmType.EXPENDITURE_CREATED)
+                BattleAlarm.withoutId(battleId, memberId, BattleAlarmType.EXPENDITURE_CREATED)
         );
     }
 
@@ -72,10 +72,10 @@ public class BattleAlarmEventHandler {
     @TransactionalEventListener(value = ZeroExpenditureCreatedEvent.class, phase = TransactionPhase.BEFORE_COMMIT)
     public void zeroExpenditureCreateEvent(final ZeroExpenditureCreatedEvent event) {
         final List<BattleWithMemberExpenditure> battleInfos =
-            battleRepository.findMemberBattlesByMemberIdAndStatusWithExpenditure(
-                event.getMemberId(),
-                BattleStatus.PROGRESS
-            );
+                battleRepository.findMemberBattlesByMemberIdAndStatusWithExpenditure(
+                        event.getMemberId(),
+                        BattleStatus.PROGRESS
+                );
 
         for (BattleWithMemberExpenditure battleInfo : battleInfos) {
             createZeroExpenditureCreatedAlarm(battleInfo.getBattle().getId(), event.getMemberId());
@@ -84,21 +84,21 @@ public class BattleAlarmEventHandler {
 
     private void createZeroExpenditureCreatedAlarm(final Long battleId, final Long memberId) {
         battleAlarmRepository.save(
-            BattleAlarm.withoutId(battleId, memberId, BattleAlarmType.ZERO_EXPENDITURE)
+                BattleAlarm.withoutId(battleId, memberId, BattleAlarmType.ZERO_EXPENDITURE)
         );
     }
 
     @TransactionalEventListener(value = VoteCreatedEvent.class, phase = TransactionPhase.BEFORE_COMMIT)
     public void voteCreatedEvent(final VoteCreatedEvent event) {
         battleAlarmRepository.save(
-            BattleAlarm.withoutId(event.getBattleId(), event.getMemberId(), BattleAlarmType.VOTE_CREATED)
+                BattleAlarm.withoutId(event.getBattleId(), event.getMemberId(), BattleAlarmType.VOTE_CREATED)
         );
     }
 
     @TransactionalEventListener(value = VotingPaperCreatedEvent.class, phase = TransactionPhase.BEFORE_COMMIT)
     public void votingPaperCreatedEvent(final VotingPaperCreatedEvent event) {
         battleAlarmRepository.save(
-            BattleAlarm.withoutId(event.getBattleId(), event.getMemberId(), BattleAlarmType.VOTING_PAPER_CREATED)
+                BattleAlarm.withoutId(event.getBattleId(), event.getMemberId(), BattleAlarmType.VOTING_PAPER_CREATED)
         );
     }
 }

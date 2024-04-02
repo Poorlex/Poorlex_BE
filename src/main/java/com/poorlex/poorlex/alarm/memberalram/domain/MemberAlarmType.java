@@ -12,18 +12,18 @@ public enum MemberAlarmType {
     BATTLE_INVITATION_DENIED,
     BATTLE_INVITATION_ACCEPT,
     BATTLE_KICKED_OUT;
-    private static final List<MemberAlarmType> FRIEND_ALARM_TYPES = List.of(
-        FRIEND_INVITATION_NOT_ACCEPTED,
-        FRIEND_INVITATION_ACCEPTED,
-        FRIEND_INVITATION_DENIED,
-        FRIEND_ACCEPTED
+    public static final List<MemberAlarmType> FRIEND_ALARM_TYPES = List.of(
+            FRIEND_INVITATION_NOT_ACCEPTED,
+            FRIEND_INVITATION_ACCEPTED,
+            FRIEND_INVITATION_DENIED,
+            FRIEND_ACCEPTED
     );
 
-    private static final List<MemberAlarmType> BATTLE_INVITE_ALARM_TYPES = List.of(
-        BATTLE_INVITATION_NOT_ACCEPTED,
-        BATTLE_INVITATION_ACCEPTED,
-        BATTLE_INVITATION_DENIED,
-        BATTLE_INVITATION_ACCEPT
+    public static final List<MemberAlarmType> BATTLE_INVITE_ALARM_TYPES = List.of(
+            BATTLE_INVITATION_NOT_ACCEPTED,
+            BATTLE_INVITATION_ACCEPTED,
+            BATTLE_INVITATION_DENIED,
+            BATTLE_INVITATION_ACCEPT
     );
 
     public static boolean isFriendTypeAlarm(final MemberAlarmType memberAlarmType) {

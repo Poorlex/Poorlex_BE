@@ -5,12 +5,12 @@ import com.poorlex.poorlex.friend.domain.Friend;
 import com.poorlex.poorlex.friend.domain.FriendRepository;
 import com.poorlex.poorlex.friend.service.dto.request.FriendCreateRequest;
 import com.poorlex.poorlex.friend.service.dto.response.FriendResponse;
-import com.poorlex.poorlex.member.domain.Member;
-import com.poorlex.poorlex.member.domain.MemberNickname;
-import com.poorlex.poorlex.member.domain.MemberRepository;
-import com.poorlex.poorlex.member.domain.Oauth2RegistrationId;
 import com.poorlex.poorlex.support.IntegrationTest;
 import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
+import com.poorlex.poorlex.user.member.domain.Member;
+import com.poorlex.poorlex.user.member.domain.MemberNickname;
+import com.poorlex.poorlex.user.member.domain.MemberRepository;
+import com.poorlex.poorlex.user.member.domain.Oauth2RegistrationId;
 import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -85,16 +85,18 @@ class FriendServiceTest extends IntegrationTest implements ReplaceUnderScoreTest
 
         //then
         final List<FriendResponse> expected = List.of(
-                new FriendResponse(1, friend1.getNickname(), 0),
-                new FriendResponse(1, friend2.getNickname(), 0),
-                new FriendResponse(1, friend3.getNickname(), 0)
+                new FriendResponse(1L, 1, friend1.getNickname(), 0L),
+                new FriendResponse(2L, 1, friend2.getNickname(), 0L),
+                new FriendResponse(3L, 1, friend3.getNickname(), 0L)
         );
 
         assertSoftly(
                 softly -> {
                     softly.assertThat(responses).hasSize(3);
                     softly.assertThat(responses)
-                            .usingRecursiveFieldByFieldElementComparatorOnFields()
+                            .usingRecursiveComparison()
+                            .ignoringFields("id")
+//                            .usingRecursiveFieldByFieldElementComparatorOnFields()
                             .isEqualTo(expected);
                 }
         );

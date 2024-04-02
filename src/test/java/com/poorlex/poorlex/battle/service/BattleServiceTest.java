@@ -9,19 +9,18 @@ import com.poorlex.poorlex.battle.domain.BattleType;
 import com.poorlex.poorlex.battle.fixture.BattleFixture;
 import com.poorlex.poorlex.battle.service.dto.response.MemberCompleteBattleResponse;
 import com.poorlex.poorlex.battle.service.dto.response.MemberProgressBattleResponse;
-import com.poorlex.poorlex.config.aws.AWSS3Service;
-import com.poorlex.poorlex.expenditure.domain.ExpenditureRepository;
-import com.poorlex.poorlex.expenditure.fixture.ExpenditureFixture;
-import com.poorlex.poorlex.member.domain.Member;
-import com.poorlex.poorlex.member.domain.MemberNickname;
-import com.poorlex.poorlex.member.domain.MemberRepository;
-import com.poorlex.poorlex.member.domain.Oauth2RegistrationId;
+import com.poorlex.poorlex.consumption.expenditure.domain.ExpenditureRepository;
+import com.poorlex.poorlex.consumption.expenditure.fixture.ExpenditureFixture;
 import com.poorlex.poorlex.participate.domain.BattleParticipant;
 import com.poorlex.poorlex.participate.domain.BattleParticipantRepository;
 import com.poorlex.poorlex.participate.service.event.BattleParticipantAddedEvent;
 import com.poorlex.poorlex.participate.service.event.BattlesWithdrewEvent;
 import com.poorlex.poorlex.support.IntegrationTest;
 import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
+import com.poorlex.poorlex.user.member.domain.Member;
+import com.poorlex.poorlex.user.member.domain.MemberNickname;
+import com.poorlex.poorlex.user.member.domain.MemberRepository;
+import com.poorlex.poorlex.user.member.domain.Oauth2RegistrationId;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.time.LocalDate;
@@ -71,14 +70,14 @@ class BattleServiceTest extends IntegrationTest implements ReplaceUnderScoreTest
     private ExpenditureRepository expenditureRepository;
 
     @MockBean
-    private AWSS3Service awss3Service;
+    private BattleImageService imageService;
 
     @MockBean
     private BattleParticipantChangedEventHandler battleParticipantChangedEventHandler;
 
     @BeforeEach
     void setUp() {
-        given(awss3Service.uploadMultipartFile(any(), any())).willReturn(BattleFixture.simple().getImageUrl());
+        given(imageService.saveAndReturnPath(any(), any())).willReturn(BattleFixture.simple().getImageUrl());
         doNothing().when(battleParticipantChangedEventHandler).added(any(BattleParticipantAddedEvent.class));
         doNothing().when(battleParticipantChangedEventHandler).added(any(BattlesWithdrewEvent.class));
     }
@@ -116,8 +115,8 @@ class BattleServiceTest extends IntegrationTest implements ReplaceUnderScoreTest
             value = {"1000:1000:1", "1000:2000:1", "2000:1000:2"},
             delimiter = ':'
     )
-    void 멤버가_포함된_진행중인_배틀들의_정보를_조회한다(final int member1Expenditure,
-                                    final int member2Expenditure,
+    void 멤버가_포함된_진행중인_배틀들의_정보를_조회한다(final Long member1Expenditure,
+                                    final Long member2Expenditure,
                                     final int expectedRank) {
         //given
         final Member member1 = createMemberWithOauthId("oauthId1");
@@ -150,8 +149,8 @@ class BattleServiceTest extends IntegrationTest implements ReplaceUnderScoreTest
             value = {"1000:1000:1", "1000:2000:1", "2000:1000:2"},
             delimiter = ':'
     )
-    void 멤버가_포함되어있는_종료된_배틀들의_정보를_조회한다(final int member1Expenditure,
-                                      final int member2Expenditure,
+    void 멤버가_포함되어있는_종료된_배틀들의_정보를_조회한다(final Long member1Expenditure,
+                                      final Long member2Expenditure,
                                       final int expectedRank) {
         //given
         final Member member1 = createMemberWithOauthId("oauthId1");
@@ -204,7 +203,7 @@ class BattleServiceTest extends IntegrationTest implements ReplaceUnderScoreTest
         return battleRepository.save(battle);
     }
 
-    private void expend(final int amount, final Member member, final LocalDate date) {
+    private void expend(final Long amount, final Member member, final LocalDate date) {
         expenditureRepository.save(ExpenditureFixture.simpleWithMainImage(amount, member.getId(), date));
     }
 }

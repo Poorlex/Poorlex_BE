@@ -18,14 +18,14 @@ import com.poorlex.poorlex.battlealarmreaction.domain.AlarmReactionContent;
 import com.poorlex.poorlex.battlealarmreaction.domain.AlarmReactionRepository;
 import com.poorlex.poorlex.battlealarmreaction.service.AlarmReactionService;
 import com.poorlex.poorlex.battlealarmreaction.service.dto.response.AlarmReactionResponse;
-import com.poorlex.poorlex.member.domain.Member;
-import com.poorlex.poorlex.member.domain.MemberNickname;
-import com.poorlex.poorlex.member.domain.MemberRepository;
-import com.poorlex.poorlex.member.domain.Oauth2RegistrationId;
 import com.poorlex.poorlex.participate.domain.BattleParticipant;
 import com.poorlex.poorlex.participate.domain.BattleParticipantRepository;
 import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
 import com.poorlex.poorlex.support.db.UsingDataJpaTest;
+import com.poorlex.poorlex.user.member.domain.Member;
+import com.poorlex.poorlex.user.member.domain.MemberNickname;
+import com.poorlex.poorlex.user.member.domain.MemberRepository;
+import com.poorlex.poorlex.user.member.domain.Oauth2RegistrationId;
 import com.poorlex.poorlex.voting.vote.domain.Vote;
 import com.poorlex.poorlex.voting.vote.domain.VoteAmount;
 import com.poorlex.poorlex.voting.vote.domain.VoteDuration;
@@ -83,6 +83,7 @@ class BattleAlarmServiceTest extends UsingDataJpaTest implements ReplaceUnderSco
                 new VotingPaperService(voteRepository, votingPaperRepository, battleParticipantRepository),
                 new AlarmReactionService(alarmReactionRepository, battleAlarmRepository),
                 battleAlarmViewHistoryRepository);
+        initializeDataBase();
     }
 
     @Test

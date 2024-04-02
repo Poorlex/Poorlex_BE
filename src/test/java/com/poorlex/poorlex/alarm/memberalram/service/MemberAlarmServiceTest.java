@@ -1,5 +1,7 @@
 package com.poorlex.poorlex.alarm.memberalram.service;
 
+import com.poorlex.poorlex.alarm.alarmallowance.domain.AlarmAllowance;
+import com.poorlex.poorlex.alarm.alarmallowance.domain.AlarmAllowanceRepository;
 import com.poorlex.poorlex.alarm.memberalram.domain.MemberAlarm;
 import com.poorlex.poorlex.alarm.memberalram.domain.MemberAlarmRepository;
 import com.poorlex.poorlex.alarm.memberalram.domain.MemberAlarmType;
@@ -8,14 +10,14 @@ import com.poorlex.poorlex.battle.domain.Battle;
 import com.poorlex.poorlex.battle.domain.BattleRepository;
 import com.poorlex.poorlex.battle.domain.BattleStatus;
 import com.poorlex.poorlex.battle.fixture.BattleFixture;
-import com.poorlex.poorlex.member.domain.Member;
-import com.poorlex.poorlex.member.domain.MemberNickname;
-import com.poorlex.poorlex.member.domain.MemberRepository;
-import com.poorlex.poorlex.member.domain.Oauth2RegistrationId;
 import com.poorlex.poorlex.participate.domain.BattleParticipant;
 import com.poorlex.poorlex.participate.domain.BattleParticipantRepository;
 import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
 import com.poorlex.poorlex.support.db.UsingDataJpaTest;
+import com.poorlex.poorlex.user.member.domain.Member;
+import com.poorlex.poorlex.user.member.domain.MemberNickname;
+import com.poorlex.poorlex.user.member.domain.MemberRepository;
+import com.poorlex.poorlex.user.member.domain.Oauth2RegistrationId;
 import java.time.LocalDateTime;
 import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -32,18 +34,24 @@ class MemberAlarmServiceTest extends UsingDataJpaTest implements ReplaceUnderSco
     private MemberRepository memberRepository;
 
     @Autowired
+    private AlarmAllowanceRepository alarmAllowanceRepository;
+
+    @Autowired
     private BattleRepository battleRepository;
 
     @Autowired
     private BattleParticipantRepository battleParticipantRepository;
+
     private MemberAlarmService memberAlarmService;
 
     @BeforeEach
     void setUp() {
         this.memberAlarmService = new MemberAlarmService(
                 memberAlarmRepository,
+                alarmAllowanceRepository,
                 new MemberAlarmResponseConverter(memberRepository, battleRepository, battleParticipantRepository)
         );
+        initializeDataBase();
     }
 
     @Test
@@ -53,6 +61,8 @@ class MemberAlarmServiceTest extends UsingDataJpaTest implements ReplaceUnderSco
         final Member me = createMemberWithOauthId("oauthId2");
         final Member other = createMemberWithOauthId("oauthId1");
         final BattleParticipant battleParticipant = join(battle, other);
+        createMemberAlarmAllowance(me.getId());
+
 
         final MemberAlarm battleInvitationAlarm = memberAlarmRepository.save(MemberAlarm.withoutId(
                 me.getId(),
@@ -93,5 +103,9 @@ class MemberAlarmServiceTest extends UsingDataJpaTest implements ReplaceUnderSco
 
     private BattleParticipant join(final Battle battle, final Member member) {
         return battleParticipantRepository.save(BattleParticipant.normalPlayer(battle.getId(), member.getId()));
+    }
+
+    private void createMemberAlarmAllowance(final Long memberId) {
+        alarmAllowanceRepository.save(AlarmAllowance.withoutIdWithAllAllowed(memberId));
     }
 }

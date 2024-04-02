@@ -1,6 +1,6 @@
 package com.poorlex.poorlex.security.handler;
 
-import com.poorlex.poorlex.member.domain.MemberRepository;
+import com.poorlex.poorlex.user.member.domain.MemberRepository;
 import com.poorlex.poorlex.security.service.UserProfile;
 import com.poorlex.poorlex.token.JwtTokenProvider;
 import jakarta.servlet.ServletException;
@@ -34,16 +34,16 @@ public class TokenOauth2AuthenticationSuccessHandlerFacade extends AbstractToken
 
     private AbstractTokenOauth2AuthenticationSuccessHandler findValidHandler(final String registrationId) {
         return handlers.stream()
-            .filter(handler -> handler.supports(registrationId))
-            .findAny()
-            .orElseThrow(() -> new IllegalArgumentException(
-                "지원하지 않는 Oauth2.0 Registration Id 입니다. ( id = " + registrationId + " )"));
+                .filter(handler -> handler.supports(registrationId))
+                .findAny()
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "지원하지 않는 Oauth2.0 Registration Id 입니다. ( id = " + registrationId + " )"));
     }
 
     @Override
     public boolean supports(final String registrationId) {
         return handlers.stream()
-            .anyMatch(handler -> handler.supports(registrationId));
+                .anyMatch(handler -> handler.supports(registrationId));
     }
 
     public void addHandlers(final AbstractTokenOauth2AuthenticationSuccessHandler handler) {

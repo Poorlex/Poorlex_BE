@@ -41,6 +41,7 @@ class VotingPaperServiceTest extends UsingDataJpaTest implements ReplaceUnderSco
                 votingPaperRepository,
                 battleParticipantRepository
         );
+        initializeDataBase();
     }
 
     @Test

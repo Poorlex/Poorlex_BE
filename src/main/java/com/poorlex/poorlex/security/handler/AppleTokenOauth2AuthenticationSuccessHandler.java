@@ -1,11 +1,11 @@
 package com.poorlex.poorlex.security.handler;
 
 import com.poorlex.poorlex.config.event.Events;
-import com.poorlex.poorlex.member.domain.Member;
-import com.poorlex.poorlex.member.domain.MemberNickname;
-import com.poorlex.poorlex.member.domain.MemberRepository;
-import com.poorlex.poorlex.member.domain.Oauth2RegistrationId;
-import com.poorlex.poorlex.member.service.event.MemberRegisteredEvent;
+import com.poorlex.poorlex.user.member.domain.Member;
+import com.poorlex.poorlex.user.member.domain.MemberNickname;
+import com.poorlex.poorlex.user.member.domain.MemberRepository;
+import com.poorlex.poorlex.user.member.domain.Oauth2RegistrationId;
+import com.poorlex.poorlex.user.member.service.event.MemberRegisteredEvent;
 import com.poorlex.poorlex.security.service.UserProfile;
 import com.poorlex.poorlex.token.JwtTokenProvider;
 import jakarta.servlet.http.HttpServletRequest;

@@ -10,10 +10,10 @@ import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 
-@Tag(name = "멤버 알림 관련 API")
+@Tag(name = "회원 알림 관련 API")
 public interface MemberAlarmControllerSwaggerInterface {
 
-    @Operation(summary = "맴버 알림 전체 조회", description = "액세스 토큰 필요")
+    @Operation(summary = "회원 알림 전체 조회", description = "액세스 토큰 필요")
     @GetMapping
     @ApiResponse(responseCode = "200")
     public ResponseEntity<List<MemberAlarmResponse>> findBattleAlarms(

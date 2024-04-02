@@ -11,4 +11,7 @@ public interface MemberAlarmRepository extends JpaRepository<MemberAlarm, Long> 
     Optional<MemberAlarm> findMemberAlarmByMemberIdAndTargetIdAndType(final Long memberId,
                                                                       final Long targetId,
                                                                       final MemberAlarmType memberAlarmType);
+
+    List<MemberAlarm> findAllByMemberIdAndTypeIn(final Long memberId,
+                                                 final List<MemberAlarmType> memberAlarmTypes);
 }

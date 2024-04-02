@@ -31,6 +31,7 @@ class VoteServiceTest extends UsingDataJpaTest implements ReplaceUnderScoreTest 
     @BeforeEach
     void setUp() {
         this.voteService = new VoteService(voteRepository, battleParticipantRepository);
+        initializeDataBase();
     }
 
     @Test

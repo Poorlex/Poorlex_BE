@@ -21,18 +21,17 @@ import com.poorlex.poorlex.battle.service.dto.response.MemberCompleteBattleRespo
 import com.poorlex.poorlex.battle.service.dto.response.MemberProgressBattleResponse;
 import com.poorlex.poorlex.battle.service.dto.response.ParticipantRankingResponse;
 import com.poorlex.poorlex.battle.service.event.BattleCreatedEvent;
-import com.poorlex.poorlex.config.aws.AWSS3Service;
 import com.poorlex.poorlex.config.event.Events;
+import com.poorlex.poorlex.consumption.expenditure.service.ExpenditureQueryService;
+import com.poorlex.poorlex.consumption.expenditure.service.dto.RankAndTotalExpenditureDto;
 import com.poorlex.poorlex.exception.ApiException;
 import com.poorlex.poorlex.exception.ExceptionTag;
-import com.poorlex.poorlex.expenditure.service.ExpenditureQueryService;
-import com.poorlex.poorlex.expenditure.service.dto.RankAndTotalExpenditureDto;
-import com.poorlex.poorlex.member.domain.MemberLevel;
-import com.poorlex.poorlex.member.service.MemberService;
 import com.poorlex.poorlex.participate.domain.BattleParticipant;
 import com.poorlex.poorlex.participate.domain.BattleParticipantRepository;
-import com.poorlex.poorlex.point.domain.Point;
-import com.poorlex.poorlex.point.service.MemberPointService;
+import com.poorlex.poorlex.user.member.domain.MemberLevel;
+import com.poorlex.poorlex.user.member.service.MemberQueryService;
+import com.poorlex.poorlex.user.point.domain.Point;
+import com.poorlex.poorlex.user.point.service.MemberPointQueryService;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Comparator;
@@ -52,10 +51,10 @@ public class BattleService {
     private final BattleRepository battleRepository;
     private final BattleParticipantRepository battleParticipantRepository;
     private final BattleAlarmService battleAlarmService;
-    private final MemberPointService memberPointService;
+    private final MemberPointQueryService memberPointService;
     private final ExpenditureQueryService expenditureQueryService;
-    private final MemberService memberService;
-    private final AWSS3Service awss3Service;
+    private final MemberQueryService memberQueryService;
+    private final BattleImageService imageService;
     private final String bucketDirectory;
     private final boolean activateStartTimeValidation;
     private final boolean activateEndTimeValidation;
@@ -63,10 +62,10 @@ public class BattleService {
     public BattleService(final BattleRepository battleRepository,
                          final BattleParticipantRepository battleParticipantRepository,
                          final BattleAlarmService battleAlarmService,
-                         final MemberPointService memberPointService,
+                         final MemberPointQueryService memberPointService,
                          final ExpenditureQueryService expenditureQueryService,
-                         final MemberService memberService,
-                         final AWSS3Service awss3Service,
+                         final MemberQueryService memberQueryService,
+                         final BattleImageService imageService,
                          @Value("${aws.s3.battle-directory}") final String bucketDirectory,
                          @Value("${validation.start-time}") final boolean activateStartTimeValidation,
                          @Value("${validation.start-time}") final boolean activateEndTimeValidation) {
@@ -75,8 +74,8 @@ public class BattleService {
         this.battleAlarmService = battleAlarmService;
         this.memberPointService = memberPointService;
         this.expenditureQueryService = expenditureQueryService;
-        this.memberService = memberService;
-        this.awss3Service = awss3Service;
+        this.memberQueryService = memberQueryService;
+        this.imageService = imageService;
         this.bucketDirectory = bucketDirectory;
         this.activateStartTimeValidation = activateStartTimeValidation;
         this.activateEndTimeValidation = activateEndTimeValidation;
@@ -110,7 +109,7 @@ public class BattleService {
         final BattleIntroduction introduction = new BattleIntroduction(request.getIntroduction());
         final BattleBudget budget = new BattleBudget(request.getBudget());
         final BattleParticipantSize participantSize = new BattleParticipantSize(request.getMaxParticipantSize());
-        final String imageUrl = awss3Service.uploadMultipartFile(image, bucketDirectory);
+        final String imageUrl = imageService.saveAndReturnPath(image, bucketDirectory);
         return Battle.withoutBattleId(name,
                                       introduction,
                                       new BattleImageUrl(imageUrl),
@@ -214,11 +213,7 @@ public class BattleService {
 
     @Transactional
     public void startBattle(final Long battleId, final LocalDateTime current) {
-        final Battle battle = battleRepository.findById(battleId)
-                .orElseThrow(() -> {
-                    final String errorMessage = String.format("ID에 해당하는 배틀이 존재하지 않습니다. ( ID : %d )", battleId);
-                    return new ApiException(ExceptionTag.BATTLE_FIND, errorMessage);
-                });
+        final Battle battle = findExistBattle(battleId);
         if (activateStartTimeValidation) {
             battle.start(current);
             return;
@@ -226,13 +221,17 @@ public class BattleService {
         battle.startWithoutValidate();
     }
 
-    @Transactional
-    public void endBattle(final Long battleId, final LocalDateTime current) {
-        final Battle battle = battleRepository.findById(battleId)
+    private Battle findExistBattle(final Long battleId) {
+        return battleRepository.findById(battleId)
                 .orElseThrow(() -> {
                     final String errorMessage = String.format("ID에 해당하는 배틀이 존재하지 않습니다. ( ID : %d )", battleId);
                     return new ApiException(ExceptionTag.BATTLE_FIND, errorMessage);
                 });
+    }
+
+    @Transactional
+    public void endBattle(final Long battleId, final LocalDateTime current) {
+        final Battle battle = findExistBattle(battleId);
         if (activateEndTimeValidation) {
             battle.end(current);
             return;
@@ -241,11 +240,7 @@ public class BattleService {
     }
 
     public BattleResponse getBattleInfo(final Long battleId, final BattleFindRequest request) {
-        final Battle battle = battleRepository.findById(battleId)
-                .orElseThrow(() -> {
-                    final String errorMessage = String.format("ID에 해당하는 배틀이 존재하지 않습니다. ( ID : %d )", battleId);
-                    return new ApiException(ExceptionTag.BATTLE_FIND, errorMessage);
-                });
+        final Battle battle = findExistBattle(battleId);
 
         final List<BattleParticipant> participants = battleParticipantRepository.findAllByBattleId(battleId);
         final List<Long> participantMemberIds = participants.stream()
@@ -265,7 +260,7 @@ public class BattleService {
     }
 
     private Map<Long, String> getParticipantsNickname(final List<Long> memberIds) {
-        return memberService.getMembersNickname(memberIds);
+        return memberQueryService.getMembersNickname(memberIds);
     }
 
     private Map<Long, Integer> getParticipantsTotalPoint(final List<Long> memberIds) {

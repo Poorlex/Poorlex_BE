@@ -10,6 +10,8 @@ schedules:
     cron: "15 * * * * *" # 매 분 15초 마다
   battle-end:
     cron: "30 * * * * *" # 매 분 30 초마다
+  expenditure-pay-point:
+    cron: "40 * * * * *" # 매 분 30 초마다
 
 spring:
   security:
@@ -48,13 +50,10 @@ aws:
     battle-directory: directory
 
 url:
-  server: localhost
+  server: localhost:8080
 
 validation:
   start-time: false
   end-time: false
-
-sentry:
-  dsn: sentry-dsn
 
 sentry-token: sentry-token

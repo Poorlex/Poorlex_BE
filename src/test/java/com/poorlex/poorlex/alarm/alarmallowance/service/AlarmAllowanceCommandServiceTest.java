@@ -29,6 +29,7 @@ class AlarmAllowanceCommandServiceTest extends UsingDataJpaTest implements Repla
     @BeforeEach
     void setUp() {
         alarmAllowanceCommandService = new AlarmAllowanceCommandService(alarmAllowanceRepository);
+        initializeDataBase();
     }
 
     @TestFactory

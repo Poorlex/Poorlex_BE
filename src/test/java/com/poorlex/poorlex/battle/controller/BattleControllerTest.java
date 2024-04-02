@@ -2,16 +2,12 @@ package com.poorlex.poorlex.battle.controller;
 
 import com.poorlex.poorlex.battle.domain.Battle;
 import com.poorlex.poorlex.battle.domain.BattleRepository;
+import com.poorlex.poorlex.battle.service.BattleImageService;
 import com.poorlex.poorlex.battle.service.BattleService;
 import com.poorlex.poorlex.battle.service.dto.request.BattleFindRequest;
 import com.poorlex.poorlex.battle.service.event.BattleCreatedEvent;
-import com.poorlex.poorlex.config.aws.AWSS3Service;
-import com.poorlex.poorlex.expenditure.domain.ExpenditureRepository;
-import com.poorlex.poorlex.expenditure.fixture.ExpenditureFixture;
-import com.poorlex.poorlex.member.domain.Member;
-import com.poorlex.poorlex.member.domain.MemberNickname;
-import com.poorlex.poorlex.member.domain.MemberRepository;
-import com.poorlex.poorlex.member.domain.Oauth2RegistrationId;
+import com.poorlex.poorlex.consumption.expenditure.domain.ExpenditureRepository;
+import com.poorlex.poorlex.consumption.expenditure.fixture.ExpenditureFixture;
 import com.poorlex.poorlex.participate.domain.BattleParticipant;
 import com.poorlex.poorlex.participate.domain.BattleParticipantRepository;
 import com.poorlex.poorlex.participate.service.BattleParticipantEventHandler;
@@ -19,6 +15,10 @@ import com.poorlex.poorlex.support.IntegrationTest;
 import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
 import com.poorlex.poorlex.support.TestMemberTokenGenerator;
 import com.poorlex.poorlex.token.JwtTokenProvider;
+import com.poorlex.poorlex.user.member.domain.Member;
+import com.poorlex.poorlex.user.member.domain.MemberNickname;
+import com.poorlex.poorlex.user.member.domain.MemberRepository;
+import com.poorlex.poorlex.user.member.domain.Oauth2RegistrationId;
 import java.io.FileInputStream;
 import java.time.LocalDate;
 import org.junit.jupiter.api.BeforeEach;
@@ -63,7 +63,7 @@ class BattleControllerTest extends IntegrationTest implements ReplaceUnderScoreT
     private BattleService battleService;
 
     @MockBean
-    private AWSS3Service awss3Service;
+    private BattleImageService imageService;
 
     @MockBean
     private BattleParticipantEventHandler battleParticipantEventHandler;
@@ -74,7 +74,7 @@ class BattleControllerTest extends IntegrationTest implements ReplaceUnderScoreT
     void setUp() {
         this.testMemberTokenGenerator = new TestMemberTokenGenerator(memberRepository, jwtTokenProvider);
         doNothing().when(battleParticipantEventHandler).handle(any(BattleCreatedEvent.class));
-        given(awss3Service.uploadMultipartFile(any(), any())).willReturn("imageUrl");
+        given(imageService.saveAndReturnPath(any(), any())).willReturn("imageUrl");
     }
 
     @Test
@@ -133,7 +133,7 @@ class BattleControllerTest extends IntegrationTest implements ReplaceUnderScoreT
 
         join(member, battle);
         startBattle(battle);
-        expend(1000, member, LocalDate.from(battle.getDuration().getStart()));
+        expend(1000L, member, LocalDate.from(battle.getDuration().getStart()));
 
         final String accessToken = testMemberTokenGenerator.createAccessToken(member);
 
@@ -166,7 +166,7 @@ class BattleControllerTest extends IntegrationTest implements ReplaceUnderScoreT
 
         join(member, battle);
         startBattle(battle);
-        expend(1000, member, LocalDate.from(battle.getDuration().getStart()));
+        expend(1000L, member, LocalDate.from(battle.getDuration().getStart()));
         endBattle(battle);
 
         final String accessToken = testMemberTokenGenerator.createAccessToken(member);
@@ -199,7 +199,7 @@ class BattleControllerTest extends IntegrationTest implements ReplaceUnderScoreT
 
         join(member, battle);
         startBattle(battle);
-        expend(1000, member, LocalDate.from(battle.getDuration().getStart()));
+        expend(1000L, member, LocalDate.from(battle.getDuration().getStart()));
         endBattle(battle);
 
         final BattleFindRequest request = new BattleFindRequest(LocalDate.now());
@@ -470,7 +470,7 @@ class BattleControllerTest extends IntegrationTest implements ReplaceUnderScoreT
         battleService.endBattle(battle.getId(), battle.getDuration().getEnd());
     }
 
-    private void expend(final int amount, final Member member, final LocalDate date) {
+    private void expend(final Long amount, final Member member, final LocalDate date) {
         expenditureRepository.save(ExpenditureFixture.simpleWithMainImage(amount, member.getId(), date));
     }
 }
