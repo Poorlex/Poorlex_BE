@@ -40,4 +40,6 @@ public interface ExpenditureRepository extends JpaRepository<Expenditure, Long> 
     List<Expenditure> findAllByMemberIdOrderByCreatedAtDesc(final Long memberId, final Pageable pageable);
 
     Long countAllByMemberId(final Long memberId);
+
+    List<Expenditure> findAllByPointPaid(final boolean pointPaid);
 }

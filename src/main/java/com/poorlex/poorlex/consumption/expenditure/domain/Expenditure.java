@@ -33,6 +33,7 @@ public class Expenditure extends BaseCreatedAtEntity {
     @Column(nullable = false)
     private String mainImageUrl;
     private String subImageUrl;
+    private boolean pointPaid;
 
     Expenditure(final Long id,
                 final Long memberId,
@@ -40,7 +41,8 @@ public class Expenditure extends BaseCreatedAtEntity {
                 final LocalDate date,
                 final ExpenditureDescription description,
                 final String mainImageUrl,
-                final String subImageUrl) {
+                final String subImageUrl,
+                final boolean pointPaid) {
         this.id = id;
         this.memberId = memberId;
         this.amount = amount;
@@ -48,6 +50,7 @@ public class Expenditure extends BaseCreatedAtEntity {
         this.description = description;
         this.mainImageUrl = mainImageUrl;
         this.subImageUrl = subImageUrl;
+        this.pointPaid = pointPaid;
     }
 
     public static Expenditure withoutId(final ExpenditureAmount amount,
@@ -56,7 +59,7 @@ public class Expenditure extends BaseCreatedAtEntity {
                                         final ExpenditureDescription description,
                                         final String mainImageUrl,
                                         final String subImageUrl) {
-        return new Expenditure(null, memberId, amount, date, description, mainImageUrl, subImageUrl);
+        return new Expenditure(null, memberId, amount, date, description, mainImageUrl, subImageUrl, false);
     }
 
     public void updateMainImage(final String mainImageUrl) {
@@ -84,6 +87,14 @@ public class Expenditure extends BaseCreatedAtEntity {
 
     public boolean owned(final Long memberId) {
         return this.memberId.equals(memberId);
+    }
+
+    public void payPoint() {
+        this.pointPaid = true;
+    }
+
+    public boolean isZeroExpenditure() {
+        return amount.getValue().equals(0L);
     }
 
     public int getImageCounts() {

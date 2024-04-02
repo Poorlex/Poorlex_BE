@@ -71,6 +71,7 @@ create table if not exists expenditure
     sub_image_url  text,
     date           date   not null,
     created_at     datetime(6),
+    point_paid     boolean,
     primary key (id)
 ) engine = InnoDB;
 
