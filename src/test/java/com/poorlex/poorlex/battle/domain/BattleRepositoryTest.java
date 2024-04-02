@@ -17,6 +17,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -43,6 +44,11 @@ class BattleRepositoryTest extends UsingDataJpaTest implements ReplaceUnderScore
 
     @Autowired
     private ExpenditureRepository expenditureRepository;
+
+    @BeforeEach
+    void setUp() {
+        initializeDataBase();
+    }
 
     @Test
     void 사용자_참여중인_배틀목록을_조회한다_2개_이상일_때() {

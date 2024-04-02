@@ -35,6 +35,7 @@ class WeeklyBudgetCommandServiceTest extends UsingDataJpaTest implements Replace
         memberExistenceProvider = new MemberExistenceProviderImpl(memberRepository);
         this.weeklyBudgetCommandService = new WeeklyBudgetCommandService(weeklyBudgetRepository,
                                                                          memberExistenceProvider);
+        initializeDataBase();
     }
 
     @Test

@@ -1,11 +1,11 @@
 package com.poorlex.poorlex.voting.vote.domain;
 
+import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
+import com.poorlex.poorlex.support.db.UsingDataJpaTest;
 import com.poorlex.poorlex.user.member.domain.Member;
 import com.poorlex.poorlex.user.member.domain.MemberNickname;
 import com.poorlex.poorlex.user.member.domain.MemberRepository;
 import com.poorlex.poorlex.user.member.domain.Oauth2RegistrationId;
-import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
-import com.poorlex.poorlex.support.db.UsingDataJpaTest;
 import com.poorlex.poorlex.voting.votingpaper.domain.VotingPaper;
 import com.poorlex.poorlex.voting.votingpaper.domain.VotingPaperRepository;
 import com.poorlex.poorlex.voting.votingpaper.domain.VotingPaperType;
@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -24,6 +25,11 @@ class VoteRepositoryTest extends UsingDataJpaTest implements ReplaceUnderScoreTe
     private VoteRepository voteRepository;
     @Autowired
     private VotingPaperRepository votingPaperRepository;
+
+    @BeforeEach
+    void setUp() {
+        initializeDataBase();
+    }
 
     @Test
     void find() {

@@ -27,6 +27,7 @@ class BattleAlarmReactionServiceTest extends UsingDataJpaTest implements Replace
     @BeforeEach
     void setUp() {
         this.alarmReactionService = new AlarmReactionService(alarmReactionRepository, battleAlarmRepository);
+        initializeDataBase();
     }
 
     @ParameterizedTest(name = "알림 타입이 {0} 인 경우")

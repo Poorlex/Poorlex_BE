@@ -55,6 +55,7 @@ class ExpenditureCommandServiceTest extends UsingDataJpaTest implements ReplaceU
         this.expenditureCommandService = new ExpenditureCommandService("bucketDirectory",
                                                                        expenditureRepository,
                                                                        imageService);
+        initializeDataBase();
     }
 
     @Test

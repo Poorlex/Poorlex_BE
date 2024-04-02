@@ -33,6 +33,7 @@ class MemberPointQueryServiceTest extends UsingDataJpaTest implements ReplaceUnd
     @BeforeEach
     void setUp() {
         this.memberPointQueryService = new MemberPointQueryService(memberPointRepository);
+        initializeDataBase();
     }
 
     @Test

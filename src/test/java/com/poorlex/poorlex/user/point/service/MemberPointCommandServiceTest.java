@@ -27,6 +27,7 @@ class MemberPointCommandServiceTest extends UsingDataJpaTest implements ReplaceU
     @BeforeEach
     void setUp() {
         this.memberPointCommandService = new MemberPointCommandService(memberPointRepository, memberRepository);
+        initializeDataBase();
     }
 
     @Test

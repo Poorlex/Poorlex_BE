@@ -43,6 +43,7 @@ class GoalServiceTest extends UsingDataJpaTest implements ReplaceUnderScoreTest 
     @BeforeEach
     void setUp() {
         this.goalService = new GoalService(goalRepository, memberRepository);
+        initializeDataBase();
     }
 
     @Test

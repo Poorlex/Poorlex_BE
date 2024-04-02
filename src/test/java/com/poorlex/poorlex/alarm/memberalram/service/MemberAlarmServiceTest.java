@@ -51,6 +51,7 @@ class MemberAlarmServiceTest extends UsingDataJpaTest implements ReplaceUnderSco
                 alarmAllowanceRepository,
                 new MemberAlarmResponseConverter(memberRepository, battleRepository, battleParticipantRepository)
         );
+        initializeDataBase();
     }
 
     @Test

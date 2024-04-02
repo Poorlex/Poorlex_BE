@@ -12,14 +12,14 @@ import com.poorlex.poorlex.battleinvititation.service.event.BattleInvitedEvent;
 import com.poorlex.poorlex.friend.service.event.FriendAcceptedEvent;
 import com.poorlex.poorlex.friend.service.event.FriendDeniedEvent;
 import com.poorlex.poorlex.friend.service.event.FriendInvitedEvent;
-import com.poorlex.poorlex.user.member.domain.Member;
-import com.poorlex.poorlex.user.member.domain.MemberNickname;
-import com.poorlex.poorlex.user.member.domain.MemberRepository;
-import com.poorlex.poorlex.user.member.domain.Oauth2RegistrationId;
 import com.poorlex.poorlex.participate.domain.BattleParticipant;
 import com.poorlex.poorlex.participate.domain.BattleParticipantRepository;
 import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
 import com.poorlex.poorlex.support.db.UsingDataJpaTest;
+import com.poorlex.poorlex.user.member.domain.Member;
+import com.poorlex.poorlex.user.member.domain.MemberNickname;
+import com.poorlex.poorlex.user.member.domain.MemberRepository;
+import com.poorlex.poorlex.user.member.domain.Oauth2RegistrationId;
 import java.util.List;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import org.junit.jupiter.api.BeforeEach;
@@ -45,6 +45,7 @@ class MemberAlarmEventHandlerTest extends UsingDataJpaTest implements ReplaceUnd
     @BeforeEach
     void setUp() {
         this.memberAlarmEventHandler = new MemberAlarmEventHandler(memberAlarmRepository);
+        initializeDataBase();
     }
 
     @Test

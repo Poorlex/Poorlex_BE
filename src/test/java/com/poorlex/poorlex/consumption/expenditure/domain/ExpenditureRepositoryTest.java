@@ -5,6 +5,7 @@ import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
 import com.poorlex.poorlex.support.db.UsingDataJpaTest;
 import java.time.LocalDate;
 import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -12,6 +13,11 @@ class ExpenditureRepositoryTest extends UsingDataJpaTest implements ReplaceUnder
 
     @Autowired
     private ExpenditureRepository expenditureRepository;
+
+    @BeforeEach
+    void setUp() {
+        initializeDataBase();
+    }
 
     @Test
     void 멤버의_기간내의_지출의_총합을_구한다() {

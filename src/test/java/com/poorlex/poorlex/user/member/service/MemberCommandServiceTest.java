@@ -26,6 +26,7 @@ class MemberCommandServiceTest extends UsingDataJpaTest implements ReplaceUnderS
     @BeforeEach
     void setUp() {
         this.memberService = new MemberCommandService(memberRepository);
+        initializeDataBase();
     }
 
     @Test

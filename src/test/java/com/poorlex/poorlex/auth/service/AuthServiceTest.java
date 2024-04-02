@@ -2,13 +2,13 @@ package com.poorlex.poorlex.auth.service;
 
 import com.poorlex.poorlex.auth.service.dto.request.LoginRequest;
 import com.poorlex.poorlex.auth.service.dto.response.LoginTokenResponse;
+import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
+import com.poorlex.poorlex.support.db.UsingDataJpaTest;
+import com.poorlex.poorlex.token.JwtTokenProvider;
 import com.poorlex.poorlex.user.member.domain.Member;
 import com.poorlex.poorlex.user.member.domain.MemberNickname;
 import com.poorlex.poorlex.user.member.domain.MemberRepository;
 import com.poorlex.poorlex.user.member.domain.Oauth2RegistrationId;
-import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
-import com.poorlex.poorlex.support.db.UsingDataJpaTest;
-import com.poorlex.poorlex.token.JwtTokenProvider;
 import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
@@ -30,6 +30,7 @@ class AuthServiceTest extends UsingDataJpaTest implements ReplaceUnderScoreTest 
     void setUp() {
         this.tokenProvider = new JwtTokenProvider(SECRET_KEY, ACCESS_EXPIRE_LENGTH);
         this.authService = new AuthService(memberRepository, tokenProvider);
+        initializeDataBase();
     }
 
     @Test

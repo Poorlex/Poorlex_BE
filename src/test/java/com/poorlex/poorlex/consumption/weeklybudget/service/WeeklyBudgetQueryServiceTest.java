@@ -35,6 +35,7 @@ class WeeklyBudgetQueryServiceTest extends UsingDataJpaTest implements ReplaceUn
     void setUp() {
         this.weeklyBudgetQueryService =
                 new WeeklyBudgetQueryService(weeklyBudgetRepository, memberId -> true, totalExpenditureProvider);
+        initializeDataBase();
     }
 
     @Test

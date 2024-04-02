@@ -4,6 +4,7 @@ import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
 import com.poorlex.poorlex.support.db.UsingDataJpaTest;
 import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -11,6 +12,11 @@ class FriendRepositoryTest extends UsingDataJpaTest implements ReplaceUnderScore
 
     @Autowired
     private FriendRepository friendRepository;
+
+    @BeforeEach
+    void setUp() {
+        initializeDataBase();
+    }
 
     @Test
     void Id를_포함한_모든_친구를_조회한다() {
