@@ -1,0 +1,37 @@
+# JWT-TOKEN
+jwt:
+  token:
+    secret-key: testtokensecretkeytesttokensecretkeytesttokensecretkey
+    access-expire-length: ${JWT_ACCESS_EXPIRE:3600000}
+
+schedules:
+  battle-start:
+    cron: "* * */5 * * *"
+  save-battle-success-history:
+    cron: "* * */5 * * *"
+  battle-end:
+    cron: "* * */5 * * *"
+  expenditure-pay-point:
+    cron: "* * */5 * * *" # 매 분 30 초마다
+
+apple:
+  client-id: client_id
+  key-id: key_id
+  team-id: team_id
+  audience: https://appleid.apple.com
+  private-key: p8 file
+
+aws:
+  s3:
+    accesskey: accesskey
+    secretKey: secretKey
+    bucket: bucket
+    expenditure-directory: directory
+    battle-directory: battles
+
+url:
+  server: test
+
+validation:
+  start-time: false
+  end-time: false
