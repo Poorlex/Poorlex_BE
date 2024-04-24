@@ -1,7 +1,7 @@
 package com.poorlex.poorlex.config.auth.interceptor;
 
 import com.poorlex.poorlex.config.auth.ExcludePattern;
-import com.poorlex.poorlex.token.JwtTokenProvider;
+import com.poorlex.poorlex.auth.service.JwtTokenProvider;
 import com.poorlex.poorlex.user.member.domain.Member;
 import com.poorlex.poorlex.user.member.domain.MemberRepository;
 import io.jsonwebtoken.Claims;

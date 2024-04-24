@@ -2,7 +2,7 @@ package com.poorlex.poorlex.user.member.controller;
 
 import com.poorlex.poorlex.support.IntegrationTest;
 import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
-import com.poorlex.poorlex.token.JwtTokenProvider;
+import com.poorlex.poorlex.auth.service.JwtTokenProvider;
 import com.poorlex.poorlex.user.member.domain.Member;
 import com.poorlex.poorlex.user.member.domain.MemberNickname;
 import com.poorlex.poorlex.user.member.domain.MemberRepository;

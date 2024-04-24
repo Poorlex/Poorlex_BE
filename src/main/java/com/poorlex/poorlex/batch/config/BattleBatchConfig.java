@@ -1,8 +1,8 @@
 package com.poorlex.poorlex.batch.config;
 
 import com.poorlex.poorlex.batch.jobparameter.BattleJobParameter;
-import com.poorlex.poorlex.battle.domain.Battle;
-import com.poorlex.poorlex.battle.domain.BattleStatus;
+import com.poorlex.poorlex.battle.battle.domain.Battle;
+import com.poorlex.poorlex.battle.battle.domain.BattleStatus;
 import jakarta.persistence.EntityManagerFactory;
 import java.time.LocalDateTime;
 import java.util.HashMap;

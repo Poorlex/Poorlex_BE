@@ -1,6 +1,6 @@
 package com.poorlex.poorlex.external.aws;
 
-import com.poorlex.poorlex.battle.service.BattleImageService;
+import com.poorlex.poorlex.battle.battle.service.BattleImageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;

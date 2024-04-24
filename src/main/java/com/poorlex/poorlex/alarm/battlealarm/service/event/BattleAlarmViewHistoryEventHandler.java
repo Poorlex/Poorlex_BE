@@ -2,7 +2,7 @@ package com.poorlex.poorlex.alarm.battlealarm.service.event;
 
 import com.poorlex.poorlex.alarm.battlealarm.domain.BattleAlarmViewHistory;
 import com.poorlex.poorlex.alarm.battlealarm.domain.BattleAlarmViewHistoryRepository;
-import com.poorlex.poorlex.participate.domain.BattleParticipantRepository;
+import com.poorlex.poorlex.battle.participation.domain.BattleParticipantRepository;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

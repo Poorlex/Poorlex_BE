@@ -1,8 +1,8 @@
 package com.poorlex.poorlex.bridge;
 
-import com.poorlex.poorlex.battle.service.dto.response.BattleSuccessCountResponse;
-import com.poorlex.poorlex.battlesuccess.domain.BattleSuccessCountGroup;
-import com.poorlex.poorlex.battlesuccess.domain.BattleSuccessHistoryRepository;
+import com.poorlex.poorlex.battle.battle.service.dto.response.BattleSuccessCountResponse;
+import com.poorlex.poorlex.battle.succession.domain.BattleSuccessCountGroup;
+import com.poorlex.poorlex.battle.succession.domain.BattleSuccessHistoryRepository;
 import com.poorlex.poorlex.user.member.service.provider.BattleSuccessCountProvider;
 import java.util.List;
 import lombok.RequiredArgsConstructor;

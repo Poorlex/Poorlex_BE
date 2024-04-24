@@ -1,6 +1,6 @@
 package com.poorlex.poorlex.voting.vote.service;
 
-import com.poorlex.poorlex.participate.domain.BattleParticipantRepository;
+import com.poorlex.poorlex.battle.participation.domain.BattleParticipantRepository;
 import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
 import com.poorlex.poorlex.support.db.UsingDataJpaTest;
 import com.poorlex.poorlex.voting.vote.domain.Vote;

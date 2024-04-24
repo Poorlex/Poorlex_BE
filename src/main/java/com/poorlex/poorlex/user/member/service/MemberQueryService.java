@@ -1,6 +1,6 @@
 package com.poorlex.poorlex.user.member.service;
 
-import com.poorlex.poorlex.battle.service.dto.response.BattleSuccessCountResponse;
+import com.poorlex.poorlex.battle.battle.service.dto.response.BattleSuccessCountResponse;
 import com.poorlex.poorlex.exception.ApiException;
 import com.poorlex.poorlex.exception.ExceptionTag;
 import com.poorlex.poorlex.friend.service.dto.response.FriendResponse;

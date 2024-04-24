@@ -1,6 +1,6 @@
 package com.poorlex.poorlex.security.handler;
 
-import com.poorlex.poorlex.token.JwtTokenProvider;
+import com.poorlex.poorlex.auth.service.JwtTokenProvider;
 import com.poorlex.poorlex.user.member.domain.MemberRepository;
 import org.springframework.security.web.authentication.AbstractAuthenticationTargetUrlRequestHandler;
 

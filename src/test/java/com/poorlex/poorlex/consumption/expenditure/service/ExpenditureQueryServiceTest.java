@@ -1,9 +1,9 @@
 package com.poorlex.poorlex.consumption.expenditure.service;
 
-import com.poorlex.poorlex.battle.domain.Battle;
-import com.poorlex.poorlex.battle.domain.BattleRepository;
-import com.poorlex.poorlex.battle.domain.BattleStatus;
-import com.poorlex.poorlex.battle.fixture.BattleFixture;
+import com.poorlex.poorlex.battle.battle.domain.Battle;
+import com.poorlex.poorlex.battle.battle.domain.BattleRepository;
+import com.poorlex.poorlex.battle.battle.domain.BattleStatus;
+import com.poorlex.poorlex.battle.battle.fixture.BattleFixture;
 import com.poorlex.poorlex.consumption.expenditure.domain.Expenditure;
 import com.poorlex.poorlex.consumption.expenditure.domain.ExpenditureRepository;
 import com.poorlex.poorlex.consumption.expenditure.domain.WeeklyExpenditureDuration;
@@ -13,8 +13,8 @@ import com.poorlex.poorlex.consumption.expenditure.service.dto.response.Expendit
 import com.poorlex.poorlex.consumption.expenditure.service.dto.response.MemberWeeklyTotalExpenditureResponse;
 import com.poorlex.poorlex.consumption.expenditure.service.provider.BattleDurationProvider;
 import com.poorlex.poorlex.consumption.weeklybudget.domain.WeeklyBudgetDuration;
-import com.poorlex.poorlex.participate.domain.BattleParticipant;
-import com.poorlex.poorlex.participate.domain.BattleParticipantRepository;
+import com.poorlex.poorlex.battle.participation.domain.BattleParticipant;
+import com.poorlex.poorlex.battle.participation.domain.BattleParticipantRepository;
 import com.poorlex.poorlex.support.IntegrationTest;
 import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
 import com.poorlex.poorlex.user.member.domain.Member;

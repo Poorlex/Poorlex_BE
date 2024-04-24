@@ -1,7 +1,7 @@
 package com.poorlex.poorlex.bridge;
 
-import com.poorlex.poorlex.battle.domain.Battle;
-import com.poorlex.poorlex.battle.domain.BattleRepository;
+import com.poorlex.poorlex.battle.battle.domain.Battle;
+import com.poorlex.poorlex.battle.battle.domain.BattleRepository;
 import com.poorlex.poorlex.consumption.expenditure.service.dto.BattleDurationDto;
 import com.poorlex.poorlex.consumption.expenditure.service.provider.BattleDurationProvider;
 import java.time.LocalDate;

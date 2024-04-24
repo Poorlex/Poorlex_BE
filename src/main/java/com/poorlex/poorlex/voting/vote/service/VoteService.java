@@ -1,7 +1,7 @@
 package com.poorlex.poorlex.voting.vote.service;
 
 import com.poorlex.poorlex.config.event.Events;
-import com.poorlex.poorlex.participate.domain.BattleParticipantRepository;
+import com.poorlex.poorlex.battle.participation.domain.BattleParticipantRepository;
 import com.poorlex.poorlex.voting.vote.domain.VoteRepository;
 import com.poorlex.poorlex.voting.vote.service.dto.request.VoteCreateRequest;
 import com.poorlex.poorlex.voting.vote.service.dto.response.VoteResponse;

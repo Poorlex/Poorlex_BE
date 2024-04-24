@@ -14,7 +14,7 @@ import com.poorlex.poorlex.consumption.goal.service.dto.request.MemberGoalReques
 import com.poorlex.poorlex.support.IntegrationTest;
 import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
 import com.poorlex.poorlex.support.TestMemberTokenGenerator;
-import com.poorlex.poorlex.token.JwtTokenProvider;
+import com.poorlex.poorlex.auth.service.JwtTokenProvider;
 import com.poorlex.poorlex.user.member.domain.Member;
 import com.poorlex.poorlex.user.member.domain.MemberNickname;
 import com.poorlex.poorlex.user.member.domain.MemberRepository;

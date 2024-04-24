@@ -14,7 +14,7 @@ import com.poorlex.poorlex.user.member.domain.MemberRepository;
 import com.poorlex.poorlex.user.member.domain.Oauth2RegistrationId;
 import com.poorlex.poorlex.support.IntegrationTest;
 import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
-import com.poorlex.poorlex.token.JwtTokenProvider;
+import com.poorlex.poorlex.auth.service.JwtTokenProvider;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;

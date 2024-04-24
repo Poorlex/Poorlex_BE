@@ -1,31 +1,22 @@
 package com.poorlex.poorlex.batch.scheduler;
 
-import com.poorlex.poorlex.batch.config.BattleBatchConfig;
-import com.poorlex.poorlex.batch.config.BattleSuccessBatchConfig;
-import com.poorlex.poorlex.battle.domain.Battle;
-import com.poorlex.poorlex.battle.domain.BattleDifficulty;
-import com.poorlex.poorlex.battle.domain.BattleParticipantWithExpenditure;
-import com.poorlex.poorlex.battle.domain.BattleRepository;
-import com.poorlex.poorlex.battle.domain.BattleStatus;
-import com.poorlex.poorlex.battlesuccess.domain.BattleSuccessHistory;
-import com.poorlex.poorlex.battlesuccess.domain.BattleSuccessHistoryRepository;
+import com.poorlex.poorlex.battle.battle.domain.Battle;
+import com.poorlex.poorlex.battle.battle.domain.BattleDifficulty;
+import com.poorlex.poorlex.battle.battle.domain.BattleDuration;
+import com.poorlex.poorlex.battle.battle.domain.BattleParticipantWithExpenditure;
+import com.poorlex.poorlex.battle.battle.domain.BattleRepository;
+import com.poorlex.poorlex.battle.battle.domain.BattleStatus;
+import com.poorlex.poorlex.battle.succession.domain.BattleSuccessHistory;
+import com.poorlex.poorlex.battle.succession.domain.BattleSuccessHistoryRepository;
 import com.poorlex.poorlex.user.point.domain.MemberPoint;
 import com.poorlex.poorlex.user.point.domain.MemberPointRepository;
 import com.poorlex.poorlex.user.point.domain.Point;
-import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.batch.core.JobParameter;
-import org.springframework.batch.core.JobParameters;
-import org.springframework.batch.core.JobParametersInvalidException;
-import org.springframework.batch.core.launch.JobLauncher;
-import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException;
-import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
-import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,10 +26,10 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class BattleBatchScheduler {
 
-    private static final String REQUEST_DATE_TIME_KEY = "requestDateTime";
-    private final JobLauncher jobLauncher;
-    private final BattleBatchConfig battleBatchConfig;
-    private final BattleSuccessBatchConfig battleSuccessBatchConfig;
+    //    private static final String REQUEST_DATE_TIME_KEY = "requestDateTime";
+//    private final JobLauncher jobLauncher;
+//    private final BattleBatchConfig battleBatchConfig;
+//    private final BattleSuccessBatchConfig battleSuccessBatchConfig;
     private final BattleRepository battleRepository;
     private final MemberPointRepository memberPointRepository;
     private final BattleSuccessHistoryRepository battleSuccessHistoryRepository;
@@ -53,7 +44,7 @@ public class BattleBatchScheduler {
 
     @Scheduled(cron = "${schedules.battle-end.cron}")
     @Transactional
-    public void battlePointJob() {
+    public void giveBattlePointToParticipants() {
         log.info("batch schedule run : {}", "배틀 성공 포인트 지급");
 
         battleRepository.findBattlesByStatusIn(List.of(BattleStatus.PROGRESS))
@@ -67,6 +58,7 @@ public class BattleBatchScheduler {
     private Map<Long, Integer> getSuccessParticipantRankings(final Battle battle) {
         final List<BattleParticipantWithExpenditure> participantsInfo =
                 battleRepository.findBattleParticipantsWithExpenditureByBattleId(battle.getId()).stream()
+                        .filter(participantInfo -> participantInfo.getExpenditureCount() == BattleDuration.BATTLE_DAYS)
                         .filter(participantInfo -> battle.isSuccess(participantInfo.getExpenditure()))
                         .sorted(Comparator.comparing(BattleParticipantWithExpenditure::getExpenditure))
                         .toList();
@@ -121,57 +113,57 @@ public class BattleBatchScheduler {
                                                                                   battleDifficulty));
     }
 
-    public void runBattleStartJob() {
-        log.info("batch schedule run : {}", "battle start");
-
-        final Map<String, JobParameter<?>> parameters = new HashMap<>();
-        parameters.put(REQUEST_DATE_TIME_KEY, new JobParameter<>(LocalDateTime.now(), LocalDateTime.class));
-        parameters.put("statuses",
-                       new JobParameter<>(List.of(BattleStatus.RECRUITING, BattleStatus.RECRUITING_FINISHED),
-                                          List.class));
-        parameters.put("changeStatus", new JobParameter<>(BattleStatus.PROGRESS, BattleStatus.class));
-
-        try {
-            jobLauncher.run(battleBatchConfig.job(), new JobParameters(parameters));
-        } catch (JobExecutionAlreadyRunningException |
-                 JobRestartException |
-                 JobInstanceAlreadyCompleteException |
-                 JobParametersInvalidException e) {
-            log.error(e.getMessage());
-        }
-    }
-
-
-    public void runBattleEndJob() {
-        log.info("batch schedule run : {}", "battle end");
-
-        final Map<String, JobParameter<?>> parameters = new HashMap<>();
-        parameters.put(REQUEST_DATE_TIME_KEY, new JobParameter<>(LocalDateTime.now(), LocalDateTime.class));
-        parameters.put("statuses", new JobParameter<>(List.of(BattleStatus.PROGRESS), List.class));
-        parameters.put("changeStatus", new JobParameter<>(BattleStatus.COMPLETE, BattleStatus.class));
-
-        try {
-            jobLauncher.run(battleBatchConfig.job(), new JobParameters(parameters));
-        } catch (JobExecutionAlreadyRunningException |
-                 JobRestartException |
-                 JobInstanceAlreadyCompleteException |
-                 JobParametersInvalidException e) {
-            log.error(e.getMessage());
-        }
-    }
-
-    public void saveBattleSuccessHistory() {
-        log.info("batch schedule run : {}", "save battle success history");
-        final Map<String, JobParameter<?>> parameters = new HashMap<>();
-        parameters.put(REQUEST_DATE_TIME_KEY, new JobParameter<>(LocalDateTime.now(), LocalDateTime.class));
-
-        try {
-            jobLauncher.run(battleSuccessBatchConfig.job(), new JobParameters(parameters));
-        } catch (JobExecutionAlreadyRunningException |
-                 JobRestartException |
-                 JobInstanceAlreadyCompleteException |
-                 JobParametersInvalidException e) {
-            log.error(e.getMessage());
-        }
-    }
+//    public void runBattleStartJob() {
+//        log.info("batch schedule run : {}", "battle start");
+//
+//        final Map<String, JobParameter<?>> parameters = new HashMap<>();
+//        parameters.put(REQUEST_DATE_TIME_KEY, new JobParameter<>(LocalDateTime.now(), LocalDateTime.class));
+//        parameters.put("statuses",
+//                       new JobParameter<>(List.of(BattleStatus.RECRUITING, BattleStatus.RECRUITING_FINISHED),
+//                                          List.class));
+//        parameters.put("changeStatus", new JobParameter<>(BattleStatus.PROGRESS, BattleStatus.class));
+//
+//        try {
+//            jobLauncher.run(battleBatchConfig.job(), new JobParameters(parameters));
+//        } catch (JobExecutionAlreadyRunningException |
+//                 JobRestartException |
+//                 JobInstanceAlreadyCompleteException |
+//                 JobParametersInvalidException e) {
+//            log.error(e.getMessage());
+//        }
+//    }
+//
+//
+//    public void runBattleEndJob() {
+//        log.info("batch schedule run : {}", "battle end");
+//
+//        final Map<String, JobParameter<?>> parameters = new HashMap<>();
+//        parameters.put(REQUEST_DATE_TIME_KEY, new JobParameter<>(LocalDateTime.now(), LocalDateTime.class));
+//        parameters.put("statuses", new JobParameter<>(List.of(BattleStatus.PROGRESS), List.class));
+//        parameters.put("changeStatus", new JobParameter<>(BattleStatus.COMPLETE, BattleStatus.class));
+//
+//        try {
+//            jobLauncher.run(battleBatchConfig.job(), new JobParameters(parameters));
+//        } catch (JobExecutionAlreadyRunningException |
+//                 JobRestartException |
+//                 JobInstanceAlreadyCompleteException |
+//                 JobParametersInvalidException e) {
+//            log.error(e.getMessage());
+//        }
+//    }
+//
+//    public void saveBattleSuccessHistory() {
+//        log.info("batch schedule run : {}", "save battle success history");
+//        final Map<String, JobParameter<?>> parameters = new HashMap<>();
+//        parameters.put(REQUEST_DATE_TIME_KEY, new JobParameter<>(LocalDateTime.now(), LocalDateTime.class));
+//
+//        try {
+//            jobLauncher.run(battleSuccessBatchConfig.job(), new JobParameters(parameters));
+//        } catch (JobExecutionAlreadyRunningException |
+//                 JobRestartException |
+//                 JobInstanceAlreadyCompleteException |
+//                 JobParametersInvalidException e) {
+//            log.error(e.getMessage());
+//        }
+//    }
 }

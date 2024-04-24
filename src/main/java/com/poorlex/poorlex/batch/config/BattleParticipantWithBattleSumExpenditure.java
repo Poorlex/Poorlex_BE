@@ -1,7 +1,7 @@
 package com.poorlex.poorlex.batch.config;
 
-import com.poorlex.poorlex.battle.domain.Battle;
-import com.poorlex.poorlex.participate.domain.BattleParticipant;
+import com.poorlex.poorlex.battle.battle.domain.Battle;
+import com.poorlex.poorlex.battle.participation.domain.BattleParticipant;
 
 public class BattleParticipantWithBattleSumExpenditure {
 

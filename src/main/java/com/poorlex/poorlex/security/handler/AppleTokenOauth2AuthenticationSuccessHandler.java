@@ -7,7 +7,7 @@ import com.poorlex.poorlex.user.member.domain.MemberRepository;
 import com.poorlex.poorlex.user.member.domain.Oauth2RegistrationId;
 import com.poorlex.poorlex.user.member.service.event.MemberRegisteredEvent;
 import com.poorlex.poorlex.security.service.UserProfile;
-import com.poorlex.poorlex.token.JwtTokenProvider;
+import com.poorlex.poorlex.auth.service.JwtTokenProvider;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;

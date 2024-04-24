@@ -1,6 +1,6 @@
 package com.poorlex.poorlex.batch.jobparameter;
 
-import com.poorlex.poorlex.battle.domain.BattleStatus;
+import com.poorlex.poorlex.battle.battle.domain.BattleStatus;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.Getter;

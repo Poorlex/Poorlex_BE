@@ -1,7 +1,7 @@
 package com.poorlex.poorlex.voting.votingpaper.service;
 
 import com.poorlex.poorlex.config.event.Events;
-import com.poorlex.poorlex.participate.domain.BattleParticipantRepository;
+import com.poorlex.poorlex.battle.participation.domain.BattleParticipantRepository;
 import com.poorlex.poorlex.voting.vote.domain.Vote;
 import com.poorlex.poorlex.voting.vote.domain.VoteRepository;
 import com.poorlex.poorlex.voting.votingpaper.domain.VotingPaper;

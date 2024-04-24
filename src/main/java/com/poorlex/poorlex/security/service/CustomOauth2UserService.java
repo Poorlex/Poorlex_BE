@@ -1,6 +1,6 @@
 package com.poorlex.poorlex.security.service;
 
-import com.poorlex.poorlex.token.JwtTokenProvider;
+import com.poorlex.poorlex.auth.service.JwtTokenProvider;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -37,29 +37,29 @@ public class CustomOauth2UserService implements OAuth2UserService<OAuth2UserRequ
             return appleLoginUserProfile(userRequest, registrationId);
         }
         return new UserProfile(
-            registrationId,
-            Collections.singleton(new SimpleGrantedAuthority(USER_ROLE)),
-            defaultOAuth2UserService.loadUser(userRequest).getAttributes()
+                registrationId,
+                Collections.singleton(new SimpleGrantedAuthority(USER_ROLE)),
+                defaultOAuth2UserService.loadUser(userRequest).getAttributes()
         );
     }
 
     private UserProfile appleLoginUserProfile(final OAuth2UserRequest userRequest, final String registrationId) {
         final String idToken = userRequest.getAdditionalParameters()
-            .get("id_token")
-            .toString();
+                .get("id_token")
+                .toString();
         final Map<String, Object> idTokenPayloads = decodeIdTokenPayload(idToken);
         log.info("idTokenPayloads : {}", idTokenPayloads);
 
         return new UserProfile(
-            registrationId,
-            Collections.singleton(new SimpleGrantedAuthority(USER_ROLE)),
-            idTokenPayloads
+                registrationId,
+                Collections.singleton(new SimpleGrantedAuthority(USER_ROLE)),
+                idTokenPayloads
         );
     }
 
     public Map<String, Object> decodeIdTokenPayload(String idToken) {
         final AppleIdTokenPayload appleIdTokenPayload =
-            jwtTokenProvider.decodePayload(idToken, AppleIdTokenPayload.class);
+                jwtTokenProvider.decodePayload(idToken, AppleIdTokenPayload.class);
         log.info("sub : {}", appleIdTokenPayload.getSub());
         final Map<String, Object> idTokenClaims = new HashMap<>();
         idTokenClaims.put("sub", appleIdTokenPayload.getSub());

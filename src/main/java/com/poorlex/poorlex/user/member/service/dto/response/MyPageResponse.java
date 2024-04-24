@@ -1,6 +1,6 @@
 package com.poorlex.poorlex.user.member.service.dto.response;
 
-import com.poorlex.poorlex.battle.service.dto.response.BattleSuccessCountResponse;
+import com.poorlex.poorlex.battle.battle.service.dto.response.BattleSuccessCountResponse;
 import com.poorlex.poorlex.friend.service.dto.response.FriendResponse;
 import com.poorlex.poorlex.user.member.domain.Member;
 import com.poorlex.poorlex.user.point.service.dto.response.MyPageLevelInfoResponse;

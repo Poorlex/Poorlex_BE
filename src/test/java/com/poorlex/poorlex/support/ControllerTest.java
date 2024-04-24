@@ -2,7 +2,7 @@ package com.poorlex.poorlex.support;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.poorlex.poorlex.config.auth.interceptor.RequestMemberInfo;
-import com.poorlex.poorlex.token.JwtTokenProvider;
+import com.poorlex.poorlex.auth.service.JwtTokenProvider;
 import com.poorlex.poorlex.user.member.domain.Member;
 import com.poorlex.poorlex.user.member.domain.MemberNickname;
 import com.poorlex.poorlex.user.member.domain.MemberRepository;

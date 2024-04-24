@@ -7,7 +7,7 @@ import com.poorlex.poorlex.security.handler.KaKaoTokenOauth2AuthenticationSucces
 import com.poorlex.poorlex.security.handler.Oauth2AuthenticationSuccessHandler;
 import com.poorlex.poorlex.security.handler.TokenOauth2AuthenticationSuccessHandlerFacade;
 import com.poorlex.poorlex.security.service.CustomOauth2UserService;
-import com.poorlex.poorlex.token.JwtTokenProvider;
+import com.poorlex.poorlex.auth.service.JwtTokenProvider;
 import com.poorlex.poorlex.user.member.domain.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;

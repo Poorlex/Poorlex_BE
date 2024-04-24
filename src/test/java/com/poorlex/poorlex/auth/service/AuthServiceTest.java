@@ -4,7 +4,6 @@ import com.poorlex.poorlex.auth.service.dto.request.LoginRequest;
 import com.poorlex.poorlex.auth.service.dto.response.LoginTokenResponse;
 import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
 import com.poorlex.poorlex.support.db.UsingDataJpaTest;
-import com.poorlex.poorlex.token.JwtTokenProvider;
 import com.poorlex.poorlex.user.member.domain.Member;
 import com.poorlex.poorlex.user.member.domain.MemberNickname;
 import com.poorlex.poorlex.user.member.domain.MemberRepository;
