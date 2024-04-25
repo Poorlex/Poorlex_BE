@@ -9,12 +9,12 @@ import com.poorlex.poorlex.battle.battle.domain.BattleType;
 import com.poorlex.poorlex.battle.battle.fixture.BattleFixture;
 import com.poorlex.poorlex.battle.battle.service.dto.response.MemberCompleteBattleResponse;
 import com.poorlex.poorlex.battle.battle.service.dto.response.MemberProgressBattleResponse;
-import com.poorlex.poorlex.consumption.expenditure.domain.ExpenditureRepository;
-import com.poorlex.poorlex.consumption.expenditure.fixture.ExpenditureFixture;
 import com.poorlex.poorlex.battle.participation.domain.BattleParticipant;
 import com.poorlex.poorlex.battle.participation.domain.BattleParticipantRepository;
 import com.poorlex.poorlex.battle.participation.service.event.BattleParticipantAddedEvent;
 import com.poorlex.poorlex.battle.participation.service.event.BattlesWithdrewEvent;
+import com.poorlex.poorlex.consumption.expenditure.domain.ExpenditureRepository;
+import com.poorlex.poorlex.consumption.expenditure.fixture.ExpenditureFixture;
 import com.poorlex.poorlex.support.IntegrationTest;
 import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
 import com.poorlex.poorlex.user.member.domain.Member;
@@ -146,7 +146,7 @@ class BattleServiceTest extends IntegrationTest implements ReplaceUnderScoreTest
 
     @ParameterizedTest(name = "멤버1의 지출이 {0}, 멤버2의 지출이 {1} 일 때")
     @CsvSource(
-            value = {"1000:1000:1", "1000:2000:1", "2000:1000:2"},
+            value = {"7000:14000:1", "7000:21000:1", "14000:7000:2"},
             delimiter = ':'
     )
     void 멤버가_포함되어있는_종료된_배틀들의_정보를_조회한다(final Long member1Expenditure,
@@ -160,8 +160,21 @@ class BattleServiceTest extends IntegrationTest implements ReplaceUnderScoreTest
         join(member1, battle);
         join(member2, battle);
 
-        expend(member1Expenditure, member1, LocalDate.from(BATTLE_START_DATE));
-        expend(member2Expenditure, member2, LocalDate.from(BATTLE_START_DATE));
+        expend(member1Expenditure / 7, member1, LocalDate.from(BATTLE_START_DATE));
+        expend(member1Expenditure / 7, member1, LocalDate.from(BATTLE_START_DATE).plusDays(1));
+        expend(member1Expenditure / 7, member1, LocalDate.from(BATTLE_START_DATE).plusDays(2));
+        expend(member1Expenditure / 7, member1, LocalDate.from(BATTLE_START_DATE).plusDays(3));
+        expend(member1Expenditure / 7, member1, LocalDate.from(BATTLE_START_DATE).plusDays(4));
+        expend(member1Expenditure / 7, member1, LocalDate.from(BATTLE_START_DATE).plusDays(5));
+        expend(member1Expenditure / 7, member1, LocalDate.from(BATTLE_START_DATE).plusDays(6));
+
+        expend(member2Expenditure / 7, member2, LocalDate.from(BATTLE_START_DATE));
+        expend(member2Expenditure / 7, member2, LocalDate.from(BATTLE_START_DATE).plusDays(1));
+        expend(member2Expenditure / 7, member2, LocalDate.from(BATTLE_START_DATE).plusDays(2));
+        expend(member2Expenditure / 7, member2, LocalDate.from(BATTLE_START_DATE).plusDays(3));
+        expend(member2Expenditure / 7, member2, LocalDate.from(BATTLE_START_DATE).plusDays(4));
+        expend(member2Expenditure / 7, member2, LocalDate.from(BATTLE_START_DATE).plusDays(5));
+        expend(member2Expenditure / 7, member2, LocalDate.from(BATTLE_START_DATE).plusDays(6));
 
         //when
         final List<MemberCompleteBattleResponse> battles =

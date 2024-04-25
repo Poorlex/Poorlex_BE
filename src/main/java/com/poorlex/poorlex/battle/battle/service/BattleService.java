@@ -149,13 +149,13 @@ public class BattleService {
         return MemberProgressBattleResponse.from(
                 battleInfo,
                 battle.getDDay(date),
-                getMemberRank(battle, memberId),
+                getMemberRank(battle, memberId, battle.getNumberOfDayPassedAfterStart(date) + 1),
                 battleParticipantCount,
                 uncheckedAlarmCount
         );
     }
 
-    private int getMemberRank(final Battle battle, final Long targetMemberId) {
+    private int getMemberRank(final Battle battle, final Long targetMemberId, final Long needExpenditureCount) {
         //책임 분리 리펙토링 필요
         final List<BattleParticipantWithExpenditure> battleParticipantsWithExpenditure =
                 battleRepository.findBattleParticipantsWithExpenditureByBattleId(battle.getId())
@@ -169,6 +169,13 @@ public class BattleService {
         for (int idx = 0; idx < battleParticipantsWithExpenditure.size(); idx++) {
             final BattleParticipantWithExpenditure current = battleParticipantsWithExpenditure.get(idx);
             final Long currentExpenditure = current.getExpenditure();
+
+            if (current.getExpenditureCount() < needExpenditureCount) {
+                if (current.getBattleParticipant().getMemberId().equals(targetMemberId)) {
+                    return 0;
+                }
+                continue;
+            }
 
             if (idx == 0) {
                 rank++;
@@ -204,7 +211,7 @@ public class BattleService {
                                                                            final Long memberId,
                                                                            final LocalDate date) {
         final Battle battle = battleInfo.getBattle();
-        final int memberRank = getMemberRank(battle, memberId);
+        final int memberRank = getMemberRank(battle, memberId, Long.valueOf(BattleDuration.BATTLE_DAYS));
         final int battleParticipantCount = battleParticipantRepository.countBattleParticipantByBattleId(
                 battle.getId());
 

@@ -165,11 +165,15 @@ public class Battle {
         this.isBattleSuccessCounted = true;
     }
 
-    public long getDDay(final LocalDate current) {
+    public Long getDDay(final LocalDate current) {
         return ChronoUnit.DAYS.between(current, LocalDate.from(duration.getEnd()));
     }
 
-    public long getPastDay(final LocalDate current) {
+    public Long getNumberOfDayPassedAfterStart(final LocalDate current) {
+        return ChronoUnit.DAYS.between(LocalDate.from(duration.getStart()), current);
+    }
+
+    public Long getNumberOfDayPassedAfterEnd(final LocalDate current) {
         return ChronoUnit.DAYS.between(LocalDate.from(duration.getEnd()), current);
     }
 

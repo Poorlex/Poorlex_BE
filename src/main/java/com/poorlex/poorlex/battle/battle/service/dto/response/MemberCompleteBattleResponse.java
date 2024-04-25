@@ -27,15 +27,15 @@ public class MemberCompleteBattleResponse {
         final Battle battle = battleInfo.getBattle();
 
         return new MemberCompleteBattleResponse(
-            battle.getId(),
-            battle.getName(),
-            battle.getImageUrl(),
-            battle.getDifficulty().name(),
-            battle.getPastDay(current),
-            battle.getBudgetLeft(battleInfo.getExpenditure()),
-            currentParticipantRank,
-            battleParticipantCount,
-            battle.getBattleType().getScore(currentParticipantRank)
+                battle.getId(),
+                battle.getName(),
+                battle.getImageUrl(),
+                battle.getDifficulty().name(),
+                battle.getNumberOfDayPassedAfterEnd(current),
+                battle.getBudgetLeft(battleInfo.getExpenditure()),
+                currentParticipantRank,
+                battleParticipantCount,
+                battle.getBattleType().getScore(currentParticipantRank)
         );
     }
 }

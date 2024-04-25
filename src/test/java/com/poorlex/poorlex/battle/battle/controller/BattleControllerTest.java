@@ -1,26 +1,28 @@
 package com.poorlex.poorlex.battle.battle.controller;
 
+import com.poorlex.poorlex.auth.service.JwtTokenProvider;
 import com.poorlex.poorlex.battle.battle.domain.Battle;
 import com.poorlex.poorlex.battle.battle.domain.BattleRepository;
 import com.poorlex.poorlex.battle.battle.service.BattleImageService;
 import com.poorlex.poorlex.battle.battle.service.BattleService;
+import com.poorlex.poorlex.battle.battle.service.dto.request.BattleCreateRequest;
 import com.poorlex.poorlex.battle.battle.service.dto.request.BattleFindRequest;
 import com.poorlex.poorlex.battle.battle.service.event.BattleCreatedEvent;
-import com.poorlex.poorlex.consumption.expenditure.domain.ExpenditureRepository;
-import com.poorlex.poorlex.consumption.expenditure.fixture.ExpenditureFixture;
 import com.poorlex.poorlex.battle.participation.domain.BattleParticipant;
 import com.poorlex.poorlex.battle.participation.domain.BattleParticipantRepository;
 import com.poorlex.poorlex.battle.participation.service.BattleParticipantEventHandler;
+import com.poorlex.poorlex.consumption.expenditure.domain.ExpenditureRepository;
+import com.poorlex.poorlex.consumption.expenditure.fixture.ExpenditureFixture;
 import com.poorlex.poorlex.support.IntegrationTest;
 import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
 import com.poorlex.poorlex.support.TestMemberTokenGenerator;
-import com.poorlex.poorlex.auth.service.JwtTokenProvider;
 import com.poorlex.poorlex.user.member.domain.Member;
 import com.poorlex.poorlex.user.member.domain.MemberNickname;
 import com.poorlex.poorlex.user.member.domain.MemberRepository;
 import com.poorlex.poorlex.user.member.domain.Oauth2RegistrationId;
 import java.io.FileInputStream;
 import java.time.LocalDate;
+import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -33,7 +35,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.test.web.servlet.MvcResult;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -166,7 +167,15 @@ class BattleControllerTest extends IntegrationTest implements ReplaceUnderScoreT
 
         join(member, battle);
         startBattle(battle);
+
         expend(1000L, member, LocalDate.from(battle.getDuration().getStart()));
+        expend(1000L, member, LocalDate.from(battle.getDuration().getStart()).plusDays(1));
+        expend(1000L, member, LocalDate.from(battle.getDuration().getStart()).plusDays(2));
+        expend(1000L, member, LocalDate.from(battle.getDuration().getStart()).plusDays(3));
+        expend(1000L, member, LocalDate.from(battle.getDuration().getStart()).plusDays(4));
+        expend(1000L, member, LocalDate.from(battle.getDuration().getStart()).plusDays(5));
+        expend(1000L, member, LocalDate.from(battle.getDuration().getStart()).plusDays(6));
+
         endBattle(battle);
 
         final String accessToken = testMemberTokenGenerator.createAccessToken(member);
@@ -183,8 +192,8 @@ class BattleControllerTest extends IntegrationTest implements ReplaceUnderScoreT
                 .andExpect(jsonPath("$[0].name").value("배틀 이름"))
                 .andExpect(jsonPath("$[0].imageUrl").value("imageUrl"))
                 .andExpect(jsonPath("$[0].difficulty").value("HARD"))
-                .andExpect(jsonPath("$[0].pastDay").value(battle.getPastDay(LocalDate.now())))
-                .andExpect(jsonPath("$[0].budgetLeft").value(10000 - 1000))
+                .andExpect(jsonPath("$[0].pastDay").value(battle.getNumberOfDayPassedAfterEnd(LocalDate.now())))
+                .andExpect(jsonPath("$[0].budgetLeft").value(10000 - (1000 * 7)))
                 .andExpect(jsonPath("$[0].earnedPoint").value(30))
                 .andExpect(jsonPath("$[0].currentParticipantRank").value(1))
                 .andExpect(jsonPath("$[0].battleParticipantCount").value(1));
@@ -423,6 +432,11 @@ class BattleControllerTest extends IntegrationTest implements ReplaceUnderScoreT
     }
 
     private Long createBattle() throws Exception {
+        final Member member = Member.withoutId(Oauth2RegistrationId.APPLE,
+                                               UUID.randomUUID().toString(),
+                                               new MemberNickname("nickname"));
+        memberRepository.save(member);
+
         final MockMultipartFile image = new MockMultipartFile(
                 "image",
                 "cat-8415620_640",
@@ -430,22 +444,7 @@ class BattleControllerTest extends IntegrationTest implements ReplaceUnderScoreT
                 new FileInputStream(
                         "src/test/resources/testImage/cat-8415620_640.jpg")
         );
-        final String accessToken = testMemberTokenGenerator.createTokenWithNewMember("nickname");
-
-        final MvcResult mvcResult = mockMvc.perform(
-                multipart(HttpMethod.POST, "/battles")
-                        .file(image)
-                        .queryParam("name", "배틀 이름")
-                        .queryParam("introduction", "배틀 소개")
-                        .queryParam("budget", "10000")
-                        .queryParam("maxParticipantSize", "10")
-                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
-        ).andReturn();
-
-        final String locationHeader = mvcResult.getResponse().getHeader(HttpHeaders.LOCATION);
-        return Long.parseLong(
-                locationHeader.substring(locationHeader.lastIndexOf('/') + 1)
-        );
+        return battleService.create(member.getId(), image, new BattleCreateRequest("배틀 이름", "배틀 소개", 10000, 10));
     }
 
     private void joinNewNormalPlayerWithOauthId(final String oauthId, final Long battleId) {
