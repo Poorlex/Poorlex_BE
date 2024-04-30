@@ -104,7 +104,7 @@ class BattleServiceTest extends IntegrationTest implements ReplaceUnderScoreTest
                 (softly) -> {
                     softly.assertThat(battles).hasSize(1);
                     softly.assertThat(battles.get(0)).usingRecursiveComparison()
-                            .ignoringFields("id")
+                            .ignoringFields("id", "createdAt")
                             .isEqualTo(excpectedBattle);
                 }
         );

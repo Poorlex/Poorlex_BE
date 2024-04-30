@@ -124,6 +124,10 @@ public class BattleService {
 
         final List<BattleWithCurrentParticipantSize> battlesByMemberIdWithCurrentParticipantSize =
                 battleRepository.findBattlesWithCurrentParticipantSizeByStatusesIn(statuses);
+        battlesByMemberIdWithCurrentParticipantSize.sort(Comparator.comparing(
+                battleInfo -> battleInfo.getBattle().getCreatedAt(),
+                Comparator.reverseOrder())
+        );
 
         return FindingBattleResponse.parseToList(battlesByMemberIdWithCurrentParticipantSize);
     }
@@ -133,6 +137,8 @@ public class BattleService {
                 battleRepository.findMemberBattlesByMemberIdAndStatusWithExpenditure(memberId, BattleStatus.PROGRESS);
 
         return battles.stream()
+                .sorted(Comparator.comparing(battleInfo -> battleInfo.getBattle().getCreatedAt(),
+                                             Comparator.reverseOrder()))
                 .map(battleInfo -> mapToProgressBattleResponse(battleInfo, memberId, date))
                 .toList();
     }
@@ -203,6 +209,8 @@ public class BattleService {
                 battleRepository.findMemberBattlesByMemberIdAndStatusWithExpenditure(memberId, BattleStatus.COMPLETE);
 
         return battles.stream()
+                .sorted(Comparator.comparing(battleInfo -> battleInfo.getBattle().getCreatedAt(),
+                                             Comparator.reverseOrder()))
                 .map(battleInfo -> mapToMemberCompleteBattleResponse(battleInfo, memberId, date))
                 .toList();
     }
