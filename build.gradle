@@ -84,6 +84,7 @@ dependencies {
 
     //SENTRY
     implementation 'io.sentry:sentry-spring-boot-starter-jakarta:7.6.0'
+    implementation 'com.github.maricn:logback-slack-appender:1.4.0'
 }
 
 ext {
