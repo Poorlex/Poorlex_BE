@@ -17,7 +17,7 @@ public class ApiExceptionHandler {
     public ResponseEntity<ExceptionResponse> handle(final ApiException exception) {
         setSentryTag(exception);
         captureWithSentry(exception);
-        log.warn(HANDLED_EXCEPTION_LOG_MESSAGE, exception.getTag().getValue(), exception.getMessage());
+        log.error(HANDLED_EXCEPTION_LOG_MESSAGE, exception.getTag().getValue(), exception.getMessage());
         return ResponseEntity.badRequest().body(ExceptionResponse.from(exception));
     }
 
@@ -25,7 +25,7 @@ public class ApiExceptionHandler {
     public ResponseEntity<ExceptionResponse> handle(final Exception exception) {
         captureWithSentry(exception);
         exception.printStackTrace();
-        log.warn(UNHANDLED_EXCEPTION_LOG_MESSAGE, exception.getClass());
+        log.error(UNHANDLED_EXCEPTION_LOG_MESSAGE, exception.getClass());
         return ResponseEntity.internalServerError().body(ExceptionResponse.from(exception));
     }
 
