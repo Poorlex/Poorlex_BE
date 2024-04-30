@@ -1,5 +1,6 @@
 package com.poorlex.poorlex.battle.battle.domain;
 
+import com.poorlex.poorlex.common.BaseCreatedAtEntity;
 import com.poorlex.poorlex.exception.ApiException;
 import com.poorlex.poorlex.exception.ExceptionTag;
 import jakarta.persistence.Embedded;
@@ -19,7 +20,7 @@ import lombok.NonNull;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Battle {
+public class Battle extends BaseCreatedAtEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

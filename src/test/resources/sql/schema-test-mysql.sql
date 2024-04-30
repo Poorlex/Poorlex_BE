@@ -39,6 +39,7 @@ create table if not exists battle
     end_time                  datetime(6)  not null,
     status                    enum ('COMPLETE','PROGRESS','RECRUITING','RECRUITING_FINISHED'),
     is_battle_success_counted boolean,
+    created_at                datetime(6),
     primary key (id)
 ) engine = InnoDB;
 

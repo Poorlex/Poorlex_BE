@@ -50,6 +50,7 @@ create table if not exists battle
                                                              'PROGRESS',
                                                              'COMPLETE')),
     is_battle_success_counted boolean,
+    created_at                datetime(6),
     primary key (id)
 );
 
