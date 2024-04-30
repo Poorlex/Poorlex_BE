@@ -1,6 +1,7 @@
 package com.poorlex.poorlex.battle.battle.documentation;
 
-import com.poorlex.poorlex.battle.battle.controller.BattleController;
+import com.poorlex.poorlex.battle.battle.controller.BattleCommandController;
+import com.poorlex.poorlex.battle.battle.controller.BattleQueryController;
 import com.poorlex.poorlex.battle.battle.service.BattleService;
 import com.poorlex.poorlex.battle.battle.service.dto.request.BattleFindRequest;
 import com.poorlex.poorlex.battle.battle.service.dto.response.BattleResponse;
@@ -38,7 +39,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-@WebMvcTest(BattleController.class)
+@WebMvcTest(controllers = {BattleCommandController.class, BattleQueryController.class})
 class BattleDocumentationTest extends MockMvcTest {
 
     @Autowired
