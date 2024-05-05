@@ -24,4 +24,28 @@ public interface BattleCommandControllerSwaggerInterface {
             @Parameter(in = ParameterIn.QUERY, required = true, description = "배틀 예산") final int budget,
             @Parameter(in = ParameterIn.QUERY, required = true, description = "배틀 최대 인원수") final int maxParticipantSize
     );
+
+    @Operation(summary = "[테스트용] 진행중 배틀 생성", description = "액세스 토큰 필요")
+    @PostMapping
+    @ApiResponse(responseCode = "201")
+    ResponseEntity<Void> createProgressingBattle(
+            @Parameter(hidden = true) final MemberInfo memberInfo,
+            @Parameter(description = "배틀 이미지", required = true) final MultipartFile image,
+            @Parameter(in = ParameterIn.QUERY, required = true, description = "배틀 이름") final String name,
+            @Parameter(in = ParameterIn.QUERY, required = true, description = "배틀 설명") final String introduction,
+            @Parameter(in = ParameterIn.QUERY, required = true, description = "배틀 예산") final int budget,
+            @Parameter(in = ParameterIn.QUERY, required = true, description = "배틀 최대 인원수") final int maxParticipantSize
+    );
+
+    @Operation(summary = "[테스트용] 완료된 배틀 생성", description = "액세스 토큰 필요")
+    @PostMapping
+    @ApiResponse(responseCode = "201")
+    ResponseEntity<Void> createCompletedBattle(
+            @Parameter(hidden = true) final MemberInfo memberInfo,
+            @Parameter(description = "배틀 이미지", required = true) final MultipartFile image,
+            @Parameter(in = ParameterIn.QUERY, required = true, description = "배틀 이름") final String name,
+            @Parameter(in = ParameterIn.QUERY, required = true, description = "배틀 설명") final String introduction,
+            @Parameter(in = ParameterIn.QUERY, required = true, description = "배틀 예산") final int budget,
+            @Parameter(in = ParameterIn.QUERY, required = true, description = "배틀 최대 인원수") final int maxParticipantSize
+    );
 }

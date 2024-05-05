@@ -36,4 +36,34 @@ public class BattleCommandController implements BattleCommandControllerSwaggerIn
         final Long createdBattleId = battleService.create(memberInfo.getMemberId(), image, request);
         return ResponseEntity.created(URI.create("/battles/" + createdBattleId)).build();
     }
+
+    @PostMapping(path = "/progressing", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<Void> createProgressingBattle(@MemberOnly final MemberInfo memberInfo,
+                                                        @RequestPart("image") final MultipartFile image,
+                                                        @RequestParam final String name,
+                                                        @RequestParam final String introduction,
+                                                        @RequestParam final int budget,
+                                                        @RequestParam final int maxParticipantSize) {
+        final BattleCreateRequest request = new BattleCreateRequest(name,
+                                                                    introduction,
+                                                                    budget,
+                                                                    maxParticipantSize);
+        final Long createdBattleId = battleService.createProgressing(memberInfo.getMemberId(), image, request);
+        return ResponseEntity.created(URI.create("/battles/" + createdBattleId)).build();
+    }
+
+    @PostMapping(path = "/completed", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<Void> createCompletedBattle(@MemberOnly final MemberInfo memberInfo,
+                                                      @RequestPart("image") final MultipartFile image,
+                                                      @RequestParam final String name,
+                                                      @RequestParam final String introduction,
+                                                      @RequestParam final int budget,
+                                                      @RequestParam final int maxParticipantSize) {
+        final BattleCreateRequest request = new BattleCreateRequest(name,
+                                                                    introduction,
+                                                                    budget,
+                                                                    maxParticipantSize);
+        final Long createdBattleId = battleService.createCompleted(memberInfo.getMemberId(), image, request);
+        return ResponseEntity.created(URI.create("/battles/" + createdBattleId)).build();
+    }
 }

@@ -84,7 +84,27 @@ public class BattleService {
     @Transactional
     public Long create(final Long memberId, final MultipartFile image, final BattleCreateRequest request) {
         validateMemberCanCreateBattle(memberId);
-        final Battle battle = battleRepository.save(createBattle(image, request));
+        final Battle battle = battleRepository.save(createBattle(image, request, BattleStatus.RECRUITING));
+
+        Events.raise(new BattleCreatedEvent(battle.getId(), memberId));
+
+        return battle.getId();
+    }
+
+    @Transactional
+    public Long createProgressing(final Long memberId, final MultipartFile image, final BattleCreateRequest request) {
+        validateMemberCanCreateBattle(memberId);
+        final Battle battle = battleRepository.save(createBattle(image, request, BattleStatus.PROGRESS));
+
+        Events.raise(new BattleCreatedEvent(battle.getId(), memberId));
+
+        return battle.getId();
+    }
+
+    @Transactional
+    public Long createCompleted(final Long memberId, final MultipartFile image, final BattleCreateRequest request) {
+        validateMemberCanCreateBattle(memberId);
+        final Battle battle = battleRepository.save(createBattle(image, request, BattleStatus.COMPLETE));
 
         Events.raise(new BattleCreatedEvent(battle.getId(), memberId));
 
@@ -104,7 +124,9 @@ public class BattleService {
         }
     }
 
-    private Battle createBattle(final MultipartFile image, final BattleCreateRequest request) {
+    private Battle createBattle(final MultipartFile image,
+                                final BattleCreateRequest request,
+                                final BattleStatus battleStatus) {
         final BattleName name = new BattleName(request.getName());
         final BattleIntroduction introduction = new BattleIntroduction(request.getIntroduction());
         final BattleBudget budget = new BattleBudget(request.getBudget());
@@ -116,8 +138,9 @@ public class BattleService {
                                       budget,
                                       participantSize,
                                       BattleDuration.current(),
-                                      BattleStatus.RECRUITING);
+                                      battleStatus);
     }
+
 
     public List<FindingBattleResponse> findBattlesToPlay() {
         final List<BattleStatus> statuses = List.of(BattleStatus.RECRUITING, BattleStatus.RECRUITING_FINISHED);
