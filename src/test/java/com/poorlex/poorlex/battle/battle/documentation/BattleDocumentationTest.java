@@ -93,9 +93,9 @@ class BattleDocumentationTest extends MockMvcTest {
         mockingMemberArgumentResolver();
         given(battleService.findBattlesToPlay()).willReturn(
                 List.of(
-                        new FindingBattleResponse(1L, "첫번째 배틀명", "첫번째 배틀 이미지 링크", "HARD", 10000, 2, 10),
-                        new FindingBattleResponse(2L, "두번째 배틀명", "두번째 배틀 이미지 링크", "NORMAL", 90000, 1, 10),
-                        new FindingBattleResponse(3L, "세번째 배틀명", "세번째 배틀 이미지 링크", "EASY", 150000, 5, 10)
+                        new FindingBattleResponse(1L, "첫번째 배틀명", "소개", "첫번째 배틀 이미지 링크", "HARD", 10000, 2, 10),
+                        new FindingBattleResponse(2L, "두번째 배틀명", "소개", "두번째 배틀 이미지 링크", "NORMAL", 90000, 1, 10),
+                        new FindingBattleResponse(3L, "세번째 배틀명", "소개", "세번째 배틀 이미지 링크", "EASY", 150000, 5, 10)
                 )
         );
 
@@ -117,6 +117,8 @@ class BattleDocumentationTest extends MockMvcTest {
                                                                 .description("배틀 ID"),
                                                         fieldWithPath("name").type(JsonFieldType.STRING)
                                                                 .description("배틀방 이름"),
+                                                        fieldWithPath("introduction").type(JsonFieldType.STRING)
+                                                                .description("배틀방 소개"),
                                                         fieldWithPath("imageUrl").type(JsonFieldType.STRING)
                                                                 .description("배틀 이미지 링크"),
                                                         fieldWithPath("budget").type(JsonFieldType.NUMBER)

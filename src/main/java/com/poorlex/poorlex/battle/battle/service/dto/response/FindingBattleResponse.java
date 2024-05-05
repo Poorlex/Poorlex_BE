@@ -12,6 +12,7 @@ public class FindingBattleResponse {
 
     private final Long battleId;
     private final String name;
+    private final String introduction;
     private final String imageUrl;
     private final String difficulty;
     private final int budget;
@@ -20,8 +21,8 @@ public class FindingBattleResponse {
 
     public static List<FindingBattleResponse> parseToList(final List<BattleWithCurrentParticipantSize> battles) {
         return battles.stream()
-            .map(FindingBattleResponse::from)
-            .toList();
+                .map(FindingBattleResponse::from)
+                .toList();
     }
 
     public static FindingBattleResponse from(final BattleWithCurrentParticipantSize battleWithCurrentParticipantSize) {
@@ -29,13 +30,14 @@ public class FindingBattleResponse {
         final int currentParticipantSize = battleWithCurrentParticipantSize.getCurrentParticipantSize();
 
         return new FindingBattleResponse(
-            battle.getId(),
-            battle.getName(),
-            battle.getImageUrl(),
-            battle.getDifficulty().name(),
-            battle.getBudget(),
-            currentParticipantSize,
-            battle.getMaxParticipantSize().getValue()
+                battle.getId(),
+                battle.getName(),
+                battle.getIntroduction(),
+                battle.getImageUrl(),
+                battle.getDifficulty().name(),
+                battle.getBudget(),
+                currentParticipantSize,
+                battle.getMaxParticipantSize().getValue()
         );
     }
 }
