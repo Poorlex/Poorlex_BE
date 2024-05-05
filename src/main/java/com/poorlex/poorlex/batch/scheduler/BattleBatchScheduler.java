@@ -36,7 +36,7 @@ public class BattleBatchScheduler {
 
     @Scheduled(cron = "${schedules.battle-start.cron}")
     @Transactional
-    public void readiedBattleStart() {
+    public void startReadiedBattles() {
         log.info("batch schedule run : {}", "준비 배틀 시작");
         battleRepository.findBattlesByStatusIn(BattleStatus.getReadiedStatues())
                 .forEach(Battle::startWithoutValidate);
