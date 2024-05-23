@@ -14,7 +14,6 @@ import com.poorlex.poorlex.battle.battle.domain.BattleStatus;
 import com.poorlex.poorlex.battle.battle.domain.BattleWithCurrentParticipantSize;
 import com.poorlex.poorlex.battle.battle.domain.BattleWithMemberExpenditure;
 import com.poorlex.poorlex.battle.battle.service.dto.request.BattleCreateRequest;
-import com.poorlex.poorlex.battle.battle.service.dto.request.BattleFindRequest;
 import com.poorlex.poorlex.battle.battle.service.dto.response.BattleResponse;
 import com.poorlex.poorlex.battle.battle.service.dto.response.FindingBattleResponse;
 import com.poorlex.poorlex.battle.battle.service.dto.response.MemberCompleteBattleResponse;
@@ -277,7 +276,7 @@ public class BattleService {
         battle.endWithoutValidate();
     }
 
-    public BattleResponse getBattleInfo(final Long battleId, final BattleFindRequest request) {
+    public BattleResponse getBattleInfo(final Long battleId, final LocalDate date) {
         final Battle battle = findExistBattle(battleId);
 
         final List<BattleParticipant> participants = battleParticipantRepository.findAllByBattleId(battleId);
@@ -294,7 +293,7 @@ public class BattleService {
                 getParticipantsRanks(battle, participantMemberIds)
         );
 
-        return new BattleResponse(battle, battle.getDDay(request.getDate()), sortedRankingsResponses);
+        return new BattleResponse(battle, battle.getDDay(date), sortedRankingsResponses);
     }
 
     private Map<Long, String> getParticipantsNickname(final List<Long> memberIds) {

@@ -26,7 +26,6 @@ import org.springframework.http.MediaType;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import org.springframework.restdocs.payload.JsonFieldType;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.partWithName;
@@ -251,10 +250,7 @@ class BattleDocumentationTest extends MockMvcTest {
         final BattleFindRequest request = new BattleFindRequest(LocalDate.now());
 
         //when
-        final ResultActions result = mockMvc.perform(get("/battles/{battleId}", 1)
-                                                             .content(objectMapper.writeValueAsString(request))
-                                                             .contentType(MediaType.APPLICATION_JSON)
-        );
+        final ResultActions result = mockMvc.perform(get("/battles/{battleId}?date={date}", 1, LocalDate.now()));
 
         //then
         result.andExpect(MockMvcResultMatchers.status().isOk())
@@ -262,8 +258,8 @@ class BattleDocumentationTest extends MockMvcTest {
                         document("battle-find-by-id",
                                  ApiDocumentUtils.getDocumentRequest(),
                                  ApiDocumentUtils.getDocumentResponse(),
-                                 requestFields(
-                                         fieldWithPath("date").type(JsonFieldType.STRING).description("조회 날짜")
+                                 queryParameters(
+                                         parameterWithName("date").description("조회 날짜")
                                  ),
                                  responseFields(
                                          fieldWithPath("battleName").type(JsonFieldType.STRING).description("배틀 명"),

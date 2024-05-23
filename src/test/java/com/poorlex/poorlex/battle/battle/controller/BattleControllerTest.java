@@ -216,9 +216,7 @@ class BattleControllerTest extends IntegrationTest implements ReplaceUnderScoreT
         //when
         //then
         mockMvc.perform(
-                        get("/battles/{battleId}", battleId)
-                                .content(objectMapper.writeValueAsString(request))
-                                .contentType(MediaType.APPLICATION_JSON)
+                        get("/battles/{battleId}?date={date}", battleId, LocalDate.now())
                 )
                 .andDo(print())
                 .andExpect(status().isOk())

@@ -1,7 +1,6 @@
 package com.poorlex.poorlex.battle.battle.controller;
 
 import com.poorlex.poorlex.battle.battle.service.BattleService;
-import com.poorlex.poorlex.battle.battle.service.dto.request.BattleFindRequest;
 import com.poorlex.poorlex.battle.battle.service.dto.response.BattleResponse;
 import com.poorlex.poorlex.battle.battle.service.dto.response.FindingBattleResponse;
 import com.poorlex.poorlex.battle.battle.service.dto.response.MemberCompleteBattleResponse;
@@ -14,8 +13,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -25,10 +24,10 @@ public class BattleQueryController implements BattleQueryControllerSwaggerInterf
 
     private final BattleService battleService;
 
-    @GetMapping("/{battleId}")
+    @GetMapping(value = "/{battleId}", params = "date")
     public ResponseEntity<BattleResponse> getBattleInfo(@PathVariable("battleId") final Long battleId,
-                                                        @RequestBody final BattleFindRequest request) {
-        final BattleResponse battleResponse = battleService.getBattleInfo(battleId, request);
+                                                        @RequestParam final LocalDate date) {
+        final BattleResponse battleResponse = battleService.getBattleInfo(battleId, date);
         return ResponseEntity.ok(battleResponse);
     }
 
