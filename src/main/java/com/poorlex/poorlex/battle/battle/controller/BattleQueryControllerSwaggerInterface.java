@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Tag(name = "배틀 조회 관련 API")
 public interface BattleQueryControllerSwaggerInterface {
@@ -21,8 +22,7 @@ public interface BattleQueryControllerSwaggerInterface {
     @GetMapping("/{battleId}")
     @ApiResponse(responseCode = "200")
     ResponseEntity<BattleResponse> getBattleInfo(@Parameter(description = "배틀 Id") final Long battleId,
-                                                 @Parameter(description = "조회 날짜", required = true)
-                                                 final BattleFindRequest request);
+                                                 @RequestParam final BattleFindRequest request);
 
     @Operation(summary = "모든 배틀 조회 ( 모집중, 모집 완료 )")
     @GetMapping
