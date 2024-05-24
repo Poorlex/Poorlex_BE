@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 public class BattleResponse {
 
     private final String battleName;
+    private final String battleImageUrl;
     private final int maxParticipantSize;
     private final int currentParticipantSize;
     private final int battleBudget;
@@ -18,6 +19,7 @@ public class BattleResponse {
 
     public BattleResponse(final Battle battle, final long battleDDay, final List<ParticipantRankingResponse> rankings) {
         this.battleName = battle.getName();
+        this.battleImageUrl = battle.getImageUrl();
         this.maxParticipantSize = battle.getMaxParticipantSize().getValue();
         this.currentParticipantSize = rankings.size();
         this.battleBudget = battle.getBudget();

@@ -236,6 +236,7 @@ class BattleDocumentationTest extends MockMvcTest {
         given(battleService.getBattleInfo(any(), any()))
                 .willReturn(new BattleResponse(
                                     "배틀명",
+                                    "배틀 이미지 URL",
                                     10,
                                     10,
                                     10000,
@@ -263,6 +264,8 @@ class BattleDocumentationTest extends MockMvcTest {
                                  ),
                                  responseFields(
                                          fieldWithPath("battleName").type(JsonFieldType.STRING).description("배틀 명"),
+                                         fieldWithPath("battleImageUrl").type(JsonFieldType.STRING)
+                                                 .description("배틀 이미지 URL"),
                                          fieldWithPath("maxParticipantSize").type(JsonFieldType.NUMBER)
                                                  .description("배틀 최대 참가자 수"),
                                          fieldWithPath("currentParticipantSize").type(JsonFieldType.NUMBER)
