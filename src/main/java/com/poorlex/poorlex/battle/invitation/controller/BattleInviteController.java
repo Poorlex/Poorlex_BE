@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping
 @RequiredArgsConstructor
-public class BattleInviteController {
+public class BattleInviteController implements BattleInviteControllerSwaggerInterface {
 
     private final BattleInviteService battleInviteService;
 
