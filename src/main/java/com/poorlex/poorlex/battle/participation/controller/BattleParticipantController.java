@@ -1,8 +1,8 @@
 package com.poorlex.poorlex.battle.participation.controller;
 
+import com.poorlex.poorlex.battle.participation.service.BattleParticipantService;
 import com.poorlex.poorlex.config.auth.argumentresolver.MemberInfo;
 import com.poorlex.poorlex.config.auth.argumentresolver.MemberOnly;
-import com.poorlex.poorlex.battle.participation.service.BattleParticipantService;
 import java.net.URI;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/battles/{battleId}/participants")
 @RequiredArgsConstructor
-public class BattleParticipantController {
+public class BattleParticipantController implements BattleParticipantControllerSwaggerInterface {
 
     private final BattleParticipantService battleParticipantService;
 
