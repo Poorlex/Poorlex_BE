@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/battles/{battleId}/notification")
 @RequiredArgsConstructor
-public class BattleNotificationController {
+public class BattleNotificationController implements BattleNotificationControllerSwaggerInterface {
 
     private final BattleNotificationService battleNotificationService;
 
@@ -43,7 +43,7 @@ public class BattleNotificationController {
 
     @GetMapping
     public ResponseEntity<BattleNotificationResponse> findNotification(
-        @PathVariable(name = "battleId") final Long battleId) {
+            @PathVariable(name = "battleId") final Long battleId) {
         final BattleNotificationResponse response = battleNotificationService.findNotificationByBattleId(battleId);
 
         return ResponseEntity.ok(response);
