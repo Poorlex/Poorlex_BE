@@ -29,7 +29,7 @@ public interface ExpenditureRepository extends JpaRepository<Expenditure, Long> 
             + "left join BattleParticipant bp on e.memberId = bp.memberId and bp.battleId = :battleId "
             + "left join Battle b on bp.battleId = b.id "
             + "where e.date between cast(b.duration.start as LocalDate) and cast(b.duration.end as LocalDate)")
-    List<Expenditure> findBattleExpenditureByBattleId(final Long battleId);
+    List<Expenditure> findBattleExpenditureByBattleId(@Param("battleId") final Long battleId);
 
     List<Expenditure> findExpendituresByMemberIdAndDateBetween(final Long memberId,
                                                                final LocalDate start,

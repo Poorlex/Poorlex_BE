@@ -3,6 +3,7 @@ package com.poorlex.poorlex.voting.vote.domain;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 public interface VoteRepository extends JpaRepository<Vote, Long> {
 
@@ -21,5 +22,5 @@ public interface VoteRepository extends JpaRepository<Vote, Long> {
         + "where v.battle_id =  :battleId "
         + "group by v.id",
         nativeQuery = true)
-    List<VoteAndVotingCountDto> findVotesByBattleId(final Long battleId);
+    List<VoteAndVotingCountDto> findVotesByBattleId(@Param("battleId") final Long battleId);
 }

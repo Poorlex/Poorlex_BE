@@ -3,6 +3,7 @@ package com.poorlex.poorlex.battle.succession.domain;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 public interface BattleSuccessHistoryRepository extends JpaRepository<BattleSuccessHistory, Long> {
 
@@ -11,5 +12,5 @@ public interface BattleSuccessHistoryRepository extends JpaRepository<BattleSucc
             + "where bs.memberId = :memberId "
             + "group by bs.battleDifficulty"
     )
-    List<BattleSuccessCountGroup> findDifficultySuccessCountsByMemberId(final Long memberId);
+    List<BattleSuccessCountGroup> findDifficultySuccessCountsByMemberId(@Param("memberId") final Long memberId);
 }

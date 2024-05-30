@@ -18,7 +18,7 @@ public interface MemberPointRepository extends JpaRepository<MemberPoint, Long> 
             + "from Member m left join MemberPoint mp on m.id = mp.memberId "
             + "where m.id in :memberIds "
             + "group by m.id")
-    List<MemberIdAndTotalPointDto> findTotalPointsByMemberIdIn(final List<Long> memberIds);
+    List<MemberIdAndTotalPointDto> findTotalPointsByMemberIdIn(@Param("memberIds") final List<Long> memberIds);
 
     List<MemberPoint> findMemberPointsByMemberId(final Long memberId);
 }
