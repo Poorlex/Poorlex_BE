@@ -37,6 +37,10 @@ spring:
       mode: always
       schema-locations: classpath*:sql/schema.sql
 
+  output:
+    ansi:
+      enabled: always
+
 logging:
   level:
     root: INFO

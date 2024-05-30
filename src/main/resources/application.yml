@@ -2,5 +2,9 @@ spring:
   profiles:
     active: local
 
+  output:
+    ansi:
+      enabled: always
+
   config:
     import: classpath:secure/application.yml
