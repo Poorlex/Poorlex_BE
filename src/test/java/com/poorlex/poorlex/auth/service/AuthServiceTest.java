@@ -11,6 +11,8 @@ import com.poorlex.poorlex.user.member.domain.Oauth2RegistrationId;
 import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
+
+import com.poorlex.poorlex.user.member.service.NicknameGenerator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,12 +25,13 @@ class AuthServiceTest extends UsingDataJpaTest implements ReplaceUnderScoreTest 
     @Autowired
     private MemberRepository memberRepository;
     private JwtTokenProvider tokenProvider;
+    private NicknameGenerator nicknameGenerator;
     private AuthService authService;
 
     @BeforeEach
     void setUp() {
         this.tokenProvider = new JwtTokenProvider(SECRET_KEY, ACCESS_EXPIRE_LENGTH);
-        this.authService = new AuthService(memberRepository, tokenProvider);
+        this.authService = new AuthService(memberRepository, tokenProvider, nicknameGenerator);
         initializeDataBase();
     }
 

@@ -2,6 +2,8 @@ package com.poorlex.poorlex.auth.documentation;
 
 import com.poorlex.poorlex.auth.controller.AuthController;
 import com.poorlex.poorlex.auth.service.AuthService;
+import com.poorlex.poorlex.auth.service.authenticator.AppleAuthenticator;
+import com.poorlex.poorlex.auth.service.authenticator.KakaoAuthenticator;
 import com.poorlex.poorlex.auth.service.dto.request.LoginRequest;
 import com.poorlex.poorlex.auth.service.dto.response.LoginTokenResponse;
 import com.poorlex.poorlex.support.MockMvcTest;
@@ -33,6 +35,12 @@ class AuthDocumentationTest extends MockMvcTest {
 
     @MockBean
     private AuthService authService;
+
+    @MockBean
+    private AppleAuthenticator appleAuthenticator;
+
+    @MockBean
+    private KakaoAuthenticator kakaoAuthenticator;
 
     @Test
     void login_or_register() throws Exception {
