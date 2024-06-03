@@ -40,6 +40,7 @@ apple:
   team-id: team_id
   audience: https://appleid.apple.com
   private-key: p8 file
+  grant-type: authorization_code
 
 aws:
   s3:
