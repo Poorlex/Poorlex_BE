@@ -23,9 +23,6 @@ public class AppleAuthenticator implements Authenticator {
     @Value("${apple.private-key}")
     String clientSecret;
 
-    @Value("${apple.grant-type}")
-    String grantType;
-
     private final RestClient restClient = RestClient.create();
     private final JwtTokenProvider jwtTokenProvider;
 
@@ -35,7 +32,7 @@ public class AppleAuthenticator implements Authenticator {
         request.put("code", List.of(code));
         request.put("client_id", List.of(clientId));
         request.put("client_secret", List.of(clientSecret));
-        request.put("grant_type", List.of(grantType));
+        request.put("grant_type", List.of("authorization_code"));
 
         AppleLoginResponse response = restClient.post()
                 .uri("https://appleid.apple.com/auth/token")
