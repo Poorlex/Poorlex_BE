@@ -8,6 +8,7 @@ import com.poorlex.poorlex.battle.participation.domain.BattleParticipantReposito
 import com.poorlex.poorlex.battle.participation.service.event.BattleParticipantAddedEvent;
 import com.poorlex.poorlex.config.event.Events;
 import com.poorlex.poorlex.exception.ApiException;
+import com.poorlex.poorlex.exception.BadRequestException;
 import com.poorlex.poorlex.exception.ExceptionTag;
 import com.poorlex.poorlex.user.member.domain.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -26,9 +27,9 @@ public class BattleParticipantService {
     private final BattleParticipantRepository battleParticipantRepository;
 
     @Transactional
-    public Long participate(final Long battleId, final Long memberId) {
+    public Long participate(final Long battleId, final Long memberId) throws BadRequestException {
         validateMemberExist(memberId);
-        validateMemberCanParticipateBattle(memberId);
+        validateMemberCanParticipateBattle(battleId, memberId);
         validateBattle(battleId);
         final BattleParticipant battleParticipant = BattleParticipant.normalPlayer(battleId, memberId);
         final BattleParticipant savedBattleParticipant = battleParticipantRepository.save(battleParticipant);
@@ -44,7 +45,12 @@ public class BattleParticipantService {
         }
     }
 
-    private void validateMemberCanParticipateBattle(final Long memberId) {
+    private void validateMemberCanParticipateBattle(final Long battleId, final Long memberId) throws BadRequestException {
+        if (battleParticipantRepository.existsByBattleIdAndMemberId(battleId, memberId)) {
+            final String errorMessage = "하나의 배틀에 중복 참여할 수 없습니다.";
+            throw new BadRequestException(errorMessage);
+        }
+
         final int readiedBattleCount = battleRepository.countMemberBattleWithStatuses(
                 memberId,
                 BattleStatus.getReadiedStatues()

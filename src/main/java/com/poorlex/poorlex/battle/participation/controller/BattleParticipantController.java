@@ -4,6 +4,8 @@ import com.poorlex.poorlex.battle.participation.service.BattleParticipantService
 import com.poorlex.poorlex.config.auth.argumentresolver.MemberInfo;
 import com.poorlex.poorlex.config.auth.argumentresolver.MemberOnly;
 import java.net.URI;
+
+import com.poorlex.poorlex.exception.BadRequestException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -21,7 +23,7 @@ public class BattleParticipantController implements BattleParticipantControllerS
 
     @PostMapping
     public ResponseEntity<Void> participate(@PathVariable(value = "battleId") final Long battleId,
-                                            @MemberOnly MemberInfo memberInfo) {
+                                            @MemberOnly MemberInfo memberInfo) throws BadRequestException {
         final Long battleParticipantId = battleParticipantService.participate(battleId, memberInfo.getMemberId());
         final String locationHeader = "/battles/" + battleId + "/participants/" + battleParticipantId;
 
