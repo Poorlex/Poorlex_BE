@@ -13,8 +13,9 @@ import java.util.Map;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
+
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
@@ -37,7 +38,9 @@ class MemberPointCommandControllerTest extends IntegrationTest implements Replac
         //given
         final Long 회원_ID = 1L;
         MOCKING_토큰이_회원_ID를_가진_클레임을_반환하도록_한다(회원_ID);
+        MOCKING_토큰과_클레임이_회원_ID를_반환하도록_한다(회원_ID);
         MOCKING_ID로_회원조회시_동일한_ID를_가지는_임의의_회원을_반환하도록_한다(회원_ID);
+        MOCKING_토큰이_없더라도_회원을_반환한다(회원_ID);
         MOCKING_멤버_존재여부를_확인시_참을_반환하도록_한다();
 
         final String 회원_액세스_토큰 = "access_token";
@@ -67,5 +70,13 @@ class MemberPointCommandControllerTest extends IntegrationTest implements Replac
 
     private void MOCKING_멤버_존재여부를_확인시_참을_반환하도록_한다() {
         when(memberRepository.existsById(anyLong())).thenReturn(true);
+    }
+
+    private void MOCKING_토큰과_클레임이_회원_ID를_반환하도록_한다(final Long 회원_ID) {
+        when(jwtTokenProvider.getPayload(anyString(), anyString(), any())).thenReturn(회원_ID);
+    }
+
+    private void MOCKING_토큰이_없더라도_회원을_반환한다(final Long 회원_ID) {
+        when(memberRepository.existsById(회원_ID)).thenReturn(true);
     }
 }
