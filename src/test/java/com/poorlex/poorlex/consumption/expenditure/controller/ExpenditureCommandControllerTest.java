@@ -6,6 +6,7 @@ import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.time.LocalDate;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,11 +22,10 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @DisplayName("지출 관리 Controller 단위 테스트")
 @WebMvcTest(
@@ -149,7 +149,7 @@ class ExpenditureCommandControllerTest extends ControllerTest implements Replace
     }
 
     @Test
-    void ERROR_지출생성시_메인이미지가_없는_경우_500_상태코드로_응답한다() throws Exception {
+    void ERROR_지출생성시_메인이미지가_없는_경우_400_상태코드로_응답한다() throws Exception {
         //given
         STUBBING_요청을_지출로_변환하는_실제_로직이_실행된다();
         final MockMultipartFile 지출_서브_이미지 = 해당_키를_가지는_MultipartFile을_생성한다("subImage");
@@ -165,12 +165,12 @@ class ExpenditureCommandControllerTest extends ControllerTest implements Replace
                                 .header(HttpHeaders.AUTHORIZATION, "Bearer accessToken")
                 )
                 .andDo(print())
-                .andExpect(status().isInternalServerError())
-                .andExpect(jsonPath("$.message").exists());
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.detail").value("Required part 'mainImage' is not present."));
     }
 
     @Test
-    void ERROR_지출생성시_이미지가_없는_경우_500_상태코드로_응답한다() throws Exception {
+    void ERROR_지출생성시_이미지가_없는_경우_400_상태코드로_응답한다() throws Exception {
         //given when then
         mockMvc.perform(
                         multipart(HttpMethod.POST, "/expenditures")
@@ -180,8 +180,8 @@ class ExpenditureCommandControllerTest extends ControllerTest implements Replace
                                 .header(HttpHeaders.AUTHORIZATION, "Bearer accessToken")
                 )
                 .andDo(print())
-                .andExpect(status().isInternalServerError())
-                .andExpect(jsonPath("$.message").exists());
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.detail").value("Required part 'mainImage' is not present."));
     }
 
     @Test

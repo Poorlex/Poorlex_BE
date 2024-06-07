@@ -6,14 +6,18 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -33,11 +37,16 @@ public class JwtFilter extends OncePerRequestFilter {
             return;
         }
 
-        final String accessToken = authorization.split(" ")[1];
-        final Long memberId = jwtTokenProvider.getPayload(accessToken, "memberId", Long.class);
+        try {
+            final String accessToken = authorization.split(" ")[1];
+            final Long memberId = jwtTokenProvider.getPayload(accessToken, "memberId", Long.class);
 
-        if (!memberRepository.existsById(memberId)) {
-            throw new IllegalArgumentException("해당 Id 를 가진 멤버가 존재하지 않습니다.");
+            if (!memberRepository.existsById(memberId)) {
+                throw new UsernameNotFoundException("user not found");
+            }
+        } catch (AuthenticationException e) {
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, e.getMessage());
+            return;
         }
 
         final UsernamePasswordAuthenticationToken authenticationToken =

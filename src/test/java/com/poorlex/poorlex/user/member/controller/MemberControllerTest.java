@@ -12,12 +12,14 @@ import io.jsonwebtoken.impl.DefaultClaims;
 import java.util.Map;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
+
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.when;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+
+import static org.mockito.Mockito.doReturn;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -36,7 +38,9 @@ class MemberControllerTest extends IntegrationTest implements ReplaceUnderScoreT
         //given
         final Long 회원_ID = 1L;
         MOCKING_토큰이_회원_ID를_가진_클레임을_반환하도록_한다(회원_ID);
+        MOCKING_토큰과_클레임이_회원_ID를_반환하도록_한다(회원_ID);
         MOCKING_ID로_회원조회시_동일한_ID를_가지는_임의의_회원을_반환하도록_한다(회원_ID);
+        MOCKING_토큰이_없더라도_회원을_반환한다(회원_ID);
 
         final String 회원_액세스_토큰 = "access_token";
         final MemberProfileUpdateRequest 변경_요청 = new MemberProfileUpdateRequest("닉네임", "소개");
@@ -57,7 +61,9 @@ class MemberControllerTest extends IntegrationTest implements ReplaceUnderScoreT
         //given
         final Long 회원_ID = 1L;
         MOCKING_토큰이_회원_ID를_가진_클레임을_반환하도록_한다(회원_ID);
+        MOCKING_토큰과_클레임이_회원_ID를_반환하도록_한다(회원_ID);
         MOCKING_ID로_회원조회시_동일한_ID를_가지는_임의의_회원을_반환하도록_한다(회원_ID);
+        MOCKING_토큰이_없더라도_회원을_반환한다(회원_ID);
 
         final String 회원_액세스_토큰 = "access_token";
         final MemberProfileUpdateRequest 변경_요청 = new MemberProfileUpdateRequest("    ", "소개");
@@ -79,7 +85,9 @@ class MemberControllerTest extends IntegrationTest implements ReplaceUnderScoreT
         //given
         final Long 회원_ID = 1L;
         MOCKING_토큰이_회원_ID를_가진_클레임을_반환하도록_한다(회원_ID);
+        MOCKING_토큰과_클레임이_회원_ID를_반환하도록_한다(회원_ID);
         MOCKING_ID로_회원조회시_동일한_ID를_가지는_임의의_회원을_반환하도록_한다(회원_ID);
+        MOCKING_토큰이_없더라도_회원을_반환한다(회원_ID);
 
         final String 회원_액세스_토큰 = "access_token";
         final MemberProfileUpdateRequest 변경_요청 = new MemberProfileUpdateRequest("a", "소개");
@@ -101,7 +109,9 @@ class MemberControllerTest extends IntegrationTest implements ReplaceUnderScoreT
         //given
         final Long 회원_ID = 1L;
         MOCKING_토큰이_회원_ID를_가진_클레임을_반환하도록_한다(회원_ID);
+        MOCKING_토큰과_클레임이_회원_ID를_반환하도록_한다(회원_ID);
         MOCKING_ID로_회원조회시_동일한_ID를_가지는_임의의_회원을_반환하도록_한다(회원_ID);
+        MOCKING_토큰이_없더라도_회원을_반환한다(회원_ID);
 
         final String 회원_액세스_토큰 = "access_token";
         final MemberProfileUpdateRequest 변경_요청 = new MemberProfileUpdateRequest("a".repeat(16), "소개");
@@ -123,7 +133,9 @@ class MemberControllerTest extends IntegrationTest implements ReplaceUnderScoreT
         //given
         final Long 회원_ID = 1L;
         MOCKING_토큰이_회원_ID를_가진_클레임을_반환하도록_한다(회원_ID);
+        MOCKING_토큰과_클레임이_회원_ID를_반환하도록_한다(회원_ID);
         MOCKING_ID로_회원조회시_동일한_ID를_가지는_임의의_회원을_반환하도록_한다(회원_ID);
+        MOCKING_토큰이_없더라도_회원을_반환한다(회원_ID);
 
         final String 회원_액세스_토큰 = "access_token";
         final MemberProfileUpdateRequest 변경_요청 = new MemberProfileUpdateRequest("닉네임", "    ");
@@ -145,7 +157,9 @@ class MemberControllerTest extends IntegrationTest implements ReplaceUnderScoreT
         //given
         final Long 회원_ID = 1L;
         MOCKING_토큰이_회원_ID를_가진_클레임을_반환하도록_한다(회원_ID);
+        MOCKING_토큰과_클레임이_회원_ID를_반환하도록_한다(회원_ID);
         MOCKING_ID로_회원조회시_동일한_ID를_가지는_임의의_회원을_반환하도록_한다(회원_ID);
+        MOCKING_토큰이_없더라도_회원을_반환한다(회원_ID);
 
         final String 회원_액세스_토큰 = "access_token";
         final MemberProfileUpdateRequest 변경_요청 = new MemberProfileUpdateRequest("닉네임", "a");
@@ -167,7 +181,9 @@ class MemberControllerTest extends IntegrationTest implements ReplaceUnderScoreT
         //given
         final Long 회원_ID = 1L;
         MOCKING_토큰이_회원_ID를_가진_클레임을_반환하도록_한다(회원_ID);
+        MOCKING_토큰과_클레임이_회원_ID를_반환하도록_한다(회원_ID);
         MOCKING_ID로_회원조회시_동일한_ID를_가지는_임의의_회원을_반환하도록_한다(회원_ID);
+        MOCKING_토큰이_없더라도_회원을_반환한다(회원_ID);
 
         final String 회원_액세스_토큰 = "access_token";
         final MemberProfileUpdateRequest 변경_요청 = new MemberProfileUpdateRequest("닉네임", "a".repeat(301));
@@ -192,5 +208,13 @@ class MemberControllerTest extends IntegrationTest implements ReplaceUnderScoreT
     private void MOCKING_토큰이_회원_ID를_가진_클레임을_반환하도록_한다(final Long 회원_ID) {
         final DefaultClaims 토큰_정보 = new DefaultClaims(Map.of("memberId", 회원_ID));
         when(jwtTokenProvider.getPayload(any())).thenReturn(토큰_정보);
+    }
+
+    private void MOCKING_토큰과_클레임이_회원_ID를_반환하도록_한다(final Long 회원_ID) {
+        when(jwtTokenProvider.getPayload(anyString(), anyString(), any())).thenReturn(회원_ID);
+    }
+
+    private void MOCKING_토큰이_없더라도_회원을_반환한다(final Long 회원_ID) {
+        when(memberRepository.existsById(회원_ID)).thenReturn(true);
     }
 }

@@ -10,6 +10,7 @@ import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -46,7 +47,7 @@ public class JwtTokenProvider {
                     .parseClaimsJws(token)
                     .getBody();
         } catch (JwtException e) {
-            throw new IllegalArgumentException(e);
+            throw new BadCredentialsException("Invalid JWT token");
         }
     }
 
