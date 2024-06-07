@@ -2,10 +2,7 @@ package com.poorlex.poorlex.security;
 
 import com.poorlex.poorlex.security.coverter.AppleRequestEntityConverter;
 import com.poorlex.poorlex.security.filter.JwtFilter;
-import com.poorlex.poorlex.security.handler.AppleTokenOauth2AuthenticationSuccessHandler;
-import com.poorlex.poorlex.security.handler.KaKaoTokenOauth2AuthenticationSuccessHandler;
-import com.poorlex.poorlex.security.handler.Oauth2AuthenticationSuccessHandler;
-import com.poorlex.poorlex.security.handler.TokenOauth2AuthenticationSuccessHandlerFacade;
+import com.poorlex.poorlex.security.handler.*;
 import com.poorlex.poorlex.security.service.CustomOauth2UserService;
 import com.poorlex.poorlex.auth.service.JwtTokenProvider;
 import com.poorlex.poorlex.user.member.domain.MemberRepository;
@@ -43,6 +40,7 @@ public class SecurityConfig {
         configureAuthorizeRequests(http);
         configureOauth2Login(http);
         configureLogout(http);
+        configureFilter(http);
 
         return http.build();
     }

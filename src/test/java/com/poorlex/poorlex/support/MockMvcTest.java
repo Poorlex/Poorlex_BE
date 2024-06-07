@@ -17,6 +17,8 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.io.IOException;
+
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(excludeFilters = {
         @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = SecurityConfig.class)
@@ -33,7 +35,7 @@ public abstract class MockMvcTest implements MockUserSecurityTest {
     @MockBean
     protected MemberArgumentResolver memberArgumentResolver;
 
-    protected void mockingTokenInterceptor() {
+    protected void mockingTokenInterceptor() throws IOException {
         given(tokenInterceptor.preHandle(any(), any(), any())).willReturn(true);
     }
 
