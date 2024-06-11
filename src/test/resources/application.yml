@@ -47,3 +47,6 @@ logging:
     org.hibernate.orm.jdbc.bind: trace
     org.springframework.web: INFO
     org.springframework.security: DEBUG
+
+server:
+  port: 8080
