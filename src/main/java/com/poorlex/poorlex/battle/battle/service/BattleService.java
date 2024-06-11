@@ -14,14 +14,11 @@ import com.poorlex.poorlex.battle.battle.domain.BattleStatus;
 import com.poorlex.poorlex.battle.battle.domain.BattleWithCurrentParticipantSize;
 import com.poorlex.poorlex.battle.battle.domain.BattleWithMemberExpenditure;
 import com.poorlex.poorlex.battle.battle.service.dto.request.BattleCreateRequest;
-import com.poorlex.poorlex.battle.battle.service.dto.response.BattleResponse;
-import com.poorlex.poorlex.battle.battle.service.dto.response.FindingBattleResponse;
-import com.poorlex.poorlex.battle.battle.service.dto.response.MemberCompleteBattleResponse;
-import com.poorlex.poorlex.battle.battle.service.dto.response.MemberProgressBattleResponse;
-import com.poorlex.poorlex.battle.battle.service.dto.response.ParticipantRankingResponse;
+import com.poorlex.poorlex.battle.battle.service.dto.response.*;
 import com.poorlex.poorlex.battle.battle.service.event.BattleCreatedEvent;
 import com.poorlex.poorlex.battle.participation.domain.BattleParticipant;
 import com.poorlex.poorlex.battle.participation.domain.BattleParticipantRepository;
+import com.poorlex.poorlex.battle.participation.domain.BattleParticipantRole;
 import com.poorlex.poorlex.config.event.Events;
 import com.poorlex.poorlex.consumption.expenditure.service.ExpenditureQueryService;
 import com.poorlex.poorlex.consumption.expenditure.service.dto.RankAndTotalExpenditureDto;
@@ -29,6 +26,7 @@ import com.poorlex.poorlex.exception.ApiException;
 import com.poorlex.poorlex.exception.ExceptionTag;
 import com.poorlex.poorlex.user.member.domain.MemberLevel;
 import com.poorlex.poorlex.user.member.service.MemberQueryService;
+import com.poorlex.poorlex.user.member.service.dto.response.MyPageResponse;
 import com.poorlex.poorlex.user.point.domain.Point;
 import com.poorlex.poorlex.user.point.service.MemberPointQueryService;
 import java.time.LocalDate;
@@ -36,6 +34,8 @@ import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+
+import com.poorlex.poorlex.user.point.service.dto.response.MyPageLevelInfoResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -276,24 +276,22 @@ public class BattleService {
         battle.endWithoutValidate();
     }
 
-    public BattleResponse getBattleInfo(final Long battleId, final LocalDate date) {
+    public BattleResponse getBattleInfo(final Long battleId) {
         final Battle battle = findExistBattle(battleId);
 
         final List<BattleParticipant> participants = battleParticipantRepository.findAllByBattleId(battleId);
-        final List<Long> participantMemberIds = participants.stream()
-                .map(BattleParticipant::getMemberId)
-                .toList();
 
-        final Map<Long, String> participantsNickname = getParticipantsNickname(participantMemberIds);
-        final Map<Long, Integer> participantsTotalPoint = getParticipantsTotalPoint(participantMemberIds);
-        final List<ParticipantRankingResponse> sortedRankingsResponses = mapToParticipantRankingResponses(
-                participants,
-                participantsNickname,
-                participantsTotalPoint,
-                getParticipantsRanks(battle, participantMemberIds)
-        );
+        Long managerId = participants.stream().filter(p -> p.getRole().equals(BattleParticipantRole.MANAGER))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("배틀 매니저를 찾을 수 없습니다."))
+                .getMemberId();
+        MyPageResponse managerInfo = memberQueryService.getMyPageInfoFromCurrentDatetime(managerId);
 
-        return new BattleResponse(battle, battle.getDDay(date), sortedRankingsResponses);
+        MyPageLevelInfoResponse memberLevelInfo = memberPointService.findMemberLevelInfo(managerId);
+
+        BattleManagerResponse managerResponse = new BattleManagerResponse(managerInfo.getNickname(), memberLevelInfo.getLevel(), managerInfo.getDescription());
+
+        return new BattleResponse(battle, battle.getDDay(LocalDate.now()), managerResponse, participants.size());
     }
 
     private Map<Long, String> getParticipantsNickname(final List<Long> memberIds) {
