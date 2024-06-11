@@ -20,16 +20,20 @@ public class SwaggerConfig {
 
     private int order = 1;
 
-    @Value("${server.port}")
+    @Value("${server.host:#{'localhost'}}")
+    private String serverHost;
+
+    @Value("${server.announce-port:#{8080}}")
     private int serverPort;
+
+    @Value("${server.protocol:#{'http'}}")
+    private String serverProtocol;
 
     @Bean
     @Profile("!dev")
     public OpenAPI openAPI() {
-        String hostName = InetAddress.getLoopbackAddress().getHostName();
-
         final Server local = new Server()
-                .url("http://" + hostName + ":" + serverPort)
+                .url(serverProtocol + "://" + serverHost + ":" + serverPort)
                 .description("for local API call");
 
         return new OpenAPI()
@@ -42,10 +46,8 @@ public class SwaggerConfig {
     @Bean
     @Profile("dev")
     public OpenAPI devOpenAPI() {
-        String hostName = InetAddress.getLoopbackAddress().getHostName();
-
         final Server server = new Server()
-                .url("https://" + hostName + ":" + serverPort)
+                .url(serverProtocol + "://" + serverHost + ":" + serverPort)
                 .description("for real API call");
 
         return new OpenAPI()

@@ -10,4 +10,7 @@ spring:
     import: classpath:secure/application.yml
 
 server:
+  protocol: http
+  host: localhost
   port: 8080
+  announce-port: 8080
