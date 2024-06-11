@@ -22,11 +22,13 @@ import com.poorlex.poorlex.user.member.domain.MemberRepository;
 import com.poorlex.poorlex.user.member.domain.Oauth2RegistrationId;
 import java.io.FileInputStream;
 import java.time.LocalDate;
-import java.util.UUID;
+import java.util.*;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import static org.mockito.ArgumentMatchers.any;
+
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +37,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
+
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -107,7 +111,8 @@ class BattleControllerTest extends IntegrationTest implements ReplaceUnderScoreT
     @Test
     void 현재_참여가능한_배틀들을_조회시_상태코드_200_과_배틀의_데이터를_반환한다() throws Exception {
         //given
-        final Long battleId = createBattle();
+        Member manager = createMember();
+        final Long battleId = createBattle(manager);
         joinNewNormalPlayerWithOauthId("oauthId", battleId);
 
         //when
@@ -121,7 +126,7 @@ class BattleControllerTest extends IntegrationTest implements ReplaceUnderScoreT
                 .andExpect(jsonPath("$[0].imageUrl").value("imageUrl"))
                 .andExpect(jsonPath("$[0].difficulty").value("HARD"))
                 .andExpect(jsonPath("$[0].budget").value(10000))
-                .andExpect(jsonPath("$[0].currentParticipant").value(1))
+                .andExpect(jsonPath("$[0].currentParticipant").value(2))
                 .andExpect(jsonPath("$[0].maxParticipantCount").value(10));
     }
 
@@ -129,7 +134,8 @@ class BattleControllerTest extends IntegrationTest implements ReplaceUnderScoreT
     void 현재_진행중인_배틀들을_조회시_상태코드_200_과_배틀의_데이터를_반환한다() throws Exception {
         //given
         final Member member = Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname"));
-        final Long battleId = createBattle();
+        final Member manager = createMember();
+        final Long battleId = createBattle(manager);
         final Battle battle = battleRepository.findById(battleId).orElseThrow(IllegalArgumentException::new);
 
         join(member, battle);
@@ -153,8 +159,8 @@ class BattleControllerTest extends IntegrationTest implements ReplaceUnderScoreT
                 .andExpect(jsonPath("$[0].difficulty").value("HARD"))
                 .andExpect(jsonPath("$[0].dday").value(battle.getDDay(LocalDate.now())))
                 .andExpect(jsonPath("$[0].budgetLeft").value(10000 - 1000))
-                .andExpect(jsonPath("$[0].currentParticipantRank").value(1))
-                .andExpect(jsonPath("$[0].battleParticipantCount").value(1))
+                .andExpect(jsonPath("$[0].currentParticipantRank").value(2))
+                .andExpect(jsonPath("$[0].battleParticipantCount").value(2))
                 .andExpect(jsonPath("$[0].uncheckedAlarmCount").value(0));
     }
 
@@ -162,7 +168,8 @@ class BattleControllerTest extends IntegrationTest implements ReplaceUnderScoreT
     void 완료된_배틀들을_조회시_상태코드_200_과_배틀의_데이터를_반환한다() throws Exception {
         //given
         final Member member = Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname"));
-        final Long battleId = createBattle();
+        final Member manager = createMember();
+        final Long battleId = createBattle(manager);
         final Battle battle = battleRepository.findById(battleId).orElseThrow(IllegalArgumentException::new);
 
         join(member, battle);
@@ -196,14 +203,15 @@ class BattleControllerTest extends IntegrationTest implements ReplaceUnderScoreT
                 .andExpect(jsonPath("$[0].budgetLeft").value(10000 - (1000 * 7)))
                 .andExpect(jsonPath("$[0].earnedPoint").value(30))
                 .andExpect(jsonPath("$[0].currentParticipantRank").value(1))
-                .andExpect(jsonPath("$[0].battleParticipantCount").value(1));
+                .andExpect(jsonPath("$[0].battleParticipantCount").value(2));
     }
 
     @Test
     void Id에_해당하는_배틀을_조회시_상태코드_200_과_배틀의_데이터를_반환한다() throws Exception {
         //given
         final Member member = Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname"));
-        final Long battleId = createBattle();
+        final Member manager = createMember();
+        final Long battleId = createBattle(manager);
         final Battle battle = battleRepository.findById(battleId).orElseThrow(IllegalArgumentException::new);
 
         join(member, battle);
@@ -216,21 +224,19 @@ class BattleControllerTest extends IntegrationTest implements ReplaceUnderScoreT
         //when
         //then
         mockMvc.perform(
-                        get("/battles/{battleId}?date={date}", battleId, LocalDate.now())
+                        get("/battles/{battleId}", battleId)
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.battleName").value(battle.getName()))
                 .andExpect(jsonPath("$.maxParticipantSize").value(battle.getMaxParticipantSize().getValue()))
-                .andExpect(jsonPath("$.currentParticipantSize").value(1))
-                .andExpect(jsonPath("$.battleBudget").value(10000))
+                .andExpect(jsonPath("$.currentParticipantSize").value(2))
+                .andExpect(jsonPath("$.battleBudget").value(battle.getBudget()))
                 .andExpect(jsonPath("$.battleDDay").value(battle.getDDay(request.getDate())))
-                .andExpect(jsonPath("$.rankings.length()").value(1))
-                .andExpect(jsonPath("$.rankings[0].rank").value(1))
-                .andExpect(jsonPath("$.rankings[0].level").value(1))
-                .andExpect(jsonPath("$.rankings[0].manager").value(false))
-                .andExpect(jsonPath("$.rankings[0].nickname").value(member.getNickname()))
-                .andExpect(jsonPath("$.rankings[0].expenditure").value(1000));
+                .andExpect(jsonPath("$.battleIntroduction").value(battle.getIntroduction()))
+                .andExpect(jsonPath("$.battleManager.nickname").value(manager.getNickname()))
+                .andExpect(jsonPath("$.battleManager.level").isNumber())
+                .andExpect(jsonPath("$.battleManager.description").doesNotExist());
     }
 
     @Test
@@ -429,12 +435,14 @@ class BattleControllerTest extends IntegrationTest implements ReplaceUnderScoreT
                 .andExpect(jsonPath("$.message").exists());
     }
 
-    private Long createBattle() throws Exception {
+    private Member createMember() {
         final Member member = Member.withoutId(Oauth2RegistrationId.APPLE,
-                                               UUID.randomUUID().toString(),
-                                               new MemberNickname("nickname"));
-        memberRepository.save(member);
+                UUID.randomUUID().toString(),
+                new MemberNickname("nickname"));
+        return memberRepository.save(member);
+    }
 
+    private Long createBattle(Member manager) throws Exception {
         final MockMultipartFile image = new MockMultipartFile(
                 "image",
                 "cat-8415620_640",
@@ -442,7 +450,12 @@ class BattleControllerTest extends IntegrationTest implements ReplaceUnderScoreT
                 new FileInputStream(
                         "src/test/resources/testImage/cat-8415620_640.jpg")
         );
-        return battleService.create(member.getId(), image, new BattleCreateRequest("배틀 이름", "배틀 소개", 10000, 10));
+        Long battleId = battleService.create(manager.getId(), image, new BattleCreateRequest("배틀 이름", "배틀 소개", 10000, 10));
+
+        BattleParticipant battleParticipant = BattleParticipant.manager(battleId, manager.getId());
+        battleParticipantRepository.save(battleParticipant);
+
+        return battleId;
     }
 
     private void joinNewNormalPlayerWithOauthId(final String oauthId, final Long battleId) {
