@@ -8,3 +8,6 @@ spring:
 
   config:
     import: classpath:secure/application.yml
+
+server:
+  port: 8080
