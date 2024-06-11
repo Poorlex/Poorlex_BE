@@ -6,6 +6,8 @@ import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.servers.Server;
+
+import java.net.InetAddress;
 import java.util.List;
 import org.springdoc.core.models.GroupedOpenApi;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,14 +20,20 @@ public class SwaggerConfig {
 
     private int order = 1;
 
-    @Value("${url.server}")
-    private String serverUrl;
+    @Value("${server.host:#{'localhost'}}")
+    private String serverHost;
+
+    @Value("${server.announce-port:#{8080}}")
+    private int serverPort;
+
+    @Value("${server.protocol:#{'http'}}")
+    private String serverProtocol;
 
     @Bean
     @Profile("!dev")
     public OpenAPI openAPI() {
         final Server local = new Server()
-                .url("http://" + serverUrl)
+                .url(serverProtocol + "://" + serverHost + ":" + serverPort)
                 .description("for local API call");
 
         return new OpenAPI()
@@ -39,7 +47,7 @@ public class SwaggerConfig {
     @Profile("dev")
     public OpenAPI devOpenAPI() {
         final Server server = new Server()
-                .url("https://" + serverUrl)
+                .url(serverProtocol + "://" + serverHost + ":" + serverPort)
                 .description("for real API call");
 
         return new OpenAPI()

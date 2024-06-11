@@ -4,11 +4,7 @@ import com.poorlex.poorlex.battle.battle.controller.BattleCommandController;
 import com.poorlex.poorlex.battle.battle.controller.BattleQueryController;
 import com.poorlex.poorlex.battle.battle.service.BattleService;
 import com.poorlex.poorlex.battle.battle.service.dto.request.BattleFindRequest;
-import com.poorlex.poorlex.battle.battle.service.dto.response.BattleResponse;
-import com.poorlex.poorlex.battle.battle.service.dto.response.FindingBattleResponse;
-import com.poorlex.poorlex.battle.battle.service.dto.response.MemberCompleteBattleResponse;
-import com.poorlex.poorlex.battle.battle.service.dto.response.MemberProgressBattleResponse;
-import com.poorlex.poorlex.battle.battle.service.dto.response.ParticipantRankingResponse;
+import com.poorlex.poorlex.battle.battle.service.dto.response.*;
 import com.poorlex.poorlex.support.MockMultipartFileFixture;
 import com.poorlex.poorlex.support.MockMvcTest;
 import com.poorlex.poorlex.util.ApiDocumentUtils;
@@ -233,19 +229,16 @@ class BattleDocumentationTest extends MockMvcTest {
         //given
         mockingTokenInterceptor();
         mockingMemberArgumentResolver();
-        given(battleService.getBattleInfo(any(), any()))
+        given(battleService.getBattleInfo(any()))
                 .willReturn(new BattleResponse(
                                     "배틀명",
                                     "배틀 이미지 URL",
                                     10,
                                     10,
                                     10000,
-                                    5,
-                                    List.of(
-                                            new ParticipantRankingResponse(1, 1, true, "참가자 닉네임1", 1000L),
-                                            new ParticipantRankingResponse(1, 2, false, "참가자 닉네임2", 1000L),
-                                            new ParticipantRankingResponse(3, 3, false, "참가자 닉네임3", 2000L)
-                                    )
+                                    "배틀 소개",
+                                    3L,
+                                    new BattleManagerResponse("배틀 매니저", 3, "매니저 소개글")
                             )
                 );
         final BattleFindRequest request = new BattleFindRequest(LocalDate.now());
@@ -271,19 +264,17 @@ class BattleDocumentationTest extends MockMvcTest {
                                          fieldWithPath("currentParticipantSize").type(JsonFieldType.NUMBER)
                                                  .description("현재 배틀 참가자 수"),
                                          fieldWithPath("battleBudget").type(JsonFieldType.NUMBER).description("배틀 예산"),
+                                         fieldWithPath("battleIntroduction").type(JsonFieldType.STRING)
+                                                 .description("배틀 소개"),
                                          fieldWithPath("battleDDay").type(JsonFieldType.NUMBER)
                                                  .description("배틀 종료까지 D-Day"),
-                                         fieldWithPath(".rankings[]").description("배틀 참가자 랭킹 리스트")
-                                 ).andWithPrefix(".rankings[].",
-                                                 fieldWithPath("rank").type(JsonFieldType.NUMBER).description("참가자 랭킹"),
+                                         fieldWithPath("battleManager").type(JsonFieldType.OBJECT).description("배틀 매니저")
+                                 ).andWithPrefix(".battleManager.",
+                                                 fieldWithPath("nickname").type(JsonFieldType.STRING).description("매니저 닉네임"),
                                                  fieldWithPath("level").type(JsonFieldType.NUMBER)
-                                                         .description("참자가 레벨"),
-                                                 fieldWithPath("manager").type(JsonFieldType.BOOLEAN)
-                                                         .description("참가자 매니저 여부"),
-                                                 fieldWithPath("nickname").type(JsonFieldType.STRING)
-                                                         .description("참가자 닉네임"),
-                                                 fieldWithPath("expenditure").type(JsonFieldType.NUMBER)
-                                                         .description("참가자 지출")
+                                                         .description("매니저 레벨"),
+                                                 fieldWithPath("description").type(JsonFieldType.STRING)
+                                                         .description("매니저 소개")
                                  )
                         ));
     }

@@ -20,8 +20,7 @@ public interface BattleQueryControllerSwaggerInterface {
     @Operation(summary = "배틀 상세 조회")
     @GetMapping("/{battleId}")
     @ApiResponse(responseCode = "200")
-    ResponseEntity<BattleResponse> getBattleInfo(@Parameter(description = "배틀 Id") final Long battleId,
-                                                 @Parameter(description = "조회 날짜") final LocalDate request);
+    ResponseEntity<BattleResponse> getBattleInfo(@Parameter(description = "배틀 Id") final Long battleId);
 
     @Operation(summary = "모든 배틀 조회 ( 모집중, 모집 완료 )")
     @GetMapping
