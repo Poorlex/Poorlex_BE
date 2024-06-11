@@ -24,10 +24,9 @@ public class BattleQueryController implements BattleQueryControllerSwaggerInterf
 
     private final BattleService battleService;
 
-    @GetMapping(value = "/{battleId}", params = "date")
-    public ResponseEntity<BattleResponse> getBattleInfo(@PathVariable("battleId") final Long battleId,
-                                                        @RequestParam final LocalDate date) {
-        final BattleResponse battleResponse = battleService.getBattleInfo(battleId, date);
+    @GetMapping(value = "/{battleId}")
+    public ResponseEntity<BattleResponse> getBattleInfo(@PathVariable("battleId") final Long battleId) {
+        final BattleResponse battleResponse = battleService.getBattleInfo(battleId);
         return ResponseEntity.ok(battleResponse);
     }
 
