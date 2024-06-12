@@ -38,6 +38,12 @@ jobs:
         run: ./gradlew build
         shell: bash
 
+      - name: Archive production artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: jar-file
+          path: /build/libs/*.jar
+
       - name: Comment on test result
         uses: EnricoMi/publish-unit-test-result-action@v1
         if: always()
@@ -58,6 +64,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Download production artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: jar-file
+
       - name: Docker meta
         id: docker_meta
         uses: crazy-max/ghaction-docker-meta@v1
