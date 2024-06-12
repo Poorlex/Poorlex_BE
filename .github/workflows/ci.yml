@@ -5,14 +5,14 @@ name: CI
 on:
   pull_request:
     branches: [ main, dev ] # main branch로 pull request될 때 실행됩니다.
-    types: [ opened, synchronize, reopened ]
+    types: [ opened, synchronize, reopened, closed ]
 
 permissions: write-all
 
 # workflow는 한개 이상의 job을 가지며, 각 job은 여러 step에 따라 단계를 나눌 수 있습니다.
 jobs:
   build:
-    name: CI
+    name: Build
     # 해당 jobs에서 아래의 steps들이 어떠한 환경에서 실행될 것인지를 지정합니다.(우리가 확인하고 싶은 것은 build가 되는 것과 test를 통과하는 여부를 알고 싶음)
     runs-on: ubuntu-latest
 
@@ -51,6 +51,13 @@ jobs:
           report_paths: '**/build/test-results/test/TEST-*.xml'
           token: ${{ github.token }}
 
+  # pull request 가 merged 된 경우 실행합니다
+  if_merged:
+    name: CI
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+
+    steps:
       - name: Docker meta
         id: docker_meta
         uses: crazy-max/ghaction-docker-meta@v1
