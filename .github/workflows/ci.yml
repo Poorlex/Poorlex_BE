@@ -11,12 +11,9 @@ permissions: write-all
 
 # workflow는 한개 이상의 job을 가지며, 각 job은 여러 step에 따라 단계를 나눌 수 있습니다.
 jobs:
-  build:
-    if: github.event.pull_request.merged == false
-    name: Build
-    # 해당 jobs에서 아래의 steps들이 어떠한 환경에서 실행될 것인지를 지정합니다.(우리가 확인하고 싶은 것은 build가 되는 것과 test를 통과하는 여부를 알고 싶음)
+  build-setting:
+    name: setup
     runs-on: ubuntu-latest
-
     steps:
       # 작업에서 액세스할 수 있도록 $GITHUB_WORKSPACE에서 저장소를 체크아웃합니다.
       - name: Pull Repository
@@ -35,15 +32,16 @@ jobs:
         run: chmod +x ./gradlew
         shell: bash
 
+  build-test:
+    if: github.event.pull_request.merged == false
+    name: test
+    # 해당 jobs에서 아래의 steps들이 어떠한 환경에서 실행될 것인지를 지정합니다.(우리가 확인하고 싶은 것은 build가 되는 것과 test를 통과하는 여부를 알고 싶음)
+    runs-on: ubuntu-latest
+
+    steps:
       - name: Build with Gradle
         run: ./gradlew build
         shell: bash
-
-      - name: Archive production artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: jar-file
-          path: build/libs/*.jar
 
       - name: Comment on test result
         uses: EnricoMi/publish-unit-test-result-action@v1
@@ -59,16 +57,15 @@ jobs:
           token: ${{ github.token }}
 
   # pull request 가 merged 된 경우 실행합니다
-  if_merged:
-    name: CI
+  build:
+    name: build
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
 
     steps:
-      - name: Download production artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: jar-file
+      - name: Build with Gradle
+        run: ./gradlew build -x test -x copyDocument
+        shell: bash
 
       - name: Docker meta
         id: docker_meta
