@@ -9,7 +9,7 @@ public class ClientErrorException extends RuntimeException {
         this.tag = tag;
     }
 
-    public ExceptionTag tag() {
+    public ExceptionTag getTag() {
         return tag;
     }
 }
