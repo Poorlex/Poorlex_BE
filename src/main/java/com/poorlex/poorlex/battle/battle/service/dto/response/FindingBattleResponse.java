@@ -1,6 +1,7 @@
 package com.poorlex.poorlex.battle.battle.service.dto.response;
 
 import com.poorlex.poorlex.battle.battle.domain.Battle;
+import com.poorlex.poorlex.battle.battle.domain.BattleBudget;
 import com.poorlex.poorlex.battle.battle.domain.BattleWithCurrentParticipantSize;
 import java.util.List;
 import lombok.Getter;
@@ -39,5 +40,17 @@ public class FindingBattleResponse {
                 currentParticipantSize,
                 battle.getMaxParticipantSize().getValue()
         );
+    }
+
+    public FindingBattleResponse(Long battleId, String name, String introduction, String imageUrl, int budget, int maxParticipantCount, int currentParticipant) {
+        this.battleId = battleId;
+        this.name = name;
+        this.introduction = introduction;
+        this.imageUrl = imageUrl;
+        this.budget = budget;
+        BattleBudget battleBudget = new BattleBudget(budget);
+        this.difficulty = battleBudget.getDifficulty().name();
+        this.maxParticipantCount = maxParticipantCount;
+        this.currentParticipant = currentParticipant;
     }
 }

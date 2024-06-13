@@ -4,7 +4,9 @@ import io.sentry.Sentry;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.web.ErrorResponse;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingRequestValueException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -19,13 +21,13 @@ public class ExceptionHandlerAdvice {
     private static final String HANDLED_EXCEPTION_LOG_MESSAGE = "[Exception] Tag : {} / Message : {}";
     private static final String UNHANDLED_EXCEPTION_LOG_MESSAGE = "Unhandled Exception : {}";
 
-    @ExceptionHandler(BadRequestException.class)
+    @ExceptionHandler({BadRequestException.class})
     public ResponseEntity<ExceptionResponse> handleBadRequestException(BadRequestException e) {
         return ResponseEntity.badRequest().body(ExceptionResponse.from(e));
     }
 
-    @ExceptionHandler({MissingServletRequestPartException.class, MissingRequestValueException.class})
-    public ResponseEntity<?> handleMissingServletRequestPartException(MissingServletRequestPartException e) {
+    @ExceptionHandler({MethodArgumentNotValidException.class, MissingServletRequestPartException.class, MissingRequestValueException.class})
+    public ResponseEntity<?> handleServletException(ErrorResponse e) {
         return ResponseEntity.status(e.getStatusCode()).body(e.getBody());
     }
 
@@ -48,7 +50,6 @@ public class ExceptionHandlerAdvice {
     public ResponseEntity<ExceptionResponse> handleAuthenticationException(AuthenticationException ex) throws AuthenticationException {
         throw ex;
     }
-
 
     @ExceptionHandler(ApiException.class)
     public ResponseEntity<ExceptionResponse> handle(final ApiException exception) {

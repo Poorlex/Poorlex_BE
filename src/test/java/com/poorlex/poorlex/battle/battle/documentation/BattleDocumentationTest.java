@@ -13,9 +13,11 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
@@ -78,53 +80,6 @@ class BattleDocumentationTest extends MockMvcTest {
                                  requestParts(
                                          partWithName("image").description("배틀 이미지")
                                  )
-                        ));
-    }
-
-    @Test
-    void find_recruiting() throws Exception {
-        //given
-        mockingTokenInterceptor();
-        mockingMemberArgumentResolver();
-        given(battleService.findBattlesToPlay()).willReturn(
-                List.of(
-                        new FindingBattleResponse(1L, "첫번째 배틀명", "소개", "첫번째 배틀 이미지 링크", "HARD", 10000, 2, 10),
-                        new FindingBattleResponse(2L, "두번째 배틀명", "소개", "두번째 배틀 이미지 링크", "NORMAL", 90000, 1, 10),
-                        new FindingBattleResponse(3L, "세번째 배틀명", "소개", "세번째 배틀 이미지 링크", "EASY", 150000, 5, 10)
-                )
-        );
-
-        //when
-        final ResultActions result = mockMvc.perform(
-                get("/battles")
-                        .header(HttpHeaders.AUTHORIZATION, "Bearer {accessToken}")
-        );
-
-        //then
-        result.andExpect(MockMvcResultMatchers.status().isOk())
-                .andDo(
-                        document("battle-find-recruiting",
-                                 ApiDocumentUtils.getDocumentRequest(),
-                                 ApiDocumentUtils.getDocumentResponse(),
-                                 responseFields(fieldWithPath("[]").description("모집중 배틀방 리스트"))
-                                         .andWithPrefix("[].",
-                                                        fieldWithPath("battleId").type(JsonFieldType.NUMBER)
-                                                                .description("배틀 ID"),
-                                                        fieldWithPath("name").type(JsonFieldType.STRING)
-                                                                .description("배틀방 이름"),
-                                                        fieldWithPath("introduction").type(JsonFieldType.STRING)
-                                                                .description("배틀방 소개"),
-                                                        fieldWithPath("imageUrl").type(JsonFieldType.STRING)
-                                                                .description("배틀 이미지 링크"),
-                                                        fieldWithPath("budget").type(JsonFieldType.NUMBER)
-                                                                .description("배틀 예산"),
-                                                        fieldWithPath("difficulty").type(JsonFieldType.STRING)
-                                                                .description("배틀 난이도"),
-                                                        fieldWithPath("currentParticipant").type(JsonFieldType.NUMBER)
-                                                                .description("배틀 현재 참가자 수"),
-                                                        fieldWithPath("maxParticipantCount").type(JsonFieldType.NUMBER)
-                                                                .description("배틀 최대 참가자 수")
-                                         )
                         ));
     }
 
@@ -241,7 +196,7 @@ class BattleDocumentationTest extends MockMvcTest {
                                     new BattleManagerResponse("배틀 매니저", 3, "매니저 소개글")
                             )
                 );
-        final BattleFindRequest request = new BattleFindRequest(LocalDate.now());
+        final BattleFindRequest request = new BattleFindRequest(LocalDate.now(), List.of());
 
         //when
         final ResultActions result = mockMvc.perform(get("/battles/{battleId}?date={date}", 1, LocalDate.now()));
@@ -276,6 +231,52 @@ class BattleDocumentationTest extends MockMvcTest {
                                                  fieldWithPath("description").type(JsonFieldType.STRING)
                                                          .description("매니저 소개")
                                  )
+                        ));
+    }
+
+    @Test
+    void find_all_battles() throws Exception {
+        //given
+        mockingTokenInterceptor();
+        mockingMemberArgumentResolver();
+        given(battleService.queryBattles(any(BattleFindRequest.class), any(Pageable.class))).willReturn(
+                List.of(
+                        new FindingBattleResponse(1L, "첫번째 배틀명", "첫번째 배틀 설명", "첫번째 배틀 이미지 링크", 50000, 10, 3),
+                        new FindingBattleResponse(2L, "두번째 배틀명", "두번째 배틀 설명", "두번째 배틀 이미지 링크", 100000, 6, 2),
+                        new FindingBattleResponse(3L, "세번째 배틀명", "세번째 배틀 설명", "세번째 배틀 이미지 링크", 150000, 4, 1)
+                )
+        );
+
+        //when
+        final ResultActions result = mockMvc.perform(get("/battles")
+                .header(HttpHeaders.AUTHORIZATION, "Bearer {accessToken}")
+        );
+
+        //then
+        result.andExpect(MockMvcResultMatchers.status().isOk())
+                .andDo(
+                        document("battle-find-all-by-query",
+                                ApiDocumentUtils.getDocumentRequest(),
+                                ApiDocumentUtils.getDocumentResponse(),
+                                responseFields(fieldWithPath("[]").description("모집중 배틀방 리스트"))
+                                        .andWithPrefix("[].",
+                                                fieldWithPath("battleId").type(JsonFieldType.NUMBER)
+                                                        .description("배틀 ID"),
+                                                fieldWithPath("name").type(JsonFieldType.STRING)
+                                                        .description("배틀방 이름"),
+                                                fieldWithPath("introduction").type(JsonFieldType.STRING)
+                                                        .description("배틀방 소개"),
+                                                fieldWithPath("imageUrl").type(JsonFieldType.STRING)
+                                                        .description("배틀 이미지 링크"),
+                                                fieldWithPath("budget").type(JsonFieldType.NUMBER)
+                                                        .description("배틀 예산"),
+                                                fieldWithPath("difficulty").type(JsonFieldType.STRING)
+                                                        .description("배틀 난이도"),
+                                                fieldWithPath("currentParticipant").type(JsonFieldType.NUMBER)
+                                                        .description("배틀 현재 참가자 수"),
+                                                fieldWithPath("maxParticipantCount").type(JsonFieldType.NUMBER)
+                                                        .description("배틀 최대 참가자 수")
+                                        )
                         ));
     }
 }

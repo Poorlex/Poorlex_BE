@@ -1,12 +1,9 @@
 package com.poorlex.poorlex.battle.battle.service;
 
-import com.poorlex.poorlex.battle.battle.domain.Battle;
-import com.poorlex.poorlex.battle.battle.domain.BattleBudget;
-import com.poorlex.poorlex.battle.battle.domain.BattleDuration;
-import com.poorlex.poorlex.battle.battle.domain.BattleRepository;
-import com.poorlex.poorlex.battle.battle.domain.BattleStatus;
-import com.poorlex.poorlex.battle.battle.domain.BattleType;
+import com.poorlex.poorlex.battle.battle.domain.*;
 import com.poorlex.poorlex.battle.battle.fixture.BattleFixture;
+import com.poorlex.poorlex.battle.battle.service.dto.request.BattleFindRequest;
+import com.poorlex.poorlex.battle.battle.service.dto.response.FindingBattleResponse;
 import com.poorlex.poorlex.battle.battle.service.dto.response.MemberCompleteBattleResponse;
 import com.poorlex.poorlex.battle.battle.service.dto.response.MemberProgressBattleResponse;
 import com.poorlex.poorlex.battle.participation.domain.BattleParticipant;
@@ -26,7 +23,10 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -38,6 +38,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 
@@ -189,6 +190,90 @@ class BattleServiceTest extends IntegrationTest implements ReplaceUnderScoreTest
                     softly.assertThat(battles.get(0).getBudgetLeft()).isEqualTo(10000 - member1Expenditure);
                     softly.assertThat(battles.get(0).getEarnedPoint())
                             .isEqualTo(BattleType.LARGE.getScore(expectedRank));
+                }
+        );
+    }
+
+    @ParameterizedTest(name = "배틀 상태가 {0} 일 때")
+    @CsvSource(
+            value = {"RECRUITING", "PROGRESS", "COMPLETE"}
+    )
+    void 쿼리에_따라_다른_상태의_배틀들의_정보를_조회한다(final String status) {
+        //given
+        final Member member1 = createMemberWithOauthId("oauthId1");
+        final Member member2 = createMemberWithOauthId("oauthId2");
+        final Member member3 = createMemberWithOauthId("oauthId3");
+        final Battle battle1 = createSimpleBattleWithStatusAndDuration(30000, BattleStatus.RECRUITING, BATTLE_DURATION);
+        final Battle battle2 = createSimpleBattleWithStatusAndDuration(60000, BattleStatus.RECRUITING, BATTLE_DURATION);
+        final Battle battle3 = createSimpleBattleWithStatusAndDuration(90000, BattleStatus.PROGRESS, BATTLE_DURATION);
+        final Battle battle4 = createSimpleBattleWithStatusAndDuration(120000, BattleStatus.PROGRESS, BATTLE_DURATION);
+        final Battle battle5 = createSimpleBattleWithStatusAndDuration(150000, BattleStatus.PROGRESS, BATTLE_DURATION);
+        final Battle battle6 = createSimpleBattleWithStatusAndDuration(180000, BattleStatus.COMPLETE, BATTLE_DURATION);
+        final Battle battle7 = createSimpleBattleWithStatusAndDuration(200000, BattleStatus.COMPLETE, BATTLE_DURATION);
+
+        Map<Long, Integer> currentParticipant = new HashMap<>();
+        join(member1, battle1);
+        join(member2, battle1);
+        join(member3, battle1);
+        currentParticipant.put(battle1.getId(), 3);
+
+        join(member1, battle2);
+        join(member3, battle2);
+        currentParticipant.put(battle2.getId(), 2);
+
+        join(member1, battle3);
+        currentParticipant.put(battle3.getId(), 1);
+
+        join(member1, battle4);
+        join(member3, battle4);
+        currentParticipant.put(battle4.getId(), 2);
+
+        join(member1, battle5);
+        join(member2, battle5);
+        currentParticipant.put(battle5.getId(), 2);
+
+        join(member3, battle6);
+        currentParticipant.put(battle6.getId(), 1);
+
+        join(member1, battle7);
+        join(member2, battle7);
+        join(member3, battle7);
+        currentParticipant.put(battle7.getId(), 3);
+
+        List<Battle> battlesInRecruiting = List.of(battle1, battle2);
+        List<Battle> battlesInProgress = List.of(battle3, battle4, battle5);
+        List<Battle> battlesInComplete = List.of(battle6, battle7);
+
+        Map<String, List<Battle>> result = new HashMap<>();
+        result.put("RECRUITING", battlesInRecruiting);
+        result.put("PROGRESS", battlesInProgress);
+        result.put("COMPLETE", battlesInComplete);
+
+        List<Long> battleId = result.get(status).stream().map(Battle::getId).toList();
+        List<String> name = result.get(status).stream().map(Battle::getName).toList();
+        List<String> introduction = result.get(status).stream().map(Battle::getIntroduction).toList();
+        List<String> imageUrl = result.get(status).stream().map(Battle::getImageUrl).toList();
+        List<Integer> budget = result.get(status).stream().map(Battle::getBudget).toList();
+        List<String> difficulty = result.get(status).stream().map(b -> b.getDifficulty().name()).toList();
+        List<Integer> participantSize = result.get(status).stream().map(b -> b.getMaxParticipantSize().getValue()).toList();
+
+        //when
+        BattleFindRequest battleFindRequest = new BattleFindRequest(null, List.of(BattleStatus.valueOf(status)));
+
+        final List<FindingBattleResponse> battles = battleService.queryBattles(battleFindRequest, Pageable.ofSize(20));
+
+        //then
+        assertSoftly(
+                softly -> {
+                    softly.assertThat(battles).hasSize(result.get(status).size());
+                    softly.assertThat(battles).extracting("battleId").containsExactlyInAnyOrderElementsOf(battleId);
+                    softly.assertThat(battles).extracting("name").containsExactlyInAnyOrderElementsOf(name);
+                    softly.assertThat(battles).extracting("introduction").containsExactlyInAnyOrderElementsOf(introduction);
+                    softly.assertThat(battles).extracting("imageUrl").containsExactlyInAnyOrderElementsOf(imageUrl);
+                    softly.assertThat(battles).extracting("budget").containsExactlyInAnyOrderElementsOf(budget);
+                    softly.assertThat(battles).extracting("difficulty").containsExactlyInAnyOrderElementsOf(difficulty);
+                    softly.assertThat(battles).extracting("maxParticipantCount").containsExactlyInAnyOrderElementsOf(participantSize);
+                    softly.assertThat(battles).allMatch(b -> b.getCurrentParticipant() == currentParticipant.get(b.getBattleId()));
                 }
         );
     }

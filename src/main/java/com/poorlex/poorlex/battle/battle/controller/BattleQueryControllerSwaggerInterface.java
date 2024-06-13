@@ -1,5 +1,6 @@
 package com.poorlex.poorlex.battle.battle.controller;
 
+import com.poorlex.poorlex.battle.battle.service.dto.request.BattleFindRequest;
 import com.poorlex.poorlex.battle.battle.service.dto.response.BattleResponse;
 import com.poorlex.poorlex.battle.battle.service.dto.response.FindingBattleResponse;
 import com.poorlex.poorlex.battle.battle.service.dto.response.MemberCompleteBattleResponse;
@@ -9,8 +10,10 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import java.time.LocalDate;
+
 import java.util.List;
+
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 
@@ -22,10 +25,10 @@ public interface BattleQueryControllerSwaggerInterface {
     @ApiResponse(responseCode = "200")
     ResponseEntity<BattleResponse> getBattleInfo(@Parameter(description = "배틀 Id") final Long battleId);
 
-    @Operation(summary = "모든 배틀 조회 ( 모집중, 모집 완료 )")
+    @Operation(summary = "모든 배틀 조회")
     @GetMapping
     @ApiResponse(responseCode = "200")
-    ResponseEntity<List<FindingBattleResponse>> findBattles();
+    ResponseEntity<List<FindingBattleResponse>> findBattles(BattleFindRequest request, Pageable pageable);
 
     @Operation(summary = "회원 배틀 조회 ( 진행 중 )", description = "액세스 토큰 필요")
     @GetMapping("/progress")
