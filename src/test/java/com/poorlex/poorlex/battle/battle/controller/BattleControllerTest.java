@@ -109,7 +109,7 @@ class BattleControllerTest extends IntegrationTest implements ReplaceUnderScoreT
     }
 
     @Test
-    void 현재_참여가능한_배틀들을_조회시_상태코드_200_과_배틀의_데이터를_반환한다() throws Exception {
+    void 배틀들을_조회시_상태코드_200_과_배틀의_데이터를_반환한다() throws Exception {
         //given
         Member manager = createMember();
         final Long battleId = createBattle(manager);
@@ -219,7 +219,7 @@ class BattleControllerTest extends IntegrationTest implements ReplaceUnderScoreT
         expend(1000L, member, LocalDate.from(battle.getDuration().getStart()));
         endBattle(battle);
 
-        final BattleFindRequest request = new BattleFindRequest(LocalDate.now());
+        final BattleFindRequest request = new BattleFindRequest(LocalDate.now(), List.of());
 
         //when
         //then

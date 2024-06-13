@@ -1,21 +1,20 @@
 package com.poorlex.poorlex.battle.battle.controller;
 
 import com.poorlex.poorlex.battle.battle.service.BattleService;
+import com.poorlex.poorlex.battle.battle.service.dto.request.BattleFindRequest;
 import com.poorlex.poorlex.battle.battle.service.dto.response.BattleResponse;
 import com.poorlex.poorlex.battle.battle.service.dto.response.FindingBattleResponse;
 import com.poorlex.poorlex.battle.battle.service.dto.response.MemberCompleteBattleResponse;
 import com.poorlex.poorlex.battle.battle.service.dto.response.MemberProgressBattleResponse;
 import com.poorlex.poorlex.config.auth.argumentresolver.MemberInfo;
 import com.poorlex.poorlex.config.auth.argumentresolver.MemberOnly;
+
 import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(value = "/battles")
@@ -31,9 +30,9 @@ public class BattleQueryController implements BattleQueryControllerSwaggerInterf
     }
 
     @GetMapping
-    public ResponseEntity<List<FindingBattleResponse>> findBattles() {
-        final List<FindingBattleResponse> battlesToPlay = battleService.findBattlesToPlay();
-        return ResponseEntity.ok(battlesToPlay);
+    public ResponseEntity<List<FindingBattleResponse>> findBattles(BattleFindRequest request, Pageable pageable) {
+        final List<FindingBattleResponse> battles = battleService.queryBattles(request, pageable);
+        return ResponseEntity.ok(battles);
     }
 
     @GetMapping("/progress")

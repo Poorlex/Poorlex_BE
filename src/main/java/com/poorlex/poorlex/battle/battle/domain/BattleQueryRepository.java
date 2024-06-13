@@ -42,7 +42,7 @@ public class BattleQueryRepository {
 
     private Predicate buildPredicate(BattleFindRequest request) {
         BooleanBuilder booleanBuilder = new BooleanBuilder();
-        if (!request.getStatus().isEmpty()) {
+        if (request.getStatus() != null && !request.getStatus().isEmpty()) {
             booleanBuilder.and(battle.status.in(request.getStatus()));
         }
         return booleanBuilder;

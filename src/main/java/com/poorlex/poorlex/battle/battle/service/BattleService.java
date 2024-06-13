@@ -1,19 +1,9 @@
 package com.poorlex.poorlex.battle.battle.service;
 
 import com.poorlex.poorlex.alarm.battlealarm.service.BattleAlarmService;
-import com.poorlex.poorlex.battle.battle.domain.Battle;
-import com.poorlex.poorlex.battle.battle.domain.BattleBudget;
-import com.poorlex.poorlex.battle.battle.domain.BattleDuration;
-import com.poorlex.poorlex.battle.battle.domain.BattleImageUrl;
-import com.poorlex.poorlex.battle.battle.domain.BattleIntroduction;
-import com.poorlex.poorlex.battle.battle.domain.BattleName;
-import com.poorlex.poorlex.battle.battle.domain.BattleParticipantSize;
-import com.poorlex.poorlex.battle.battle.domain.BattleParticipantWithExpenditure;
-import com.poorlex.poorlex.battle.battle.domain.BattleRepository;
-import com.poorlex.poorlex.battle.battle.domain.BattleStatus;
-import com.poorlex.poorlex.battle.battle.domain.BattleWithCurrentParticipantSize;
-import com.poorlex.poorlex.battle.battle.domain.BattleWithMemberExpenditure;
+import com.poorlex.poorlex.battle.battle.domain.*;
 import com.poorlex.poorlex.battle.battle.service.dto.request.BattleCreateRequest;
+import com.poorlex.poorlex.battle.battle.service.dto.request.BattleFindRequest;
 import com.poorlex.poorlex.battle.battle.service.dto.response.*;
 import com.poorlex.poorlex.battle.battle.service.event.BattleCreatedEvent;
 import com.poorlex.poorlex.battle.participation.domain.BattleParticipant;
@@ -29,6 +19,7 @@ import com.poorlex.poorlex.user.member.service.MemberQueryService;
 import com.poorlex.poorlex.user.member.service.dto.response.MyPageResponse;
 import com.poorlex.poorlex.user.point.domain.Point;
 import com.poorlex.poorlex.user.point.service.MemberPointQueryService;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Comparator;
@@ -37,6 +28,7 @@ import java.util.Map;
 
 import com.poorlex.poorlex.user.point.service.dto.response.MyPageLevelInfoResponse;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -57,6 +49,7 @@ public class BattleService {
     private final String bucketDirectory;
     private final boolean activateStartTimeValidation;
     private final boolean activateEndTimeValidation;
+    private final BattleQueryRepository battleQueryRepository;
 
     public BattleService(final BattleRepository battleRepository,
                          final BattleParticipantRepository battleParticipantRepository,
@@ -65,6 +58,7 @@ public class BattleService {
                          final ExpenditureQueryService expenditureQueryService,
                          final MemberQueryService memberQueryService,
                          final BattleImageService imageService,
+                         final BattleQueryRepository battleQueryRepository,
                          @Value("${aws.s3.battle-directory}") final String bucketDirectory,
                          @Value("${validation.start-time}") final boolean activateStartTimeValidation,
                          @Value("${validation.start-time}") final boolean activateEndTimeValidation) {
@@ -76,6 +70,7 @@ public class BattleService {
         this.memberQueryService = memberQueryService;
         this.imageService = imageService;
         this.bucketDirectory = bucketDirectory;
+        this.battleQueryRepository = battleQueryRepository;
         this.activateStartTimeValidation = activateStartTimeValidation;
         this.activateEndTimeValidation = activateEndTimeValidation;
     }
@@ -138,20 +133,6 @@ public class BattleService {
                                       participantSize,
                                       BattleDuration.current(),
                                       battleStatus);
-    }
-
-
-    public List<FindingBattleResponse> findBattlesToPlay() {
-        final List<BattleStatus> statuses = List.of(BattleStatus.RECRUITING, BattleStatus.RECRUITING_FINISHED);
-
-        final List<BattleWithCurrentParticipantSize> battlesByMemberIdWithCurrentParticipantSize =
-                battleRepository.findBattlesWithCurrentParticipantSizeByStatusesIn(statuses);
-        battlesByMemberIdWithCurrentParticipantSize.sort(Comparator.comparing(
-                battleInfo -> battleInfo.getBattle().getCreatedAt(),
-                Comparator.reverseOrder())
-        );
-
-        return FindingBattleResponse.parseToList(battlesByMemberIdWithCurrentParticipantSize);
     }
 
     public List<MemberProgressBattleResponse> findProgressMemberBattles(final Long memberId, final LocalDate date) {
@@ -350,5 +331,9 @@ public class BattleService {
                 nickname,
                 rankInfo.getTotalExpenditure()
         );
+    }
+
+    public List<FindingBattleResponse> queryBattles(BattleFindRequest request, Pageable pageable) {
+        return battleQueryRepository.queryBattles(request, pageable);
     }
 }
