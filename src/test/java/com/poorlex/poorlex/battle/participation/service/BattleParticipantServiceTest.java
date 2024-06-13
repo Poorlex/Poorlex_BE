@@ -91,6 +91,27 @@ class BattleParticipantServiceTest extends UsingDataJpaTest implements ReplaceUn
                 .isInstanceOf(ApiException.class);
     }
 
+    @Test
+    void 참가한_배틀이_완료된_경우_참가_개수_제한에_영향을_주지_않는다() {
+        //given
+        final Member member = createMember();
+
+        final Battle battle1 = createBattleWithStatus(BattleStatus.RECRUITING);
+        final Battle battle2 = createBattleWithStatus(BattleStatus.RECRUITING);
+        final Battle battle3 = createBattleWithStatus(BattleStatus.RECRUITING);
+        final Battle battle4 = createBattleWithStatus(BattleStatus.RECRUITING);
+
+        join(member, battle1);
+        join(member, battle2);
+        join(member, battle3);
+
+        //when
+        battle1.endWithoutValidate();
+
+        //then
+        assertDoesNotThrow(() -> battleParticipantService.participate(battle4.getId(), member.getId()));
+    }
+
     @ParameterizedTest(name = "배틀의 상태가 {0}일 때")
     @CsvSource(value = {"RECRUITING_FINISHED", "PROGRESS", "COMPLETE"})
     void 배틀참가자가_참가하려는_배틀이_모집중이_아닐_경우_예외를_던진다(final BattleStatus invalidBattleStatus) {
