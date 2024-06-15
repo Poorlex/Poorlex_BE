@@ -6,6 +6,7 @@ import com.poorlex.poorlex.battle.battle.service.dto.response.FindingBattleRespo
 import com.poorlex.poorlex.battle.battle.service.dto.response.MemberCompleteBattleResponse;
 import com.poorlex.poorlex.battle.battle.service.dto.response.MemberProgressBattleResponse;
 import com.poorlex.poorlex.config.auth.argumentresolver.MemberInfo;
+import com.poorlex.poorlex.config.auth.argumentresolver.MemberOnly;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -23,7 +24,9 @@ public interface BattleQueryControllerSwaggerInterface {
     @Operation(summary = "배틀 상세 조회")
     @GetMapping("/{battleId}")
     @ApiResponse(responseCode = "200")
-    ResponseEntity<BattleResponse> getBattleInfo(@Parameter(description = "배틀 Id") final Long battleId);
+    ResponseEntity<BattleResponse> getBattleInfo(
+            @MemberOnly final MemberInfo memberInfo,
+            @Parameter(description = "배틀 Id") final Long battleId);
 
     @Operation(summary = "모든 배틀 조회")
     @GetMapping

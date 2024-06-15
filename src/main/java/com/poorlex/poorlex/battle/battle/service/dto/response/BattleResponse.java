@@ -16,8 +16,9 @@ public class BattleResponse {
     private final String battleIntroduction;
     private final long battleDDay;
     private final BattleManagerResponse battleManager;
+    private final Boolean isParticipating;
 
-    public BattleResponse(final Battle battle, final long battleDDay, final BattleManagerResponse battleManager, final int currentParticipantSize) {
+    public BattleResponse(final Battle battle, final long battleDDay, final BattleManagerResponse battleManager, final int currentParticipantSize, final Boolean isParticipating) {
         this.battleName = battle.getName();
         this.battleImageUrl = battle.getImageUrl();
         this.battleIntroduction = battle.getIntroduction();
@@ -26,5 +27,6 @@ public class BattleResponse {
         this.battleBudget = battle.getBudget();
         this.battleDDay = battleDDay;
         this.battleManager = battleManager;
+        this.isParticipating = isParticipating;
     }
 }

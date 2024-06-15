@@ -3,6 +3,7 @@ package com.poorlex.poorlex.battle.battle.service;
 import com.poorlex.poorlex.battle.battle.domain.*;
 import com.poorlex.poorlex.battle.battle.fixture.BattleFixture;
 import com.poorlex.poorlex.battle.battle.service.dto.request.BattleFindRequest;
+import com.poorlex.poorlex.battle.battle.service.dto.response.BattleResponse;
 import com.poorlex.poorlex.battle.battle.service.dto.response.FindingBattleResponse;
 import com.poorlex.poorlex.battle.battle.service.dto.response.MemberCompleteBattleResponse;
 import com.poorlex.poorlex.battle.battle.service.dto.response.MemberProgressBattleResponse;
@@ -107,6 +108,40 @@ class BattleServiceTest extends IntegrationTest implements ReplaceUnderScoreTest
                     softly.assertThat(battles.get(0)).usingRecursiveComparison()
                             .ignoringFields("id", "createdAt")
                             .isEqualTo(excpectedBattle);
+                }
+        );
+    }
+
+    @ParameterizedTest(name = "멤버가 해당 배틀에 {1} 때 현재 참여 멤버는 {3}")
+    @CsvSource(
+            value = {"true:참여중일:2", "false:참여중이 아닐:1"},
+            delimiter = ':'
+    )
+    void 배틀의_상세_정보를_조회한다(Boolean participating, String 참여여부, Integer currentParticipantSize) {
+        // given
+        final Member member = createMemberWithOauthId("oauthId1");
+        final Member manager = createMemberWithOauthId("manager-oauthId");
+        final Battle battle = createBattleWithManager(manager, 10000, BattleStatus.PROGRESS, BATTLE_DURATION);
+
+        if (participating)
+            join(member, battle);
+
+        // when
+        BattleResponse battleInfo = battleService.getBattleInfo(member.getId(), battle.getId());
+
+        // then
+        assertSoftly(
+                softly -> {
+                    softly.assertThat(battleInfo.getBattleName()).isEqualTo(battle.getName());
+                    softly.assertThat(battleInfo.getBattleImageUrl()).isEqualTo(battle.getImageUrl());
+                    softly.assertThat(battleInfo.getMaxParticipantSize()).isEqualTo(battle.getMaxParticipantSize().getValue());
+                    softly.assertThat(battleInfo.getCurrentParticipantSize()).isEqualTo(currentParticipantSize);
+                    softly.assertThat(battleInfo.getBattleBudget()).isEqualTo(battle.getBudget());
+                    softly.assertThat(battleInfo.getBattleIntroduction()).isEqualTo(battle.getIntroduction());
+                    softly.assertThat(battleInfo.getIsParticipating()).isEqualTo(participating);
+                    softly.assertThat(battleInfo.getBattleManager()).isNotNull();
+                    softly.assertThat(battleInfo.getBattleManager().nickname()).isEqualTo(manager.getNickname());
+                    softly.assertThat(battleInfo.getBattleManager().level()).isEqualTo(1);
                 }
         );
     }
@@ -299,6 +334,20 @@ class BattleServiceTest extends IntegrationTest implements ReplaceUnderScoreTest
                 .build();
 
         return battleRepository.save(battle);
+    }
+
+    private Battle createBattleWithManager(Member member, final int budget,
+                                                           final BattleStatus status,
+                                                           final BattleDuration battleDuration) {
+        Battle battle = battleRepository.save(BattleFixture.initialBattleBuilder()
+                .budget(new BattleBudget(budget))
+                .status(status)
+                .duration(battleDuration)
+                .build());
+
+        battleParticipantRepository.save(BattleParticipant.manager(battle.getId(), member.getId()));
+
+        return battle;
     }
 
     private void expend(final Long amount, final Member member, final LocalDate date) {

@@ -184,7 +184,7 @@ class BattleDocumentationTest extends MockMvcTest {
         //given
         mockingTokenInterceptor();
         mockingMemberArgumentResolver();
-        given(battleService.getBattleInfo(any()))
+        given(battleService.getBattleInfo(any(), any()))
                 .willReturn(new BattleResponse(
                                     "배틀명",
                                     "배틀 이미지 URL",
@@ -193,7 +193,8 @@ class BattleDocumentationTest extends MockMvcTest {
                                     10000,
                                     "배틀 소개",
                                     3L,
-                                    new BattleManagerResponse("배틀 매니저", 3, "매니저 소개글")
+                                    new BattleManagerResponse("배틀 매니저", 3, "매니저 소개글"),
+                                    true
                             )
                 );
         final BattleFindRequest request = new BattleFindRequest(LocalDate.now(), List.of());
@@ -223,7 +224,8 @@ class BattleDocumentationTest extends MockMvcTest {
                                                  .description("배틀 소개"),
                                          fieldWithPath("battleDDay").type(JsonFieldType.NUMBER)
                                                  .description("배틀 종료까지 D-Day"),
-                                         fieldWithPath("battleManager").type(JsonFieldType.OBJECT).description("배틀 매니저")
+                                         fieldWithPath("battleManager").type(JsonFieldType.OBJECT).description("배틀 매니저"),
+                                         fieldWithPath("isParticipating").type(JsonFieldType.BOOLEAN).description("현재 참여중인 배틀")
                                  ).andWithPrefix(".battleManager.",
                                                  fieldWithPath("nickname").type(JsonFieldType.STRING).description("매니저 닉네임"),
                                                  fieldWithPath("level").type(JsonFieldType.NUMBER)
