@@ -9,6 +9,7 @@ import com.poorlex.poorlex.battle.battle.service.event.BattleCreatedEvent;
 import com.poorlex.poorlex.battle.participation.domain.BattleParticipant;
 import com.poorlex.poorlex.battle.participation.domain.BattleParticipantRepository;
 import com.poorlex.poorlex.battle.participation.domain.BattleParticipantRole;
+import com.poorlex.poorlex.battle.participation.service.BattleParticipantService;
 import com.poorlex.poorlex.config.event.Events;
 import com.poorlex.poorlex.consumption.expenditure.service.ExpenditureQueryService;
 import com.poorlex.poorlex.consumption.expenditure.service.dto.RankAndTotalExpenditureDto;
@@ -50,6 +51,7 @@ public class BattleService {
     private final boolean activateStartTimeValidation;
     private final boolean activateEndTimeValidation;
     private final BattleQueryRepository battleQueryRepository;
+    private final BattleParticipantService battleParticipantService;
 
     public BattleService(final BattleRepository battleRepository,
                          final BattleParticipantRepository battleParticipantRepository,
@@ -61,7 +63,7 @@ public class BattleService {
                          final BattleQueryRepository battleQueryRepository,
                          @Value("${aws.s3.battle-directory}") final String bucketDirectory,
                          @Value("${validation.start-time}") final boolean activateStartTimeValidation,
-                         @Value("${validation.start-time}") final boolean activateEndTimeValidation) {
+                         @Value("${validation.start-time}") final boolean activateEndTimeValidation, BattleParticipantService battleParticipantService) {
         this.battleRepository = battleRepository;
         this.battleParticipantRepository = battleParticipantRepository;
         this.battleAlarmService = battleAlarmService;
@@ -73,6 +75,7 @@ public class BattleService {
         this.battleQueryRepository = battleQueryRepository;
         this.activateStartTimeValidation = activateStartTimeValidation;
         this.activateEndTimeValidation = activateEndTimeValidation;
+        this.battleParticipantService = battleParticipantService;
     }
 
     @Transactional
@@ -257,10 +260,11 @@ public class BattleService {
         battle.endWithoutValidate();
     }
 
-    public BattleResponse getBattleInfo(final Long battleId) {
+    public BattleResponse getBattleInfo(final Long memberId, final Long battleId) {
         final Battle battle = findExistBattle(battleId);
 
         final List<BattleParticipant> participants = battleParticipantRepository.findAllByBattleId(battleId);
+        final Boolean isParticipating = battleParticipantRepository.existsByBattleIdAndMemberId(battleId, memberId);
 
         Long managerId = participants.stream().filter(p -> p.getRole().equals(BattleParticipantRole.MANAGER))
                 .findFirst()
@@ -272,7 +276,7 @@ public class BattleService {
 
         BattleManagerResponse managerResponse = new BattleManagerResponse(managerInfo.getNickname(), memberLevelInfo.getLevel(), managerInfo.getDescription());
 
-        return new BattleResponse(battle, battle.getDDay(LocalDate.now()), managerResponse, participants.size());
+        return new BattleResponse(battle, battle.getDDay(LocalDate.now()), managerResponse, participants.size(), isParticipating);
     }
 
     private Map<Long, String> getParticipantsNickname(final List<Long> memberIds) {
