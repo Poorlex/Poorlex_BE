@@ -186,6 +186,7 @@ class BattleDocumentationTest extends MockMvcTest {
         mockingMemberArgumentResolver();
         given(battleService.getBattleInfo(any(), any()))
                 .willReturn(new BattleResponse(
+                                    1L,
                                     "배틀명",
                                     "배틀 이미지 URL",
                                     10,

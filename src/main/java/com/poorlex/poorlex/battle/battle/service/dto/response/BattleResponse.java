@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class BattleResponse {
 
+    private final Long id;
     private final String battleName;
     private final String battleImageUrl;
     private final int maxParticipantSize;
@@ -18,7 +19,8 @@ public class BattleResponse {
     private final BattleManagerResponse battleManager;
     private final Boolean isParticipating;
 
-    public BattleResponse(final Battle battle, final long battleDDay, final BattleManagerResponse battleManager, final int currentParticipantSize, final Boolean isParticipating) {
+    public BattleResponse(final Long battleId, final Battle battle, final long battleDDay, final BattleManagerResponse battleManager, final int currentParticipantSize, final Boolean isParticipating) {
+        this.id = battleId;
         this.battleName = battle.getName();
         this.battleImageUrl = battle.getImageUrl();
         this.battleIntroduction = battle.getIntroduction();

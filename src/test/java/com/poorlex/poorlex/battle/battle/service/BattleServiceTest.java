@@ -132,6 +132,7 @@ class BattleServiceTest extends IntegrationTest implements ReplaceUnderScoreTest
         // then
         assertSoftly(
                 softly -> {
+                    softly.assertThat(battleInfo.getId()).isEqualTo(battle.getId());
                     softly.assertThat(battleInfo.getBattleName()).isEqualTo(battle.getName());
                     softly.assertThat(battleInfo.getBattleImageUrl()).isEqualTo(battle.getImageUrl());
                     softly.assertThat(battleInfo.getMaxParticipantSize()).isEqualTo(battle.getMaxParticipantSize().getValue());
