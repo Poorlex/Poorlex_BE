@@ -186,6 +186,7 @@ class BattleDocumentationTest extends MockMvcTest {
         mockingMemberArgumentResolver();
         given(battleService.getBattleInfo(any(), any()))
                 .willReturn(new BattleResponse(
+                                    1L,
                                     "배틀명",
                                     "배틀 이미지 URL",
                                     10,
@@ -212,6 +213,7 @@ class BattleDocumentationTest extends MockMvcTest {
                                          parameterWithName("date").description("조회 날짜")
                                  ),
                                  responseFields(
+                                         fieldWithPath("id").type(JsonFieldType.NUMBER).description("배틀 ID"),
                                          fieldWithPath("battleName").type(JsonFieldType.STRING).description("배틀 명"),
                                          fieldWithPath("battleImageUrl").type(JsonFieldType.STRING)
                                                  .description("배틀 이미지 URL"),

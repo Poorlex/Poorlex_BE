@@ -276,7 +276,7 @@ public class BattleService {
 
         BattleManagerResponse managerResponse = new BattleManagerResponse(managerInfo.getNickname(), memberLevelInfo.getLevel(), managerInfo.getDescription());
 
-        return new BattleResponse(battle, battle.getDDay(LocalDate.now()), managerResponse, participants.size(), isParticipating);
+        return new BattleResponse(battleId, battle, battle.getDDay(LocalDate.now()), managerResponse, participants.size(), isParticipating);
     }
 
     private Map<Long, String> getParticipantsNickname(final List<Long> memberIds) {
