@@ -9,6 +9,7 @@ import com.poorlex.poorlex.user.member.domain.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -25,6 +26,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
+@EnableMethodSecurity
 public class SecurityConfig {
 
     private final MemberRepository memberRepository;
@@ -38,7 +40,6 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         configureBaseAuthorization(http);
         configureAuthorizeRequests(http);
-        configureOauth2Login(http);
         configureLogout(http);
         configureFilter(http);
 
@@ -77,7 +78,8 @@ public class SecurityConfig {
     }
 
     private void configureAuthorizeRequests(final HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests(oauth2 -> oauth2.anyRequest().permitAll());
+        http.authorizeHttpRequests(oauth2 -> oauth2.requestMatchers("/login/**", "/error", "/swagger-ui/**", "/api-docs/**").permitAll()
+                .anyRequest().authenticated());
     }
 
     private void configureOauth2Login(final HttpSecurity http) throws Exception {
