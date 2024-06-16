@@ -17,8 +17,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 @RequiredArgsConstructor
@@ -44,18 +44,16 @@ public class JwtFilter extends OncePerRequestFilter {
             if (!memberRepository.existsById(memberId)) {
                 throw new UsernameNotFoundException("user not found");
             }
+
+            User principal = new User(memberId.toString(), "", List.of(new SimpleGrantedAuthority("ROLE_USER")));
+            UsernamePasswordAuthenticationToken user = new UsernamePasswordAuthenticationToken(principal, accessToken, List.of(new SimpleGrantedAuthority("ROLE_USER")));
+
+            SecurityContextHolder.getContext().setAuthentication(user);
         } catch (AuthenticationException e) {
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, e.getMessage());
             return;
         }
 
-        final UsernamePasswordAuthenticationToken authenticationToken =
-                new UsernamePasswordAuthenticationToken(authorization,
-                                                        null,
-                                                        List.of(new SimpleGrantedAuthority("USER")));
-
-        authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-        SecurityContextHolder.getContext().setAuthentication(authenticationToken);
         filterChain.doFilter(request, response);
     }
 }
