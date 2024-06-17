@@ -1,6 +1,6 @@
 package com.poorlex.poorlex.user.point.api;
 
-import com.poorlex.poorlex.config.auth.argumentresolver.MemberInfo;
+import com.poorlex.poorlex.security.service.MemberInfo;
 import com.poorlex.poorlex.user.point.service.dto.response.MemberLevelBarResponse;
 import com.poorlex.poorlex.user.point.service.dto.response.MemberPointAndLevelResponse;
 import io.swagger.v3.oas.annotations.Operation;

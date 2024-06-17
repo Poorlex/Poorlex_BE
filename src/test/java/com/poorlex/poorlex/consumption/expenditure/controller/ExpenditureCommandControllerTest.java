@@ -14,8 +14,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
-import org.springframework.boot.autoconfigure.security.oauth2.client.servlet.OAuth2ClientAutoConfiguration;
-import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
+
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
@@ -23,15 +22,14 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @DisplayName("지출 관리 Controller 단위 테스트")
-@WebMvcTest(
-        controllers = ExpenditureCommandController.class,
-        excludeAutoConfiguration = {SecurityAutoConfiguration.class, OAuth2ClientAutoConfiguration.class}
-)
+@WebMvcTest(ExpenditureCommandController.class)
 class ExpenditureCommandControllerTest extends ControllerTest implements ReplaceUnderScoreTest {
 
     @MockBean
@@ -45,6 +43,7 @@ class ExpenditureCommandControllerTest extends ControllerTest implements Replace
     @Test
     void 지출을_생성한다_메인_이미지만_있을_때() throws Exception {
         //given
+        STUBBING_토큰에서_해당_회원ID를_추출하도록한다(1L);
         final MockMultipartFile 지출_메인_이미지 = 해당_키를_가지는_MultipartFile을_생성한다("mainImage");
 
         //when
@@ -56,6 +55,7 @@ class ExpenditureCommandControllerTest extends ControllerTest implements Replace
                                 .queryParam("description", "소개")
                                 .queryParam("date", LocalDate.now().toString())
                                 .header(HttpHeaders.AUTHORIZATION, "Bearer accessToken")
+                                .with(csrf())
                 )
                 .andDo(print())
                 .andExpect(status().isCreated())
@@ -65,6 +65,7 @@ class ExpenditureCommandControllerTest extends ControllerTest implements Replace
     @Test
     void 지출을_생성한다_메인이미지와_서브이미지가_있을_때() throws Exception {
         //given
+        STUBBING_토큰에서_해당_회원ID를_추출하도록한다(1L);
         final MockMultipartFile 지출_메인_이미지 = 해당_키를_가지는_MultipartFile을_생성한다("mainImage");
         final MockMultipartFile 지출_서브_이미지 = 해당_키를_가지는_MultipartFile을_생성한다("subImage");
 
@@ -78,6 +79,7 @@ class ExpenditureCommandControllerTest extends ControllerTest implements Replace
                                 .queryParam("description", "소개")
                                 .queryParam("date", LocalDate.now().toString())
                                 .header(HttpHeaders.AUTHORIZATION, "Bearer accessToken")
+                                .with(csrf())
                 )
                 .andDo(print())
                 .andExpect(status().isCreated())
@@ -89,6 +91,7 @@ class ExpenditureCommandControllerTest extends ControllerTest implements Replace
     void ERROR_지출생성시_금액이_적절하지_않을_경우_400_상태코드로_응답한다(final String amount) throws Exception {
         //given
         STUBBING_요청을_지출로_변환하는_실제_로직이_실행된다();
+        STUBBING_토큰에서_해당_회원ID를_추출하도록한다(1L);
         final MockMultipartFile 지출_메인_이미지 = 해당_키를_가지는_MultipartFile을_생성한다("mainImage");
 
         //when
@@ -100,6 +103,7 @@ class ExpenditureCommandControllerTest extends ControllerTest implements Replace
                                 .queryParam("description", "소개")
                                 .queryParam("date", LocalDate.now().toString())
                                 .header(HttpHeaders.AUTHORIZATION, "Bearer accessToken")
+                                .with(csrf())
                 )
                 .andDo(print())
                 .andExpect(status().isBadRequest())
@@ -110,6 +114,7 @@ class ExpenditureCommandControllerTest extends ControllerTest implements Replace
     void ERROR_지출생성시_설명이_비어있는_경우_400_상태코드로_응답한다() throws Exception {
         //given
         STUBBING_요청을_지출로_변환하는_실제_로직이_실행된다();
+        STUBBING_토큰에서_해당_회원ID를_추출하도록한다(1L);
         final MockMultipartFile 지출_메인_이미지 = 해당_키를_가지는_MultipartFile을_생성한다("mainImage");
 
         //when
@@ -121,6 +126,7 @@ class ExpenditureCommandControllerTest extends ControllerTest implements Replace
                                 .queryParam("description", "  ")
                                 .queryParam("date", LocalDate.now().toString())
                                 .header(HttpHeaders.AUTHORIZATION, "Bearer accessToken")
+                                .with(csrf())
                 )
                 .andDo(print())
                 .andExpect(status().isBadRequest())
@@ -131,6 +137,7 @@ class ExpenditureCommandControllerTest extends ControllerTest implements Replace
     void ERROR_지출생성시_설명이_30자를_넘는_경우_400_상태코드로_응답한다() throws Exception {
         //given
         STUBBING_요청을_지출로_변환하는_실제_로직이_실행된다();
+        STUBBING_토큰에서_해당_회원ID를_추출하도록한다(1L);
         final MockMultipartFile 지출_메인_이미지 = 해당_키를_가지는_MultipartFile을_생성한다("mainImage");
 
         //when
@@ -142,6 +149,7 @@ class ExpenditureCommandControllerTest extends ControllerTest implements Replace
                                 .queryParam("description", "a".repeat(31))
                                 .queryParam("date", LocalDate.now().toString())
                                 .header(HttpHeaders.AUTHORIZATION, "Bearer accessToken")
+                                .with(csrf())
                 )
                 .andDo(print())
                 .andExpect(status().isBadRequest())
@@ -152,6 +160,7 @@ class ExpenditureCommandControllerTest extends ControllerTest implements Replace
     void ERROR_지출생성시_메인이미지가_없는_경우_400_상태코드로_응답한다() throws Exception {
         //given
         STUBBING_요청을_지출로_변환하는_실제_로직이_실행된다();
+        STUBBING_토큰에서_해당_회원ID를_추출하도록한다(1L);
         final MockMultipartFile 지출_서브_이미지 = 해당_키를_가지는_MultipartFile을_생성한다("subImage");
 
         //when
@@ -163,6 +172,7 @@ class ExpenditureCommandControllerTest extends ControllerTest implements Replace
                                 .queryParam("description", "소개")
                                 .queryParam("date", LocalDate.now().toString())
                                 .header(HttpHeaders.AUTHORIZATION, "Bearer accessToken")
+                                .with(csrf())
                 )
                 .andDo(print())
                 .andExpect(status().isBadRequest())
@@ -171,13 +181,18 @@ class ExpenditureCommandControllerTest extends ControllerTest implements Replace
 
     @Test
     void ERROR_지출생성시_이미지가_없는_경우_400_상태코드로_응답한다() throws Exception {
-        //given when then
+        //given
+        STUBBING_토큰에서_해당_회원ID를_추출하도록한다(1L);
+
+        //when
+        //then
         mockMvc.perform(
                         multipart(HttpMethod.POST, "/expenditures")
                                 .queryParam("amount", "1000")
                                 .queryParam("description", "소개")
                                 .queryParam("date", LocalDate.now().toString())
                                 .header(HttpHeaders.AUTHORIZATION, "Bearer accessToken")
+                                .with(csrf())
                 )
                 .andDo(print())
                 .andExpect(status().isBadRequest())
@@ -187,6 +202,7 @@ class ExpenditureCommandControllerTest extends ControllerTest implements Replace
     @Test
     void 지출을_수정한다() throws Exception {
         //given
+        STUBBING_토큰에서_해당_회원ID를_추출하도록한다(1L);
         final Long 수정하려는_지출_ID = 1L;
         final MockMultipartFile 변경할_메인_이미지 = 해당_키를_가지는_MultipartFile을_생성한다("mainImage");
         final MockMultipartFile 변경할_서브_이미지 = 해당_키를_가지는_MultipartFile을_생성한다("subImage");
@@ -200,6 +216,7 @@ class ExpenditureCommandControllerTest extends ControllerTest implements Replace
                                 .queryParam("amount", "2000")
                                 .queryParam("description", "업데이트된 소개")
                                 .header(HttpHeaders.AUTHORIZATION, "Bearer accessToken")
+                                .with(csrf())
                 )
                 .andDo(print())
                 .andExpect(status().isOk());

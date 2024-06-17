@@ -1,7 +1,7 @@
 package com.poorlex.poorlex.alarm.memberalram.controller;
 
 import com.poorlex.poorlex.alarm.memberalram.service.dto.response.MemberAlarmResponse;
-import com.poorlex.poorlex.config.auth.argumentresolver.MemberInfo;
+import com.poorlex.poorlex.security.service.MemberInfo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -16,6 +16,6 @@ public interface MemberAlarmControllerSwaggerInterface {
     @Operation(summary = "회원 알림 전체 조회", description = "액세스 토큰 필요")
     @GetMapping
     @ApiResponse(responseCode = "200")
-    public ResponseEntity<List<MemberAlarmResponse>> findBattleAlarms(
+    ResponseEntity<List<MemberAlarmResponse>> findBattleAlarms(
             @Parameter(hidden = true) final MemberInfo memberInfo);
 }

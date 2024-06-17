@@ -3,6 +3,7 @@ package com.poorlex.poorlex.exception;
 import io.sentry.Sentry;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.ErrorResponse;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
@@ -48,6 +49,11 @@ public class ExceptionHandlerAdvice {
 
     @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity<ExceptionResponse> handleAuthenticationException(AuthenticationException ex) throws AuthenticationException {
+        throw ex;
+    }
+
+    @ExceptionHandler(AuthorizationDeniedException.class)
+    public ResponseEntity<ExceptionResponse> handleAuthorizationDeniedException(AuthorizationDeniedException ex) throws AuthorizationDeniedException {
         throw ex;
     }
 

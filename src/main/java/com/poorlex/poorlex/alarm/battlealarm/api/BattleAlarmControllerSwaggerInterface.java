@@ -4,7 +4,7 @@ import com.poorlex.poorlex.alarm.battlealarm.service.dto.request.BattleAlarmRequ
 import com.poorlex.poorlex.alarm.battlealarm.service.dto.response.AbstractBattleAlarmResponse;
 import com.poorlex.poorlex.alarm.battlealarm.service.dto.response.BattleAlarmResponse;
 import com.poorlex.poorlex.alarm.battlealarm.service.dto.response.UncheckedBattleAlarmCountResponse;
-import com.poorlex.poorlex.config.auth.argumentresolver.MemberInfo;
+import com.poorlex.poorlex.security.service.MemberInfo;
 import com.poorlex.poorlex.voting.vote.service.dto.response.VoteResponse;
 import com.poorlex.poorlex.voting.votingpaper.service.dto.response.VotingPaperResponse;
 import io.swagger.v3.oas.annotations.Operation;

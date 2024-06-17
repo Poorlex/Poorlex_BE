@@ -48,8 +48,6 @@ class BattleDocumentationTest extends MockMvcTest {
     @Test
     void create() throws Exception {
         //given
-        mockingTokenInterceptor();
-        mockingMemberArgumentResolver();
         given(battleService.create(any(), any(), any())).willReturn(1L);
 
         //when
@@ -86,8 +84,6 @@ class BattleDocumentationTest extends MockMvcTest {
     @Test
     void find_progressing() throws Exception {
         //given
-        mockingTokenInterceptor();
-        mockingMemberArgumentResolver();
         given(battleService.findProgressMemberBattles(any(), any())).willReturn(
                 List.of(
                         new MemberProgressBattleResponse(1L, "첫번째 배틀명", "첫번째 배틀 이미지 링크", "HARD", 5, 10000, 1, 10, 1),
@@ -134,8 +130,6 @@ class BattleDocumentationTest extends MockMvcTest {
     @Test
     void find_complete() throws Exception {
         //given
-        mockingTokenInterceptor();
-        mockingMemberArgumentResolver();
         given(battleService.findCompleteMemberBattles(any(), any())).willReturn(
                 List.of(
                         new MemberCompleteBattleResponse(1L, "첫번째 배틀명", "첫번째 배틀 이미지 링크", "HARD", 5, 10000, 1, 10, 30),
@@ -182,8 +176,6 @@ class BattleDocumentationTest extends MockMvcTest {
     @Test
     void find_one_battle() throws Exception {
         //given
-        mockingTokenInterceptor();
-        mockingMemberArgumentResolver();
         given(battleService.getBattleInfo(any(), any()))
                 .willReturn(new BattleResponse(
                                     1L,
@@ -241,8 +233,6 @@ class BattleDocumentationTest extends MockMvcTest {
     @Test
     void find_all_battles() throws Exception {
         //given
-        mockingTokenInterceptor();
-        mockingMemberArgumentResolver();
         given(battleService.queryBattles(any(BattleFindRequest.class), any(Pageable.class))).willReturn(
                 List.of(
                         new FindingBattleResponse(1L, "첫번째 배틀명", "첫번째 배틀 설명", "첫번째 배틀 이미지 링크", 50000, 10, 3),

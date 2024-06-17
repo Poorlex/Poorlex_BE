@@ -38,8 +38,6 @@ class BattleInviteDocumentationTest extends MockMvcTest implements ReplaceUnderS
     @Test
     void 배틀에_초대한다() throws Exception {
         //given
-        mockingTokenInterceptor();
-        mockingMemberArgumentResolver();
         doNothing().when(battleInviteService).invite(any(), any(), any());
 
         final BattleInviteRequest request = new BattleInviteRequest(1L);
@@ -69,8 +67,6 @@ class BattleInviteDocumentationTest extends MockMvcTest implements ReplaceUnderS
     @Test
     void 배틀초대_요청을_수락한다() throws Exception {
         //given
-        mockingTokenInterceptor();
-        mockingMemberArgumentResolver();
         doNothing().when(battleInviteService).inviteAccept(any(), any());
 
         final BattleInviteAcceptRequest request = new BattleInviteAcceptRequest(1L);
@@ -100,8 +96,6 @@ class BattleInviteDocumentationTest extends MockMvcTest implements ReplaceUnderS
     @Test
     void 배틀초대_요청을_거절한다() throws Exception {
         //given
-        mockingTokenInterceptor();
-        mockingMemberArgumentResolver();
         doNothing().when(battleInviteService).inviteDeny(any(), any());
 
         final BattleInviteDenyRequest request = new BattleInviteDenyRequest(1L);

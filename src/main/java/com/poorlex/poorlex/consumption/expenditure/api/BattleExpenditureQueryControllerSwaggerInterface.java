@@ -1,7 +1,7 @@
 package com.poorlex.poorlex.consumption.expenditure.api;
 
-import com.poorlex.poorlex.config.auth.argumentresolver.MemberInfo;
 import com.poorlex.poorlex.consumption.expenditure.service.dto.response.BattleExpenditureResponse;
+import com.poorlex.poorlex.security.service.MemberInfo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;

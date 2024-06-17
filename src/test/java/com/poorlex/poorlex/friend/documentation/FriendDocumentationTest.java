@@ -43,8 +43,6 @@ class FriendDocumentationTest extends MockMvcTest implements ReplaceUnderScoreTe
     @Test
     void 친구요청을_생성한다() throws Exception {
         //given
-        mockingTokenInterceptor();
-        mockingMemberArgumentResolver();
         doNothing().when(friendService).inviteFriend(any(), any());
 
         final FriendInviteRequest request = new FriendInviteRequest(1L);
@@ -74,8 +72,6 @@ class FriendDocumentationTest extends MockMvcTest implements ReplaceUnderScoreTe
     @Test
     void 친구요청을_수락한다() throws Exception {
         //given
-        mockingTokenInterceptor();
-        mockingMemberArgumentResolver();
         doNothing().when(friendService).inviteAccept(any(), any());
 
         final FriendCreateRequest request = new FriendCreateRequest(1L);
@@ -105,8 +101,6 @@ class FriendDocumentationTest extends MockMvcTest implements ReplaceUnderScoreTe
     @Test
     void 친구요청을_거절한다() throws Exception {
         //given
-        mockingTokenInterceptor();
-        mockingMemberArgumentResolver();
         doNothing().when(friendService).inviteDeny(any(), any());
 
         final FriendDenyRequest request = new FriendDenyRequest(1L);
@@ -136,8 +130,6 @@ class FriendDocumentationTest extends MockMvcTest implements ReplaceUnderScoreTe
     @Test
     void 친구목록을_조회한다() throws Exception {
         //given
-        mockingTokenInterceptor();
-        mockingMemberArgumentResolver();
         given(friendService.findMemberFriendsWithCurrentDateTime(any()))
                 .willReturn(List.of(
                         new FriendResponse(1L, 1, "친구1 닉네임", 1000L),

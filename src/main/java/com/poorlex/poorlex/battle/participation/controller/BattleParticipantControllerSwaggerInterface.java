@@ -1,7 +1,7 @@
 package com.poorlex.poorlex.battle.participation.controller;
 
-import com.poorlex.poorlex.config.auth.argumentresolver.MemberInfo;
-import com.poorlex.poorlex.config.auth.argumentresolver.MemberOnly;
+
+import com.poorlex.poorlex.security.service.MemberInfo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -17,11 +17,11 @@ public interface BattleParticipantControllerSwaggerInterface {
     @PostMapping
     @ApiResponse(responseCode = "201")
     ResponseEntity<Void> participate(@Parameter(description = "참가할 배틀 ID") final Long battleId,
-                                     @Parameter(hidden = true) @MemberOnly MemberInfo memberInfo);
+                                     @Parameter(hidden = true) final MemberInfo memberInfo);
 
     @Operation(summary = "배틀 탈퇴", description = "액세스 토큰 필요")
     @DeleteMapping
     @ApiResponse(responseCode = "204")
     ResponseEntity<Void> withdraw(@Parameter(description = "탈퇴할 배틀 ID") final Long battleId,
-                                  @Parameter(hidden = true) @MemberOnly MemberInfo memberInfo);
+                                  @Parameter(hidden = true) final MemberInfo memberInfo);
 }

@@ -53,8 +53,6 @@ class ExpenditureDocumentationTest extends MockMvcTest {
     @Test
     void create() throws Exception {
         //given
-        mockingTokenInterceptor();
-        mockingMemberArgumentResolver();
         given(expenditureCommandService.createExpenditure(any(), any(), any(), any())).willReturn(1L);
 
         final MockMultipartFile mainImage = new MockMultipartFile(
@@ -106,8 +104,6 @@ class ExpenditureDocumentationTest extends MockMvcTest {
     @Test
     void find_weekly_expenditure() throws Exception {
         //given
-        mockingTokenInterceptor();
-        mockingMemberArgumentResolver();
 
         given(expenditureQueryService.findMemberCurrentWeeklyTotalExpenditure(any()))
                 .willReturn(new MemberWeeklyTotalExpenditureResponse(1000L));
@@ -134,8 +130,6 @@ class ExpenditureDocumentationTest extends MockMvcTest {
     @Test
     void find_expenditure() throws Exception {
         //given
-        mockingTokenInterceptor();
-        mockingMemberArgumentResolver();
 
         given(expenditureQueryService.findExpenditureById(any()))
                 .willReturn(
@@ -173,8 +167,6 @@ class ExpenditureDocumentationTest extends MockMvcTest {
     @Test
     void find_battle_expenditure_by_dayOfWeek() throws Exception {
         //given
-        mockingTokenInterceptor();
-        mockingMemberArgumentResolver();
 
         given(expenditureQueryService.findBattleExpendituresInDayOfWeek(any(), any(), any()))
                 .willReturn(
@@ -215,8 +207,6 @@ class ExpenditureDocumentationTest extends MockMvcTest {
     @Test
     void find_member_battle_expenditure() throws Exception {
         //given
-        mockingTokenInterceptor();
-        mockingMemberArgumentResolver();
 
         given(expenditureQueryService.findMemberBattleExpenditures(any(), any()))
                 .willReturn(
@@ -257,8 +247,6 @@ class ExpenditureDocumentationTest extends MockMvcTest {
     @Test
     void find_member_expenditure() throws Exception {
         //given
-        mockingTokenInterceptor();
-        mockingMemberArgumentResolver();
 
         given(expenditureQueryService.findMemberExpenditures(any()))
                 .willReturn(

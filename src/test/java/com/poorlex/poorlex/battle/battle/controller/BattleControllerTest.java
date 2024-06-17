@@ -221,19 +221,24 @@ class BattleControllerTest extends IntegrationTest implements ReplaceUnderScoreT
 
         final BattleFindRequest request = new BattleFindRequest(LocalDate.now(), List.of());
 
+        final String accessToken = testMemberTokenGenerator.createAccessToken(member);
+
         //when
         //then
         mockMvc.perform(
                         get("/battles/{battleId}", battleId)
+                                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(battle.getId()))
                 .andExpect(jsonPath("$.battleName").value(battle.getName()))
                 .andExpect(jsonPath("$.maxParticipantSize").value(battle.getMaxParticipantSize().getValue()))
                 .andExpect(jsonPath("$.currentParticipantSize").value(2))
                 .andExpect(jsonPath("$.battleBudget").value(battle.getBudget()))
                 .andExpect(jsonPath("$.battleDDay").value(battle.getDDay(request.getDate())))
                 .andExpect(jsonPath("$.battleIntroduction").value(battle.getIntroduction()))
+                .andExpect(jsonPath("$.isParticipating").value(true))
                 .andExpect(jsonPath("$.battleManager.nickname").value(manager.getNickname()))
                 .andExpect(jsonPath("$.battleManager.level").isNumber())
                 .andExpect(jsonPath("$.battleManager.description").doesNotExist());

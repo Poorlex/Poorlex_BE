@@ -1,7 +1,5 @@
 package com.poorlex.poorlex.consumption.expenditure.controller;
 
-import com.poorlex.poorlex.config.auth.argumentresolver.MemberInfo;
-import com.poorlex.poorlex.config.auth.argumentresolver.MemberOnly;
 import com.poorlex.poorlex.consumption.expenditure.api.ExpenditureCommandControllerSwaggerInterface;
 import com.poorlex.poorlex.consumption.expenditure.service.ExpenditureCommandService;
 import com.poorlex.poorlex.consumption.expenditure.service.dto.request.ExpenditureCreateRequest;
@@ -9,9 +7,11 @@ import com.poorlex.poorlex.consumption.expenditure.service.dto.request.Expenditu
 import java.net.URI;
 import java.time.LocalDate;
 import java.util.Optional;
+import com.poorlex.poorlex.security.service.MemberInfo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -30,7 +30,7 @@ public class ExpenditureCommandController implements ExpenditureCommandControlle
     private final ExpenditureCommandService expenditureCommandService;
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<Void> createExpenditure(@MemberOnly final MemberInfo memberInfo,
+    public ResponseEntity<Void> createExpenditure(@AuthenticationPrincipal final MemberInfo memberInfo,
                                                   @RequestPart(name = "mainImage") final MultipartFile mainImage,
                                                   @RequestPart(name = "subImage", required = false)
                                                   final MultipartFile subImage,
@@ -38,7 +38,7 @@ public class ExpenditureCommandController implements ExpenditureCommandControlle
                                                   @RequestParam(value = "description") final String description,
                                                   @RequestParam(value = "date") final LocalDate date) {
         final ExpenditureCreateRequest request = new ExpenditureCreateRequest(amount, description, date);
-        final Long expenditureID = expenditureCommandService.createExpenditure(memberInfo.getMemberId(),
+        final Long expenditureID = expenditureCommandService.createExpenditure(memberInfo.getId(),
                                                                                mainImage,
                                                                                subImage,
                                                                                request);
@@ -49,7 +49,7 @@ public class ExpenditureCommandController implements ExpenditureCommandControlle
     }
 
     @PutMapping(path = "/{expenditureId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<Void> updateExpenditure(@MemberOnly final MemberInfo memberInfo,
+    public ResponseEntity<Void> updateExpenditure(@AuthenticationPrincipal final MemberInfo memberInfo,
                                                   @PathVariable(name = "expenditureId") final Long expenditureId,
                                                   @RequestPart(name = "mainImage", required = false)
                                                   final MultipartFile mainImage,
@@ -63,7 +63,7 @@ public class ExpenditureCommandController implements ExpenditureCommandControlle
                                                   @RequestParam(value = "description") final String description) {
         final ExpenditureUpdateRequest request = new ExpenditureUpdateRequest(amount, description);
         expenditureCommandService.updateExpenditure(expenditureId,
-                                                    memberInfo.getMemberId(),
+                                                    memberInfo.getId(),
                                                     Optional.ofNullable(mainImage),
                                                     Optional.ofNullable(mainImageUrl),
                                                     Optional.ofNullable(subImage),
@@ -73,9 +73,9 @@ public class ExpenditureCommandController implements ExpenditureCommandControlle
     }
 
     @DeleteMapping("/{expenditureId}")
-    public ResponseEntity<Void> deleteExpenditure(@MemberOnly final MemberInfo memberInfo,
+    public ResponseEntity<Void> deleteExpenditure(@AuthenticationPrincipal final MemberInfo memberInfo,
                                                   @PathVariable(name = "expenditureId") final Long expenditureId) {
-        expenditureCommandService.deleteExpenditure(memberInfo.getMemberId(), expenditureId);
+        expenditureCommandService.deleteExpenditure(memberInfo.getId(), expenditureId);
         return ResponseEntity.ok().build();
     }
 }

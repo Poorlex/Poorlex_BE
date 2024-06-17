@@ -51,8 +51,6 @@ class GoalDocumentationTest extends MockMvcTest {
     @Test
     void create_goal() throws Exception {
         //given
-        mockingTokenInterceptor();
-        mockingMemberArgumentResolver();
         given(goalService.createGoal(any(), any())).willReturn(1L);
 
         final GoalCreateRequest request = new GoalCreateRequest(
@@ -92,8 +90,6 @@ class GoalDocumentationTest extends MockMvcTest {
     @Test
     void delete_goal() throws Exception {
         //given
-        mockingTokenInterceptor();
-        mockingMemberArgumentResolver();
         doNothing().when(goalService).deleteGoal(any(), any());
 
         //when
@@ -116,8 +112,6 @@ class GoalDocumentationTest extends MockMvcTest {
     @Test
     void update_goal() throws Exception {
         //given
-        mockingTokenInterceptor();
-        mockingMemberArgumentResolver();
         doNothing().when(goalService).updateGoal(any(), any(), any());
 
         final GoalUpdateRequest request = new GoalUpdateRequest(
@@ -158,8 +152,6 @@ class GoalDocumentationTest extends MockMvcTest {
     @Test
     void find_progress_member_goals() throws Exception {
         //given
-        mockingTokenInterceptor();
-        mockingMemberArgumentResolver();
         final MemberGoalRequest request = new MemberGoalRequest("PROGRESS", LocalDate.of(2023, 1, 1));
         given(goalService.findMemberGoalWithStatus(any(), any()))
                 .willReturn(
@@ -232,8 +224,6 @@ class GoalDocumentationTest extends MockMvcTest {
     @Test
     void find_finish_member_goals() throws Exception {
         //given
-        mockingTokenInterceptor();
-        mockingMemberArgumentResolver();
         final MemberGoalRequest request = new MemberGoalRequest("FINISH", LocalDate.of(2023, 1, 1));
         given(goalService.findMemberGoalWithStatus(any(), any()))
                 .willReturn(
@@ -306,8 +296,6 @@ class GoalDocumentationTest extends MockMvcTest {
     @Test
     void goal_find_ids() throws Exception {
         //given
-        mockingTokenInterceptor();
-        mockingMemberArgumentResolver();
         given(goalService.findMemberGoalIds(any()))
                 .willReturn(List.of(
                         new GoalIdResponse(1L),
@@ -339,8 +327,6 @@ class GoalDocumentationTest extends MockMvcTest {
     @Test
     void goal_find_types() throws Exception {
         //given
-        mockingTokenInterceptor();
-        mockingMemberArgumentResolver();
 
         given(goalService.findAllGoalType())
                 .willReturn(

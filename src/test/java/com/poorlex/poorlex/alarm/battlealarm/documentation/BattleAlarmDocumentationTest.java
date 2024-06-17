@@ -43,8 +43,6 @@ class BattleAlarmDocumentationTest extends MockMvcTest {
     @Test
     void find_battle_alarm_basic() throws Exception {
         //given
-        mockingTokenInterceptor();
-        mockingMemberArgumentResolver();
         final BattleAlarmRequest request = new BattleAlarmRequest(LocalDateTime.now().truncatedTo(ChronoUnit.MICROS));
         given(battleAlarmService.findBattleAlarms(any(), any(), any())).willReturn(
                 List.of(
@@ -89,8 +87,6 @@ class BattleAlarmDocumentationTest extends MockMvcTest {
     @Test
     void find_battle_alarm_vote() throws Exception {
         //given
-        mockingTokenInterceptor();
-        mockingMemberArgumentResolver();
         final BattleAlarmRequest request = new BattleAlarmRequest(LocalDateTime.now().truncatedTo(ChronoUnit.MICROS));
         given(battleAlarmService.findBattleAlarms(any(), any(), any())).willReturn(
                 List.of(
@@ -143,8 +139,6 @@ class BattleAlarmDocumentationTest extends MockMvcTest {
     @Test
     void find_battle_alarm_voting_paper() throws Exception {
         //given
-        mockingTokenInterceptor();
-        mockingMemberArgumentResolver();
         final BattleAlarmRequest request = new BattleAlarmRequest(LocalDateTime.now().truncatedTo(ChronoUnit.MICROS));
         given(battleAlarmService.findBattleAlarms(any(), any(), any())).willReturn(
                 List.of(
@@ -189,8 +183,6 @@ class BattleAlarmDocumentationTest extends MockMvcTest {
     @Test
     void find_battle_alarm_reaction() throws Exception {
         //given
-        mockingTokenInterceptor();
-        mockingMemberArgumentResolver();
         final BattleAlarmRequest request = new BattleAlarmRequest(LocalDateTime.now().truncatedTo(ChronoUnit.MICROS));
         given(battleAlarmService.findBattleAlarms(any(), any(), any())).willReturn(
                 List.of(
@@ -233,8 +225,6 @@ class BattleAlarmDocumentationTest extends MockMvcTest {
     @Test
     void find_unchecked_battle_alarm_count() throws Exception {
         //given
-        mockingTokenInterceptor();
-        mockingMemberArgumentResolver();
         given(battleAlarmService.getBattleParticipantUncheckedAlarmCount(any(), any()))
                 .willReturn(new UncheckedBattleAlarmCountResponse(1));
 

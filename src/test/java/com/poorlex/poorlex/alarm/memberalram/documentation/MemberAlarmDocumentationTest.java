@@ -36,8 +36,6 @@ class MemberAlarmDocumentationTest extends MockMvcTest {
     @Test
     void find_member_alarms() throws Exception {
         //given
-        mockingTokenInterceptor();
-        mockingMemberArgumentResolver();
         given(memberAlarmService.findMemberAlarmsByCurrentTime(any())).willReturn(
                 List.of(
                         new MemberAlarmResponse(1L, "관련 멤버 닉네임", "관련 배틀 이름", "FRIEND_INVITATION", 60 * 3, 3, 0),

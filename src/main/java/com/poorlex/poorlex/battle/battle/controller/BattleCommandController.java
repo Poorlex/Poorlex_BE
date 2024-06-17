@@ -2,12 +2,12 @@ package com.poorlex.poorlex.battle.battle.controller;
 
 import com.poorlex.poorlex.battle.battle.service.BattleService;
 import com.poorlex.poorlex.battle.battle.service.dto.request.BattleCreateRequest;
-import com.poorlex.poorlex.config.auth.argumentresolver.MemberInfo;
-import com.poorlex.poorlex.config.auth.argumentresolver.MemberOnly;
 import java.net.URI;
+import com.poorlex.poorlex.security.service.MemberInfo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -23,7 +23,7 @@ public class BattleCommandController implements BattleCommandControllerSwaggerIn
     private final BattleService battleService;
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<Void> createBattle(@MemberOnly final MemberInfo memberInfo,
+    public ResponseEntity<Void> createBattle(@AuthenticationPrincipal final MemberInfo memberInfo,
                                              @RequestPart("image") final MultipartFile image,
                                              @RequestParam final String name,
                                              @RequestParam final String introduction,
@@ -33,12 +33,12 @@ public class BattleCommandController implements BattleCommandControllerSwaggerIn
                                                                     introduction,
                                                                     budget,
                                                                     maxParticipantSize);
-        final Long createdBattleId = battleService.create(memberInfo.getMemberId(), image, request);
+        final Long createdBattleId = battleService.create(memberInfo.getId(), image, request);
         return ResponseEntity.created(URI.create("/battles/" + createdBattleId)).build();
     }
 
     @PostMapping(path = "/progressing", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<Void> createProgressingBattle(@MemberOnly final MemberInfo memberInfo,
+    public ResponseEntity<Void> createProgressingBattle(@AuthenticationPrincipal final MemberInfo memberInfo,
                                                         @RequestPart("image") final MultipartFile image,
                                                         @RequestParam final String name,
                                                         @RequestParam final String introduction,
@@ -48,12 +48,12 @@ public class BattleCommandController implements BattleCommandControllerSwaggerIn
                                                                     introduction,
                                                                     budget,
                                                                     maxParticipantSize);
-        final Long createdBattleId = battleService.createProgressing(memberInfo.getMemberId(), image, request);
+        final Long createdBattleId = battleService.createProgressing(memberInfo.getId(), image, request);
         return ResponseEntity.created(URI.create("/battles/" + createdBattleId)).build();
     }
 
     @PostMapping(path = "/completed", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<Void> createCompletedBattle(@MemberOnly final MemberInfo memberInfo,
+    public ResponseEntity<Void> createCompletedBattle(@AuthenticationPrincipal final MemberInfo memberInfo,
                                                       @RequestPart("image") final MultipartFile image,
                                                       @RequestParam final String name,
                                                       @RequestParam final String introduction,
@@ -63,7 +63,7 @@ public class BattleCommandController implements BattleCommandControllerSwaggerIn
                                                                     introduction,
                                                                     budget,
                                                                     maxParticipantSize);
-        final Long createdBattleId = battleService.createCompleted(memberInfo.getMemberId(), image, request);
+        final Long createdBattleId = battleService.createCompleted(memberInfo.getId(), image, request);
         return ResponseEntity.created(URI.create("/battles/" + createdBattleId)).build();
     }
 }

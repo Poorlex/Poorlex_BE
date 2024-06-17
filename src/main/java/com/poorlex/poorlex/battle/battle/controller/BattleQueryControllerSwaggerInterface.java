@@ -5,8 +5,7 @@ import com.poorlex.poorlex.battle.battle.service.dto.response.BattleResponse;
 import com.poorlex.poorlex.battle.battle.service.dto.response.FindingBattleResponse;
 import com.poorlex.poorlex.battle.battle.service.dto.response.MemberCompleteBattleResponse;
 import com.poorlex.poorlex.battle.battle.service.dto.response.MemberProgressBattleResponse;
-import com.poorlex.poorlex.config.auth.argumentresolver.MemberInfo;
-import com.poorlex.poorlex.config.auth.argumentresolver.MemberOnly;
+import com.poorlex.poorlex.security.service.MemberInfo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -16,6 +15,7 @@ import java.util.List;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 
 @Tag(name = "배틀 조회 관련 API")
@@ -25,7 +25,7 @@ public interface BattleQueryControllerSwaggerInterface {
     @GetMapping("/{battleId}")
     @ApiResponse(responseCode = "200")
     ResponseEntity<BattleResponse> getBattleInfo(
-            @MemberOnly final MemberInfo memberInfo,
+            @AuthenticationPrincipal MemberInfo memberInfo,
             @Parameter(description = "배틀 Id") final Long battleId);
 
     @Operation(summary = "모든 배틀 조회")

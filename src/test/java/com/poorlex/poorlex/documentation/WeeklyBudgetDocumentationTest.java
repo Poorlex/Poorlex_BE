@@ -52,8 +52,6 @@ class WeeklyBudgetDocumentationTest extends MockMvcTest {
         //given
         final WeeklyBudgetCreateRequest request = new WeeklyBudgetCreateRequest(10000L);
 
-        mockingTokenInterceptor();
-        mockingMemberArgumentResolver();
         doNothing().when(weeklyBudgetCommandService).createBudgetWithCurrentDuration(anyLong(), anyLong());
 
         //when
@@ -82,8 +80,6 @@ class WeeklyBudgetDocumentationTest extends MockMvcTest {
         //given
         final WeeklyBudgetRequest request = new WeeklyBudgetRequest(LocalDate.now());
 
-        mockingTokenInterceptor();
-        mockingMemberArgumentResolver();
         given(weeklyBudgetQueryService.findCurrentWeeklyBudgetByMemberId(any())).willReturn(
                 new WeeklyBudgetResponse(true, 10000L, 5L)
         );
@@ -122,8 +118,6 @@ class WeeklyBudgetDocumentationTest extends MockMvcTest {
         //given
         final WeeklyBudgetLeftRequest request = new WeeklyBudgetLeftRequest(LocalDate.now());
 
-        mockingTokenInterceptor();
-        mockingMemberArgumentResolver();
         given(weeklyBudgetQueryService.findCurrentWeeklyBudgetLeftByMemberId(any())).willReturn(
                 new WeeklyBudgetLeftResponse(true, 10000L)
         );
