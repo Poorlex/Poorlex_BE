@@ -1,5 +1,6 @@
 package com.poorlex.poorlex.security.filter;
 
+import com.poorlex.poorlex.security.service.MemberInfo;
 import com.poorlex.poorlex.user.member.domain.MemberRepository;
 import com.poorlex.poorlex.auth.service.JwtTokenProvider;
 import jakarta.servlet.FilterChain;
@@ -8,16 +9,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Objects;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -45,8 +43,8 @@ public class JwtFilter extends OncePerRequestFilter {
                 throw new UsernameNotFoundException("user not found");
             }
 
-            User principal = new User(memberId.toString(), "", List.of(new SimpleGrantedAuthority("ROLE_USER")));
-            UsernamePasswordAuthenticationToken user = new UsernamePasswordAuthenticationToken(principal, accessToken, List.of(new SimpleGrantedAuthority("ROLE_USER")));
+            MemberInfo memberInfo = MemberInfo.ofUserRole(memberId);
+            UsernamePasswordAuthenticationToken user = new UsernamePasswordAuthenticationToken(memberInfo, accessToken, memberInfo.getAuthorities());
 
             SecurityContextHolder.getContext().setAuthentication(user);
         } catch (AuthenticationException e) {
