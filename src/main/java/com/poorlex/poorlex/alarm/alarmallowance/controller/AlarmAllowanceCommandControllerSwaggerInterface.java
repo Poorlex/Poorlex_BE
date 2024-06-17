@@ -2,7 +2,7 @@ package com.poorlex.poorlex.alarm.alarmallowance.controller;
 
 import com.poorlex.poorlex.alarm.alarmallowance.service.dto.request.AlarmAllowanceStatusChangeRequest;
 import com.poorlex.poorlex.alarm.alarmallowance.service.dto.response.AlarmAllowanceResponse;
-import com.poorlex.poorlex.config.auth.argumentresolver.MemberInfo;
+import com.poorlex.poorlex.security.service.MemberInfo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

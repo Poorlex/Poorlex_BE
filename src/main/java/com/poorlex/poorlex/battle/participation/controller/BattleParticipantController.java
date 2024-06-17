@@ -1,11 +1,11 @@
 package com.poorlex.poorlex.battle.participation.controller;
 
 import com.poorlex.poorlex.battle.participation.service.BattleParticipantService;
-import com.poorlex.poorlex.config.auth.argumentresolver.MemberInfo;
-import com.poorlex.poorlex.config.auth.argumentresolver.MemberOnly;
 import java.net.URI;
+import com.poorlex.poorlex.security.service.MemberInfo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,8 +21,8 @@ public class BattleParticipantController implements BattleParticipantControllerS
 
     @PostMapping
     public ResponseEntity<Void> participate(@PathVariable(value = "battleId") final Long battleId,
-                                            @MemberOnly MemberInfo memberInfo) {
-        final Long battleParticipantId = battleParticipantService.participate(battleId, memberInfo.getMemberId());
+                                            @AuthenticationPrincipal MemberInfo memberInfo) {
+        final Long battleParticipantId = battleParticipantService.participate(battleId, memberInfo.getId());
         final String locationHeader = "/battles/" + battleId + "/participants/" + battleParticipantId;
 
         return ResponseEntity.created(URI.create(locationHeader)).build();
@@ -30,8 +30,8 @@ public class BattleParticipantController implements BattleParticipantControllerS
 
     @DeleteMapping
     public ResponseEntity<Void> withdraw(@PathVariable(value = "battleId") final Long battleId,
-                                         @MemberOnly MemberInfo memberInfo) {
-        battleParticipantService.withdraw(battleId, memberInfo.getMemberId());
+                                         @AuthenticationPrincipal MemberInfo memberInfo) {
+        battleParticipantService.withdraw(battleId, memberInfo.getId());
         return ResponseEntity.noContent().build();
     }
 }

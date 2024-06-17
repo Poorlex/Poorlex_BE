@@ -36,8 +36,6 @@ class VotingPaperDocumentationTest extends MockMvcTest implements ReplaceUnderSc
     @Test
     void 투표에_투표한다() throws Exception {
         //given
-        mockingTokenInterceptor();
-        mockingMemberArgumentResolver();
         doNothing().when(votingPaperService).createVotingPaper(any(), any(), any());
         final VotingPaperCreateRequest request = new VotingPaperCreateRequest(true);
 

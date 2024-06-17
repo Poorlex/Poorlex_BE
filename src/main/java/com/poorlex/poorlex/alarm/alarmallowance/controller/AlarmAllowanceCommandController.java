@@ -4,10 +4,10 @@ import com.poorlex.poorlex.alarm.alarmallowance.service.AlarmAllowanceCommandSer
 import com.poorlex.poorlex.alarm.alarmallowance.service.AlarmAllowanceQueryService;
 import com.poorlex.poorlex.alarm.alarmallowance.service.dto.request.AlarmAllowanceStatusChangeRequest;
 import com.poorlex.poorlex.alarm.alarmallowance.service.dto.response.AlarmAllowanceResponse;
-import com.poorlex.poorlex.config.auth.argumentresolver.MemberInfo;
-import com.poorlex.poorlex.config.auth.argumentresolver.MemberOnly;
+import com.poorlex.poorlex.security.service.MemberInfo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,16 +24,16 @@ public class AlarmAllowanceCommandController implements AlarmAllowanceCommandCon
 
     @PatchMapping
     public ResponseEntity<Void> changeAlarmAllowanceStatus(
-            @MemberOnly final MemberInfo memberInfo,
+            @AuthenticationPrincipal final MemberInfo memberInfo,
             @RequestBody final AlarmAllowanceStatusChangeRequest request
     ) {
-        alarmAllowanceCommandService.changeAlarmAllowanceStatus(memberInfo.getMemberId(), request);
+        alarmAllowanceCommandService.changeAlarmAllowanceStatus(memberInfo.getId(), request);
         return ResponseEntity.ok().build();
     }
 
     @GetMapping
-    public ResponseEntity<AlarmAllowanceResponse> findAlarmAllowance(@MemberOnly final MemberInfo memberInfo) {
+    public ResponseEntity<AlarmAllowanceResponse> findAlarmAllowance(@AuthenticationPrincipal final MemberInfo memberInfo) {
         return ResponseEntity.ok()
-                .body(alarmAllowanceQueryService.findAllowance(memberInfo.getMemberId()));
+                .body(alarmAllowanceQueryService.findAllowance(memberInfo.getId()));
     }
 }

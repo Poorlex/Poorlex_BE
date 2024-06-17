@@ -37,8 +37,6 @@ class VoteDocumentationTest extends MockMvcTest implements ReplaceUnderScoreTest
     @Test
     void 투표를_생성한다() throws Exception {
         //given
-        mockingTokenInterceptor();
-        mockingMemberArgumentResolver();
         doNothing().when(voteService).createVote(any(), any(), any());
         final VoteCreateRequest request = new VoteCreateRequest(1500, LocalDateTime.now(), 30, "초코우유");
 

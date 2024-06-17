@@ -38,8 +38,6 @@ class BattleAlarmReactionDocumentationTest extends MockMvcTest {
         //given
         final AlarmReactionCreateRequest request = new AlarmReactionCreateRequest(1L, "PRAISE", "알림 반응 문구");
 
-        mockingTokenInterceptor();
-        mockingMemberArgumentResolver();
         doNothing().when(alarmReactionService).createAlarmReaction(anyLong(), any());
 
         //when

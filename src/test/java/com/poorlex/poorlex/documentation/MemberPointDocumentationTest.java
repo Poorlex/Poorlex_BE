@@ -50,8 +50,6 @@ class MemberPointDocumentationTest extends MockMvcTest {
         //given
         final PointCreateRequest request = new PointCreateRequest(1000);
 
-        mockingTokenInterceptor();
-        mockingMemberArgumentResolver();
         doNothing().when(memberPointService).createPoint(anyLong(), anyInt());
 
         //when
@@ -78,8 +76,6 @@ class MemberPointDocumentationTest extends MockMvcTest {
     @Test
     void find_total_point_and_level() throws Exception {
         //given
-        mockingTokenInterceptor();
-        mockingMemberArgumentResolver();
         given(memberPointQueryService.findMemberSumPointAndLevel(any()))
                 .willReturn(new MemberPointAndLevelResponse(1000, MemberLevel.LEVEL_4.getNumber()));
 
@@ -105,8 +101,6 @@ class MemberPointDocumentationTest extends MockMvcTest {
     @Test
     void find_info_for_level_bar() throws Exception {
         //given
-        mockingTokenInterceptor();
-        mockingMemberArgumentResolver();
         given(memberPointQueryService.findMemberLevelBarInfo(any()))
                 .willReturn(new MemberLevelBarResponse(MemberLevel.LEVEL_1.getLevelRange(), 10, 10));
 

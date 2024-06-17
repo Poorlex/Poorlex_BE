@@ -45,8 +45,6 @@ class BattleNotificationDocumentationTest extends MockMvcTest {
         final BattleNotificationCreateRequest request =
                 new BattleNotificationCreateRequest("12345678901234567890", "공지 이미지 링크");
 
-        mockingTokenInterceptor();
-        mockingMemberArgumentResolver();
         doNothing().when(battleNotificationService).createNotification(anyLong(), anyLong(), any());
 
         //when
@@ -79,8 +77,6 @@ class BattleNotificationDocumentationTest extends MockMvcTest {
         final BattleNotificationUpdateRequest request =
                 new BattleNotificationUpdateRequest("new 12345678901234567890", null);
 
-        mockingTokenInterceptor();
-        mockingMemberArgumentResolver();
         doNothing().when(battleNotificationService).updateNotification(anyLong(), anyLong(), any());
 
         //when
@@ -111,8 +107,6 @@ class BattleNotificationDocumentationTest extends MockMvcTest {
     @Test
     void find() throws Exception {
         //given
-        mockingTokenInterceptor();
-        mockingMemberArgumentResolver();
         given(battleNotificationService.findNotificationByBattleId(anyLong()))
                 .willReturn(new BattleNotificationResponse("12345678901234567890", "imageUrl"));
 

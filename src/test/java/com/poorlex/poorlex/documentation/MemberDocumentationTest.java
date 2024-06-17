@@ -35,8 +35,6 @@ class MemberDocumentationTest extends MockMvcTest {
     @Test
     void member_profile_update() throws Exception {
         //given
-        mockingTokenInterceptor();
-        mockingMemberArgumentResolver();
         doNothing().when(memberCommandService).updateProfile(any(), any());
         final MemberProfileUpdateRequest request = new MemberProfileUpdateRequest("변경할 닉네임", "변경할 소개글");
 

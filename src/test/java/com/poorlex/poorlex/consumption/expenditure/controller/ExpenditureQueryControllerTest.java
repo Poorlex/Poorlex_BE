@@ -13,8 +13,6 @@ import org.junit.jupiter.api.Test;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import org.mockito.stubbing.OngoingStubbing;
-import org.springframework.boot.autoconfigure.security.oauth2.client.servlet.OAuth2ClientAutoConfiguration;
-import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
@@ -25,10 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @DisplayName("지출 조회 Controller 단위 테스트")
-@WebMvcTest(
-        controllers = ExpenditureQueryController.class,
-        excludeAutoConfiguration = {SecurityAutoConfiguration.class, OAuth2ClientAutoConfiguration.class}
-)
+@WebMvcTest(ExpenditureQueryController.class)
 class ExpenditureQueryControllerTest extends ControllerTest implements ReplaceUnderScoreTest {
 
     @MockBean
@@ -42,6 +37,7 @@ class ExpenditureQueryControllerTest extends ControllerTest implements ReplaceUn
     @Test
     void 멤버의_모든_지출_목록을_조회한다() throws Exception {
         //given
+        STUBBING_토큰에서_해당_회원ID를_추출하도록한다(1L);
         STUBBING_회원_지출_목록을_조회시_두개의_지출을_반환한다();
 
         //when
@@ -85,6 +81,7 @@ class ExpenditureQueryControllerTest extends ControllerTest implements ReplaceUn
     void 멤버의_주간_지출의_총합을_조회한다() throws Exception {
         //given
         final Long 주간_지출_총합 = 3000L;
+        STUBBING_토큰에서_해당_회원ID를_추출하도록한다(1L);
         STUBBING_회원의_주간_지출_조회시_다음값을_반환한다(주간_지출_총합);
 
         //when

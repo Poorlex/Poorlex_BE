@@ -12,22 +12,20 @@ import org.junit.jupiter.api.Test;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.willThrow;
-import org.springframework.boot.autoconfigure.security.oauth2.client.servlet.OAuth2ClientAutoConfiguration;
-import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
+
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @DisplayName("주간 예산 관리 Controller 단위 테스트")
-@WebMvcTest(
-        controllers = WeeklyBudgetCommandController.class,
-        excludeAutoConfiguration = {SecurityAutoConfiguration.class, OAuth2ClientAutoConfiguration.class}
-)
+@WebMvcTest(WeeklyBudgetCommandController.class)
 class WeeklyBudgetCommandControllerTest extends ControllerTest implements ReplaceUnderScoreTest {
 
     @MockBean
@@ -50,6 +48,7 @@ class WeeklyBudgetCommandControllerTest extends ControllerTest implements Replac
                                 .header(HttpHeaders.AUTHORIZATION, "Bearer accessToken")
                                 .content(objectMapper.writeValueAsString(주간_예산_생성_요청))
                                 .contentType(MediaType.APPLICATION_JSON)
+                                .with(csrf())
                 )
                 .andDo(print())
                 .andExpect(status().isCreated());
@@ -69,6 +68,7 @@ class WeeklyBudgetCommandControllerTest extends ControllerTest implements Replac
                                 .header(HttpHeaders.AUTHORIZATION, "Bearer accessToken")
                                 .content(objectMapper.writeValueAsString(주간_예산_생성_요청))
                                 .contentType(MediaType.APPLICATION_JSON)
+                                .with(csrf())
                 )
                 .andDo(print())
                 .andExpect(status().isBadRequest())

@@ -6,14 +6,13 @@ import com.poorlex.poorlex.battle.battle.service.dto.response.BattleResponse;
 import com.poorlex.poorlex.battle.battle.service.dto.response.FindingBattleResponse;
 import com.poorlex.poorlex.battle.battle.service.dto.response.MemberCompleteBattleResponse;
 import com.poorlex.poorlex.battle.battle.service.dto.response.MemberProgressBattleResponse;
-import com.poorlex.poorlex.config.auth.argumentresolver.MemberInfo;
-import com.poorlex.poorlex.config.auth.argumentresolver.MemberOnly;
-
 import java.time.LocalDate;
 import java.util.List;
+import com.poorlex.poorlex.security.service.MemberInfo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -25,9 +24,9 @@ public class BattleQueryController implements BattleQueryControllerSwaggerInterf
 
     @GetMapping(value = "/{battleId}")
     public ResponseEntity<BattleResponse> getBattleInfo(
-            @MemberOnly final MemberInfo memberInfo,
+            @AuthenticationPrincipal MemberInfo memberInfo,
             @PathVariable("battleId") final Long battleId) {
-        final BattleResponse battleResponse = battleService.getBattleInfo(memberInfo.getMemberId(), battleId);
+        final BattleResponse battleResponse = battleService.getBattleInfo(memberInfo.getId(), battleId);
         return ResponseEntity.ok(battleResponse);
     }
 
@@ -39,18 +38,18 @@ public class BattleQueryController implements BattleQueryControllerSwaggerInterf
 
     @GetMapping("/progress")
     public ResponseEntity<List<MemberProgressBattleResponse>> findMemberProgressBattles(
-            @MemberOnly final MemberInfo memberInfo) {
+            @AuthenticationPrincipal final MemberInfo memberInfo) {
         final List<MemberProgressBattleResponse> memberProgressBattleResponses =
-                battleService.findProgressMemberBattles(memberInfo.getMemberId(), LocalDate.now());
+                battleService.findProgressMemberBattles(memberInfo.getId(), LocalDate.now());
 
         return ResponseEntity.ok(memberProgressBattleResponses);
     }
 
     @GetMapping("/complete")
     public ResponseEntity<List<MemberCompleteBattleResponse>> findMemberCompleteBattles(
-            @MemberOnly final MemberInfo memberInfo) {
+            @AuthenticationPrincipal final MemberInfo memberInfo) {
         final List<MemberCompleteBattleResponse> memberCompleteBattleResponses =
-                battleService.findCompleteMemberBattles(memberInfo.getMemberId(), LocalDate.now());
+                battleService.findCompleteMemberBattles(memberInfo.getId(), LocalDate.now());
 
         return ResponseEntity.ok(memberCompleteBattleResponses);
     }

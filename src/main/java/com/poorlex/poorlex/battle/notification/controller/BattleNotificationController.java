@@ -4,11 +4,11 @@ import com.poorlex.poorlex.battle.notification.service.BattleNotificationService
 import com.poorlex.poorlex.battle.notification.service.dto.request.BattleNotificationCreateRequest;
 import com.poorlex.poorlex.battle.notification.service.dto.request.BattleNotificationUpdateRequest;
 import com.poorlex.poorlex.battle.notification.service.dto.response.BattleNotificationResponse;
-import com.poorlex.poorlex.config.auth.argumentresolver.MemberInfo;
-import com.poorlex.poorlex.config.auth.argumentresolver.MemberOnly;
+import com.poorlex.poorlex.security.service.MemberInfo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,17 +26,17 @@ public class BattleNotificationController implements BattleNotificationControlle
 
     @PostMapping
     public ResponseEntity<Void> createNotification(@PathVariable(name = "battleId") final Long battleId,
-                                                   @MemberOnly final MemberInfo memberInfo,
+                                                   @AuthenticationPrincipal final MemberInfo memberInfo,
                                                    @RequestBody final BattleNotificationCreateRequest request) {
-        battleNotificationService.createNotification(battleId, memberInfo.getMemberId(), request);
+        battleNotificationService.createNotification(battleId, memberInfo.getId(), request);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @PatchMapping
     public ResponseEntity<Void> updateNotification(@PathVariable(name = "battleId") final Long battleId,
-                                                   @MemberOnly final MemberInfo memberInfo,
+                                                   @AuthenticationPrincipal final MemberInfo memberInfo,
                                                    @RequestBody final BattleNotificationUpdateRequest request) {
-        battleNotificationService.updateNotification(battleId, memberInfo.getMemberId(), request);
+        battleNotificationService.updateNotification(battleId, memberInfo.getId(), request);
 
         return ResponseEntity.ok().build();
     }

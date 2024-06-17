@@ -33,8 +33,6 @@ class BattleParticipantDocumentationTest extends MockMvcTest {
     @Test
     void join() throws Exception {
         //given
-        mockingTokenInterceptor();
-        mockingMemberArgumentResolver();
         given(battleParticipantService.participate(any(), any())).willReturn(1L);
 
         //when
@@ -56,8 +54,6 @@ class BattleParticipantDocumentationTest extends MockMvcTest {
     @Test
     void join_cancel() throws Exception {
         //given
-        mockingTokenInterceptor();
-        mockingMemberArgumentResolver();
         doNothing().when(battleParticipantService).withdraw(any(), any());
 
         //when

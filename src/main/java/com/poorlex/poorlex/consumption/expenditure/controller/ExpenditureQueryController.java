@@ -1,14 +1,14 @@
 package com.poorlex.poorlex.consumption.expenditure.controller;
 
-import com.poorlex.poorlex.config.auth.argumentresolver.MemberInfo;
-import com.poorlex.poorlex.config.auth.argumentresolver.MemberOnly;
 import com.poorlex.poorlex.consumption.expenditure.api.ExpenditureQueryControllerSwaggerInterface;
 import com.poorlex.poorlex.consumption.expenditure.service.ExpenditureQueryService;
 import com.poorlex.poorlex.consumption.expenditure.service.dto.response.ExpenditureResponse;
 import com.poorlex.poorlex.consumption.expenditure.service.dto.response.MemberWeeklyTotalExpenditureResponse;
 import java.util.List;
+import com.poorlex.poorlex.security.service.MemberInfo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,9 +20,9 @@ public class ExpenditureQueryController implements ExpenditureQueryControllerSwa
     private final ExpenditureQueryService expenditureQueryService;
 
     @GetMapping("/expenditures")
-    public ResponseEntity<List<ExpenditureResponse>> findMemberExpenditures(@MemberOnly final MemberInfo memberInfo) {
+    public ResponseEntity<List<ExpenditureResponse>> findMemberExpenditures(@AuthenticationPrincipal final MemberInfo memberInfo) {
         final List<ExpenditureResponse> responses =
-                expenditureQueryService.findMemberExpenditures(memberInfo.getMemberId());
+                expenditureQueryService.findMemberExpenditures(memberInfo.getId());
 
         return ResponseEntity.ok(responses);
     }
@@ -38,9 +38,9 @@ public class ExpenditureQueryController implements ExpenditureQueryControllerSwa
 
     @GetMapping("/expenditures/weekly")
     public ResponseEntity<MemberWeeklyTotalExpenditureResponse> findMemberWeeklyTotalExpenditures(
-            @MemberOnly final MemberInfo memberInfo
+            @AuthenticationPrincipal final MemberInfo memberInfo
     ) {
         return ResponseEntity.ok()
-                .body(expenditureQueryService.findMemberCurrentWeeklyTotalExpenditure(memberInfo.getMemberId()));
+                .body(expenditureQueryService.findMemberCurrentWeeklyTotalExpenditure(memberInfo.getId()));
     }
 }

@@ -5,11 +5,11 @@ import com.poorlex.poorlex.alarm.battlealarm.service.BattleAlarmService;
 import com.poorlex.poorlex.alarm.battlealarm.service.dto.request.BattleAlarmRequest;
 import com.poorlex.poorlex.alarm.battlealarm.service.dto.response.AbstractBattleAlarmResponse;
 import com.poorlex.poorlex.alarm.battlealarm.service.dto.response.UncheckedBattleAlarmCountResponse;
-import com.poorlex.poorlex.config.auth.argumentresolver.MemberInfo;
-import com.poorlex.poorlex.config.auth.argumentresolver.MemberOnly;
 import java.util.List;
+import com.poorlex.poorlex.security.service.MemberInfo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,22 +22,22 @@ public class BattleAlarmController implements BattleAlarmControllerSwaggerInterf
     private final BattleAlarmService battleAlarmService;
 
     @GetMapping("/battles/{battleId}/alarms")
-    public ResponseEntity<List<AbstractBattleAlarmResponse>> findBattleAlarms(@MemberOnly final MemberInfo memberInfo,
+    public ResponseEntity<List<AbstractBattleAlarmResponse>> findBattleAlarms(@AuthenticationPrincipal final MemberInfo memberInfo,
                                                                               @PathVariable(name = "battleId") final Long battleId,
                                                                               @RequestBody final BattleAlarmRequest request) {
         final List<AbstractBattleAlarmResponse> battleAlarms =
-            battleAlarmService.findBattleAlarms(battleId, memberInfo.getMemberId(), request);
+            battleAlarmService.findBattleAlarms(battleId, memberInfo.getId(), request);
 
         return ResponseEntity.ok(battleAlarms);
     }
 
     @GetMapping("/battles/{battleId}/alarms/unchecked")
     public ResponseEntity<UncheckedBattleAlarmCountResponse> getUncheckedBattleAlarmCount(
-        @MemberOnly final MemberInfo memberInfo,
+        @AuthenticationPrincipal final MemberInfo memberInfo,
         @PathVariable(name = "battleId") final Long battleId
     ) {
         final UncheckedBattleAlarmCountResponse response =
-            battleAlarmService.getBattleParticipantUncheckedAlarmCount(battleId, memberInfo.getMemberId());
+            battleAlarmService.getBattleParticipantUncheckedAlarmCount(battleId, memberInfo.getId());
 
         return ResponseEntity.ok(response);
     }
