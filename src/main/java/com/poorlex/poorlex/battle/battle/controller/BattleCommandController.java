@@ -3,16 +3,14 @@ package com.poorlex.poorlex.battle.battle.controller;
 import com.poorlex.poorlex.battle.battle.service.BattleService;
 import com.poorlex.poorlex.battle.battle.service.dto.request.BattleCreateRequest;
 import java.net.URI;
+
+import com.poorlex.poorlex.battle.battle.service.dto.request.BattleUpdateRequest;
 import com.poorlex.poorlex.security.service.MemberInfo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
@@ -35,6 +33,26 @@ public class BattleCommandController implements BattleCommandControllerSwaggerIn
                                                                     maxParticipantSize);
         final Long createdBattleId = battleService.create(memberInfo.getId(), image, request);
         return ResponseEntity.created(URI.create("/battles/" + createdBattleId)).build();
+    }
+
+    @DeleteMapping("/{battleId}")
+    public ResponseEntity<Void> deleteBattle(
+            @AuthenticationPrincipal final MemberInfo memberInfo,
+            @PathVariable final Long battleId) {
+        battleService.delete(memberInfo.getId(), battleId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/{battleId}")
+    public ResponseEntity<?> editBattle(
+            @AuthenticationPrincipal final MemberInfo memberInfo,
+            @PathVariable final Long battleId,
+            @RequestPart("image") final MultipartFile image,
+            @RequestParam final String name,
+            @RequestParam final String introduction) {
+        BattleUpdateRequest request = new BattleUpdateRequest(name, introduction);
+        battleService.updateBattle(memberInfo.getId(), battleId, image, request);
+        return ResponseEntity.noContent().build();
     }
 
     @PostMapping(path = "/progressing", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)

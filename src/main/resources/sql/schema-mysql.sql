@@ -107,9 +107,6 @@ create table if not exists member
     primary key (id)
 ) engine = InnoDB;
 
-alter table member
-    add unique key (oauth2registration_id, oauth_id);
-
 create table if not exists member_alarm
 (
     id         bigint not null auto_increment,

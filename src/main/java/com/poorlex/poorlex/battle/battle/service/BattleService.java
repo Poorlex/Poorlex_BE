@@ -4,8 +4,11 @@ import com.poorlex.poorlex.alarm.battlealarm.service.BattleAlarmService;
 import com.poorlex.poorlex.battle.battle.domain.*;
 import com.poorlex.poorlex.battle.battle.service.dto.request.BattleCreateRequest;
 import com.poorlex.poorlex.battle.battle.service.dto.request.BattleFindRequest;
+import com.poorlex.poorlex.battle.battle.service.dto.request.BattleUpdateRequest;
 import com.poorlex.poorlex.battle.battle.service.dto.response.*;
 import com.poorlex.poorlex.battle.battle.service.event.BattleCreatedEvent;
+import com.poorlex.poorlex.battle.battle.service.event.BattleDeletedEvent;
+import com.poorlex.poorlex.battle.battle.service.event.BattleUpdatedEvent;
 import com.poorlex.poorlex.battle.participation.domain.BattleParticipant;
 import com.poorlex.poorlex.battle.participation.domain.BattleParticipantRepository;
 import com.poorlex.poorlex.battle.participation.domain.BattleParticipantRole;
@@ -14,7 +17,9 @@ import com.poorlex.poorlex.config.event.Events;
 import com.poorlex.poorlex.consumption.expenditure.service.ExpenditureQueryService;
 import com.poorlex.poorlex.consumption.expenditure.service.dto.RankAndTotalExpenditureDto;
 import com.poorlex.poorlex.exception.ApiException;
+import com.poorlex.poorlex.exception.BadRequestException;
 import com.poorlex.poorlex.exception.ExceptionTag;
+import com.poorlex.poorlex.exception.ForbiddenException;
 import com.poorlex.poorlex.user.member.domain.MemberLevel;
 import com.poorlex.poorlex.user.member.service.MemberQueryService;
 import com.poorlex.poorlex.user.member.service.dto.response.MyPageResponse;
@@ -266,17 +271,61 @@ public class BattleService {
         final List<BattleParticipant> participants = battleParticipantRepository.findAllByBattleId(battleId);
         final Boolean isParticipating = battleParticipantRepository.existsByBattleIdAndMemberId(battleId, memberId);
 
-        Long managerId = participants.stream().filter(p -> p.getRole().equals(BattleParticipantRole.MANAGER))
+        final Long managerId = participants.stream().filter(p -> p.getRole().equals(BattleParticipantRole.MANAGER))
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("배틀 매니저를 찾을 수 없습니다."))
                 .getMemberId();
-        MyPageResponse managerInfo = memberQueryService.getMyPageInfoFromCurrentDatetime(managerId);
+        final MyPageResponse managerInfo = memberQueryService.getMyPageInfoFromCurrentDatetime(managerId);
 
-        MyPageLevelInfoResponse memberLevelInfo = memberPointService.findMemberLevelInfo(managerId);
+        final MyPageLevelInfoResponse memberLevelInfo = memberPointService.findMemberLevelInfo(managerId);
 
-        BattleManagerResponse managerResponse = new BattleManagerResponse(managerInfo.getNickname(), memberLevelInfo.getLevel(), managerInfo.getDescription());
+        final BattleManagerResponse managerResponse = new BattleManagerResponse(managerInfo.getNickname(), memberLevelInfo.getLevel(), managerInfo.getDescription());
 
         return new BattleResponse(battleId, battle, battle.getDDay(LocalDate.now()), managerResponse, participants.size(), isParticipating);
+    }
+
+    public List<FindingBattleResponse> queryBattles(BattleFindRequest request, Pageable pageable) {
+        return battleQueryRepository.queryBattles(request, pageable);
+    }
+
+    public List<ParticipantRankingResponse> getParticipantsRankings(final Long battleId) {
+        final Battle battle = battleRepository.findById(battleId)
+                .orElseThrow(() -> new BadRequestException(ExceptionTag.BATTLE_FIND, "배틀을 찾을 수 없습니다."));
+
+        final List<BattleParticipant> participants = battleParticipantRepository.findAllByBattleId(battleId);
+        final List<Long> participantMemberIds = participants.stream()
+                .map(BattleParticipant::getMemberId)
+                .toList();
+
+        final Map<Long, String> participantsNickname = getParticipantsNickname(participantMemberIds);
+        final Map<Long, Integer> participantsTotalPoint = getParticipantsTotalPoint(participantMemberIds);
+
+        return mapToParticipantRankingResponses(
+                participants,
+                participantsNickname,
+                participantsTotalPoint,
+                getParticipantsRanks(battle, participantMemberIds)
+        );
+    }
+
+    @Transactional
+    public void delete(Long memberId, Long battleId) {
+        validateAuthority(battleId, memberId);
+
+        battleRepository.deleteById(battleId);
+        Events.raise(new BattleDeletedEvent(battleId));
+    }
+
+    @Transactional
+    public void updateBattle(Long memberId, Long battleId, MultipartFile image, BattleUpdateRequest request) {
+        validateAuthority(battleId, memberId);
+
+        Battle battle = battleRepository.findById(battleId)
+                .orElseThrow(() -> new BadRequestException(ExceptionTag.BATTLE_FIND, "배틀을 찾을 수 없습니다."));
+
+        String imageUrl = imageService.saveAndReturnPath(image, bucketDirectory);
+        battle.update(request, imageUrl);
+        Events.raise(new BattleUpdatedEvent(battleId));
     }
 
     private Map<Long, String> getParticipantsNickname(final List<Long> memberIds) {
@@ -331,13 +380,18 @@ public class BattleService {
         return new ParticipantRankingResponse(
                 rankInfo.getRank(),
                 level,
-                battleParticipant.isManager(),
+                battleParticipant.getRole().name(),
                 nickname,
                 rankInfo.getTotalExpenditure()
         );
     }
 
-    public List<FindingBattleResponse> queryBattles(BattleFindRequest request, Pageable pageable) {
-        return battleQueryRepository.queryBattles(request, pageable);
+    private void validateAuthority(Long battleId, Long memberId) {
+        BattleParticipant battleParticipant = battleParticipantRepository.findByBattleIdAndMemberId(battleId, memberId)
+                .orElseThrow(() -> new BadRequestException(ExceptionTag.BATTLE_FIND, "배틀을 찾을 수 없습니다."));
+
+        if (!battleParticipant.isManager()) {
+            throw new ForbiddenException(ExceptionTag.BATTLE_EDIT, "배틀 변경/삭제는 매니저만 가능합니다.");
+        }
     }
 }

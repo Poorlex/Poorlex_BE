@@ -3,16 +3,18 @@ package com.poorlex.poorlex.battle.battle.service;
 import com.poorlex.poorlex.battle.battle.domain.*;
 import com.poorlex.poorlex.battle.battle.fixture.BattleFixture;
 import com.poorlex.poorlex.battle.battle.service.dto.request.BattleFindRequest;
-import com.poorlex.poorlex.battle.battle.service.dto.response.BattleResponse;
-import com.poorlex.poorlex.battle.battle.service.dto.response.FindingBattleResponse;
-import com.poorlex.poorlex.battle.battle.service.dto.response.MemberCompleteBattleResponse;
-import com.poorlex.poorlex.battle.battle.service.dto.response.MemberProgressBattleResponse;
+import com.poorlex.poorlex.battle.battle.service.dto.request.BattleUpdateRequest;
+import com.poorlex.poorlex.battle.battle.service.dto.response.*;
 import com.poorlex.poorlex.battle.participation.domain.BattleParticipant;
 import com.poorlex.poorlex.battle.participation.domain.BattleParticipantRepository;
+import com.poorlex.poorlex.battle.participation.domain.BattleParticipantRole;
 import com.poorlex.poorlex.battle.participation.service.event.BattleParticipantAddedEvent;
 import com.poorlex.poorlex.battle.participation.service.event.BattlesWithdrewEvent;
 import com.poorlex.poorlex.consumption.expenditure.domain.ExpenditureRepository;
 import com.poorlex.poorlex.consumption.expenditure.fixture.ExpenditureFixture;
+import com.poorlex.poorlex.exception.BadRequestException;
+import com.poorlex.poorlex.exception.ExceptionTag;
+import com.poorlex.poorlex.exception.ForbiddenException;
 import com.poorlex.poorlex.support.IntegrationTest;
 import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
 import com.poorlex.poorlex.user.member.domain.Member;
@@ -20,6 +22,7 @@ import com.poorlex.poorlex.user.member.domain.MemberNickname;
 import com.poorlex.poorlex.user.member.domain.MemberRepository;
 import com.poorlex.poorlex.user.member.domain.Oauth2RegistrationId;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -42,6 +45,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.transaction.annotation.Transactional;
 
 @DisplayName("배틀 서비스 테스트")
 class BattleServiceTest extends IntegrationTest implements ReplaceUnderScoreTest {
@@ -312,6 +316,134 @@ class BattleServiceTest extends IntegrationTest implements ReplaceUnderScoreTest
                     softly.assertThat(battles).allMatch(b -> b.getCurrentParticipant() == currentParticipant.get(b.getBattleId()));
                 }
         );
+    }
+
+    @Transactional
+    @ParameterizedTest(name = "멤버1의 지출이 {0}, 멤버2의 지출이 {1} 일 때")
+    @CsvSource(
+            value = {"7000:14000:1:2", "7000:21000:1:2", "14000:7000:1:2"},
+            delimiter = ':'
+    )
+    void 배틀에_참여한_멤버의_랭킹_정보를_조회한다(Long member1Expenditure, Long member2Expenditure, int member1ExpectedRank, int member2ExpectedRank) {
+        final Member member1 = createMemberWithOauthId("oauthId1");
+        final Member member2 = createMemberWithOauthId("oauthId2");
+        final Battle battle = createBattleWithManager(member1, 10000, BattleStatus.COMPLETE, BATTLE_DURATION);
+
+        join(member2, battle);
+
+        expend(member1Expenditure / 7, member1, LocalDate.from(BATTLE_START_DATE));
+        expend(member1Expenditure / 7, member1, LocalDate.from(BATTLE_START_DATE).plusDays(1));
+        expend(member1Expenditure / 7, member1, LocalDate.from(BATTLE_START_DATE).plusDays(2));
+        expend(member1Expenditure / 7, member1, LocalDate.from(BATTLE_START_DATE).plusDays(3));
+        expend(member1Expenditure / 7, member1, LocalDate.from(BATTLE_START_DATE).plusDays(4));
+        expend(member1Expenditure / 7, member1, LocalDate.from(BATTLE_START_DATE).plusDays(5));
+        expend(member1Expenditure / 7, member1, LocalDate.from(BATTLE_START_DATE).plusDays(6));
+
+        expend(member2Expenditure / 7, member2, LocalDate.from(BATTLE_START_DATE));
+        expend(member2Expenditure / 7, member2, LocalDate.from(BATTLE_START_DATE).plusDays(1));
+        expend(member2Expenditure / 7, member2, LocalDate.from(BATTLE_START_DATE).plusDays(2));
+        expend(member2Expenditure / 7, member2, LocalDate.from(BATTLE_START_DATE).plusDays(3));
+        expend(member2Expenditure / 7, member2, LocalDate.from(BATTLE_START_DATE).plusDays(4));
+        expend(member2Expenditure / 7, member2, LocalDate.from(BATTLE_START_DATE).plusDays(5));
+        expend(member2Expenditure / 7, member2, LocalDate.from(BATTLE_START_DATE).plusDays(6));
+
+
+        List<ParticipantRankingResponse> participantsRankings = battleService.getParticipantsRankings(member1.getId());
+
+        //then
+        assertSoftly(
+                softly -> {
+                    softly.assertThat(participantsRankings).hasSize(2);
+                    softly.assertThat(participantsRankings).extracting("rank")
+                            .containsExactlyInAnyOrder(member1ExpectedRank, member2ExpectedRank);
+                    softly.assertThat(participantsRankings).extracting("nickname")
+                            .containsExactlyInAnyOrder("nickname", "nickname");
+                    softly.assertThat(participantsRankings).extracting("expenditure")
+                            .containsExactlyInAnyOrder(member1Expenditure, member2Expenditure);
+                    softly.assertThat(participantsRankings).extracting("role")
+                            .containsExactlyInAnyOrder(BattleParticipantRole.MANAGER.name(), BattleParticipantRole.NORMAL_PLAYER.name());
+                }
+        );
+    }
+
+    @Test
+    @Transactional
+    void 배틀을_삭제한다() {
+        //given
+        final Member manager = createMemberWithOauthId("oauthId");
+        final Battle battle = createBattleWithManager(manager, 30000, BattleStatus.RECRUITING, BATTLE_DURATION);
+
+        //when
+        battleService.delete(manager.getId(), battle.getId());
+
+        //then
+        assertSoftly(softly -> softly
+                .assertThat(battleRepository.findById(battle.getId())).isEmpty());
+    }
+
+    @Test
+    @Transactional
+    void 일반_참가자가_배틀을_삭제하려고_하면_ForbiddenException_예외() {
+        //given
+        final Member manager = createMemberWithOauthId("oauthId1");
+        final Member member = createMemberWithOauthId("oauthId2");
+        final Battle battle = createBattleWithManager(manager, 30000, BattleStatus.RECRUITING, BATTLE_DURATION);
+        join(member, battle);
+
+        //when, then
+        assertSoftly(softly -> softly.assertThatThrownBy(() -> battleService.delete(member.getId(), battle.getId()))
+                .isInstanceOf(ForbiddenException.class)
+                .hasMessage("배틀 변경/삭제는 매니저만 가능합니다."));
+    }
+
+    @Test
+    @Transactional
+    void 배틀_정보를_수정한다() throws IOException {
+        //given
+        final Member manager = createMemberWithOauthId("oauthId1");
+        final Battle battle = createBattleWithManager(manager, 30000, BattleStatus.RECRUITING, BATTLE_DURATION);
+        BattleUpdateRequest request = new BattleUpdateRequest("변경된 이름", "변경된 소개문");
+        final MockMultipartFile image = new MockMultipartFile(
+                "image",
+                "cat-8415620_640",
+                MediaType.MULTIPART_FORM_DATA_VALUE,
+                new FileInputStream(
+                        "src/test/resources/testImage/cat-8415620_640.jpg")
+        );
+
+        //when
+        battleService.updateBattle(manager.getId(), battle.getId(), image, request);
+        Battle updatedBattle = battleRepository.findById(battle.getId())
+                .orElseThrow(() -> new BadRequestException(ExceptionTag.BATTLE_FIND, "배틀을 찾을 수 없습니다."));
+
+        //then
+        assertSoftly(softly -> {
+                    softly.assertThat(updatedBattle.getName()).isEqualTo(request.name());
+                    softly.assertThat(updatedBattle.getIntroduction()).isEqualTo(request.introduction());
+                });
+    }
+
+    @Test
+    @Transactional
+    void 일반_참가자가_배틀_정보를_수정하려고_하면_ForbiddenException_예외() throws IOException {
+        //given
+        final Member manager = createMemberWithOauthId("oauthId1");
+        final Member member = createMemberWithOauthId("oauthId2");
+        final Battle battle = createBattleWithManager(manager, 30000, BattleStatus.RECRUITING, BATTLE_DURATION);
+        join(member, battle);
+        BattleUpdateRequest request = new BattleUpdateRequest("변경된 이름", "변경된 소개문");
+        final MockMultipartFile image = new MockMultipartFile(
+                "image",
+                "cat-8415620_640",
+                MediaType.MULTIPART_FORM_DATA_VALUE,
+                new FileInputStream(
+                        "src/test/resources/testImage/cat-8415620_640.jpg")
+        );
+
+        //when, then
+        assertSoftly(softly -> softly.assertThatThrownBy(() -> battleService.updateBattle(member.getId(), battle.getId(), image, request))
+                .isInstanceOf(ForbiddenException.class)
+                .hasMessage("배틀 변경/삭제는 매니저만 가능합니다."));
     }
 
     private Member createMemberWithOauthId(final String oauthId) {

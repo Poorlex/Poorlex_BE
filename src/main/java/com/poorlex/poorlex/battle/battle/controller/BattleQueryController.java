@@ -2,12 +2,11 @@ package com.poorlex.poorlex.battle.battle.controller;
 
 import com.poorlex.poorlex.battle.battle.service.BattleService;
 import com.poorlex.poorlex.battle.battle.service.dto.request.BattleFindRequest;
-import com.poorlex.poorlex.battle.battle.service.dto.response.BattleResponse;
-import com.poorlex.poorlex.battle.battle.service.dto.response.FindingBattleResponse;
-import com.poorlex.poorlex.battle.battle.service.dto.response.MemberCompleteBattleResponse;
-import com.poorlex.poorlex.battle.battle.service.dto.response.MemberProgressBattleResponse;
+import com.poorlex.poorlex.battle.battle.service.dto.response.*;
+
 import java.time.LocalDate;
 import java.util.List;
+
 import com.poorlex.poorlex.security.service.MemberInfo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -28,6 +27,11 @@ public class BattleQueryController implements BattleQueryControllerSwaggerInterf
             @PathVariable("battleId") final Long battleId) {
         final BattleResponse battleResponse = battleService.getBattleInfo(memberInfo.getId(), battleId);
         return ResponseEntity.ok(battleResponse);
+    }
+
+    @GetMapping("/{battleId}/rankings")
+    public ResponseEntity<List<ParticipantRankingResponse>> battleParticipantsRankings(@PathVariable final Long battleId) {
+        return ResponseEntity.ok(battleService.getParticipantsRankings(battleId));
     }
 
     @GetMapping

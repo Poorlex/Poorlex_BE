@@ -9,7 +9,7 @@ public class ParticipantRankingResponse {
 
     private final int rank;
     private final int level;
-    private final boolean isManager;
+    private final String role;
     private final String nickname;
     private final Long expenditure;
 }

@@ -1,5 +1,6 @@
 package com.poorlex.poorlex.battle.battle.domain;
 
+import com.poorlex.poorlex.battle.battle.service.dto.request.BattleUpdateRequest;
 import com.poorlex.poorlex.common.BaseCreatedAtEntity;
 import com.poorlex.poorlex.exception.ApiException;
 import com.poorlex.poorlex.exception.ExceptionTag;
@@ -212,6 +213,12 @@ public class Battle extends BaseCreatedAtEntity {
 
     public int getBudget() {
         return budget.getValue();
+    }
+
+    public void update(BattleUpdateRequest request, String imageUrl) {
+        this.introduction = new BattleIntroduction(request.introduction());
+        this.name = new BattleName(request.name());
+        this.imageUrl = new BattleImageUrl(imageUrl);
     }
 
     public BattleParticipantSize getMaxParticipantSize() {
