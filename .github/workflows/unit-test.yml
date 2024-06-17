@@ -40,13 +40,12 @@ jobs:
 
       - name: Comment on test result
         uses: EnricoMi/publish-unit-test-result-action@v1
-        if: always()
+        continue-on-error: true
         with:
           files: '**/build/test-results/test/TEST-*.xml'
 
       - name: Show comment on fail part
         uses: mikepenz/action-junit-report@v3
-        if: always()
         with:
           report_paths: '**/build/test-results/test/TEST-*.xml'
           token: ${{ github.token }}
