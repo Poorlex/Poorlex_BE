@@ -14,6 +14,7 @@ import com.poorlex.poorlex.config.event.Events;
 import com.poorlex.poorlex.consumption.expenditure.service.ExpenditureQueryService;
 import com.poorlex.poorlex.consumption.expenditure.service.dto.RankAndTotalExpenditureDto;
 import com.poorlex.poorlex.exception.ApiException;
+import com.poorlex.poorlex.exception.BadRequestException;
 import com.poorlex.poorlex.exception.ExceptionTag;
 import com.poorlex.poorlex.user.member.domain.MemberLevel;
 import com.poorlex.poorlex.user.member.service.MemberQueryService;
@@ -266,17 +267,37 @@ public class BattleService {
         final List<BattleParticipant> participants = battleParticipantRepository.findAllByBattleId(battleId);
         final Boolean isParticipating = battleParticipantRepository.existsByBattleIdAndMemberId(battleId, memberId);
 
-        Long managerId = participants.stream().filter(p -> p.getRole().equals(BattleParticipantRole.MANAGER))
+        final Long managerId = participants.stream().filter(p -> p.getRole().equals(BattleParticipantRole.MANAGER))
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("배틀 매니저를 찾을 수 없습니다."))
                 .getMemberId();
-        MyPageResponse managerInfo = memberQueryService.getMyPageInfoFromCurrentDatetime(managerId);
+        final MyPageResponse managerInfo = memberQueryService.getMyPageInfoFromCurrentDatetime(managerId);
 
-        MyPageLevelInfoResponse memberLevelInfo = memberPointService.findMemberLevelInfo(managerId);
+        final MyPageLevelInfoResponse memberLevelInfo = memberPointService.findMemberLevelInfo(managerId);
 
-        BattleManagerResponse managerResponse = new BattleManagerResponse(managerInfo.getNickname(), memberLevelInfo.getLevel(), managerInfo.getDescription());
+        final BattleManagerResponse managerResponse = new BattleManagerResponse(managerInfo.getNickname(), memberLevelInfo.getLevel(), managerInfo.getDescription());
 
         return new BattleResponse(battleId, battle, battle.getDDay(LocalDate.now()), managerResponse, participants.size(), isParticipating);
+    }
+
+    public List<ParticipantRankingResponse> participantRankingResponse(final Long battleId) {
+        final Battle battle = battleRepository.findById(battleId)
+                .orElseThrow(() -> new BadRequestException(ExceptionTag.BATTLE_FIND, "배틀을 찾을 수 없습니다."));
+
+        final List<BattleParticipant> participants = battleParticipantRepository.findAllByBattleId(battleId);
+        final List<Long> participantMemberIds = participants.stream()
+                .map(BattleParticipant::getMemberId)
+                .toList();
+
+        final Map<Long, String> participantsNickname = getParticipantsNickname(participantMemberIds);
+        final Map<Long, Integer> participantsTotalPoint = getParticipantsTotalPoint(participantMemberIds);
+
+        return mapToParticipantRankingResponses(
+                participants,
+                participantsNickname,
+                participantsTotalPoint,
+                getParticipantsRanks(battle, participantMemberIds)
+        );
     }
 
     private Map<Long, String> getParticipantsNickname(final List<Long> memberIds) {
@@ -331,7 +352,7 @@ public class BattleService {
         return new ParticipantRankingResponse(
                 rankInfo.getRank(),
                 level,
-                battleParticipant.isManager(),
+                battleParticipant.getRole().name(),
                 nickname,
                 rankInfo.getTotalExpenditure()
         );
