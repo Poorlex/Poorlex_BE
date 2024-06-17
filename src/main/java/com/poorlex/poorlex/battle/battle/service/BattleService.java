@@ -4,8 +4,11 @@ import com.poorlex.poorlex.alarm.battlealarm.service.BattleAlarmService;
 import com.poorlex.poorlex.battle.battle.domain.*;
 import com.poorlex.poorlex.battle.battle.service.dto.request.BattleCreateRequest;
 import com.poorlex.poorlex.battle.battle.service.dto.request.BattleFindRequest;
+import com.poorlex.poorlex.battle.battle.service.dto.request.BattleUpdateRequest;
 import com.poorlex.poorlex.battle.battle.service.dto.response.*;
 import com.poorlex.poorlex.battle.battle.service.event.BattleCreatedEvent;
+import com.poorlex.poorlex.battle.battle.service.event.BattleDeletedEvent;
+import com.poorlex.poorlex.battle.battle.service.event.BattleUpdatedEvent;
 import com.poorlex.poorlex.battle.participation.domain.BattleParticipant;
 import com.poorlex.poorlex.battle.participation.domain.BattleParticipantRepository;
 import com.poorlex.poorlex.battle.participation.domain.BattleParticipantRole;
@@ -16,6 +19,7 @@ import com.poorlex.poorlex.consumption.expenditure.service.dto.RankAndTotalExpen
 import com.poorlex.poorlex.exception.ApiException;
 import com.poorlex.poorlex.exception.BadRequestException;
 import com.poorlex.poorlex.exception.ExceptionTag;
+import com.poorlex.poorlex.exception.ForbiddenException;
 import com.poorlex.poorlex.user.member.domain.MemberLevel;
 import com.poorlex.poorlex.user.member.service.MemberQueryService;
 import com.poorlex.poorlex.user.member.service.dto.response.MyPageResponse;
@@ -280,7 +284,11 @@ public class BattleService {
         return new BattleResponse(battleId, battle, battle.getDDay(LocalDate.now()), managerResponse, participants.size(), isParticipating);
     }
 
-    public List<ParticipantRankingResponse> participantRankingResponse(final Long battleId) {
+    public List<FindingBattleResponse> queryBattles(BattleFindRequest request, Pageable pageable) {
+        return battleQueryRepository.queryBattles(request, pageable);
+    }
+
+    public List<ParticipantRankingResponse> getParticipantsRankings(final Long battleId) {
         final Battle battle = battleRepository.findById(battleId)
                 .orElseThrow(() -> new BadRequestException(ExceptionTag.BATTLE_FIND, "배틀을 찾을 수 없습니다."));
 
@@ -298,6 +306,26 @@ public class BattleService {
                 participantsTotalPoint,
                 getParticipantsRanks(battle, participantMemberIds)
         );
+    }
+
+    @Transactional
+    public void delete(Long memberId, Long battleId) {
+        validateAuthority(battleId, memberId);
+
+        battleRepository.deleteById(battleId);
+        Events.raise(new BattleDeletedEvent(battleId));
+    }
+
+    @Transactional
+    public void updateBattle(Long memberId, Long battleId, MultipartFile image, BattleUpdateRequest request) {
+        validateAuthority(battleId, memberId);
+
+        Battle battle = battleRepository.findById(battleId)
+                .orElseThrow(() -> new BadRequestException(ExceptionTag.BATTLE_FIND, "배틀을 찾을 수 없습니다."));
+
+        String imageUrl = imageService.saveAndReturnPath(image, bucketDirectory);
+        battle.update(request, imageUrl);
+        Events.raise(new BattleUpdatedEvent(battleId));
     }
 
     private Map<Long, String> getParticipantsNickname(final List<Long> memberIds) {
@@ -358,7 +386,12 @@ public class BattleService {
         );
     }
 
-    public List<FindingBattleResponse> queryBattles(BattleFindRequest request, Pageable pageable) {
-        return battleQueryRepository.queryBattles(request, pageable);
+    private void validateAuthority(Long battleId, Long memberId) {
+        BattleParticipant battleParticipant = battleParticipantRepository.findByBattleIdAndMemberId(battleId, memberId)
+                .orElseThrow(() -> new BadRequestException(ExceptionTag.BATTLE_FIND, "배틀을 찾을 수 없습니다."));
+
+        if (!battleParticipant.isManager()) {
+            throw new ForbiddenException(ExceptionTag.BATTLE_EDIT, "배틀 변경/삭제는 매니저만 가능합니다.");
+        }
     }
 }

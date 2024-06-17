@@ -31,7 +31,7 @@ public class BattleQueryController implements BattleQueryControllerSwaggerInterf
 
     @GetMapping("/{battleId}/rankings")
     public ResponseEntity<List<ParticipantRankingResponse>> battleParticipantsRankings(@PathVariable final Long battleId) {
-        return ResponseEntity.ok(battleService.participantRankingResponse(battleId));
+        return ResponseEntity.ok(battleService.getParticipantsRankings(battleId));
     }
 
     @GetMapping

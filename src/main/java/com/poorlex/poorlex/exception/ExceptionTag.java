@@ -27,6 +27,7 @@ public enum ExceptionTag {
     BATTLE_DIFFICULTY("배틀 난이도 에러"),
     BATTLE_NAME("배틀 이름 에러"),
     BATTLE_TYPE("배틀 타입 에러"),
+    BATTLE_EDIT("배틀 수정 에러"),
 
     // 배틀 참가 관련
     BATTLE_WITHDRAW("배틀 탈퇴 에러"),
