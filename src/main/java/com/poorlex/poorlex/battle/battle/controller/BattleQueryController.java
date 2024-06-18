@@ -9,6 +9,7 @@ import java.util.List;
 
 import com.poorlex.poorlex.security.service.MemberInfo;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -35,7 +36,9 @@ public class BattleQueryController implements BattleQueryControllerSwaggerInterf
     }
 
     @GetMapping
-    public ResponseEntity<List<FindingBattleResponse>> findBattles(BattleFindRequest request, Pageable pageable) {
+    public ResponseEntity<List<FindingBattleResponse>> findBattles(
+            @ParameterObject BattleFindRequest request,
+            @ParameterObject Pageable pageable) {
         final List<FindingBattleResponse> battles = battleService.queryBattles(request, pageable);
         return ResponseEntity.ok(battles);
     }
