@@ -32,7 +32,12 @@ public class SwaggerConfig {
     @Bean
     @Profile("dev")
     public OpenAPI devOpenAPI() {
+        final Server server = new Server()
+                .url("https://poorlex.com")
+                .description("for real API call");
+
         return new OpenAPI()
+                .servers(List.of(server))
                 .addSecurityItem(new SecurityRequirement().addList("Bearer Authentication"))
                 .components(new Components().addSecuritySchemes("Bearer Authentication", createAPIKeyScheme()))
                 .info(new Info().title("Poorlex REST API").description("푸얼렉스 API 문서"));
