@@ -78,7 +78,9 @@ public class SecurityConfig {
     }
 
     private void configureAuthorizeRequests(final HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests(oauth2 -> oauth2.requestMatchers("/login/**", "/error", "/swagger-ui/**", "/api-docs/**", "/test/**").permitAll()
+        http.authorizeHttpRequests(oauth2 -> oauth2.requestMatchers(
+                "/login/**", "/error", "/swagger-ui/**", "/api-docs/**", "/test/**"
+                ,"/battles/schedule").permitAll()
                 .anyRequest().authenticated());
     }
 
