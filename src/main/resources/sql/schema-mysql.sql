@@ -1,3 +1,6 @@
+create database if not exists poorlex;
+use poorlex;
+
 create table if not exists alarm_reaction
 (
     id         bigint not null auto_increment,
@@ -105,6 +108,7 @@ create table if not exists member
     nickname              varchar(255),
     description           varchar(255),
     primary key (id)
+    unique key (oauth2registration_id, oauth_id)
 ) engine = InnoDB;
 
 create table if not exists member_alarm
