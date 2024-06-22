@@ -107,8 +107,8 @@ create table if not exists member
     oauth_id              varchar(100),
     nickname              varchar(255),
     description           varchar(255),
-    primary key (id)
-    unique key (oauth2registration_id, oauth_id)
+    primary key (id),
+    unique key oauth2 (oauth2registration_id,oauth_id)
 ) engine = InnoDB;
 
 create table if not exists member_alarm
