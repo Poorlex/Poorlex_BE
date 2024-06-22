@@ -56,13 +56,14 @@ class ExpenditureQueryControllerTest extends ControllerTest implements ReplaceUn
     void Id에_해당하는_지출을_조회한다() throws Exception {
         //given
         final long 지출_ID = 1L;
+        final long 지출_생성_멤버_ID = 1L;
         final LocalDate 지출_생성_날짜 = LocalDate.now();
         final long 지출_금액 = 1000L;
         final String 지출_설명 = "설명";
         final String 지출_메인이미지_URL = "메인이미지URL";
         final String 지출_서브이미지_URL = "서브이미지URL";
 
-        STUBBING_지출ID를_통해_지출조회시_다음값들을_가진_지출을_반환한다(지출_ID, 지출_생성_날짜, 지출_금액, 지출_설명, 지출_메인이미지_URL, 지출_서브이미지_URL);
+        STUBBING_지출ID를_통해_지출조회시_다음값들을_가진_지출을_반환한다(지출_ID, 지출_생성_멤버_ID, 지출_생성_날짜, 지출_금액, 지출_설명, 지출_메인이미지_URL, 지출_서브이미지_URL);
 
         //when
         //then
@@ -97,12 +98,14 @@ class ExpenditureQueryControllerTest extends ControllerTest implements ReplaceUn
     }
 
     private OngoingStubbing<ExpenditureResponse> STUBBING_지출ID를_통해_지출조회시_다음값들을_가진_지출을_반환한다(final long 지출_ID,
+                                                                                           final long 지출_생성_멤버_ID,
                                                                                            final LocalDate 지출_생성_날짜,
                                                                                            final long 지출_금액,
                                                                                            final String 지출_설명,
                                                                                            final String 지출_메인이미지_URL,
                                                                                            final String 지출_서브이미지_URL) {
         return when(expenditureQueryService.findExpenditureById(any())).thenReturn(new ExpenditureResponse(지출_ID,
+                                                                                                           지출_생성_멤버_ID,
                                                                                                            지출_생성_날짜,
                                                                                                            지출_금액,
                                                                                                            지출_설명,
@@ -111,19 +114,21 @@ class ExpenditureQueryControllerTest extends ControllerTest implements ReplaceUn
     }
 
     private void STUBBING_회원_지출_목록을_조회시_두개의_지출을_반환한다() {
-        final ExpenditureResponse 첫번째_지출_응답 = 지출_응답을_생성한다(1L, LocalDate.now(), 1000L, "설명", "메인이미지", "서브이미지");
-        final ExpenditureResponse 두번째_지출_응답 = 지출_응답을_생성한다(1L, LocalDate.now(), 1000L, "설명", "메인이미지", "서브이미지");
+        final ExpenditureResponse 첫번째_지출_응답 = 지출_응답을_생성한다(1L, 1L, LocalDate.now(), 1000L, "설명", "메인이미지", "서브이미지");
+        final ExpenditureResponse 두번째_지출_응답 = 지출_응답을_생성한다(1L, 1L, LocalDate.now(), 1000L, "설명", "메인이미지", "서브이미지");
 
         when(expenditureQueryService.findMemberExpenditures(any()))
                 .thenReturn(List.of(첫번째_지출_응답, 두번째_지출_응답));
     }
 
-    private ExpenditureResponse 지출_응답을_생성한다(final Long 지출_ID, final LocalDate 지출_생성_날짜,
+    private ExpenditureResponse 지출_응답을_생성한다(final Long 지출_ID,
+                                            final long 지출_생성_멤버_ID,
+                                            final LocalDate 지출_생성_날짜,
                                             final Long 지출_금액,
                                             final String 지출_설명,
                                             final String 지출_메인이미지_URL,
                                             final String 지출_서브이미지_URL) {
-        return new ExpenditureResponse(지출_ID, 지출_생성_날짜, 지출_금액, 지출_설명, 지출_메인이미지_URL, 지출_서브이미지_URL);
+        return new ExpenditureResponse(지출_ID, 지출_생성_멤버_ID, 지출_생성_날짜, 지출_금액, 지출_설명, 지출_메인이미지_URL, 지출_서브이미지_URL);
     }
 
     private void STUBBING_회원의_주간_지출_조회시_다음값을_반환한다(final Long amount) {

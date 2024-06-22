@@ -135,6 +135,7 @@ class ExpenditureDocumentationTest extends MockMvcTest {
                 .willReturn(
                         new ExpenditureResponse(
                                 1L,
+                                1L,
                                 LocalDate.now(),
                                 1000,
                                 "지출 설명", "imageUrl1", "imageUrl2"
@@ -152,6 +153,7 @@ class ExpenditureDocumentationTest extends MockMvcTest {
                                  ApiDocumentUtils.getDocumentResponse(),
                                  responseFields(
                                          fieldWithPath("id").type(JsonFieldType.NUMBER).description("지출 Id"),
+                                         fieldWithPath("memberId").type(JsonFieldType.NUMBER).description("지출 멤버 Id"),
                                          fieldWithPath("date").type(JsonFieldType.STRING).description("지출 날짜"),
                                          fieldWithPath("amount").type(JsonFieldType.NUMBER).description("지출 금액"),
                                          fieldWithPath("description").type(JsonFieldType.STRING).description("지출 설명"),
@@ -253,6 +255,7 @@ class ExpenditureDocumentationTest extends MockMvcTest {
                         List.of(
                                 new ExpenditureResponse(
                                         1L,
+                                        1L,
                                         LocalDate.now().minusDays(1),
                                         1000,
                                         "지출 설명",
@@ -261,6 +264,7 @@ class ExpenditureDocumentationTest extends MockMvcTest {
                                 ),
                                 new ExpenditureResponse(
                                         2L,
+                                        1L,
                                         LocalDate.now(),
                                         4000,
                                         "지출 설명",
@@ -286,6 +290,7 @@ class ExpenditureDocumentationTest extends MockMvcTest {
                                          fieldWithPath("[]").description("회원 지출 목록")
                                  ).andWithPrefix("[].",
                                                  fieldWithPath("id").type(JsonFieldType.NUMBER).description("지출 Id"),
+                                                 fieldWithPath("memberId").type(JsonFieldType.NUMBER).description("지출 멤버 Id"),
                                                  fieldWithPath("date").type(JsonFieldType.STRING).description("지출 날짜"),
                                                  fieldWithPath("amount").type(JsonFieldType.NUMBER)
                                                          .description("지출 금액"),
