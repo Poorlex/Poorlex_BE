@@ -132,9 +132,9 @@ class BattleDocumentationTest extends MockMvcTest {
         //given
         given(battleService.findCompleteMemberBattles(any(), any())).willReturn(
                 List.of(
-                        new MemberCompleteBattleResponse(1L, "첫번째 배틀명", "첫번째 배틀 이미지 링크", "HARD", 5, 10000, 1, 10, 30),
-                        new MemberCompleteBattleResponse(2L, "두번째 배틀명", "두번째 배틀 이미지 링크", "NORMAL", 5, 90000, 1, 10, 30),
-                        new MemberCompleteBattleResponse(3L, "세번째 배틀명", "세번째 배틀 이미지 링크", "EASY", 5, 150000, 1, 10, 30)
+                        new MemberCompleteBattleResponse(1L, "첫번째 배틀명", "첫번째 배틀 이미지 링크", "HARD", 5, 10000, 10000, 1, 10, 30),
+                        new MemberCompleteBattleResponse(2L, "두번째 배틀명", "두번째 배틀 이미지 링크", "NORMAL", 5, 90000, 90000,1, 10, 30),
+                        new MemberCompleteBattleResponse(3L, "세번째 배틀명", "세번째 배틀 이미지 링크", "EASY", 5, 150000, 150000, 1, 10, 30)
                 )
         );
 
@@ -161,6 +161,8 @@ class BattleDocumentationTest extends MockMvcTest {
                                                                 .description("배틀 난이도"),
                                                         fieldWithPath("pastDay").type(JsonFieldType.NUMBER)
                                                                 .description("배틀 종료 후 지난 일 수"),
+                                                        fieldWithPath("budget").type(JsonFieldType.NUMBER)
+                                                                .description("배틀 예산"),
                                                         fieldWithPath("budgetLeft").type(JsonFieldType.NUMBER)
                                                                 .description("배틀 예산에서 멤버의 지출을 뺀 비용"),
                                                         fieldWithPath("earnedPoint").type(JsonFieldType.NUMBER)
