@@ -67,7 +67,7 @@ public class MemberPointQueryService {
     }
 
     private int getMemberRecentPoint(final Long memberId) {
-        final MemberPoint recentMemberPoint = memberPointRepository.findFirstByMemberIdOrderByCreatedAt(memberId)
+        final MemberPoint recentMemberPoint = memberPointRepository.findFirstByMemberIdOrderByCreatedAtDesc(memberId)
                 .orElse(MemberPoint.withoutId(new Point(0), memberId));
 
         return recentMemberPoint.getPoint();

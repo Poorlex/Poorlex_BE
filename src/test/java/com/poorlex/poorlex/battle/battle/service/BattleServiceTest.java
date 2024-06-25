@@ -228,6 +228,7 @@ class BattleServiceTest extends IntegrationTest implements ReplaceUnderScoreTest
                     softly.assertThat(battles.get(0).getPastDay()).isEqualTo(1);
                     softly.assertThat(battles.get(0).getCurrentParticipantRank()).isEqualTo(expectedRank);
                     softly.assertThat(battles.get(0).getBudgetLeft()).isEqualTo(10000 - member1Expenditure);
+                    softly.assertThat(battles.get(0).getBudget()).isEqualTo(10000);
                     softly.assertThat(battles.get(0).getEarnedPoint())
                             .isEqualTo(BattleType.LARGE.getScore(expectedRank));
                 }

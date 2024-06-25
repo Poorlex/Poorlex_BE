@@ -12,7 +12,7 @@ public interface MemberPointRepository extends JpaRepository<MemberPoint, Long> 
             + "where p.memberId = :memberId")
     int findSumByMemberId(@Param(value = "memberId") final Long memberId);
 
-    Optional<MemberPoint> findFirstByMemberIdOrderByCreatedAt(final Long memberId);
+    Optional<MemberPoint> findFirstByMemberIdOrderByCreatedAtDesc(final Long memberId);
 
     @Query(value = "select m.id as memberId, coalesce(sum(mp.point.value), 0) as totalPoint "
             + "from Member m left join MemberPoint mp on m.id = mp.memberId "
