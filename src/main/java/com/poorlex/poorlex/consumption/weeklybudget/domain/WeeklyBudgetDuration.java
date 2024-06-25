@@ -33,7 +33,7 @@ public class WeeklyBudgetDuration {
     }
 
     public static WeeklyBudgetDuration from(final LocalDate date) {
-        final LocalDate start = date.plusDays(getDaysBeforeMonday(date));
+        final LocalDate start = date.minusDays(getDaysBeforeMonday(date));
         final LocalDate end = start.plusDays(BATTLE_DAYS);
 
         return new WeeklyBudgetDuration(start, end);
@@ -41,7 +41,7 @@ public class WeeklyBudgetDuration {
 
     private static int getDaysBeforeMonday(final LocalDate date) {
         final int currentDayOrder = date.getDayOfWeek().getValue();
-        return 8 - currentDayOrder;
+        return currentDayOrder - 1;
     }
 
     private void validate(final LocalDate start, final LocalDate end) {
