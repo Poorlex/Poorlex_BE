@@ -15,6 +15,7 @@ public class MemberCompleteBattleResponse {
     private final String imageUrl;
     private final String difficulty;
     private final long pastDay;
+    private final int budget;
     private final int budgetLeft;
     private final int currentParticipantRank;
     private final int battleParticipantCount;
@@ -32,6 +33,7 @@ public class MemberCompleteBattleResponse {
                 battle.getImageUrl(),
                 battle.getDifficulty().name(),
                 battle.getNumberOfDayPassedAfterEnd(current),
+                battle.getBudget(),
                 battle.getBudgetLeft(battleInfo.getExpenditure()),
                 currentParticipantRank,
                 battleParticipantCount,

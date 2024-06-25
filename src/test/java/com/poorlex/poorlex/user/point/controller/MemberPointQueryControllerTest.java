@@ -101,7 +101,7 @@ class MemberPointQueryControllerTest extends IntegrationTest implements ReplaceU
     }
 
     private void MOCKING_회원의_최근_포인트_조회시_다음값으로_반환하도록_한다(final int sumPoint) {
-        when(memberPointRepository.findFirstByMemberIdOrderByCreatedAt(anyLong()))
+        when(memberPointRepository.findFirstByMemberIdOrderByCreatedAtDesc(anyLong()))
                 .thenReturn(Optional.of(new MemberPoint(1L, new Point(sumPoint), 1L)));
     }
 
