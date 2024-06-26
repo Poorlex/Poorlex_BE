@@ -323,8 +323,14 @@ public class BattleService {
         Battle battle = battleRepository.findById(battleId)
                 .orElseThrow(() -> new BadRequestException(ExceptionTag.BATTLE_FIND, "배틀을 찾을 수 없습니다."));
 
-        String imageUrl = imageService.saveAndReturnPath(image, bucketDirectory);
-        battle.update(request, imageUrl);
+        battle.update(request);
+
+        if (image != null && !image.isEmpty()) {
+            String imageUrl = imageService.saveAndReturnPath(image, bucketDirectory);
+            imageService.delete(battle.getImageUrl());
+            battle.updateImage(imageUrl);
+        }
+
         Events.raise(new BattleUpdatedEvent(battleId));
     }
 

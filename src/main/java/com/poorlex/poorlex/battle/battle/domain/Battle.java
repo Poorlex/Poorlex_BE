@@ -215,9 +215,12 @@ public class Battle extends BaseCreatedAtEntity {
         return budget.getValue();
     }
 
-    public void update(BattleUpdateRequest request, String imageUrl) {
+    public void update(BattleUpdateRequest request) {
         this.introduction = new BattleIntroduction(request.introduction());
         this.name = new BattleName(request.name());
+    }
+
+    public void updateImage(String imageUrl) {
         this.imageUrl = new BattleImageUrl(imageUrl);
     }
 

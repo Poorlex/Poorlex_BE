@@ -43,11 +43,11 @@ public class BattleCommandController implements BattleCommandControllerSwaggerIn
         return ResponseEntity.noContent().build();
     }
 
-    @PatchMapping("/{battleId}")
+    @PatchMapping(value = "/{battleId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> editBattle(
             @AuthenticationPrincipal final MemberInfo memberInfo,
             @PathVariable final Long battleId,
-            @RequestPart("image") final MultipartFile image,
+            @RequestPart(value = "image", required = false) final MultipartFile image,
             @RequestParam final String name,
             @RequestParam final String introduction) {
         BattleUpdateRequest request = new BattleUpdateRequest(name, introduction);
