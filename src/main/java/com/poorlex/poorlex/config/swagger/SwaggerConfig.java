@@ -7,10 +7,9 @@ import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.servers.Server;
 
-import java.net.InetAddress;
+import java.text.NumberFormat;
 import java.util.List;
 import org.springdoc.core.models.GroupedOpenApi;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -19,6 +18,12 @@ import org.springframework.context.annotation.Profile;
 public class SwaggerConfig {
 
     private int order = 1;
+
+    private final NumberFormat format = NumberFormat.getIntegerInstance();
+
+    {
+        format.setMinimumIntegerDigits(2);
+    }
 
     @Bean
     @Profile("!dev")
@@ -52,7 +57,7 @@ public class SwaggerConfig {
     @Bean
     public GroupedOpenApi all() {
         return GroupedOpenApi.builder()
-                .group(order++ + ". 전체")
+                .group(format.format(order++) + ". 전체")
                 .pathsToExclude("**")
                 .build();
     }
@@ -60,7 +65,7 @@ public class SwaggerConfig {
     @Bean
     public GroupedOpenApi members() {
         return GroupedOpenApi.builder()
-                .group(order++ + ". 회원")
+                .group(format.format(order++) + ". 회원")
                 .pathsToMatch("/member/**")
                 .build();
     }
@@ -68,7 +73,7 @@ public class SwaggerConfig {
     @Bean
     public GroupedOpenApi points() {
         return GroupedOpenApi.builder()
-                .group(order++ + ". 포인트 및 레벨")
+                .group(format.format(order++) + ". 포인트 및 레벨")
                 .pathsToMatch("/point/**")
                 .build();
     }
@@ -76,7 +81,7 @@ public class SwaggerConfig {
     @Bean
     public GroupedOpenApi weeklyBudgets() {
         return GroupedOpenApi.builder()
-                .group(order++ + ". 주간 예산")
+                .group(format.format(order++) + ". 주간 예산")
                 .pathsToMatch("/weekly-budgets/**")
                 .build();
     }
@@ -84,7 +89,7 @@ public class SwaggerConfig {
     @Bean
     public GroupedOpenApi expenditures() {
         return GroupedOpenApi.builder()
-                .group(order++ + ". 지출")
+                .group(format.format(order++) + ". 지출")
                 .pathsToMatch("/expenditures/**", "/battles/*/expenditures/**")
                 .build();
     }
@@ -92,7 +97,7 @@ public class SwaggerConfig {
     @Bean
     public GroupedOpenApi battles() {
         return GroupedOpenApi.builder()
-                .group(order++ + ". 배틀")
+                .group(format.format(order++) + ". 배틀")
                 .pathsToMatch("/battles/**")
                 .build();
     }
@@ -100,7 +105,7 @@ public class SwaggerConfig {
     @Bean
     public GroupedOpenApi goals() {
         return GroupedOpenApi.builder()
-                .group(order++ + ". 목표")
+                .group(format.format(order++) + ". 목표")
                 .pathsToMatch("/goals/**")
                 .build();
     }
@@ -108,7 +113,7 @@ public class SwaggerConfig {
     @Bean
     public GroupedOpenApi alarms() {
         return GroupedOpenApi.builder()
-                .group(order++ + ". 알림")
+                .group(format.format(order++) + ". 알림")
                 .pathsToMatch("/alarms/**")
                 .build();
     }
@@ -116,8 +121,16 @@ public class SwaggerConfig {
     @Bean
     public GroupedOpenApi friends() {
         return GroupedOpenApi.builder()
-                .group(order++ + ". 친구")
+                .group(format.format(order++) + ". 친구")
                 .pathsToMatch("/friends/**")
+                .build();
+    }
+
+    @Bean
+    public GroupedOpenApi tests() {
+        return GroupedOpenApi.builder()
+                .group(format.format(order++) + ". 테스트")
+                .pathsToMatch("/test/**")
                 .build();
     }
 }
