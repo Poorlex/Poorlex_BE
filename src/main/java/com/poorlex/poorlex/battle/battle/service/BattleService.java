@@ -145,7 +145,7 @@ public class BattleService {
 
     public List<MemberProgressBattleResponse> findProgressMemberBattles(final Long memberId, final LocalDate date) {
         final List<BattleWithMemberExpenditure> battles =
-                battleRepository.findMemberBattlesByMemberIdAndStatusWithExpenditure(memberId, BattleStatus.PROGRESS);
+                battleRepository.findMemberBattlesByMemberIdAndStatusWithExpenditure(memberId, List.of(BattleStatus.RECRUITING, BattleStatus.RECRUITING_FINISHED, BattleStatus.PROGRESS));
 
         return battles.stream()
                 .sorted(Comparator.comparing(battleInfo -> battleInfo.getBattle().getCreatedAt(),
@@ -217,7 +217,7 @@ public class BattleService {
 
     public List<MemberCompleteBattleResponse> findCompleteMemberBattles(final Long memberId, final LocalDate date) {
         final List<BattleWithMemberExpenditure> battles =
-                battleRepository.findMemberBattlesByMemberIdAndStatusWithExpenditure(memberId, BattleStatus.COMPLETE);
+                battleRepository.findMemberBattlesByMemberIdAndStatusWithExpenditure(memberId, List.of(BattleStatus.COMPLETE));
 
         return battles.stream()
                 .sorted(Comparator.comparing(battleInfo -> battleInfo.getBattle().getCreatedAt(),

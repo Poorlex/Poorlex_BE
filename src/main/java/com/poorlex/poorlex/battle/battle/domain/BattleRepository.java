@@ -66,13 +66,13 @@ public interface BattleRepository extends JpaRepository<Battle, Long> {
                     + "left join BattleParticipant p on p.battleId = b.id "
                     + "left join Expenditure e on e.memberId = p.memberId "
                     + "and e.date between cast(b.duration.start as LocalDate) and cast(b.duration.end as LocalDate) "
-                    + "where b.status = :status "
+                    + "where b.status in :status "
                     + "and p.memberId = :memberId "
                     + "group by b.id"
     )
     List<BattleWithMemberExpenditure> findMemberBattlesByMemberIdAndStatusWithExpenditure(
             @Param("memberId") final Long memberId,
-            @Param("status") final BattleStatus status
+            @Param("status") final List<BattleStatus> status
     );
 
     @Query("select p as battleParticipant, sum(coalesce(e.amount.value, 0)) as expenditure, count(e) as expenditureCount from Battle b "
