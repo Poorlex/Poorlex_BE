@@ -22,7 +22,6 @@ import com.poorlex.poorlex.user.member.domain.MemberNickname;
 import com.poorlex.poorlex.user.member.domain.MemberRepository;
 import com.poorlex.poorlex.user.member.domain.Oauth2RegistrationId;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -181,6 +180,7 @@ class BattleServiceTest extends IntegrationTest implements ReplaceUnderScoreTest
                     softly.assertThat(battles.get(0).getDDay()).isEqualTo(6);
                     softly.assertThat(battles.get(0).getBudgetLeft()).isEqualTo(10000 - member1Expenditure);
                     softly.assertThat(battles.get(0).getCurrentParticipantRank()).isEqualTo(expectedRank);
+                    softly.assertThat(battles.get(0).getBudget()).isEqualTo(battle.getBudget());
                 }
         );
     }

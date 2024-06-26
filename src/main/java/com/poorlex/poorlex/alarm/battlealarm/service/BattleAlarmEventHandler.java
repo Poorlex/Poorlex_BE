@@ -44,7 +44,7 @@ public class BattleAlarmEventHandler {
         final Long memberId = event.getMemberId();
 
         final List<BattleWithMemberExpenditure> battleInfos =
-                battleRepository.findMemberBattlesByMemberIdAndStatusWithExpenditure(memberId, BattleStatus.PROGRESS);
+                battleRepository.findMemberBattlesByMemberIdAndStatusWithExpenditure(memberId, List.of(BattleStatus.PROGRESS));
 
         for (final BattleWithMemberExpenditure battleInfo : battleInfos) {
             final Battle battle = battleInfo.getBattle();
@@ -74,7 +74,7 @@ public class BattleAlarmEventHandler {
         final List<BattleWithMemberExpenditure> battleInfos =
                 battleRepository.findMemberBattlesByMemberIdAndStatusWithExpenditure(
                         event.getMemberId(),
-                        BattleStatus.PROGRESS
+                        List.of(BattleStatus.PROGRESS)
                 );
 
         for (BattleWithMemberExpenditure battleInfo : battleInfos) {

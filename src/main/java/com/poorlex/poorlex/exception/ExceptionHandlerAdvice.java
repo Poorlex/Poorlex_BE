@@ -2,6 +2,7 @@ package com.poorlex.poorlex.exception;
 
 import io.sentry.Sentry;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.security.core.AuthenticationException;
@@ -55,6 +56,11 @@ public class ExceptionHandlerAdvice {
     @ExceptionHandler(AuthorizationDeniedException.class)
     public ResponseEntity<ExceptionResponse> handleAuthorizationDeniedException(AuthorizationDeniedException ex) throws AuthorizationDeniedException {
         throw ex;
+    }
+
+    @ExceptionHandler(ConflictException.class)
+    public ResponseEntity<ExceptionResponse> handleConflictException(ConflictException e) throws ConflictException {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(ExceptionResponse.from(e));
     }
 
     @ExceptionHandler(ApiException.class)

@@ -43,45 +43,15 @@ public class BattleCommandController implements BattleCommandControllerSwaggerIn
         return ResponseEntity.noContent().build();
     }
 
-    @PatchMapping("/{battleId}")
+    @PatchMapping(value = "/{battleId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> editBattle(
             @AuthenticationPrincipal final MemberInfo memberInfo,
             @PathVariable final Long battleId,
-            @RequestPart("image") final MultipartFile image,
+            @RequestPart(value = "image", required = false) final MultipartFile image,
             @RequestParam final String name,
             @RequestParam final String introduction) {
         BattleUpdateRequest request = new BattleUpdateRequest(name, introduction);
         battleService.updateBattle(memberInfo.getId(), battleId, image, request);
         return ResponseEntity.noContent().build();
-    }
-
-    @PostMapping(path = "/progressing", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<Void> createProgressingBattle(@AuthenticationPrincipal final MemberInfo memberInfo,
-                                                        @RequestPart("image") final MultipartFile image,
-                                                        @RequestParam final String name,
-                                                        @RequestParam final String introduction,
-                                                        @RequestParam final int budget,
-                                                        @RequestParam final int maxParticipantSize) {
-        final BattleCreateRequest request = new BattleCreateRequest(name,
-                                                                    introduction,
-                                                                    budget,
-                                                                    maxParticipantSize);
-        final Long createdBattleId = battleService.createProgressing(memberInfo.getId(), image, request);
-        return ResponseEntity.created(URI.create("/battles/" + createdBattleId)).build();
-    }
-
-    @PostMapping(path = "/completed", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<Void> createCompletedBattle(@AuthenticationPrincipal final MemberInfo memberInfo,
-                                                      @RequestPart("image") final MultipartFile image,
-                                                      @RequestParam final String name,
-                                                      @RequestParam final String introduction,
-                                                      @RequestParam final int budget,
-                                                      @RequestParam final int maxParticipantSize) {
-        final BattleCreateRequest request = new BattleCreateRequest(name,
-                                                                    introduction,
-                                                                    budget,
-                                                                    maxParticipantSize);
-        final Long createdBattleId = battleService.createCompleted(memberInfo.getId(), image, request);
-        return ResponseEntity.created(URI.create("/battles/" + createdBattleId)).build();
     }
 }

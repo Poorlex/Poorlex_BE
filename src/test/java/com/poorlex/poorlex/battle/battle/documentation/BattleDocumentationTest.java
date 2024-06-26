@@ -23,8 +23,8 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import org.springframework.restdocs.payload.JsonFieldType;
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.partWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.queryParameters;
@@ -86,9 +86,9 @@ class BattleDocumentationTest extends MockMvcTest {
         //given
         given(battleService.findProgressMemberBattles(any(), any())).willReturn(
                 List.of(
-                        new MemberProgressBattleResponse(1L, "첫번째 배틀명", "첫번째 배틀 이미지 링크", "HARD", 5, 10000, 1, 10, 1),
-                        new MemberProgressBattleResponse(2L, "두번째 배틀명", "두번째 배틀 이미지 링크", "NORMAL", 5, 90000, 1, 10, 1),
-                        new MemberProgressBattleResponse(3L, "세번째 배틀명", "세번째 배틀 이미지 링크", "EASY", 5, 150000, 1, 10, 1)
+                        new MemberProgressBattleResponse(1L, "첫번째 배틀명", "첫번째 배틀 이미지 링크", "HARD", 5, 10000, 10000, 1, 10, 1),
+                        new MemberProgressBattleResponse(2L, "두번째 배틀명", "두번째 배틀 이미지 링크", "NORMAL", 5, 90000, 90000, 1, 10, 1),
+                        new MemberProgressBattleResponse(3L, "세번째 배틀명", "세번째 배틀 이미지 링크", "EASY", 5, 150000, 150000, 1, 10, 1)
                 )
         );
 
@@ -115,6 +115,8 @@ class BattleDocumentationTest extends MockMvcTest {
                                                                 .description("배틀 난이도"),
                                                         fieldWithPath("dday").type(JsonFieldType.NUMBER)
                                                                 .description("배틀 종료 D-Day"),
+                                                        fieldWithPath("budget").type(JsonFieldType.NUMBER)
+                                                                .description("배틀 예산"),
                                                         fieldWithPath("budgetLeft").type(JsonFieldType.NUMBER)
                                                                 .description("배틀 예산에서 멤버의 지출을 뺀 비용"),
                                                         fieldWithPath("currentParticipantRank").type(JsonFieldType.NUMBER)

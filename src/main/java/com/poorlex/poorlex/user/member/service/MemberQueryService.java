@@ -2,6 +2,7 @@ package com.poorlex.poorlex.user.member.service;
 
 import com.poorlex.poorlex.battle.battle.service.dto.response.BattleSuccessCountResponse;
 import com.poorlex.poorlex.exception.ApiException;
+import com.poorlex.poorlex.exception.BadRequestException;
 import com.poorlex.poorlex.exception.ExceptionTag;
 import com.poorlex.poorlex.friend.service.dto.response.FriendResponse;
 import com.poorlex.poorlex.user.member.domain.Member;
@@ -9,6 +10,7 @@ import com.poorlex.poorlex.user.member.domain.MemberIdAndNicknameDto;
 import com.poorlex.poorlex.user.member.domain.MemberLevel;
 import com.poorlex.poorlex.user.member.domain.MemberRepository;
 import com.poorlex.poorlex.user.member.service.dto.ExpenditureDto;
+import com.poorlex.poorlex.user.member.service.dto.response.MemberProfileResponse;
 import com.poorlex.poorlex.user.member.service.dto.response.MyPageExpenditureResponse;
 import com.poorlex.poorlex.user.member.service.dto.response.MyPageResponse;
 import com.poorlex.poorlex.user.member.service.provider.BattleSuccessCountProvider;
@@ -17,6 +19,7 @@ import com.poorlex.poorlex.user.member.service.provider.FriendProvider;
 import com.poorlex.poorlex.user.member.service.provider.WeeklyExpenditureProvider;
 import com.poorlex.poorlex.user.point.domain.MemberPointRepository;
 import com.poorlex.poorlex.user.point.domain.Point;
+import com.poorlex.poorlex.user.point.service.MemberPointQueryService;
 import com.poorlex.poorlex.user.point.service.dto.response.MyPageLevelInfoResponse;
 import java.time.LocalDate;
 import java.util.List;
@@ -39,6 +42,7 @@ public class MemberQueryService {
     private final FriendProvider friendProvider;
     private final WeeklyExpenditureProvider weeklyExpenditureProvider;
     private final ExpenditureProvider expenditureProvider;
+    private final MemberPointQueryService memberPointQueryService;
 
     public Map<Long, String> getMembersNickname(final List<Long> memberIds) {
         return memberRepository.getMemberNicknamesByMemberIds(memberIds)
@@ -114,5 +118,16 @@ public class MemberQueryService {
                     final String errorMessage = String.format("Id 에 해당하는 회원이 존재하지 않습니다. ( ID : %d )", memberId);
                     return new ApiException(ExceptionTag.MEMBER_FIND, errorMessage);
                 });
+    }
+
+    public MemberProfileResponse getMemberProfile(Long memberId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> {
+                    final String errorMessage = String.format("Id 에 해당하는 회원이 존재하지 않습니다. ( ID : %d )", memberId);
+                    return new BadRequestException(ExceptionTag.MEMBER_FIND, errorMessage);
+                });
+
+        MyPageLevelInfoResponse memberLevelInfo = memberPointQueryService.findMemberLevelInfo(memberId);
+        return MemberProfileResponse.of(member, memberLevelInfo);
     }
 }

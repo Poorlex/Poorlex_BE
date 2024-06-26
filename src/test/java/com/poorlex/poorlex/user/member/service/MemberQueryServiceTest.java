@@ -12,6 +12,8 @@ import com.poorlex.poorlex.battle.succession.domain.BattleSuccessHistoryReposito
 import com.poorlex.poorlex.consumption.expenditure.domain.Expenditure;
 import com.poorlex.poorlex.consumption.expenditure.domain.ExpenditureRepository;
 import com.poorlex.poorlex.consumption.expenditure.fixture.ExpenditureFixture;
+import com.poorlex.poorlex.exception.ApiException;
+import com.poorlex.poorlex.exception.ExceptionTag;
 import com.poorlex.poorlex.fixture.MemberFixture;
 import com.poorlex.poorlex.friend.domain.Friend;
 import com.poorlex.poorlex.friend.domain.FriendRepository;
@@ -25,6 +27,7 @@ import com.poorlex.poorlex.user.member.domain.MemberLevel;
 import com.poorlex.poorlex.user.member.domain.MemberRepository;
 import static com.poorlex.poorlex.user.member.domain.Oauth2RegistrationId.APPLE;
 import com.poorlex.poorlex.user.member.service.dto.ExpenditureDto;
+import com.poorlex.poorlex.user.member.service.dto.response.MemberProfileResponse;
 import com.poorlex.poorlex.user.member.service.dto.response.MyPageExpenditureResponse;
 import com.poorlex.poorlex.user.member.service.dto.response.MyPageResponse;
 import com.poorlex.poorlex.user.point.domain.MemberPoint;
@@ -126,6 +129,35 @@ class MemberQueryServiceTest extends IntegrationTest implements ReplaceUnderScor
                     softly.assertThat(myPageInfo.getExpenditures())
                             .usingRecursiveComparison()
                             .isEqualTo(예상_최근_지출_4개);
+                }
+        );
+    }
+
+    @Test
+    void 멤버의_프로파일_정보를_조회한다() {
+        //given
+        final Member 푸얼렉스 = MemberFixture.saveMemberWithOauthId(memberRepository, APPLE, "고유 ID1", "푸얼렉스", "소개");
+
+        Point point = new Point(100);
+        MemberLevel memberLevel = MemberLevel.findByPoint(point)
+                .orElseThrow(() -> {
+                    final String errorMessage = String.format("포인트에 해당하는 레벨이 존재하지 않습니다. ( 포인트 : %d )", point);
+                    return new ApiException(ExceptionTag.MEMBER_LEVEL, errorMessage);
+                });
+        memberPointRepository.save(MemberPoint.withoutId(point, 푸얼렉스.getId()));
+
+        //when
+        final MemberProfileResponse memberProfile = memberQueryService.getMemberProfile(푸얼렉스.getId());
+
+        //then
+        assertSoftly(
+                softly -> {
+                    softly.assertThat(memberProfile).isNotNull();
+                    softly.assertThat(memberProfile.nickname()).isEqualTo(푸얼렉스.getNickname());
+                    softly.assertThat(memberProfile.description()).isEqualTo(푸얼렉스.getDescription().orElse(null));
+                    softly.assertThat(memberProfile.levelInfo().getLevel()).isEqualTo(memberLevel.getNumber());
+                    softly.assertThat(memberProfile.levelInfo().getPoint()).isEqualTo(point.getValue());
+                    softly.assertThat(memberProfile.levelInfo().getPointLeftForLevelUp()).isEqualTo(memberLevel.getGetPointForNextLevel(point.getValue()));
                 }
         );
     }

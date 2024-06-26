@@ -145,7 +145,7 @@ public class BattleService {
 
     public List<MemberProgressBattleResponse> findProgressMemberBattles(final Long memberId, final LocalDate date) {
         final List<BattleWithMemberExpenditure> battles =
-                battleRepository.findMemberBattlesByMemberIdAndStatusWithExpenditure(memberId, BattleStatus.PROGRESS);
+                battleRepository.findMemberBattlesByMemberIdAndStatusWithExpenditure(memberId, List.of(BattleStatus.RECRUITING, BattleStatus.RECRUITING_FINISHED, BattleStatus.PROGRESS));
 
         return battles.stream()
                 .sorted(Comparator.comparing(battleInfo -> battleInfo.getBattle().getCreatedAt(),
@@ -217,7 +217,7 @@ public class BattleService {
 
     public List<MemberCompleteBattleResponse> findCompleteMemberBattles(final Long memberId, final LocalDate date) {
         final List<BattleWithMemberExpenditure> battles =
-                battleRepository.findMemberBattlesByMemberIdAndStatusWithExpenditure(memberId, BattleStatus.COMPLETE);
+                battleRepository.findMemberBattlesByMemberIdAndStatusWithExpenditure(memberId, List.of(BattleStatus.COMPLETE));
 
         return battles.stream()
                 .sorted(Comparator.comparing(battleInfo -> battleInfo.getBattle().getCreatedAt(),
@@ -323,8 +323,14 @@ public class BattleService {
         Battle battle = battleRepository.findById(battleId)
                 .orElseThrow(() -> new BadRequestException(ExceptionTag.BATTLE_FIND, "배틀을 찾을 수 없습니다."));
 
-        String imageUrl = imageService.saveAndReturnPath(image, bucketDirectory);
-        battle.update(request, imageUrl);
+        battle.update(request);
+
+        if (image != null && !image.isEmpty()) {
+            String imageUrl = imageService.saveAndReturnPath(image, bucketDirectory);
+            imageService.delete(battle.getImageUrl());
+            battle.updateImage(imageUrl);
+        }
+
         Events.raise(new BattleUpdatedEvent(battleId));
     }
 

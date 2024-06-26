@@ -66,7 +66,7 @@ class BattleRepositoryTest extends UsingDataJpaTest implements ReplaceUnderScore
         //when
         final List<BattleWithMemberExpenditure> progressBattleInfos =
                 battleRepository.findMemberBattlesByMemberIdAndStatusWithExpenditure(member.getId(),
-                                                                                     BattleStatus.PROGRESS);
+                                                                                     List.of(BattleStatus.PROGRESS));
 
         //then
         assertSoftly(
@@ -96,7 +96,7 @@ class BattleRepositoryTest extends UsingDataJpaTest implements ReplaceUnderScore
         //when
         final List<BattleWithMemberExpenditure> progressBattleInfos =
                 battleRepository.findMemberBattlesByMemberIdAndStatusWithExpenditure(member.getId(),
-                                                                                     BattleStatus.PROGRESS);
+                                                                                     List.of(BattleStatus.PROGRESS));
 
         //then
         assertSoftly(
@@ -129,7 +129,7 @@ class BattleRepositoryTest extends UsingDataJpaTest implements ReplaceUnderScore
         //when
         final List<BattleWithMemberExpenditure> progressBattleInfos =
                 battleRepository.findMemberBattlesByMemberIdAndStatusWithExpenditure(member.getId(),
-                                                                                     BattleStatus.PROGRESS);
+                                                                                     List.of(BattleStatus.PROGRESS));
 
         //then
         assertSoftly(
@@ -159,7 +159,7 @@ class BattleRepositoryTest extends UsingDataJpaTest implements ReplaceUnderScore
         //when
         final List<BattleWithMemberExpenditure> completeBattleInfos =
                 battleRepository.findMemberBattlesByMemberIdAndStatusWithExpenditure(member.getId(),
-                                                                                     BattleStatus.COMPLETE);
+                                                                                     List.of(BattleStatus.COMPLETE));
 
         //then
         assertSoftly(
@@ -193,7 +193,7 @@ class BattleRepositoryTest extends UsingDataJpaTest implements ReplaceUnderScore
         //when
         final List<BattleWithMemberExpenditure> completeBattleInfos =
                 battleRepository.findMemberBattlesByMemberIdAndStatusWithExpenditure(member.getId(),
-                                                                                     BattleStatus.COMPLETE);
+                                                                                     List.of(BattleStatus.COMPLETE));
 
         //then
         assertSoftly(
