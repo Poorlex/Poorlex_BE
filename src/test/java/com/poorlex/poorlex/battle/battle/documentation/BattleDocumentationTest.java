@@ -205,9 +205,8 @@ class BattleDocumentationTest extends MockMvcTest {
                         document("battle-find-by-id",
                                  ApiDocumentUtils.getDocumentRequest(),
                                  ApiDocumentUtils.getDocumentResponse(),
-                                 requestFields(
-                                         fieldWithPath("memberId").type(JsonFieldType.NUMBER)
-                                                 .description("프로파일 조회할 멤버 Id")
+                                 queryParameters(
+                                         parameterWithName("date").description("조회 날짜")
                                  ),
                                  responseFields(
                                          fieldWithPath("id").type(JsonFieldType.NUMBER).description("배틀 ID"),
