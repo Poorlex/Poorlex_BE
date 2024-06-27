@@ -187,8 +187,6 @@ create table if not exists weekly_budget
     id         bigint not null auto_increment,
     member_id  bigint,
     amount     bigint,
-    start_date date,
-    end_date   date,
     primary key (id)
 ) engine = InnoDB;
 
