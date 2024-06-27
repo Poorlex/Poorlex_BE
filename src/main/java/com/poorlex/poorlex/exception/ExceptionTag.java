@@ -37,6 +37,7 @@ public enum ExceptionTag {
     //AWS 관련
     AWS_S3("S3 관련 에러"),
     WEEKLY_BUDGET_AMOUNT("주간 예산 금액 에러"),
+    WEEKLY_BUDGET_STATUS("주간 예산 상태 에러"),
     WEEKLY_BUDGET_DURATION("주간 예산 기간 에러");
 
     private final String tag;

@@ -22,7 +22,7 @@ public class WeeklyBudgetQueryController implements WeeklyBudgetQueryControllerS
     @GetMapping
     public ResponseEntity<WeeklyBudgetResponse> findWeeklyBudget(@AuthenticationPrincipal final MemberInfo memberInfo) {
         return ResponseEntity.ok()
-                .body(weeklyBudgetQueryService.findCurrentWeeklyBudgetByMemberId(memberInfo.getId()));
+                .body(weeklyBudgetQueryService.findWeeklyBudgetByMemberId(memberInfo.getId()));
     }
 
     @GetMapping("/left")

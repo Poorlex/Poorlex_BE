@@ -4,6 +4,8 @@ import com.poorlex.poorlex.consumption.weeklybudget.domain.WeeklyBudget;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+import java.time.LocalDate;
+
 @RequiredArgsConstructor
 @Getter
 public class WeeklyBudgetResponse {
@@ -13,13 +15,13 @@ public class WeeklyBudgetResponse {
 
     private final boolean exist;
     private final Long amount;
-    private final Long daysBeforeEnd;
+    private final Integer daysBeforeEnd = 8 - LocalDate.now().getDayOfWeek().getValue();
 
-    public static WeeklyBudgetResponse exist(final WeeklyBudget weeklyBudget, final Long dDay) {
-        return new WeeklyBudgetResponse(BUDGET_EXIST, weeklyBudget.getAmount(), dDay);
+    public static WeeklyBudgetResponse exist(final WeeklyBudget weeklyBudget) {
+        return new WeeklyBudgetResponse(BUDGET_EXIST, weeklyBudget.getAmount());
     }
 
     public static WeeklyBudgetResponse empty() {
-        return new WeeklyBudgetResponse(BUDGET_NOT_EXIST, 0L, 0L);
+        return new WeeklyBudgetResponse(BUDGET_NOT_EXIST, 0L);
     }
 }

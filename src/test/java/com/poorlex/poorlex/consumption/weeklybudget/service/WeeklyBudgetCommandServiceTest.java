@@ -1,10 +1,7 @@
 package com.poorlex.poorlex.consumption.weeklybudget.service;
 
-import com.poorlex.poorlex.bridge.MemberExistenceProviderImpl;
 import com.poorlex.poorlex.consumption.weeklybudget.domain.WeeklyBudget;
-import com.poorlex.poorlex.consumption.weeklybudget.domain.WeeklyBudgetDuration;
 import com.poorlex.poorlex.consumption.weeklybudget.domain.WeeklyBudgetRepository;
-import com.poorlex.poorlex.consumption.weeklybudget.service.provider.MemberExistenceProvider;
 import com.poorlex.poorlex.fixture.MemberFixture;
 import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
 import com.poorlex.poorlex.support.db.UsingDataJpaTest;
@@ -26,15 +23,11 @@ class WeeklyBudgetCommandServiceTest extends UsingDataJpaTest implements Replace
     @Autowired
     private WeeklyBudgetRepository weeklyBudgetRepository;
 
-    private MemberExistenceProvider memberExistenceProvider;
-
     private WeeklyBudgetCommandService weeklyBudgetCommandService;
 
     @BeforeEach
     void setUp() {
-        memberExistenceProvider = new MemberExistenceProviderImpl(memberRepository);
-        this.weeklyBudgetCommandService = new WeeklyBudgetCommandService(weeklyBudgetRepository,
-                                                                         memberExistenceProvider);
+        this.weeklyBudgetCommandService = new WeeklyBudgetCommandService(weeklyBudgetRepository);
         initializeDataBase();
     }
 
@@ -60,9 +53,6 @@ class WeeklyBudgetCommandServiceTest extends UsingDataJpaTest implements Replace
                     softly.assertThat(주간_예산_전체_목록).hasSize(1);
                     final WeeklyBudget weeklyBudget = 주간_예산_전체_목록.get(0);
                     softly.assertThat(weeklyBudget.getAmount()).isEqualTo(주간_에산_금액);
-                    softly.assertThat(weeklyBudget.getDuration())
-                            .usingRecursiveComparison()
-                            .isEqualTo(WeeklyBudgetDuration.from(현재_날짜));
                     softly.assertThat(weeklyBudget.getMemberId()).isEqualTo(회원.getId());
                 }
         );

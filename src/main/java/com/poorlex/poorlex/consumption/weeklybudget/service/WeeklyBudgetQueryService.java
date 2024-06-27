@@ -1,7 +1,6 @@
 package com.poorlex.poorlex.consumption.weeklybudget.service;
 
 import com.poorlex.poorlex.consumption.weeklybudget.domain.WeeklyBudget;
-import com.poorlex.poorlex.consumption.weeklybudget.domain.WeeklyBudgetDuration;
 import com.poorlex.poorlex.consumption.weeklybudget.domain.WeeklyBudgetRepository;
 import com.poorlex.poorlex.consumption.weeklybudget.service.dto.response.WeeklyBudgetLeftResponse;
 import com.poorlex.poorlex.consumption.weeklybudget.service.dto.response.WeeklyBudgetResponse;
@@ -24,15 +23,9 @@ public class WeeklyBudgetQueryService {
     private final MemberExistenceProvider memberExistenceProvider;
     private final TotalExpenditureProvider totalExpenditureProvider;
 
-    public WeeklyBudgetResponse findCurrentWeeklyBudgetByMemberId(final Long memberId) {
-        return findWeeklyBudgetByMemberIdAndDate(memberId, LocalDate.now());
-    }
-
-    public WeeklyBudgetResponse findWeeklyBudgetByMemberIdAndDate(final Long memberId, final LocalDate date) {
-        validateMemberId(memberId);
-
-        return weeklyBudgetRepository.findByMemberIdAndCurrentDate(memberId, date)
-                .map(findWeeklyBudget -> WeeklyBudgetResponse.exist(findWeeklyBudget, findWeeklyBudget.getDDay(date)))
+    public WeeklyBudgetResponse findWeeklyBudgetByMemberId(final Long memberId) {
+        return weeklyBudgetRepository.findByMemberId(memberId)
+                .map(WeeklyBudgetResponse::exist)
                 .orElseGet(WeeklyBudgetResponse::empty);
     }
 
@@ -51,19 +44,19 @@ public class WeeklyBudgetQueryService {
                                                                           final LocalDate date) {
         validateMemberId(memberId);
 
-        final WeeklyBudget weeklyBudget = weeklyBudgetRepository.findByMemberIdAndCurrentDate(memberId, date)
+        final WeeklyBudget weeklyBudget = weeklyBudgetRepository.findByMemberId(memberId)
                 .orElse(null);
         if (Objects.isNull(weeklyBudget)) {
             return WeeklyBudgetLeftResponse.withNullWeeklyBudget();
         }
 
-        final Long sumExpenditure = getSumExpenditureByMemberIdInDuration(memberId, weeklyBudget.getDuration());
+        final Long sumExpenditure = getSumExpenditureByMemberIdInDuration(memberId, date);
         return WeeklyBudgetLeftResponse.from(weeklyBudget, sumExpenditure);
     }
 
-    public Long getSumExpenditureByMemberIdInDuration(final Long memberId, final WeeklyBudgetDuration duration) {
-        final LocalDate start = LocalDate.from(duration.getStart());
-        final LocalDate end = LocalDate.from(duration.getEnd());
+    public Long getSumExpenditureByMemberIdInDuration(final Long memberId, LocalDate date) {
+        final LocalDate start = date.minusDays(LocalDate.now().getDayOfWeek().getValue() + 1);
+        final LocalDate end = date.plusDays(8 - LocalDate.now().getDayOfWeek().getValue());
         return totalExpenditureProvider.byMemberIdBetween(memberId, start, end);
     }
 }

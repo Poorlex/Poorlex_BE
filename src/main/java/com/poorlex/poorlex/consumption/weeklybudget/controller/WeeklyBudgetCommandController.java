@@ -8,10 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/weekly-budgets")
@@ -26,5 +23,18 @@ public class WeeklyBudgetCommandController implements WeeklyBudgetCommandControl
         weeklyBudgetCommandService.createBudgetWithCurrentDuration(memberInfo.getId(), request.getBudget());
 
         return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @PutMapping
+    public ResponseEntity<Void> updateBudget(@AuthenticationPrincipal MemberInfo memberInfo,
+                                             @RequestBody WeeklyBudgetCreateRequest request) {
+        weeklyBudgetCommandService.updateBudget(memberInfo.getId(), request.getBudget());
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping
+    public ResponseEntity<Void> deleteBudget(@AuthenticationPrincipal MemberInfo memberInfo) {
+        weeklyBudgetCommandService.deleteBudget(memberInfo.getId());
+        return ResponseEntity.noContent().build();
     }
 }

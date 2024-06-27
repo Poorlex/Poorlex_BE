@@ -5,8 +5,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -19,28 +17,19 @@ public class WeeklyBudget {
     private Long id;
     @Embedded
     private WeeklyBudgetAmount amount;
-    @Embedded
-    private WeeklyBudgetDuration duration;
     private Long memberId;
 
     public WeeklyBudget(final Long id,
                         final WeeklyBudgetAmount amount,
-                        final WeeklyBudgetDuration duration,
                         final Long memberId) {
         this.id = id;
         this.amount = amount;
-        this.duration = duration;
         this.memberId = memberId;
     }
 
     public static WeeklyBudget withoutId(final WeeklyBudgetAmount amount,
-                                         final WeeklyBudgetDuration duration,
                                          final Long memberId) {
-        return new WeeklyBudget(null, amount, duration, memberId);
-    }
-
-    public long getDDay(final LocalDate current) {
-        return ChronoUnit.DAYS.between(current, duration.getEnd());
+        return new WeeklyBudget(null, amount, memberId);
     }
 
     public Long getId() {
@@ -51,8 +40,8 @@ public class WeeklyBudget {
         return amount.getValue();
     }
 
-    public WeeklyBudgetDuration getDuration() {
-        return duration;
+    public void updateAmount(final WeeklyBudgetAmount amount) {
+        this.amount = amount;
     }
 
     public Long getMemberId() {

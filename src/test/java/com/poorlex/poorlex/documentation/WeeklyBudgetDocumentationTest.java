@@ -80,8 +80,8 @@ class WeeklyBudgetDocumentationTest extends MockMvcTest {
         //given
         final WeeklyBudgetRequest request = new WeeklyBudgetRequest(LocalDate.now());
 
-        given(weeklyBudgetQueryService.findCurrentWeeklyBudgetByMemberId(any())).willReturn(
-                new WeeklyBudgetResponse(true, 10000L, 5L)
+        given(weeklyBudgetQueryService.findWeeklyBudgetByMemberId(any())).willReturn(
+                new WeeklyBudgetResponse(true, 10000L)
         );
 
         //when
@@ -143,7 +143,9 @@ class WeeklyBudgetDocumentationTest extends MockMvcTest {
                                  responseFields(
                                          fieldWithPath("exist").type(JsonFieldType.BOOLEAN)
                                                  .description("요청 시간이 포함된 주의 주간 예산 등록 여부"),
-                                         fieldWithPath("amount").type(JsonFieldType.NUMBER)
+                                         fieldWithPath("left").type(JsonFieldType.NUMBER)
+                                                 .description("요청 시간이 포함된 주의 남은 주간 예산"),
+                                         fieldWithPath("daysBeforeEnd").type(JsonFieldType.NUMBER)
                                                  .description("요청 시간이 포함된 주의 남은 주간 예산")
                                  )
                         ));
