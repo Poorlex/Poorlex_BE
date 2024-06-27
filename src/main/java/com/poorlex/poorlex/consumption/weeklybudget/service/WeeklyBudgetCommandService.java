@@ -2,12 +2,12 @@ package com.poorlex.poorlex.consumption.weeklybudget.service;
 
 import com.poorlex.poorlex.consumption.weeklybudget.domain.WeeklyBudget;
 import com.poorlex.poorlex.consumption.weeklybudget.domain.WeeklyBudgetAmount;
-import com.poorlex.poorlex.consumption.weeklybudget.domain.WeeklyBudgetDuration;
 import com.poorlex.poorlex.consumption.weeklybudget.domain.WeeklyBudgetRepository;
-import com.poorlex.poorlex.consumption.weeklybudget.service.provider.MemberExistenceProvider;
 import com.poorlex.poorlex.exception.ApiException;
+import com.poorlex.poorlex.exception.BadRequestException;
 import com.poorlex.poorlex.exception.ExceptionTag;
 import java.time.LocalDate;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,30 +18,39 @@ import org.springframework.transaction.annotation.Transactional;
 public class WeeklyBudgetCommandService {
 
     private final WeeklyBudgetRepository weeklyBudgetRepository;
-    private final MemberExistenceProvider memberExistenceProvider;
 
     public void createBudgetWithCurrentDuration(final Long memberId, final Long budget) {
-        validateMemberId(memberId);
+        validateBudget(memberId);
         final WeeklyBudgetAmount amount = new WeeklyBudgetAmount(budget);
-        final WeeklyBudgetDuration duration = WeeklyBudgetDuration.current();
-        final WeeklyBudget weeklyBudget = WeeklyBudget.withoutId(amount, duration, memberId);
+        final WeeklyBudget weeklyBudget = WeeklyBudget.withoutId(amount, memberId);
 
         weeklyBudgetRepository.save(weeklyBudget);
     }
 
     public void createBudgetWithDate(final Long memberId, final Long budget, final LocalDate date) {
-        validateMemberId(memberId);
         final WeeklyBudgetAmount amount = new WeeklyBudgetAmount(budget);
-        final WeeklyBudgetDuration duration = WeeklyBudgetDuration.from(date);
-        final WeeklyBudget weeklyBudget = WeeklyBudget.withoutId(amount, duration, memberId);
+        final WeeklyBudget weeklyBudget = WeeklyBudget.withoutId(amount, memberId);
 
         weeklyBudgetRepository.save(weeklyBudget);
     }
 
-    private void validateMemberId(final Long memberId) {
-        if (!memberExistenceProvider.byMemberId(memberId)) {
-            final String errorMessage = String.format("Id 에 해당하는 회원이 존재하지 않습니다. ( ID : %d )", memberId);
-            throw new ApiException(ExceptionTag.MEMBER_FIND, errorMessage);
+    public void updateBudget(Long memberId, Long budget) {
+        WeeklyBudgetAmount amount = new WeeklyBudgetAmount(budget);
+        WeeklyBudget weeklyBudget = weeklyBudgetRepository.findByMemberId(memberId)
+                .orElseThrow(() -> new BadRequestException(ExceptionTag.MEMBER_FIND, "해당 멤버를 찾을 수 없습니다."));
+        weeklyBudget.updateAmount(amount);
+
+        weeklyBudgetRepository.save(weeklyBudget);
+    }
+
+    private void validateBudget(Long memberId) {
+        if (weeklyBudgetRepository.findByMemberId(memberId).isPresent()) {
+            throw new ApiException(ExceptionTag.WEEKLY_BUDGET_STATUS, "주간 예산이 이미 존재합니다.");
         }
+    }
+
+    public void deleteBudget(Long memberId) {
+        weeklyBudgetRepository.findByMemberId(memberId)
+                .ifPresent(weeklyBudgetRepository::delete);
     }
 }

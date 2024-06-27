@@ -80,8 +80,8 @@ class WeeklyBudgetDocumentationTest extends MockMvcTest {
         //given
         final WeeklyBudgetRequest request = new WeeklyBudgetRequest(LocalDate.now());
 
-        given(weeklyBudgetQueryService.findCurrentWeeklyBudgetByMemberId(any())).willReturn(
-                new WeeklyBudgetResponse(true, 10000L, 5L)
+        given(weeklyBudgetQueryService.findWeeklyBudgetByMemberId(any())).willReturn(
+                new WeeklyBudgetResponse(true, 10000L)
         );
 
         //when

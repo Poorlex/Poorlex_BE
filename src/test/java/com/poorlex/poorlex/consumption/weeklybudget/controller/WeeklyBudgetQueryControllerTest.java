@@ -15,6 +15,9 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+
+import java.time.LocalDate;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -37,9 +40,9 @@ class WeeklyBudgetQueryControllerTest extends ControllerTest implements ReplaceU
         //given
         final boolean 주간_예산_존재_여부 = true;
         final long 주간_예산_금액 = 10000L;
-        final long 주간_예산_기간_종료까지_남은_일수 = 6L;
+        final long 주간_예산_기간_종료까지_남은_일수 = 8 - LocalDate.now().getDayOfWeek().getValue();
 
-        STUBBING_주간_예산_조회시_해당응답을_반환하도록_한다(주간_예산_존재_여부, 주간_예산_금액, 주간_예산_기간_종료까지_남은_일수);
+        STUBBING_주간_예산_조회시_해당응답을_반환하도록_한다(주간_예산_존재_여부, 주간_예산_금액);
 
         //when
         //then
@@ -60,9 +63,9 @@ class WeeklyBudgetQueryControllerTest extends ControllerTest implements ReplaceU
         //given
         final boolean 주간_예산_존재_여부 = false;
         final long 주간_예산_금액 = 0L;
-        final long 주간_예산_기간_종료까지_남은_일수 = 0L;
+        final long 주간_예산_기간_종료까지_남은_일수 = 8 - LocalDate.now().getDayOfWeek().getValue();
 
-        STUBBING_주간_예산_조회시_해당응답을_반환하도록_한다(주간_예산_존재_여부, 주간_예산_금액, 주간_예산_기간_종료까지_남은_일수);
+        STUBBING_주간_예산_조회시_해당응답을_반환하도록_한다(주간_예산_존재_여부, 주간_예산_금액);
 
         //when
         //then
@@ -119,10 +122,9 @@ class WeeklyBudgetQueryControllerTest extends ControllerTest implements ReplaceU
     }
 
     private void STUBBING_주간_예산_조회시_해당응답을_반환하도록_한다(final boolean 주간_예산_존재_여부,
-                                                   final long 주간_예산_금액,
-                                                   final long 주간_예산_기간_종료까지_남은_일수) {
-        when(weeklyBudgetQueryService.findCurrentWeeklyBudgetByMemberId(ArgumentMatchers.any()))
-                .thenReturn(new WeeklyBudgetResponse(주간_예산_존재_여부, 주간_예산_금액, 주간_예산_기간_종료까지_남은_일수));
+                                                   final long 주간_예산_금액) {
+        when(weeklyBudgetQueryService.findWeeklyBudgetByMemberId(ArgumentMatchers.any()))
+                .thenReturn(new WeeklyBudgetResponse(주간_예산_존재_여부, 주간_예산_금액));
     }
 
     private void STUBBING_주간_예산에서_지출을뺀_나머지_조회시_해당응답을_반환하도록_한다(final boolean 주간_예산_존재_여부, final long 주간_예산_금액) {
