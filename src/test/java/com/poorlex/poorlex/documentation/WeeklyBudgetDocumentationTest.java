@@ -143,7 +143,9 @@ class WeeklyBudgetDocumentationTest extends MockMvcTest {
                                  responseFields(
                                          fieldWithPath("exist").type(JsonFieldType.BOOLEAN)
                                                  .description("요청 시간이 포함된 주의 주간 예산 등록 여부"),
-                                         fieldWithPath("amount").type(JsonFieldType.NUMBER)
+                                         fieldWithPath("left").type(JsonFieldType.NUMBER)
+                                                 .description("요청 시간이 포함된 주의 남은 주간 예산"),
+                                         fieldWithPath("daysBeforeEnd").type(JsonFieldType.NUMBER)
                                                  .description("요청 시간이 포함된 주의 남은 주간 예산")
                                  )
                         ));

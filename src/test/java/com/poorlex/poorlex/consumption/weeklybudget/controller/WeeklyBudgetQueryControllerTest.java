@@ -86,6 +86,7 @@ class WeeklyBudgetQueryControllerTest extends ControllerTest implements ReplaceU
         //given
         final boolean 주간_예산_존재_여부 = true;
         final long 주간_예산에서_지출을_뺀_금액 = 9000L;
+        final long 주간_예산_기간_종료까지_남은_일수 = 8 - LocalDate.now().getDayOfWeek().getValue();
         STUBBING_주간_예산에서_지출을뺀_나머지_조회시_해당응답을_반환하도록_한다(주간_예산_존재_여부, 주간_예산에서_지출을_뺀_금액);
 
         //when
@@ -98,7 +99,8 @@ class WeeklyBudgetQueryControllerTest extends ControllerTest implements ReplaceU
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.exist").value(주간_예산_존재_여부))
-                .andExpect(jsonPath("$.amount").value(주간_예산에서_지출을_뺀_금액));
+                .andExpect(jsonPath("$.left").value(주간_예산에서_지출을_뺀_금액))
+                .andExpect(jsonPath("$.daysBeforeEnd").value(주간_예산_기간_종료까지_남은_일수));
     }
 
     @Test
@@ -106,6 +108,7 @@ class WeeklyBudgetQueryControllerTest extends ControllerTest implements ReplaceU
         //given
         final boolean 주간_예산_존재_여부 = false;
         final long 주간_예산에서_지출을_뺀_금액 = 0L;
+        final long 주간_예산_기간_종료까지_남은_일수 = 8 - LocalDate.now().getDayOfWeek().getValue();
         STUBBING_주간_예산에서_지출을뺀_나머지_조회시_해당응답을_반환하도록_한다(주간_예산_존재_여부, 주간_예산에서_지출을_뺀_금액);
 
         //when
@@ -118,7 +121,8 @@ class WeeklyBudgetQueryControllerTest extends ControllerTest implements ReplaceU
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.exist").value(주간_예산_존재_여부))
-                .andExpect(jsonPath("$.amount").value(주간_예산에서_지출을_뺀_금액));
+                .andExpect(jsonPath("$.left").value(주간_예산에서_지출을_뺀_금액))
+                .andExpect(jsonPath("$.daysBeforeEnd").value(주간_예산_기간_종료까지_남은_일수));
     }
 
     private void STUBBING_주간_예산_조회시_해당응답을_반환하도록_한다(final boolean 주간_예산_존재_여부,
