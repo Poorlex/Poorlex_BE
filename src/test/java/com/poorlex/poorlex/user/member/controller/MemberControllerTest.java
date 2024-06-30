@@ -11,6 +11,8 @@ import com.poorlex.poorlex.user.member.service.dto.request.MemberProfileUpdateRe
 import io.jsonwebtoken.impl.DefaultClaims;
 import java.util.Map;
 import java.util.Optional;
+
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.mockito.ArgumentMatchers.*;
@@ -139,30 +141,6 @@ class MemberControllerTest extends IntegrationTest implements ReplaceUnderScoreT
 
         final String 회원_액세스_토큰 = "access_token";
         final MemberProfileUpdateRequest 변경_요청 = new MemberProfileUpdateRequest("닉네임", "    ");
-
-        //when
-        //then
-        mockMvc.perform(
-                        patch("/member/profile")
-                                .header(HttpHeaders.AUTHORIZATION, "Bearer " + 회원_액세스_토큰)
-                                .content(objectMapper.writeValueAsString(변경_요청))
-                                .contentType(MediaType.APPLICATION_JSON)
-                ).andDo(print())
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message").exists());
-    }
-
-    @Test
-    void ERROR_멤버_닉네임수정시_소개가_2자미만이면_400_상태코드로_응답한다() throws Exception {
-        //given
-        final Long 회원_ID = 1L;
-        MOCKING_토큰이_회원_ID를_가진_클레임을_반환하도록_한다(회원_ID);
-        MOCKING_토큰과_클레임이_회원_ID를_반환하도록_한다(회원_ID);
-        MOCKING_ID로_회원조회시_동일한_ID를_가지는_임의의_회원을_반환하도록_한다(회원_ID);
-        MOCKING_토큰이_없더라도_회원을_반환한다(회원_ID);
-
-        final String 회원_액세스_토큰 = "access_token";
-        final MemberProfileUpdateRequest 변경_요청 = new MemberProfileUpdateRequest("닉네임", "a");
 
         //when
         //then

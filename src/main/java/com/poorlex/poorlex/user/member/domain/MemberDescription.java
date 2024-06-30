@@ -15,7 +15,6 @@ public class MemberDescription {
     @Column(name = "description")
     private String value;
 
-    private static final int MINIMUM_DESCRIPTION_LENGTH = 2;
     private static final int MAXIMUM_DESCRIPTION_LENGTH = 300;
 
     public MemberDescription(final String value) {
@@ -33,9 +32,8 @@ public class MemberDescription {
 
     private void validateLength(final String value) {
         final int length = value.length();
-        if (MINIMUM_DESCRIPTION_LENGTH > length || length > MAXIMUM_DESCRIPTION_LENGTH) {
-            final String errorMessage = String.format("회원 소개는 %d자 이상 %d자 이하여야 합니다. ( 입력 소개 : '%s' 입력 길이 : %d )",
-                                                      MINIMUM_DESCRIPTION_LENGTH,
+        if (length > MAXIMUM_DESCRIPTION_LENGTH) {
+            final String errorMessage = String.format("회원 소개는 %d자 이하여야 합니다. ( 입력 소개 : '%s' 입력 길이 : %d )",
                                                       MAXIMUM_DESCRIPTION_LENGTH,
                                                       value,
                                                       length);

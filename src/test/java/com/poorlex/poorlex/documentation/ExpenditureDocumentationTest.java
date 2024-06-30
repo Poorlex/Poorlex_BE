@@ -250,7 +250,7 @@ class ExpenditureDocumentationTest extends MockMvcTest {
     void find_member_expenditure() throws Exception {
         //given
 
-        given(expenditureQueryService.findMemberExpenditures(any()))
+        given(expenditureQueryService.findMemberExpenditures(any(), any()))
                 .willReturn(
                         List.of(
                                 new ExpenditureResponse(

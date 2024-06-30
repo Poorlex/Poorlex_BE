@@ -117,7 +117,7 @@ class ExpenditureQueryControllerTest extends ControllerTest implements ReplaceUn
         final ExpenditureResponse 첫번째_지출_응답 = 지출_응답을_생성한다(1L, 1L, LocalDate.now(), 1000L, "설명", "메인이미지", "서브이미지");
         final ExpenditureResponse 두번째_지출_응답 = 지출_응답을_생성한다(1L, 1L, LocalDate.now(), 1000L, "설명", "메인이미지", "서브이미지");
 
-        when(expenditureQueryService.findMemberExpenditures(any()))
+        when(expenditureQueryService.findMemberExpenditures(any(), any()))
                 .thenReturn(List.of(첫번째_지출_응답, 두번째_지출_응답));
     }
 

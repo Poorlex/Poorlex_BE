@@ -12,8 +12,8 @@ import org.junit.jupiter.params.provider.ValueSource;
 class MemberDescriptionTest {
 
     @ParameterizedTest(name = "소개의 길이가 {0} 인 경우")
-    @ValueSource(ints = {1, 301})
-    void 소개의_길이가_2이상_200이하가_아닌_경우_예외를_던진다(final int length) {
+    @ValueSource(ints = {301})
+    void 소개의_길이가_200이하가_아닌_경우_예외를_던진다(final int length) {
         //given
         final String 회원_소개_내용 = "a".repeat(length);
 
