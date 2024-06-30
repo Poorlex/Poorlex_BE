@@ -288,6 +288,10 @@ public class BattleService {
         return battleQueryRepository.queryBattles(request, pageable);
     }
 
+    public List<FindingBattleResponse> getParticipableBattles(Long memberId, Pageable pageable) {
+        return battleQueryRepository.findByMemberIdNotInBattleParticipate(memberId, pageable);
+    }
+
     public List<ParticipantRankingResponse> getParticipantsRankings(final Long battleId) {
         final Battle battle = battleRepository.findById(battleId)
                 .orElseThrow(() -> new BadRequestException(ExceptionTag.BATTLE_FIND, "배틀을 찾을 수 없습니다."));
