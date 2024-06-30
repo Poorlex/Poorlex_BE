@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 import java.util.List;
 
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -48,4 +49,8 @@ public interface BattleQueryControllerSwaggerInterface {
     ResponseEntity<List<MemberCompleteBattleResponse>> findMemberCompleteBattles(
             @Parameter(hidden = true) final MemberInfo memberInfo
     );
+
+    @GetMapping("/battles/participable")
+    ResponseEntity<List<FindingBattleResponse>> participableBattles(@AuthenticationPrincipal final MemberInfo memberInfo,
+                                                                    @ParameterObject Pageable pageable);
 }

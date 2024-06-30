@@ -40,6 +40,26 @@ public class BattleQueryRepository {
                 .fetch();
     }
 
+    public List<FindingBattleResponse> findByMemberIdNotInBattleParticipate(Long memberId, Pageable pageable) {
+        return queryFactory.select(Projections.constructor(FindingBattleResponse.class,
+                        battle.id,
+                        battle.name.value,
+                        battle.introduction.value,
+                        battle.imageUrl.value,
+                        battle.budget.value,
+                        battle.maxParticipantSize.value,
+                        battleParticipant.count().intValue()
+                ))
+                .from(battle)
+                .leftJoin(battleParticipant).on(battleParticipant.battleId.eq(battle.id))
+                .where(battleParticipant.memberId.ne(memberId)
+                        .and(battle.status.in(BattleStatus.RECRUITING, BattleStatus.RECRUITING_FINISHED)))
+                .groupBy(battle.id)
+                .limit(pageable.getPageSize())
+                .offset(pageable.getOffset())
+                .fetch();
+    }
+
     private Predicate buildPredicate(BattleFindRequest request) {
         BooleanBuilder booleanBuilder = new BooleanBuilder();
         if (request.getStatus() != null && !request.getStatus().isEmpty()) {

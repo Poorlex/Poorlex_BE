@@ -60,4 +60,11 @@ public class BattleQueryController implements BattleQueryControllerSwaggerInterf
 
         return ResponseEntity.ok(memberCompleteBattleResponses);
     }
+
+    @GetMapping("/participable")
+    public ResponseEntity<List<FindingBattleResponse>> participableBattles(@AuthenticationPrincipal final MemberInfo memberInfo,
+                                                                           Pageable pageable) {
+        List<FindingBattleResponse> response = battleService.getParticipableBattles(memberInfo.getId(), pageable);
+        return ResponseEntity.ok(response);
+    }
 }
