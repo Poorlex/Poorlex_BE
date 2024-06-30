@@ -29,6 +29,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 
 @DisplayName("지출 서비스 테스트")
@@ -127,7 +128,7 @@ class ExpenditureQueryServiceTest extends IntegrationTest implements ReplaceUnde
         final Expenditure expenditure = createExpenditureWithMainImage(1000L, member.getId(), LocalDate.now());
 
         //when
-        final List<ExpenditureResponse> responses = expenditureQueryService.findMemberExpenditures(member.getId());
+        final List<ExpenditureResponse> responses = expenditureQueryService.findMemberExpenditures(member.getId(), Pageable.ofSize(20));
 
         //then
         assertSoftly(

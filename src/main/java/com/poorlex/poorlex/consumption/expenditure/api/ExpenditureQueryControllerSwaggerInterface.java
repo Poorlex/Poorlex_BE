@@ -8,6 +8,9 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
+
+import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 
@@ -25,7 +28,8 @@ public interface ExpenditureQueryControllerSwaggerInterface {
     @GetMapping("/expenditures")
     @ApiResponse(responseCode = "200")
     ResponseEntity<List<ExpenditureResponse>> findMemberExpenditures(
-            @Parameter(hidden = true) MemberInfo memberInfo
+            @Parameter(hidden = true) MemberInfo memberInfo,
+            @ParameterObject Pageable pageable
     );
 
     @Operation(summary = "회원 주간 총 지출 조회 ( 요청 시간 기준 )", description = "액세스 토큰 필요")

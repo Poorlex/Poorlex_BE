@@ -19,6 +19,8 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -96,8 +98,8 @@ public class ExpenditureQueryService {
                 });
     }
 
-    public List<ExpenditureResponse> findMemberExpenditures(final Long memberId) {
-        final List<Expenditure> memberExpenditures = expenditureRepository.findAllByMemberId(memberId);
+    public List<ExpenditureResponse> findMemberExpenditures(final Long memberId, Pageable pageable) {
+        final List<Expenditure> memberExpenditures = expenditureRepository.findAllByMemberIdOrderByCreatedAtDesc(memberId, pageable);
 
         return memberExpenditures.stream()
                 .map(ExpenditureResponse::from)

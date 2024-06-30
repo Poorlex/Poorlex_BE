@@ -7,6 +7,7 @@ import com.poorlex.poorlex.consumption.expenditure.service.dto.response.MemberWe
 import java.util.List;
 import com.poorlex.poorlex.security.service.MemberInfo;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,9 +21,10 @@ public class ExpenditureQueryController implements ExpenditureQueryControllerSwa
     private final ExpenditureQueryService expenditureQueryService;
 
     @GetMapping("/expenditures")
-    public ResponseEntity<List<ExpenditureResponse>> findMemberExpenditures(@AuthenticationPrincipal final MemberInfo memberInfo) {
+    public ResponseEntity<List<ExpenditureResponse>> findMemberExpenditures(@AuthenticationPrincipal final MemberInfo memberInfo,
+                                                                            final Pageable pageable) {
         final List<ExpenditureResponse> responses =
-                expenditureQueryService.findMemberExpenditures(memberInfo.getId());
+                expenditureQueryService.findMemberExpenditures(memberInfo.getId(), pageable);
 
         return ResponseEntity.ok(responses);
     }
