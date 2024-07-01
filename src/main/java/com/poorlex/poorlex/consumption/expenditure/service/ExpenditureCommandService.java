@@ -12,6 +12,7 @@ import com.poorlex.poorlex.consumption.expenditure.service.event.ExpenditureCrea
 import com.poorlex.poorlex.consumption.expenditure.service.event.ExpenditureImageUnusedEvent;
 import com.poorlex.poorlex.consumption.expenditure.service.event.ZeroExpenditureCreatedEvent;
 import com.poorlex.poorlex.exception.ApiException;
+import com.poorlex.poorlex.exception.BadRequestException;
 import com.poorlex.poorlex.exception.ExceptionTag;
 import java.time.LocalDate;
 import java.util.Objects;
@@ -120,9 +121,10 @@ public class ExpenditureCommandService {
                 .orElseThrow(() -> new ApiException(ExceptionTag.EXPENDITURE_UPDATE, "수정하려는 지출이 존재하지 않습니다."));
 
         validateUpdateAuthority(memberId, expenditure);
-        validateUpdatableDate(expenditure);
+        validateUpdatableDate(memberId, request.getDate(), expenditure);
         expenditure.updateAmount(new ExpenditureAmount(request.getAmount()));
         expenditure.updateDescription(new ExpenditureDescription(request.getDescription()));
+        expenditure.updateDate(request.getDate());
         updateMainImage(expenditure, updateMainImage, updateMainImageUrl);
         updateSubImage(expenditure, updateSubImage, updateSubImageUrl);
     }
@@ -133,7 +135,7 @@ public class ExpenditureCommandService {
         }
     }
 
-    private void validateUpdatableDate(final Expenditure expenditure) {
+    private void validateUpdatableDate(final Long memberId, final LocalDate date, final Expenditure expenditure) {
         final LocalDate current = LocalDate.now();
         final WeeklyExpenditureDuration currentWeek = WeeklyExpenditureDuration.from(current);
         final LocalDate expenditureDate = expenditure.getDate();
@@ -142,6 +144,11 @@ public class ExpenditureCommandService {
                                                       current,
                                                       expenditureDate.toString());
             throw new ApiException(ExceptionTag.EXPENDITURE_UPDATE, errorMessage);
+        }
+
+        if (!expenditureRepository.findExpendituresByMemberIdAndDateBetween(memberId, date, date)
+                .isEmpty()) {
+            throw new BadRequestException(ExceptionTag.EXPENDITURE_UPDATE, "변경하려는 날짜에 이미 지출이 있습니다.");
         }
     }
 

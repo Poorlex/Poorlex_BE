@@ -215,6 +215,7 @@ class ExpenditureCommandControllerTest extends ControllerTest implements Replace
                                 .file(변경할_서브_이미지)
                                 .queryParam("amount", "2000")
                                 .queryParam("description", "업데이트된 소개")
+                                .queryParam("date", LocalDate.now().toString())
                                 .header(HttpHeaders.AUTHORIZATION, "Bearer accessToken")
                                 .with(csrf())
                 )

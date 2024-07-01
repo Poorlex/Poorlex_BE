@@ -77,6 +77,10 @@ public class Expenditure extends BaseCreatedAtEntity {
         this.subImageUrl = null;
     }
 
+    public void updateDate(LocalDate date) {
+        this.date = date;
+    }
+
     public void updateAmount(final ExpenditureAmount amount) {
         this.amount = amount;
     }
