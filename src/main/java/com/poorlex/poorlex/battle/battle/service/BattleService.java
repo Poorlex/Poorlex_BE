@@ -16,6 +16,7 @@ import com.poorlex.poorlex.battle.participation.service.BattleParticipantService
 import com.poorlex.poorlex.config.event.Events;
 import com.poorlex.poorlex.consumption.expenditure.service.ExpenditureQueryService;
 import com.poorlex.poorlex.consumption.expenditure.service.dto.RankAndTotalExpenditureDto;
+import com.poorlex.poorlex.consumption.weeklybudget.domain.WeeklyBudgetRepository;
 import com.poorlex.poorlex.exception.ApiException;
 import com.poorlex.poorlex.exception.BadRequestException;
 import com.poorlex.poorlex.exception.ExceptionTag;
@@ -57,6 +58,7 @@ public class BattleService {
     private final boolean activateEndTimeValidation;
     private final BattleQueryRepository battleQueryRepository;
     private final BattleParticipantService battleParticipantService;
+    private final WeeklyBudgetRepository weeklyBudgetRepository;
 
     public BattleService(final BattleRepository battleRepository,
                          final BattleParticipantRepository battleParticipantRepository,
@@ -68,7 +70,7 @@ public class BattleService {
                          final BattleQueryRepository battleQueryRepository,
                          @Value("${aws.s3.battle-directory}") final String bucketDirectory,
                          @Value("${validation.start-time}") final boolean activateStartTimeValidation,
-                         @Value("${validation.start-time}") final boolean activateEndTimeValidation, BattleParticipantService battleParticipantService) {
+                         @Value("${validation.start-time}") final boolean activateEndTimeValidation, BattleParticipantService battleParticipantService, WeeklyBudgetRepository weeklyBudgetRepository) {
         this.battleRepository = battleRepository;
         this.battleParticipantRepository = battleParticipantRepository;
         this.battleAlarmService = battleAlarmService;
@@ -81,6 +83,7 @@ public class BattleService {
         this.activateStartTimeValidation = activateStartTimeValidation;
         this.activateEndTimeValidation = activateEndTimeValidation;
         this.battleParticipantService = battleParticipantService;
+        this.weeklyBudgetRepository = weeklyBudgetRepository;
     }
 
     @Transactional
@@ -114,6 +117,10 @@ public class BattleService {
     }
 
     private void validateMemberCanCreateBattle(final Long memberId) {
+        if (!weeklyBudgetRepository.existsByMemberId(memberId)) {
+            throw new BadRequestException(ExceptionTag.WEEKLY_BUDGET_STATUS, "예산을 먼저 설정해야만 배틀을 생성할 수 있습니다.");
+        }
+
         final int readiedBattleCount = battleRepository.countMemberBattleWithStatuses(
                 memberId,
                 BattleStatus.getReadiedStatues()
