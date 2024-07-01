@@ -7,6 +7,9 @@ import com.poorlex.poorlex.battle.notification.domain.BattleNotification;
 import com.poorlex.poorlex.battle.notification.domain.BattleNotificationRepository;
 import com.poorlex.poorlex.battle.notification.service.dto.request.BattleNotificationCreateRequest;
 import com.poorlex.poorlex.battle.notification.service.dto.request.BattleNotificationUpdateRequest;
+import com.poorlex.poorlex.consumption.weeklybudget.domain.WeeklyBudget;
+import com.poorlex.poorlex.consumption.weeklybudget.domain.WeeklyBudgetAmount;
+import com.poorlex.poorlex.consumption.weeklybudget.domain.WeeklyBudgetRepository;
 import com.poorlex.poorlex.support.IntegrationTest;
 import com.poorlex.poorlex.support.MockMultipartFileFixture;
 import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
@@ -38,6 +41,9 @@ class BattleNotificationControllerTest extends IntegrationTest implements Replac
     private MemberRepository memberRepository;
 
     @Autowired
+    private WeeklyBudgetRepository weeklyBudgetRepository;
+
+    @Autowired
     private BattleNotificationRepository battleNotificationRepository;
 
     @Autowired
@@ -59,6 +65,7 @@ class BattleNotificationControllerTest extends IntegrationTest implements Replac
         //given
         final Member member = memberRepository.save(
                 Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname")));
+        createWeeklyBudget(member.getId());
         final Long battleId = battleService.create(member.getId(),
                                                    MockMultipartFileFixture.get(),
                                                    BattleFixture.request());
@@ -83,6 +90,7 @@ class BattleNotificationControllerTest extends IntegrationTest implements Replac
         //given
         final Member member = memberRepository.save(
                 Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname")));
+        createWeeklyBudget(member.getId());
         final BattleNotification battleNotification = createBattleNotification(member);
         final Long battleId = battleNotification.getBattleId();
         final String newContent = "newContentNewContent";
@@ -106,6 +114,7 @@ class BattleNotificationControllerTest extends IntegrationTest implements Replac
         //given
         final Member member = memberRepository.save(
                 Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname")));
+        createWeeklyBudget(member.getId());
         final BattleNotification battleNotification = createBattleNotification(member);
         final Long battleId = battleNotification.getBattleId();
         final String newContent = "newContentNewContent";
@@ -140,5 +149,10 @@ class BattleNotificationControllerTest extends IntegrationTest implements Replac
         );
 
         return battleNotificationRepository.findAll().get(0);
+    }
+
+    private void createWeeklyBudget(Long memberId) {
+        WeeklyBudget weeklyBudget = WeeklyBudget.withoutId(new WeeklyBudgetAmount(100000L), memberId);
+        weeklyBudgetRepository.save(weeklyBudget);
     }
 }

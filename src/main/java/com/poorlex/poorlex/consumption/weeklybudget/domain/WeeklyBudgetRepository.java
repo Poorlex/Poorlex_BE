@@ -9,4 +9,6 @@ public interface WeeklyBudgetRepository extends JpaRepository<WeeklyBudget, Long
     List<WeeklyBudget> findWeeklyBudgetsByMemberId(final Long memberId);
 
     Optional<WeeklyBudget> findByMemberId(Long memberId);
+
+    boolean existsByMemberId(Long memberId);
 }

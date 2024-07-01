@@ -12,6 +12,7 @@ import com.poorlex.poorlex.consumption.expenditure.service.event.ExpenditureCrea
 import com.poorlex.poorlex.consumption.expenditure.service.event.ExpenditureImageUnusedEvent;
 import com.poorlex.poorlex.consumption.expenditure.service.event.ZeroExpenditureCreatedEvent;
 import com.poorlex.poorlex.exception.ApiException;
+import com.poorlex.poorlex.exception.BadRequestException;
 import com.poorlex.poorlex.exception.ExceptionTag;
 import java.time.LocalDate;
 import java.util.Objects;
@@ -41,8 +42,12 @@ public class ExpenditureCommandService {
                                   final MultipartFile mainImage,
                                   final MultipartFile subImage,
                                   final ExpenditureCreateRequest request) {
+        validateDateCreatable(memberId, request.getDate());
+        validateMainImageExist(mainImage);
+
         final Expenditure expenditure = generateExpenditure(memberId, mainImage, subImage, request);
         expenditureRepository.save(expenditure);
+
         raiseEvent(expenditure.getAmount(), memberId);
         return expenditure.getId();
     }
@@ -51,8 +56,6 @@ public class ExpenditureCommandService {
                                             final MultipartFile mainImage,
                                             final MultipartFile subImage,
                                             final ExpenditureCreateRequest request) {
-        validateDateCreatable(request.getDate());
-        validateMainImageExist(mainImage);
         final ExpenditureAmount amount = new ExpenditureAmount(request.getAmount());
         final ExpenditureDescription description = new ExpenditureDescription(request.getDescription());
         final String mainImageUrl = getUploadedImageUrl(mainImage);
@@ -61,12 +64,19 @@ public class ExpenditureCommandService {
         return Expenditure.withoutId(amount, memberId, request.getDate(), description, mainImageUrl, subImageUrl);
     }
 
-    private void validateDateCreatable(final LocalDate date) {
+    void validateDateCreatable(final Long memberId, final LocalDate date) {
         final LocalDate currentDate = LocalDate.now();
         final WeeklyExpenditureDuration weeklyExpenditureDuration = WeeklyExpenditureDuration.from(currentDate);
 
         validateExpenditureDateNotInTheFuture(date, currentDate);
         validateExpenditureDateNotInThePreviousWeek(date, weeklyExpenditureDuration);
+        validateExpenditureAlreadyExistsAtRequestDate(memberId, date);
+    }
+
+    private void validateExpenditureAlreadyExistsAtRequestDate(Long memberId, LocalDate date) {
+        if (expenditureRepository.existsByMemberIdAndDate(memberId, date)) {
+            throw new BadRequestException(ExceptionTag.EXPENDITURE_DATE, "하루에 한 개의 지출만 등록할 수 있습니다.");
+        }
     }
 
     private static void validateExpenditureDateNotInThePreviousWeek(final LocalDate date,
@@ -120,9 +130,10 @@ public class ExpenditureCommandService {
                 .orElseThrow(() -> new ApiException(ExceptionTag.EXPENDITURE_UPDATE, "수정하려는 지출이 존재하지 않습니다."));
 
         validateUpdateAuthority(memberId, expenditure);
-        validateUpdatableDate(expenditure);
+        validateUpdatableDate(memberId, request.getDate(), expenditure);
         expenditure.updateAmount(new ExpenditureAmount(request.getAmount()));
         expenditure.updateDescription(new ExpenditureDescription(request.getDescription()));
+        expenditure.updateDate(request.getDate());
         updateMainImage(expenditure, updateMainImage, updateMainImageUrl);
         updateSubImage(expenditure, updateSubImage, updateSubImageUrl);
     }
@@ -133,7 +144,7 @@ public class ExpenditureCommandService {
         }
     }
 
-    private void validateUpdatableDate(final Expenditure expenditure) {
+    private void validateUpdatableDate(final Long memberId, final LocalDate date, final Expenditure expenditure) {
         final LocalDate current = LocalDate.now();
         final WeeklyExpenditureDuration currentWeek = WeeklyExpenditureDuration.from(current);
         final LocalDate expenditureDate = expenditure.getDate();
@@ -142,6 +153,10 @@ public class ExpenditureCommandService {
                                                       current,
                                                       expenditureDate.toString());
             throw new ApiException(ExceptionTag.EXPENDITURE_UPDATE, errorMessage);
+        }
+
+        if (expenditureRepository.existsByIdNotAndMemberIdAndDate(expenditure.getId(), memberId, date)) {
+            throw new BadRequestException(ExceptionTag.EXPENDITURE_UPDATE, "변경하려는 날짜에 이미 지출이 있습니다.");
         }
     }
 

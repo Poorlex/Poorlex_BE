@@ -60,8 +60,9 @@ public class ExpenditureCommandController implements ExpenditureCommandControlle
                                                   @RequestPart(name = "subImageUrl", required = false)
                                                   final String subImageUrl,
                                                   @RequestParam(value = "amount") final Long amount,
+                                                  @RequestParam(value = "date") final LocalDate date,
                                                   @RequestParam(value = "description") final String description) {
-        final ExpenditureUpdateRequest request = new ExpenditureUpdateRequest(amount, description);
+        final ExpenditureUpdateRequest request = new ExpenditureUpdateRequest(date, amount, description);
         expenditureCommandService.updateExpenditure(expenditureId,
                                                     memberInfo.getId(),
                                                     Optional.ofNullable(mainImage),

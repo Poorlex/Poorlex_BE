@@ -6,6 +6,9 @@ import com.poorlex.poorlex.battle.battle.domain.BattleStatus;
 import com.poorlex.poorlex.battle.battle.fixture.BattleFixture;
 import com.poorlex.poorlex.battle.participation.domain.BattleParticipant;
 import com.poorlex.poorlex.battle.participation.domain.BattleParticipantRepository;
+import com.poorlex.poorlex.consumption.weeklybudget.domain.WeeklyBudget;
+import com.poorlex.poorlex.consumption.weeklybudget.domain.WeeklyBudgetAmount;
+import com.poorlex.poorlex.consumption.weeklybudget.domain.WeeklyBudgetRepository;
 import com.poorlex.poorlex.support.IntegrationTest;
 import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
 import com.poorlex.poorlex.auth.service.JwtTokenProvider;
@@ -42,6 +45,9 @@ class BattleParticipantControllerTest extends IntegrationTest implements Replace
     private MemberRepository memberRepository;
 
     @Autowired
+    private WeeklyBudgetRepository weeklyBudgetRepository;
+
+    @Autowired
     private BattleRepository battleRepository;
 
     @Autowired
@@ -51,6 +57,7 @@ class BattleParticipantControllerTest extends IntegrationTest implements Replace
     void 배틀참가자를_추가한다() throws Exception {
         //given
         final Member member = createMember("oauthId");
+        createWeeklyBudget(member.getId());
         final Battle battle = createBattle();
         final String accessToken = jwtTokenProvider.createAccessToken(member.getId());
 
@@ -152,6 +159,11 @@ class BattleParticipantControllerTest extends IntegrationTest implements Replace
     private Member createMember(final String oauthId) {
         final Member member = Member.withoutId(Oauth2RegistrationId.APPLE, oauthId, new MemberNickname("nickname"));
         return memberRepository.save(member);
+    }
+
+    private void createWeeklyBudget(Long memberId) {
+        WeeklyBudget weeklyBudget = WeeklyBudget.withoutId(new WeeklyBudgetAmount(100000L), memberId);
+        weeklyBudgetRepository.save(weeklyBudget);
     }
 
     private Battle createBattle() {

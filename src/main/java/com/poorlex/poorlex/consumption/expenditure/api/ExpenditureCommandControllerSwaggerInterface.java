@@ -72,6 +72,10 @@ public interface ExpenditureCommandControllerSwaggerInterface {
                     description = "지출 금액",
                     required = true
             ) final Long amount,
+            @Parameter(in = ParameterIn.QUERY,
+                    description = "지출 날짜",
+                    required = true
+            ) final LocalDate date,
             @Parameter(
                     in = ParameterIn.QUERY,
                     description = "지출 설명",

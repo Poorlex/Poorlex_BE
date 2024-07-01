@@ -7,6 +7,7 @@ import com.poorlex.poorlex.battle.participation.domain.BattleParticipant;
 import com.poorlex.poorlex.battle.participation.domain.BattleParticipantRepository;
 import com.poorlex.poorlex.battle.participation.service.event.BattleParticipantAddedEvent;
 import com.poorlex.poorlex.config.event.Events;
+import com.poorlex.poorlex.consumption.weeklybudget.domain.WeeklyBudgetRepository;
 import com.poorlex.poorlex.exception.ApiException;
 import com.poorlex.poorlex.exception.BadRequestException;
 import com.poorlex.poorlex.exception.ExceptionTag;
@@ -25,6 +26,7 @@ public class BattleParticipantService {
     private final MemberRepository memberRepository;
     private final BattleRepository battleRepository;
     private final BattleParticipantRepository battleParticipantRepository;
+    private final WeeklyBudgetRepository weeklyBudgetRepository;
 
     @Transactional
     public Long participate(final Long battleId, final Long memberId) {
@@ -46,6 +48,10 @@ public class BattleParticipantService {
     }
 
     private void validateMemberCanParticipateBattle(final Long battleId, final Long memberId) {
+        if (!weeklyBudgetRepository.existsByMemberId(memberId)) {
+            throw new BadRequestException(ExceptionTag.WEEKLY_BUDGET_STATUS, "예산을 먼저 설정해야만 배틀에 참여할 수 있습니다.");
+        }
+
         if (battleParticipantRepository.existsByBattleIdAndMemberId(battleId, memberId)) {
             final String errorMessage = "하나의 배틀에 중복 참여할 수 없습니다.";
             throw new BadRequestException(ExceptionTag.BATTLE_PARTICIPATE, errorMessage);
@@ -73,6 +79,11 @@ public class BattleParticipantService {
         if (!battle.isRecruiting()) {
             final String errorMessage = String.format("참가하려는 배틀이 모집중이 아닙니다. ( 배틀 Id : %d )", battleId);
             throw new ApiException(ExceptionTag.BATTLE_PROGRESS, errorMessage);
+        }
+
+        if (battleParticipantRepository.countBattleParticipantByBattleId(battleId) == battle.getMaxParticipantSize().getValue()) {
+            final String errorMessage = "배틀 참가자가 최대치에 도달하여 참여할 수 없습니다.";
+            throw new BadRequestException(ExceptionTag.BATTLE_PARTICIPANT_SIZE, errorMessage);
         }
     }
 

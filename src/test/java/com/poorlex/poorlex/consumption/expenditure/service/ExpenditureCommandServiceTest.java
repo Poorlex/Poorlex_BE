@@ -8,6 +8,7 @@ import com.poorlex.poorlex.consumption.expenditure.fixture.ExpenditureRequestFix
 import com.poorlex.poorlex.consumption.expenditure.service.dto.request.ExpenditureCreateRequest;
 import com.poorlex.poorlex.consumption.expenditure.service.dto.request.ExpenditureUpdateRequest;
 import com.poorlex.poorlex.exception.ApiException;
+import com.poorlex.poorlex.exception.BadRequestException;
 import com.poorlex.poorlex.exception.ExceptionTag;
 import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
 import com.poorlex.poorlex.support.db.UsingDataJpaTest;
@@ -167,6 +168,41 @@ class ExpenditureCommandServiceTest extends UsingDataJpaTest implements ReplaceU
     }
 
     @Test
+    void ERROR_생성하려는_날짜에_이미_지출이_있는_경우() throws IOException {
+        //given
+        final Member member = memberRepository.save(
+                Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId1", new MemberNickname("member1")));
+        final LocalDate currentDate = LocalDate.now();
+        final WeeklyExpenditureDuration weeklyDuration = WeeklyExpenditureDuration.from(currentDate);
+
+        LocalDate date = weeklyDuration.getStart();
+        final Expenditure expenditure = createExpenditureWithMainImageAndSubImage(1000L,
+                member.getId(),
+                date);
+
+        //when
+        final MockMultipartFile image = new MockMultipartFile(
+                "image",
+                "cat-8415620_640",
+                MediaType.MULTIPART_FORM_DATA_VALUE,
+                new FileInputStream(
+                        "src/test/resources/testImage/cat-8415620_640.jpg")
+        );
+        final ExpenditureCreateRequest request = ExpenditureRequestFixture.getWithDate(date);
+
+        //then
+        final String expectedErrorMessage = "하루에 한 개의 지출만 등록할 수 있습니다.";
+
+        assertThatThrownBy(() -> expenditureCommandService.createExpenditure(member.getId(),
+                image,
+                null,
+                request))
+                .isInstanceOf(BadRequestException.class)
+                .hasFieldOrPropertyWithValue("tag", ExceptionTag.EXPENDITURE_DATE)
+                .hasMessage(expectedErrorMessage);
+    }
+
+    @Test
     void 지출을_수정한다_이미지가_변경되지_않은_경우() {
         //given
         final Member member = memberRepository.save(
@@ -178,7 +214,7 @@ class ExpenditureCommandServiceTest extends UsingDataJpaTest implements ReplaceU
                                                                                   weeklyDuration.getStart());
         final String prevMainImageUrl = expenditure.getMainImageUrl();
         final String prevSubImageUrl = expenditure.getSubImageUrl().get();
-        final ExpenditureUpdateRequest request = new ExpenditureUpdateRequest(2000L, "업데이트된 소개");
+        final ExpenditureUpdateRequest request = new ExpenditureUpdateRequest(currentDate, 2000L, "업데이트된 소개");
 
         //when
         expenditureCommandService.updateExpenditure(expenditure.getId(),
@@ -199,6 +235,7 @@ class ExpenditureCommandServiceTest extends UsingDataJpaTest implements ReplaceU
         assertSoftly(
                 softly -> {
                     softly.assertThat(updatedExpenditure.getAmount()).isEqualTo(request.getAmount());
+                    softly.assertThat(updatedExpenditure.getDate()).isEqualTo(currentDate);
                     softly.assertThat(updatedExpenditure.getDescription()).isEqualTo(request.getDescription());
                     softly.assertThat(updatedExpenditure.getMainImageUrl()).isEqualTo(prevMainImageUrl);
                     softly.assertThat(updatedExpenditure.getSubImageUrl()).isPresent().get().isEqualTo(prevSubImageUrl);
@@ -211,10 +248,11 @@ class ExpenditureCommandServiceTest extends UsingDataJpaTest implements ReplaceU
         //given
         final Member member = memberRepository.save(
                 Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname")));
+        LocalDate now = LocalDate.now();
         final Expenditure expenditure = createExpenditureWithMainImageAndSubImage(1000L,
-                                                                                  member.getId(),
-                                                                                  LocalDate.now());
-        final ExpenditureUpdateRequest request = new ExpenditureUpdateRequest(2000L, "업데이트된 소개");
+                                                                                    member.getId(),
+                                                                                    now);
+        final ExpenditureUpdateRequest request = new ExpenditureUpdateRequest(now, 2000L, "업데이트된 소개");
 
         //when
         final MockMultipartFile mainImage = new MockMultipartFile(
@@ -255,6 +293,7 @@ class ExpenditureCommandServiceTest extends UsingDataJpaTest implements ReplaceU
 
         assertSoftly(
                 softly -> {
+                    softly.assertThat(updatedExpenditure.getDate()).isEqualTo(request.getDate());
                     softly.assertThat(updatedExpenditure.getAmount()).isEqualTo(request.getAmount());
                     softly.assertThat(updatedExpenditure.getDescription()).isEqualTo(request.getDescription());
                     softly.assertThat(updatedExpenditure.getMainImageUrl()).isEqualTo(newMainImageUrl);
@@ -268,11 +307,12 @@ class ExpenditureCommandServiceTest extends UsingDataJpaTest implements ReplaceU
         //given
         final Member member = memberRepository.save(
                 Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname")));
+        LocalDate now = LocalDate.now();
         final Expenditure expenditure = createExpenditureWithMainImageAndSubImage(1000L,
                                                                                   member.getId(),
-                                                                                  LocalDate.now());
+                                                                                  now);
         final String prevExpenditureImageUrl = expenditure.getMainImageUrl();
-        final ExpenditureUpdateRequest request = new ExpenditureUpdateRequest(2000L, "업데이트된 소개");
+        final ExpenditureUpdateRequest request = new ExpenditureUpdateRequest(now, 2000L, "업데이트된 소개");
 
         //when
         final MockMultipartFile subImage = new MockMultipartFile(
@@ -303,6 +343,7 @@ class ExpenditureCommandServiceTest extends UsingDataJpaTest implements ReplaceU
 
         assertSoftly(
                 softly -> {
+                    softly.assertThat(updatedExpenditure.getDate()).isEqualTo(request.getDate());
                     softly.assertThat(updatedExpenditure.getAmount()).isEqualTo(request.getAmount());
                     softly.assertThat(updatedExpenditure.getDescription()).isEqualTo(request.getDescription());
                     softly.assertThat(updatedExpenditure.getMainImageUrl()).isEqualTo(prevExpenditureImageUrl);
@@ -316,11 +357,12 @@ class ExpenditureCommandServiceTest extends UsingDataJpaTest implements ReplaceU
         //given
         final Member member = memberRepository.save(
                 Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname")));
+        LocalDate now = LocalDate.now();
         final Expenditure expenditure = createExpenditureWithMainImageAndSubImage(1000L,
                                                                                   member.getId(),
-                                                                                  LocalDate.now());
+                                                                                  now);
         final String prevSubImageUrl = expenditure.getSubImageUrl().get();
-        final ExpenditureUpdateRequest request = new ExpenditureUpdateRequest(2000L, "업데이트된 소개");
+        final ExpenditureUpdateRequest request = new ExpenditureUpdateRequest(now, 2000L, "업데이트된 소개");
 
         //when
         final MockMultipartFile mainImage = new MockMultipartFile(
@@ -351,6 +393,7 @@ class ExpenditureCommandServiceTest extends UsingDataJpaTest implements ReplaceU
 
         assertSoftly(
                 softly -> {
+                    softly.assertThat(updatedExpenditure.getDate()).isEqualTo(request.getDate());
                     softly.assertThat(updatedExpenditure.getAmount()).isEqualTo(request.getAmount());
                     softly.assertThat(updatedExpenditure.getDescription()).isEqualTo(request.getDescription());
                     softly.assertThat(updatedExpenditure.getMainImageUrl()).isEqualTo(newMainImageUrl);
@@ -364,11 +407,12 @@ class ExpenditureCommandServiceTest extends UsingDataJpaTest implements ReplaceU
         //given
         final Member member = memberRepository.save(
                 Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname")));
+        LocalDate now = LocalDate.now();
         final Expenditure expenditure = createExpenditureWithMainImageAndSubImage(1000L,
                                                                                   member.getId(),
-                                                                                  LocalDate.now());
+                                                                                  now);
         final String prevSubImageUrl = expenditure.getSubImageUrl().get();
-        final ExpenditureUpdateRequest request = new ExpenditureUpdateRequest(2000L, "업데이트된 소개");
+        final ExpenditureUpdateRequest request = new ExpenditureUpdateRequest(now, 2000L, "업데이트된 소개");
 
         //when
         expenditureCommandService.updateExpenditure(expenditure.getId(),
@@ -388,6 +432,7 @@ class ExpenditureCommandServiceTest extends UsingDataJpaTest implements ReplaceU
 
         assertSoftly(
                 softly -> {
+                    softly.assertThat(updatedExpenditure.getDate()).isEqualTo(request.getDate());
                     softly.assertThat(updatedExpenditure.getAmount()).isEqualTo(request.getAmount());
                     softly.assertThat(updatedExpenditure.getDescription()).isEqualTo(request.getDescription());
                     softly.assertThat(updatedExpenditure.getMainImageUrl()).isEqualTo(prevSubImageUrl);
@@ -401,12 +446,13 @@ class ExpenditureCommandServiceTest extends UsingDataJpaTest implements ReplaceU
         //given
         final Member member = memberRepository.save(
                 Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname")));
+        LocalDate now = LocalDate.now();
         final Expenditure expenditure = createExpenditureWithMainImageAndSubImage(1000L,
                                                                                   member.getId(),
-                                                                                  LocalDate.now());
+                                                                                  now);
         final String prevSubImageUrl = expenditure.getSubImageUrl().get();
         final String prevMainImageUrl = expenditure.getMainImageUrl();
-        final ExpenditureUpdateRequest request = new ExpenditureUpdateRequest(2000L, "업데이트된 소개");
+        final ExpenditureUpdateRequest request = new ExpenditureUpdateRequest(now, 2000L, "업데이트된 소개");
 
         //when
         expenditureCommandService.updateExpenditure(expenditure.getId(),
@@ -426,6 +472,7 @@ class ExpenditureCommandServiceTest extends UsingDataJpaTest implements ReplaceU
 
         assertSoftly(
                 softly -> {
+                    softly.assertThat(updatedExpenditure.getDate()).isEqualTo(request.getDate());
                     softly.assertThat(updatedExpenditure.getAmount()).isEqualTo(request.getAmount());
                     softly.assertThat(updatedExpenditure.getDescription()).isEqualTo(request.getDescription());
                     softly.assertThat(updatedExpenditure.getMainImageUrl()).isEqualTo(prevSubImageUrl);
@@ -442,11 +489,12 @@ class ExpenditureCommandServiceTest extends UsingDataJpaTest implements ReplaceU
         //given
         final Member member = memberRepository.save(
                 Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname")));
+        LocalDate now = LocalDate.now();
         final Expenditure expenditure = createExpenditureWithMainImageAndSubImage(1000L,
                                                                                   member.getId(),
-                                                                                  LocalDate.now());
+                                                                                  now);
         final String prevMainImageUrl = expenditure.getMainImageUrl();
-        final ExpenditureUpdateRequest request = new ExpenditureUpdateRequest(2000L, "업데이트된 소개");
+        final ExpenditureUpdateRequest request = new ExpenditureUpdateRequest(now, 2000L, "업데이트된 소개");
 
         //when
         expenditureCommandService.updateExpenditure(expenditure.getId(),
@@ -466,6 +514,7 @@ class ExpenditureCommandServiceTest extends UsingDataJpaTest implements ReplaceU
 
         assertSoftly(
                 softly -> {
+                    softly.assertThat(updatedExpenditure.getDate()).isEqualTo(request.getDate());
                     softly.assertThat(updatedExpenditure.getAmount()).isEqualTo(request.getAmount());
                     softly.assertThat(updatedExpenditure.getDescription()).isEqualTo(request.getDescription());
                     softly.assertThat(updatedExpenditure.getMainImageUrl()).isEqualTo(prevMainImageUrl);
@@ -481,10 +530,11 @@ class ExpenditureCommandServiceTest extends UsingDataJpaTest implements ReplaceU
                 Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId1", new MemberNickname("스플릿")));
         final Member 푸얼렉스 = memberRepository.save(
                 Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId2", new MemberNickname("푸얼렉스")));
+        LocalDate now = LocalDate.now();
         final Expenditure 푸얼렉스_지출 = createExpenditureWithMainImageAndSubImage(1000L,
                                                                               푸얼렉스.getId(),
-                                                                              LocalDate.now());
-        final ExpenditureUpdateRequest 지출_수정_요청 = new ExpenditureUpdateRequest(2000L, "업데이트된 소개");
+                                                                              now);
+        final ExpenditureUpdateRequest 지출_수정_요청 = new ExpenditureUpdateRequest(now, 2000L, "업데이트된 소개");
 
         //when
         //then
@@ -509,10 +559,11 @@ class ExpenditureCommandServiceTest extends UsingDataJpaTest implements ReplaceU
         final LocalDate currentDate = LocalDate.now();
         final WeeklyExpenditureDuration weeklyDuration = WeeklyExpenditureDuration.from(currentDate);
 
+        LocalDate date = weeklyDuration.getStart().minusDays(1);
         final Expenditure 스플릿_지출 = createExpenditureWithMainImageAndSubImage(1000L,
-                                                                             스플릿.getId(),
-                                                                             weeklyDuration.getStart().minusDays(1));
-        final ExpenditureUpdateRequest 지출_수정_요청 = new ExpenditureUpdateRequest(2000L, "업데이트된 소개");
+                                                                               스플릿.getId(),
+                                                                               date);
+        final ExpenditureUpdateRequest 지출_수정_요청 = new ExpenditureUpdateRequest(date, 2000L, "업데이트된 소개");
 
         //when
         //then
@@ -529,6 +580,40 @@ class ExpenditureCommandServiceTest extends UsingDataJpaTest implements ReplaceU
                                                                              Optional.of(스플릿_지출.getMainImageUrl()),
                                                                              지출_수정_요청))
                 .isInstanceOf(ApiException.class)
+                .hasFieldOrPropertyWithValue("tag", ExceptionTag.EXPENDITURE_UPDATE)
+                .hasMessage(expectedErrorMessage);
+    }
+
+    @Test
+    void ERROR_변경하려는_날짜에_이미_지출이_존재하는_경우() {
+        //given
+        final Member member = memberRepository.save(
+                Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId1", new MemberNickname("member1")));
+        final LocalDate currentDate = LocalDate.now();
+        final WeeklyExpenditureDuration weeklyDuration = WeeklyExpenditureDuration.from(currentDate);
+
+        LocalDate date1 = weeklyDuration.getStart().plusDays(1);
+        LocalDate date2 = weeklyDuration.getStart().plusDays(2);
+        final Expenditure expenditure1 = createExpenditureWithMainImageAndSubImage(1000L,
+                member.getId(),
+                date1);
+        final Expenditure expenditure2 = createExpenditureWithMainImageAndSubImage(1000L,
+                member.getId(),
+                date2);
+        final ExpenditureUpdateRequest request = new ExpenditureUpdateRequest(date2, 2000L, "업데이트된 소개");
+
+        //when
+        //then
+        final String expectedErrorMessage = "변경하려는 날짜에 이미 지출이 있습니다.";
+
+        assertThatThrownBy(() -> expenditureCommandService.updateExpenditure(expenditure1.getId(),
+                                                                            member.getId(),
+                                                                            Optional.empty(),
+                                                                            Optional.of(expenditure1.getMainImageUrl()),
+                                                                            Optional.empty(),
+                                                                            Optional.empty(),
+                                                                            request))
+                .isInstanceOf(BadRequestException.class)
                 .hasFieldOrPropertyWithValue("tag", ExceptionTag.EXPENDITURE_UPDATE)
                 .hasMessage(expectedErrorMessage);
     }
