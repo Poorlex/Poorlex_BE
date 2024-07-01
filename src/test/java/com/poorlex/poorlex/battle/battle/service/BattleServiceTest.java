@@ -12,6 +12,9 @@ import com.poorlex.poorlex.battle.participation.service.event.BattleParticipantA
 import com.poorlex.poorlex.battle.participation.service.event.BattlesWithdrewEvent;
 import com.poorlex.poorlex.consumption.expenditure.domain.ExpenditureRepository;
 import com.poorlex.poorlex.consumption.expenditure.fixture.ExpenditureFixture;
+import com.poorlex.poorlex.consumption.weeklybudget.domain.WeeklyBudget;
+import com.poorlex.poorlex.consumption.weeklybudget.domain.WeeklyBudgetAmount;
+import com.poorlex.poorlex.consumption.weeklybudget.domain.WeeklyBudgetRepository;
 import com.poorlex.poorlex.exception.BadRequestException;
 import com.poorlex.poorlex.exception.ExceptionTag;
 import com.poorlex.poorlex.exception.ForbiddenException;
@@ -30,6 +33,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -69,6 +73,9 @@ class BattleServiceTest extends IntegrationTest implements ReplaceUnderScoreTest
     private MemberRepository memberRepository;
 
     @Autowired
+    private WeeklyBudgetRepository weeklyBudgetRepository;
+
+    @Autowired
     private BattleParticipantRepository battleParticipantRepository;
 
     @Autowired
@@ -92,6 +99,7 @@ class BattleServiceTest extends IntegrationTest implements ReplaceUnderScoreTest
         //given
         final Battle excpectedBattle = BattleFixture.simple();
         final long createMemberId = 1L;
+        createWeeklyBudget(1L);
         final MockMultipartFile image = new MockMultipartFile(
                 "image",
                 "cat-8415620_640",
@@ -113,6 +121,28 @@ class BattleServiceTest extends IntegrationTest implements ReplaceUnderScoreTest
                             .isEqualTo(excpectedBattle);
                 }
         );
+    }
+
+    @Test
+    void 예산을_설정하지_않고_배틀을_생성하면_예외() throws IOException {
+        //given
+        final Battle excpectedBattle = BattleFixture.simple();
+        final long createMemberId = 1L;
+        final MockMultipartFile image = new MockMultipartFile(
+                "image",
+                "cat-8415620_640",
+                MediaType.MULTIPART_FORM_DATA_VALUE,
+                new FileInputStream(
+                        "src/test/resources/testImage/cat-8415620_640.jpg")
+        );
+
+        //when
+        //then
+        final String expectedErrorMessage = "예산을 먼저 설정해야만 배틀을 생성할 수 있습니다.";
+        assertThatThrownBy(() -> battleService.create(createMemberId, image, BattleFixture.request()))
+                .isInstanceOf(BadRequestException.class)
+                .hasFieldOrPropertyWithValue("tag", ExceptionTag.WEEKLY_BUDGET_STATUS)
+                .hasMessage(expectedErrorMessage);;
     }
 
     @ParameterizedTest(name = "멤버가 해당 배틀에 {1} 때 현재 참여 멤버는 {3}")
@@ -450,6 +480,11 @@ class BattleServiceTest extends IntegrationTest implements ReplaceUnderScoreTest
     private Member createMemberWithOauthId(final String oauthId) {
         final Member member = Member.withoutId(Oauth2RegistrationId.APPLE, oauthId, new MemberNickname("nickname"));
         return memberRepository.save(member);
+    }
+
+    private void createWeeklyBudget(Long memberId) {
+        WeeklyBudget weeklyBudget = WeeklyBudget.withoutId(new WeeklyBudgetAmount(100000L), memberId);
+        weeklyBudgetRepository.save(weeklyBudget);
     }
 
     private void join(final Member member, final Battle battle) {

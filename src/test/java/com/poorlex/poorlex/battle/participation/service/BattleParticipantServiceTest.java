@@ -6,7 +6,12 @@ import com.poorlex.poorlex.battle.battle.domain.BattleStatus;
 import com.poorlex.poorlex.battle.battle.fixture.BattleFixture;
 import com.poorlex.poorlex.battle.participation.domain.BattleParticipant;
 import com.poorlex.poorlex.battle.participation.domain.BattleParticipantRepository;
+import com.poorlex.poorlex.consumption.weeklybudget.domain.WeeklyBudget;
+import com.poorlex.poorlex.consumption.weeklybudget.domain.WeeklyBudgetAmount;
+import com.poorlex.poorlex.consumption.weeklybudget.domain.WeeklyBudgetRepository;
 import com.poorlex.poorlex.exception.ApiException;
+import com.poorlex.poorlex.exception.BadRequestException;
+import com.poorlex.poorlex.exception.ExceptionTag;
 import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
 import com.poorlex.poorlex.support.db.UsingDataJpaTest;
 import com.poorlex.poorlex.user.member.domain.Member;
@@ -34,6 +39,9 @@ class BattleParticipantServiceTest extends UsingDataJpaTest implements ReplaceUn
     private MemberRepository memberRepository;
 
     @Autowired
+    private WeeklyBudgetRepository weeklyBudgetRepository;
+
+    @Autowired
     private BattleParticipantRepository battleParticipantRepository;
 
     private BattleParticipantService battleParticipantService;
@@ -43,7 +51,8 @@ class BattleParticipantServiceTest extends UsingDataJpaTest implements ReplaceUn
         battleParticipantService = new BattleParticipantService(
                 memberRepository,
                 battleRepository,
-                battleParticipantRepository
+                battleParticipantRepository,
+                weeklyBudgetRepository
         );
         initializeDataBase();
     }
@@ -52,6 +61,7 @@ class BattleParticipantServiceTest extends UsingDataJpaTest implements ReplaceUn
     void 배틀참가자를_생성한다() {
         //given
         final Long memberId = createMember().getId();
+        createWeeklyBudget(memberId);
         final Battle recruitingBattle = createBattleWithStatus(BattleStatus.RECRUITING);
 
         //when
@@ -63,6 +73,7 @@ class BattleParticipantServiceTest extends UsingDataJpaTest implements ReplaceUn
     void 배틀참가자가_참가하려는_배틀이_없을_경우_예외를_던진다() {
         //given
         final Long memberId = createMember().getId();
+        createWeeklyBudget(memberId);
         final long notExistBattleId = -1L;
 
         //when
@@ -72,9 +83,25 @@ class BattleParticipantServiceTest extends UsingDataJpaTest implements ReplaceUn
     }
 
     @Test
+    void 예산을_설정하지_않고_배틀에_참여하려는_경우_예외() {
+        //given
+        final Long memberId = createMember().getId();
+        final Battle battle = createBattleWithStatus(BattleStatus.RECRUITING);
+
+        //when
+        //then
+        final String expectedErrorMessage = "예산을 먼저 설정해야만 배틀에 참여할 수 있습니다.";
+        assertThatThrownBy(() -> battleParticipantService.participate(battle.getId(), memberId))
+                .isInstanceOf(BadRequestException.class)
+                .hasFieldOrPropertyWithValue("tag", ExceptionTag.WEEKLY_BUDGET_STATUS)
+                .hasMessage(expectedErrorMessage);;
+    }
+
+    @Test
     void 배틀참가자가_이미_3개의_배틀이_참가되어있을_경우_예외를_던진다() {
         //given
         final Member member = createMember();
+        createWeeklyBudget(member.getId());
 
         final Battle battle1 = createBattleWithStatus(BattleStatus.RECRUITING);
         final Battle battle2 = createBattleWithStatus(BattleStatus.RECRUITING);
@@ -95,6 +122,7 @@ class BattleParticipantServiceTest extends UsingDataJpaTest implements ReplaceUn
     void 참가한_배틀이_완료된_경우_참가_개수_제한에_영향을_주지_않는다() {
         //given
         final Member member = createMember();
+        createWeeklyBudget(member.getId());
 
         final Battle battle1 = createBattleWithStatus(BattleStatus.RECRUITING);
         final Battle battle2 = createBattleWithStatus(BattleStatus.RECRUITING);
@@ -117,6 +145,7 @@ class BattleParticipantServiceTest extends UsingDataJpaTest implements ReplaceUn
     void 배틀참가자가_참가하려는_배틀이_모집중이_아닐_경우_예외를_던진다(final BattleStatus invalidBattleStatus) {
         //given
         final Long memberId = createMember().getId();
+        createWeeklyBudget(memberId);
         final Battle battleWithStatus = createBattleWithStatus(invalidBattleStatus);
         final Long battleId = battleWithStatus.getId();
 
@@ -177,6 +206,11 @@ class BattleParticipantServiceTest extends UsingDataJpaTest implements ReplaceUn
     private Member createMember() {
         return memberRepository.save(
                 Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname")));
+    }
+
+    private void createWeeklyBudget(Long memberId) {
+        WeeklyBudget weeklyBudget = WeeklyBudget.withoutId(new WeeklyBudgetAmount(100000L), memberId);
+        weeklyBudgetRepository.save(weeklyBudget);
     }
 
     private Battle createBattleWithStatus(final BattleStatus status) {

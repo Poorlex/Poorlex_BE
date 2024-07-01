@@ -21,7 +21,7 @@ public class TestMemberTokenGenerator {
         return createAccessToken(member);
     }
 
-    private Member createMember(final String oauthId) {
+    public Member createMember(final String oauthId) {
         final Member member = Member.withoutId(Oauth2RegistrationId.APPLE, oauthId, new MemberNickname("nickname"));
         return memberRepository.save(member);
     }

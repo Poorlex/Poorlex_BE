@@ -13,6 +13,9 @@ import com.poorlex.poorlex.battle.participation.domain.BattleParticipantReposito
 import com.poorlex.poorlex.battle.participation.service.BattleParticipantEventHandler;
 import com.poorlex.poorlex.consumption.expenditure.domain.ExpenditureRepository;
 import com.poorlex.poorlex.consumption.expenditure.fixture.ExpenditureFixture;
+import com.poorlex.poorlex.consumption.weeklybudget.domain.WeeklyBudget;
+import com.poorlex.poorlex.consumption.weeklybudget.domain.WeeklyBudgetAmount;
+import com.poorlex.poorlex.consumption.weeklybudget.domain.WeeklyBudgetRepository;
 import com.poorlex.poorlex.support.IntegrationTest;
 import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
 import com.poorlex.poorlex.support.TestMemberTokenGenerator;
@@ -56,6 +59,9 @@ class BattleControllerTest extends IntegrationTest implements ReplaceUnderScoreT
     private MemberRepository memberRepository;
 
     @Autowired
+    private WeeklyBudgetRepository weeklyBudgetRepository;
+
+    @Autowired
     private BattleParticipantRepository battleParticipantRepository;
 
     @Autowired
@@ -85,7 +91,9 @@ class BattleControllerTest extends IntegrationTest implements ReplaceUnderScoreT
     @Test
     void 배틀을_성공적으로_생성시_상태코드_201을_반환한다() throws Exception {
         //given
-        final String accessToken = testMemberTokenGenerator.createTokenWithNewMember("nickname");
+        final Member member = testMemberTokenGenerator.createMember("nickname");
+        String accessToken = testMemberTokenGenerator.createAccessToken(member);
+        createWeeklyBudget(member.getId());
         final MockMultipartFile image = new MockMultipartFile("image",
                                                               "cat-8415620_640",
                                                               MediaType.MULTIPART_FORM_DATA_VALUE,
@@ -112,6 +120,7 @@ class BattleControllerTest extends IntegrationTest implements ReplaceUnderScoreT
     void 배틀들을_조회시_상태코드_200_과_배틀의_데이터를_반환한다() throws Exception {
         //given
         Member manager = createMember();
+        createWeeklyBudget(manager.getId());
         final Long battleId = createBattle(manager);
         joinNewNormalPlayerWithOauthId("oauthId", battleId);
 
@@ -135,6 +144,7 @@ class BattleControllerTest extends IntegrationTest implements ReplaceUnderScoreT
         //given
         final Member member = Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname"));
         final Member manager = createMember();
+        createWeeklyBudget(manager.getId());
         final Long battleId = createBattle(manager);
         final Battle battle = battleRepository.findById(battleId).orElseThrow(IllegalArgumentException::new);
 
@@ -169,6 +179,7 @@ class BattleControllerTest extends IntegrationTest implements ReplaceUnderScoreT
         //given
         final Member member = Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname"));
         final Member manager = createMember();
+        createWeeklyBudget(manager.getId());
         final Long battleId = createBattle(manager);
         final Battle battle = battleRepository.findById(battleId).orElseThrow(IllegalArgumentException::new);
 
@@ -211,6 +222,7 @@ class BattleControllerTest extends IntegrationTest implements ReplaceUnderScoreT
         //given
         final Member member = Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId", new MemberNickname("nickname"));
         final Member manager = createMember();
+        createWeeklyBudget(manager.getId());
         final Long battleId = createBattle(manager);
         final Battle battle = battleRepository.findById(battleId).orElseThrow(IllegalArgumentException::new);
 
@@ -445,6 +457,11 @@ class BattleControllerTest extends IntegrationTest implements ReplaceUnderScoreT
                 UUID.randomUUID().toString(),
                 new MemberNickname("nickname"));
         return memberRepository.save(member);
+    }
+
+    private void createWeeklyBudget(Long memberId) {
+        WeeklyBudget weeklyBudget = WeeklyBudget.withoutId(new WeeklyBudgetAmount(100000L), memberId);
+        weeklyBudgetRepository.save(weeklyBudget);
     }
 
     private Long createBattle(Member manager) throws Exception {
