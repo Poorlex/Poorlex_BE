@@ -168,6 +168,41 @@ class ExpenditureCommandServiceTest extends UsingDataJpaTest implements ReplaceU
     }
 
     @Test
+    void ERROR_생성하려는_날짜에_이미_지출이_있는_경우() throws IOException {
+        //given
+        final Member member = memberRepository.save(
+                Member.withoutId(Oauth2RegistrationId.APPLE, "oauthId1", new MemberNickname("member1")));
+        final LocalDate currentDate = LocalDate.now();
+        final WeeklyExpenditureDuration weeklyDuration = WeeklyExpenditureDuration.from(currentDate);
+
+        LocalDate date = weeklyDuration.getStart();
+        final Expenditure expenditure = createExpenditureWithMainImageAndSubImage(1000L,
+                member.getId(),
+                date);
+
+        //when
+        final MockMultipartFile image = new MockMultipartFile(
+                "image",
+                "cat-8415620_640",
+                MediaType.MULTIPART_FORM_DATA_VALUE,
+                new FileInputStream(
+                        "src/test/resources/testImage/cat-8415620_640.jpg")
+        );
+        final ExpenditureCreateRequest request = ExpenditureRequestFixture.getWithDate(date);
+
+        //then
+        final String expectedErrorMessage = "하루에 한 개의 지출만 등록할 수 있습니다.";
+
+        assertThatThrownBy(() -> expenditureCommandService.createExpenditure(member.getId(),
+                image,
+                null,
+                request))
+                .isInstanceOf(BadRequestException.class)
+                .hasFieldOrPropertyWithValue("tag", ExceptionTag.EXPENDITURE_DATE)
+                .hasMessage(expectedErrorMessage);
+    }
+
+    @Test
     void 지출을_수정한다_이미지가_변경되지_않은_경우() {
         //given
         final Member member = memberRepository.save(

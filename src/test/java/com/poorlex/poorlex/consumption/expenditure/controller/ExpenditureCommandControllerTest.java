@@ -1,5 +1,6 @@
 package com.poorlex.poorlex.consumption.expenditure.controller;
 
+import com.poorlex.poorlex.consumption.expenditure.domain.ExpenditureRepository;
 import com.poorlex.poorlex.consumption.expenditure.service.ExpenditureCommandService;
 import com.poorlex.poorlex.support.ControllerTest;
 import com.poorlex.poorlex.support.ReplaceUnderScoreTest;
@@ -23,7 +24,6 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;

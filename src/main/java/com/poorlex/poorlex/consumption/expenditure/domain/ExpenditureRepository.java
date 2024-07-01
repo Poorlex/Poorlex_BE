@@ -2,6 +2,7 @@ package com.poorlex.poorlex.consumption.expenditure.domain;
 
 import java.time.LocalDate;
 import java.util.List;
+
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -34,6 +35,9 @@ public interface ExpenditureRepository extends JpaRepository<Expenditure, Long> 
     List<Expenditure> findExpendituresByMemberIdAndDateBetween(final Long memberId,
                                                                final LocalDate start,
                                                                final LocalDate end);
+
+    boolean existsByMemberIdAndDate(Long memberId, LocalDate date);
+    boolean existsByIdNotAndMemberIdAndDate(Long id, Long memberId, LocalDate date);
 
     List<Expenditure> findAllByMemberId(final Long memberId);
 
