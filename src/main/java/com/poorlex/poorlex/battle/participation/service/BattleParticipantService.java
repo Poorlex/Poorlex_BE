@@ -74,6 +74,11 @@ public class BattleParticipantService {
             final String errorMessage = String.format("참가하려는 배틀이 모집중이 아닙니다. ( 배틀 Id : %d )", battleId);
             throw new ApiException(ExceptionTag.BATTLE_PROGRESS, errorMessage);
         }
+
+        if (battleParticipantRepository.countBattleParticipantByBattleId(battleId) == battle.getMaxParticipantSize().getValue()) {
+            final String errorMessage = "배틀 참가자가 최대치에 도달하여 참여할 수 없습니다.";
+            throw new BadRequestException(ExceptionTag.BATTLE_PARTICIPANT_SIZE, errorMessage);
+        }
     }
 
     @Transactional
