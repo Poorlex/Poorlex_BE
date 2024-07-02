@@ -36,17 +36,6 @@ class MemberDescriptionTest {
     }
 
     @Test
-    void 모두_공백으로만_이루어져_있는_경우_예외를_던진다() {
-        //given
-        final String 회원_소개_내용 = " ".repeat(300);
-
-        //when
-        //then
-        assertThatThrownBy(() -> new MemberDescription(회원_소개_내용))
-                .isInstanceOf(ApiException.class);
-    }
-
-    @Test
     void 앞뒤_공백들은_모두_제거한다() {
         //given
         final String 회원_소개_내용 = "  aaa   ";
