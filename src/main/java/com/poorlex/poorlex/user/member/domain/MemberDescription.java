@@ -18,16 +18,8 @@ public class MemberDescription {
     private static final int MAXIMUM_DESCRIPTION_LENGTH = 300;
 
     public MemberDescription(final String value) {
-        validate(value.strip());
+        validateLength(value.strip());
         this.value = value.strip();
-    }
-
-    private void validate(final String value) {
-        if (!StringUtils.hasText(value)) {
-            final String errorMessage = String.format("회원 소개는 비어있거나 공백만으로 이루어질 수 없습니다. ( 소개 : '%s' )", value);
-            throw new ApiException(ExceptionTag.MEMBER_INTRODUCTION, errorMessage);
-        }
-        validateLength(value);
     }
 
     private void validateLength(final String value) {
