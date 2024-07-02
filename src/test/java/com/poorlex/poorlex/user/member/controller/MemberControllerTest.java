@@ -131,7 +131,7 @@ class MemberControllerTest extends IntegrationTest implements ReplaceUnderScoreT
     }
 
     @Test
-    void ERROR_멤버_닉네임수정시_소개가_비어있으면_400_상태코드로_응답한다() throws Exception {
+    void ERROR_멤버_닉네임수정시_소개를_비워둘_수_있다() throws Exception {
         //given
         final Long 회원_ID = 1L;
         MOCKING_토큰이_회원_ID를_가진_클레임을_반환하도록_한다(회원_ID);
@@ -150,7 +150,7 @@ class MemberControllerTest extends IntegrationTest implements ReplaceUnderScoreT
                                 .content(objectMapper.writeValueAsString(변경_요청))
                                 .contentType(MediaType.APPLICATION_JSON)
                 ).andDo(print())
-                .andExpect(status().isBadRequest())
+                .andExpect(status().is2xxSuccessful())
                 .andExpect(jsonPath("$.message").exists());
     }
 
