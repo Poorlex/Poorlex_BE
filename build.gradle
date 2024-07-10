@@ -48,6 +48,9 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-security'
     testImplementation 'org.springframework.security:spring-security-test'
 
+    // Socket
+    implementation 'org.springframework.boot:spring-boot-starter-websocket'
+
     //Oauth
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 
