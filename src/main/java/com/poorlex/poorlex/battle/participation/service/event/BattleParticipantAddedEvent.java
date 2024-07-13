@@ -8,4 +8,5 @@ import lombok.RequiredArgsConstructor;
 public class BattleParticipantAddedEvent {
 
     private final Long battleId;
+    private final Long memberId;
 }

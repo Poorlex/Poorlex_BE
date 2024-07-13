@@ -42,7 +42,7 @@ class BattleParticipantChangedEventHandlerTest extends IntegrationTest implement
         join(member, battle);
 
         //when
-        battleParticipantChangedEventHandler.added(new BattleParticipantAddedEvent(battle.getId()));
+        battleParticipantChangedEventHandler.added(new BattleParticipantAddedEvent(battle.getId(), member.getId()));
 
         //then
         final BattleStatus battleStatus = battleRepository.findById(battle.getId())

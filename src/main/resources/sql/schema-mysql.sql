@@ -181,3 +181,14 @@ create table if not exists battle_success_history
     battle_difficulty enum ('EASY', 'NORMAL', 'HARD'),
     primary key (id)
 ) engine = InnoDB;
+
+create table if not exists chatting
+(
+    id         bigint not null auto_increment,
+    battle_id  bigint                      not null,
+    member_id  bigint                      not null,
+    content    varchar(255)                null,
+    type enum ('JOIN', 'LEAVE', 'CHAT'),
+    created_at datetime(6),
+    primary key (id)
+) engine = InnoDB;

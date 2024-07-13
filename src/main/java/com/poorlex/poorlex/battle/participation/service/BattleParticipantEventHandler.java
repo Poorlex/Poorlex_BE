@@ -28,7 +28,7 @@ public class BattleParticipantEventHandler {
         final BattleParticipant manager = BattleParticipant.manager(battleId, event.getManagerId());
         battleParticipantRepository.save(manager);
 
-        Events.raise(new BattleParticipantAddedEvent(battleId));
+        Events.raise(new BattleParticipantAddedEvent(battleId, event.getManagerId()));
     }
 
     @TransactionalEventListener(value = MemberDeletedEvent.class, phase = TransactionPhase.BEFORE_COMMIT)

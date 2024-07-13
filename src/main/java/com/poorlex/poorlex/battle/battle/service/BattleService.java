@@ -322,9 +322,17 @@ public class BattleService {
     @Transactional
     public void delete(Long memberId, Long battleId) {
         validateAuthority(battleId, memberId);
+        validateMemberCanDeleteBattle(battleId);
 
         battleRepository.deleteById(battleId);
         Events.raise(new BattleDeletedEvent(battleId));
+    }
+
+    private void validateMemberCanDeleteBattle(Long battleId) {
+        if (battleParticipantRepository.findAllByBattleId(battleId)
+                .size() > 1) {
+            throw new BadRequestException(ExceptionTag.BATTLE_PARTICIPANT_SIZE, "참가자가 있는 배틀은 삭제할 수 없습니다.");
+        }
     }
 
     @Transactional
