@@ -26,6 +26,7 @@ public class ChatService {
     private final ApplicationEventPublisher publisher;
     private final MemberQueryService memberQueryService;
 
+    // TODO: 테스트 필요
     @Transactional
     public void sendMessage(BattleRoomMessage battleRoomMessage, Long battleId, Long memberId) {
         simpMessageSendingOperations.convertAndSend("/topic/battle/" + battleId, battleRoomMessage);
