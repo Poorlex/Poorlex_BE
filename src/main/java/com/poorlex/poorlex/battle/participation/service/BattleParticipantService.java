@@ -6,6 +6,7 @@ import com.poorlex.poorlex.battle.battle.domain.BattleStatus;
 import com.poorlex.poorlex.battle.participation.domain.BattleParticipant;
 import com.poorlex.poorlex.battle.participation.domain.BattleParticipantRepository;
 import com.poorlex.poorlex.battle.participation.service.event.BattleParticipantAddedEvent;
+import com.poorlex.poorlex.battle.participation.service.event.BattleParticipantWithdrawEvent;
 import com.poorlex.poorlex.config.event.Events;
 import com.poorlex.poorlex.consumption.weeklybudget.domain.WeeklyBudgetRepository;
 import com.poorlex.poorlex.exception.ApiException;
@@ -35,7 +36,7 @@ public class BattleParticipantService {
         validateBattle(battleId);
         final BattleParticipant battleParticipant = BattleParticipant.normalPlayer(battleId, memberId);
         final BattleParticipant savedBattleParticipant = battleParticipantRepository.save(battleParticipant);
-        Events.raise(new BattleParticipantAddedEvent(battleId));
+        Events.raise(new BattleParticipantAddedEvent(battleId, memberId));
 
         return savedBattleParticipant.getId();
     }
@@ -101,6 +102,7 @@ public class BattleParticipantService {
         validateBattleCanWithdraw(battleId);
         validateParticipantNotManager(battleParticipant);
         battleParticipantRepository.delete(battleParticipant);
+        Events.raise(new BattleParticipantWithdrawEvent(battleId, memberId));
     }
 
     private void validateBattleCanWithdraw(final Long battleId) {
