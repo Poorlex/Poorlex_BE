@@ -29,7 +29,7 @@ public class ChatService {
     // TODO: 테스트 필요
     @Transactional
     public void sendMessage(BattleRoomMessage battleRoomMessage, Long battleId, Long memberId) {
-        simpMessageSendingOperations.convertAndSend("/topic/battle/" + battleId, battleRoomMessage);
+        simpMessageSendingOperations.convertAndSend("/topic/battles/" + battleId, battleRoomMessage);
         publisher.publishEvent(new ChattingSentEvent(battleId, memberId, battleRoomMessage.content(), MessageType.CHAT));
     }
 
@@ -38,7 +38,7 @@ public class ChatService {
         MemberProfileResponse memberProfile = memberQueryService.getMemberProfile(event.getMemberId());
         BattleRoomMessage payload = new BattleRoomMessage(memberProfile.nickname(), null, MessageType.JOIN);
 
-        simpMessageSendingOperations.convertAndSend("/topic/battle/" + event.getBattleId(), payload);
+        simpMessageSendingOperations.convertAndSend("/topic/battles/" + event.getBattleId(), payload);
         publisher.publishEvent(new ChattingSentEvent(event.getBattleId(), event.getMemberId(), null, MessageType.JOIN));
     }
 
@@ -47,7 +47,7 @@ public class ChatService {
         MemberProfileResponse memberProfile = memberQueryService.getMemberProfile(event.memberId());
         BattleRoomMessage payload = new BattleRoomMessage(memberProfile.nickname(), null, MessageType.LEAVE);
 
-        simpMessageSendingOperations.convertAndSend("/topic/battle/" + event.battleId(), payload);
+        simpMessageSendingOperations.convertAndSend("/topic/battles/" + event.battleId(), payload);
         publisher.publishEvent(new ChattingSentEvent(event.battleId(), event.memberId(), null, MessageType.LEAVE));
     }
 }

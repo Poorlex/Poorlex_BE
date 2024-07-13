@@ -16,7 +16,7 @@ public class ChatController {
 
     private final ChatService chatService;
 
-    @MessageMapping("/chat/battle/{battleId}")
+    @MessageMapping("/chat/battles/{battleId}")
     public BattleRoomMessage sendMessage(@Payload BattleRoomMessage battleRoomMessage,
                                          SimpMessageHeaderAccessor accessor,
                                          @DestinationVariable("battleId") Long battleId) {
@@ -24,7 +24,7 @@ public class ChatController {
         return battleRoomMessage;
     }
 
-    @SubscribeMapping("/battle/{battleId}")
+    @SubscribeMapping("/battles/{battleId}")
     public void joinBattle(
                                         @DestinationVariable Long battleId,
                                         SimpMessageHeaderAccessor accessor
