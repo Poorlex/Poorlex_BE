@@ -187,8 +187,8 @@ create table if not exists chatting
     id         bigint not null auto_increment,
     battle_id  bigint                      not null,
     member_id  bigint                      not null,
-    content    varchar(255)                not null,
-    chat_type enum ('JOIN', 'LEAVE', 'CHAT'),
+    content    varchar(255)                null,
+    type enum ('JOIN', 'LEAVE', 'CHAT'),
     created_at datetime(6),
     primary key (id)
 ) engine = InnoDB;

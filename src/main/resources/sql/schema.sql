@@ -214,8 +214,8 @@ create table if not exists chatting
     id         bigint not null auto_increment,
     battle_id  bigint                      not null,
     member_id  bigint                      not null,
-    content    varchar(255)                not null,
-    chat_type varchar(255) check (chat_type in ('JOIN', 'LEAVE', 'CHAT')),
+    content    varchar(255)                null,
+    type varchar(255) check (type in ('JOIN', 'LEAVE', 'CHAT')),
     created_at datetime(6),
     primary key (id)
 );
