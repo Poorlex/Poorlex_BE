@@ -26,6 +26,7 @@ public class ChattingQueryRepository {
                 .where(chatting.battleId.eq(battleId))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
+                .orderBy(chatting.createdAt.desc())
                 .fetch();
     }
 }
