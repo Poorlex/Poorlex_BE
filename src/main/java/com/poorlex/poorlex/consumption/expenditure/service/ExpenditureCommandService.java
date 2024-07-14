@@ -75,7 +75,7 @@ public class ExpenditureCommandService {
 
     private void validateExpenditureAlreadyExistsAtRequestDate(Long memberId, LocalDate date) {
         if (expenditureRepository.existsByMemberIdAndDate(memberId, date)) {
-            throw new BadRequestException(ExceptionTag.EXPENDITURE_DATE, "하루에 한 개의 지출만 등록할 수 있습니다.");
+            throw new BadRequestException(ExceptionTag.EXPENDITURE_DATE, "지출은 하루에 1개만 등록 가능합니다");
         }
     }
 
