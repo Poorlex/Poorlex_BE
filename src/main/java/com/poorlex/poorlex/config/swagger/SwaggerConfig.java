@@ -10,6 +10,7 @@ import io.swagger.v3.oas.models.servers.Server;
 import java.text.NumberFormat;
 import java.util.List;
 import org.springdoc.core.models.GroupedOpenApi;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -18,6 +19,15 @@ import org.springframework.context.annotation.Profile;
 public class SwaggerConfig {
 
     private int order = 1;
+
+    @Value("${server.protocol:http}")
+    private String protocol;
+
+    @Value("${server.host:localhost}")
+    private String host;
+
+    @Value("${server.announce-port:8080}")
+    private int port;
 
     private final NumberFormat format = NumberFormat.getIntegerInstance();
 
@@ -38,7 +48,7 @@ public class SwaggerConfig {
     @Profile("dev")
     public OpenAPI devOpenAPI() {
         final Server server = new Server()
-                .url("https://poorlex.com")
+                .url(String.format("%s://%s:%d", protocol, host, port))
                 .description("for real API call");
 
         return new OpenAPI()
