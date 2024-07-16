@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 import static com.poorlex.poorlex.chat.domain.QChatting.chatting;
+import static com.poorlex.poorlex.user.member.domain.QMember.member;
 
 @Repository
 @RequiredArgsConstructor
@@ -19,10 +20,11 @@ public class ChattingQueryRepository {
 
     public List<ChatHistoryResponse> findByBattleId(Long battleId, Pageable pageable) {
         return queryFactory.select(Projections.constructor(ChatHistoryResponse.class,
-                            chatting.memberId,
-                            chatting.content,
-                            chatting.type
-                        )).from(chatting)
+                        member.nickname.value,
+                        chatting.content,
+                        chatting.type
+                )).from(chatting)
+                .innerJoin(member).on(chatting.memberId.eq(member.id))
                 .where(chatting.battleId.eq(battleId))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())

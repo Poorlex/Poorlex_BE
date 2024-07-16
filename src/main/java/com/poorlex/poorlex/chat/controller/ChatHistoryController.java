@@ -21,7 +21,7 @@ public class ChatHistoryController {
     private final ChatHistoryService chatHistoryService;
 
     @GetMapping("/battles/{battleId}")
-    public ResponseEntity<?> loadChatHistory(@PathVariable Long battleId, @ParameterObject Pageable pageable) {
+    public ResponseEntity<List<ChatHistoryResponse>> loadChatHistory(@PathVariable Long battleId, @ParameterObject Pageable pageable) {
         List<ChatHistoryResponse> response = chatHistoryService.loadChatHistory(battleId, pageable);
         return ResponseEntity.ok(response);
     }
