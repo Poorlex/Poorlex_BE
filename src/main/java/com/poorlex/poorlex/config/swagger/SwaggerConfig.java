@@ -20,13 +20,13 @@ public class SwaggerConfig {
 
     private int order = 1;
 
-    @Value("${server.protocol}")
+    @Value("${server.protocol:http}")
     private String protocol;
 
-    @Value("${server.host}")
+    @Value("${server.host:localhost}")
     private String host;
 
-    @Value("${server.announce-port}")
+    @Value("${server.announce-port:8080}")
     private int port;
 
     private final NumberFormat format = NumberFormat.getIntegerInstance();

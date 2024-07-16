@@ -191,7 +191,7 @@ class ExpenditureCommandServiceTest extends UsingDataJpaTest implements ReplaceU
         final ExpenditureCreateRequest request = ExpenditureRequestFixture.getWithDate(date);
 
         //then
-        final String expectedErrorMessage = "하루에 한 개의 지출만 등록할 수 있습니다.";
+        final String expectedErrorMessage = "지출은 하루에 1개만 등록 가능합니다";
 
         assertThatThrownBy(() -> expenditureCommandService.createExpenditure(member.getId(),
                 image,
